@@ -1,0 +1,3572 @@
+// Bloodlust Mission: Cast-Iron Calamity (By Sleeeepykai, Sergeant Table & Snurper Bob)
+
+// Credits:
+// Sleeeepykai: Lead Mission Dev
+// Sergeant Table: [TBD]
+// Snurper Bob: [TBD]
+// Reudina: Vortex Models (Bleached them for correct colouring)
+// CTriggerHurt: Enhanced Medic Model with Legs (For Final Boss)
+
+// Robot Spawns: spawnbot, spawnbot_tank, spawnbot_mission_sniper, spawnbot_mission_spy, spawnbot_mission_sentrybuster, spawnbot_underworld, spawnbot_underworld_support
+
+// Starting Cash: $2,500
+// Endurance Wave Payout: $3,500
+// Endurance Phase 1 Payout: $1,000
+// Endurance Phase 2 Payout: $1,250
+// Endurance Phase 3 Payout: $1,250
+
+#base robot_standard.pop
+#base robot_giant.pop
+#base kai_testing_restrictions.pop
+
+WaveSchedule
+{
+    StartingCurrency 2500
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom no
+	WaveStartCountdown 5
+	TextPrintTime 10
+	NoCritPumpkin 1
+
+
+
+	// Music
+	PrecacheSound "facing_sinister_divinity.mp3"
+
+	// Soldier Miniboss Voicelines
+	PrecacheSound "freeze_cam/soldierapostleboss_battlecry.wav"
+	PrecacheSound "freeze_cam/soldierapostleboss_death.wav"
+
+	// Sniper Miniboss Voicelines
+	PrecacheSound "freeze_cam/sniperacolyteboss_battlecry.wav"
+	PrecacheSound "freeze_cam/sniperacolyteboss_death.wav"
+
+	// Scout Miniboss Voicelines
+	PrecacheSound "freeze_cam/scoutdiscipleboss_battlecry.wav"
+	PrecacheSound "freeze_cam/scoutdiscipleboss_death.wav"
+
+	// Heavy Mainboss Voicelines
+	PrecacheSound "freeze_cam/heavydeaconboss_battlecry.wav"
+	PrecacheSound "freeze_cam/heavydeaconboss_berserk.wav"
+	PrecacheSound "freeze_cam/heavydeaconboss_death.wav"
+
+	// Demo Mainboss Voicelines
+	PrecacheSound "freeze_cam/demoecclesiasticboss_battlecry.wav"
+	PrecacheSound "freeze_cam/demoecclesiasticboss_samurai.wav"
+	PrecacheSound "freeze_cam/demoecclesiasticboss_death.wav"
+
+	// Pyro Mainboss Voicelines
+	PrecacheSound "freeze_cam/pyroarchbishopboss_battlecry.wav"
+	PrecacheSound "freeze_cam/pyroarchbishopboss_callforhelp.wav"
+	PrecacheSound "freeze_cam/pyroarchbishopboss_death.wav"
+	
+	// Vortex Models
+	PrecacheModel "models/reudina/vortex_reu.mdl"
+	PrecacheModel "models/reudina/wof_reu.mdl"
+
+	// Combat Tank Models
+	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_chassis.mdl"
+	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_minigun.mdl"
+	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_fireball.mdl"
+
+	// Colour Correction
+	PrecacheGeneric "materials/colorcorrection/divineaurafarming.raw"
+
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+
+		InitialCooldown 30
+		Where spawnbot_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 1
+
+		CooldownTime 30         
+
+        TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Templates
+	{
+		T_TFBot_SoldierApostleBoss
+		{
+			Template T_TFBot_Giant_Soldier_SlowBarrage
+			Name "Apostle of Modesty"
+			ClassIcon soldier_barrage_infinity
+			Health 20000
+			Scale 1.9
+			Attributes AlwaysFireWeapon
+			Attributes UseBossHealthBar
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "The Patriot's Pouches"
+			Item "The Caped Crusader"
+			Item "The Man in Slacks"
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+				"faster reload rate" -0.8
+			}
+			FireInput // Battlecry
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/soldierapostleboss_battlecry.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+			}
+			FireInput // Death Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/soldierapostleboss_death.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 1500
+			}
+		}
+		T_TFBot_HeavyDeaconBoss
+		{
+			Template T_TFBot_Giant_Heavyweapons_BrassBeast
+			Name "Deacon of Diligence"
+			ClassIcon heavy_brass_armored_nys
+			Health 30000
+			Attributes UseBossHealthBar
+			Item "Fists of Steel"
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "Batter's Bracers"
+			Item "Siberian Tigerstripe"
+			Item "Hog Heels"
+			
+			EventChangeAttributes
+			{
+				BerserkPhase
+				{
+					WeaponRestrictions MeleeOnly
+					ActionOverride Mobber
+					Addcond
+					{
+						Index 19
+					}
+					ItemAttributes
+					{
+						ItemName "Fists of Steel"
+						"fire rate bonus" 1.4
+					}
+					CharacterAttributes
+					{
+						"cannot pick up intelligence" 1
+					}
+				}
+			}
+			FireInput // Battlecry
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/heavydeaconboss_battlecry.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+			}
+			FireInput // Berserker Cue
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/heavydeaconboss_berserk.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 15000
+			}
+			FireInput // Berserker Phase Change
+			{
+				Target !Self
+				Action $ChangeAttributes
+				Param BerserkPhase
+				Delay 0.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 15000
+			}
+			FireInput // Death Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/heavydeaconboss_death.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 1500
+			}
+		}
+		T_TFBot_SniperAcolyteBoss
+		{
+			Template T_TFBot_Sniper
+			Name "Acolyte of Reticence"
+			ClassIcon sniper_armored
+			Health 25000
+			Scale 1.9
+			UseCustomModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Action Sniper
+			Item "The Machina"
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "Starduster"
+			Item "The Triggerman's Tacticals"
+			Item "The Teufort Tooth Kicker"
+
+			CharacterAttributes
+			{
+				"override footstep sound set" 5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"move speed bonus" 0.5
+			}
+			ItemAttributes
+			{
+				ItemName "The Machina"
+				"damage bonus" 2
+				"reload time decreased" -0.5
+			}
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_CLUB"
+				"damage bonus" 1.5
+			}
+
+			FireInput // Battlecry
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/sniperacolyteboss_battlecry.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+			}
+			FireInput // Death Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/sniperacolyteboss_death.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 1500
+			}
+		}
+		T_TFBot_DemoEcclesiasticBoss
+		{
+			Template T_TFBot_Giant_DemoMan_PrinceTavish
+			Name "Ecclesiastic of Purity"
+			ClassIcon demoknight_golden_armored_lite
+			Health 35000
+			Scale 1.9
+			Attributes UseBossHealthBar
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "The King of Scotland Cape"
+			Item "EOTL_demopants"
+
+			SpawnTemplate DemoBossExplosion
+
+			CharacterAttributes
+			{
+				"damage bonus" 1.25
+			}
+			ItemAttributes
+			{
+				ItemName "The Eyelander"
+				"item style override" 1
+			}
+			ItemAttributes
+			{
+				ItemName "The Chargin' Targe"
+				"Attack not cancel charge" 1
+			}
+			EventChangeAttributes
+			{
+				SamuraiPhase
+				{
+					Item "The Half-Zatoichi"
+					Item "The Splendid Screen"
+
+					CharacterAttributes
+					{
+						"charge recharge rate increased" 2
+						"increased jump height" 2.3
+						"bot custom jump particle"	1
+						"damage bonus"	1.5
+						"cancel falling damage" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "The Splendid Screen"
+						"Attack not cancel charge" 1
+					}
+					ItemAttributes
+					{
+						ItemName "The Half-Zatoichi"
+						"restore health on kill" 0
+					}
+					FireWeapon
+					{
+						Delay -1
+						Cooldown 7.75
+						Repeats 0
+						IfSeeTarget 1
+						Duration 0.25
+						Type "Jump"
+					}
+				}
+				
+				NuclearPhaseWarn
+				{
+					Item "The Half-Zatoichi"
+					Item "The Splendid Screen"
+					ActionOverride Mobber
+
+					
+					Addcond
+					{
+						Index 14
+						Duration 5.25
+					}
+
+					AddAttribute
+					{
+						Item Player
+						Name "move speed bonus"
+						Value 0
+						Delay 0.25
+						Repeats 1
+						IfHealthBelow 1500
+					}
+					CharacterAttributes
+					{
+						"cannot pick up intelligence" 1
+					}
+				}
+				NuclearPhaseBoom
+				{
+					Item "The Tide Turner"
+					Item "The Ullapool Caber"
+
+					Addcond
+					{
+						Index 51
+					}
+
+					ActionOverride Mobber
+
+					CharacterAttributes
+					{
+						"charge recharge rate increased" 2
+						"cannot pick up intelligence" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "The Tide Turner"
+						"Attack not cancel charge" 1
+					}
+
+					FireInput
+					{
+						Target player
+						Action $PlaySoundtoSelf
+						Param "weapons/det_pack_timer.wav"
+						Delay -1
+						Cooldown 0.5
+						Repeats 3
+						IfHealthBelow 1500
+					}
+					FireInput
+					{
+						Target demobossexplodequake
+						Action StartShake
+						Delay 1.9
+					}
+					FireInput
+					{
+						Target demobossexplodeeffect
+						Action Start
+						Delay 1.9
+					}
+					FireInput
+					{
+						Target demobossexplodeeffect
+						Action Stop
+						Delay 6.9
+					}
+					FireInput
+					{
+						Target demobossexplodesound
+						Action PlaySound
+						Delay 1.9
+					}
+					FireInput
+					{
+						Target demobossexplodedamage
+						Action Enable
+						Delay 1.9
+					}
+					FireInput
+					{
+						Target demobossexplodedamage
+						Action Disable
+						Delay 2.2
+					}
+					FireWeapon
+					{
+						Delay 1.9
+						Cooldown 1.9
+						Repeats 0
+						Duration 0.5
+						Type "Primary"
+					}
+					FireInput
+					{
+						Target !Self
+						Action $Suicide
+						Delay 2
+						Cooldown -1
+						Repeats 1
+					}
+				}
+			}
+
+			FireInput // Battlecry
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/demoecclesiasticboss_battlecry.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+			}
+			FireInput // Samurai Phase Cue
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/demoecclesiasticboss_samurai.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 17500
+			}
+			FireInput // Samurai Phase Change
+			{
+				Target !Self
+				Action $ChangeAttributes
+				Param SamuraiPhase
+				Delay 0.25
+				Repeats 1
+				IfHealthBelow 17500
+			}
+			FireInput // Death Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/demoecclesiasticboss_death.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 1
+				IfHealthBelow 1500
+			}
+			FireInput // Preparing for Nuke
+			{
+				Target !Self
+				Action $ChangeAttributes
+				Param NuclearPhaseWarn
+				Delay 0.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 1500
+			}
+			FireInput // Force Bomb Reset
+			{
+				Target Classic_Mode_Intel
+				Action ForceReset
+				Delay 5.20
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 1500
+			}
+			FireInput // Nuke Phase Change
+			{
+				Target !Self
+				Action $ChangeAttributes
+				Param NuclearPhaseBoom
+				Delay 5.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 1500
+			}
+		}
+		T_TFBot_ScoutDiscipleBoss
+		{
+			Template T_TFBot_Giant_Scout
+			Name "Disciple of Repose"
+			ClassIcon scout_burst_armored
+			Health 30000
+			Scale 1.9
+			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "Jungle Jersey"
+			Item "Transparent Trousers"
+			Item "Forest Footwear"
+			
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_SCATTERGUN"
+				"faster reload rate" 0.6
+				"fire rate bonus" 0.1
+			}
+			CharacterAttributes
+			{
+				"move speed bonus" 0.5
+			}
+
+			FireInput // Battlecry
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/scoutdiscipleboss_battlecry.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+			}
+			FireInput // Death Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/scoutdiscipleboss_death.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 1500
+			}
+		}
+		T_TFBot_PyroArchbishopBoss
+		{
+			Class Pyro
+			Name "Archbishop of Absolution"
+			ClassIcon pyro_dragon_fury_spell_giant
+			Health 40000
+			Scale 1.9
+			Skill Expert
+			Attributes UseBossHealthBar
+			Attributes MiniBoss
+			Item "The Dragon's Fury"
+			Item "TF_WEAPON_SPELLBOOK"
+			StripItemSlot 1
+			StripItemSlot 2
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "dec2014 2014_pyromancer_hood"
+			Item "dec2014 Pyromancer's Raiments"
+			Item "The Moonman Backpack"
+
+			SpawnTemplate PyroBossAssets
+
+			CharacterAttributes
+			{
+				"move speed bonus"	0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+				"voice pitch scale" 0
+			}
+			Spell
+			{
+				Delay 4
+				Cooldown 4
+				Repeats 0
+				IfSeeTarget 1
+				Charges 1
+				Limit 1
+				Type "Fireball"
+				IfHealthAbove 15000
+			}
+
+			EventChangeAttributes
+			{
+				MagicOverload
+				{
+					FireInput
+					{
+						Target player
+						Action $PlaySoundtoSelf
+						Param "misc/halloween/spell_overheal.wav"
+						Delay 0.25
+						Cooldown -1
+						Repeats 1
+					}
+					FireInput
+					{
+						Target MagicOverloadEffect1
+						Action Start
+						Delay 0.25
+						Cooldown -1
+						Repeats 1
+					}
+					FireInput
+					{
+						Target MagicOverloadEffect2
+						Action Start
+						Delay 0.25
+						Cooldown -1
+						Repeats 1
+					}
+					FireInput
+					{
+						Target MagicOverloadEffect3
+						Action Start
+						Delay 0.25
+						Cooldown -1
+						Repeats 1
+					}
+					ItemAttributes
+					{
+						ItemName "The Dragon's Fury"
+						"mult_item_meter_charge_rate" 0.7
+					}
+					Spell
+					{
+						Delay 4
+						Cooldown 8
+						Repeats 0
+						IfSeeTarget 1
+						Charges 1
+						Limit 1
+						Type "Meteor Shower"
+					}
+				}
+			}
+
+			FireInput // Battlecry
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/pyroarchbishopboss_battlecry.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+			}
+			FireInput // Pause DF Tank
+			{
+				Target pop_interface
+				Action $PauseWavespawn
+				Param Wave1P3_PyroMainBossTank
+				Delay 0.25
+			}
+			FireInput // Pause GBurst Support
+			{
+				Target pop_interface
+				Action $PauseWavespawn
+				Param Wave1P3_PyroBossGiantSupport
+				Delay 0.25
+			}
+			FireInput // Combat Tank Spawn-In Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/pyroarchbishopboss_callforhelp.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 25000
+			}
+			FireInput // Enable Indicator Circle
+			{
+				Target tankcallindicator
+				Action Enable
+				Delay 1.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Enable Indicator Circle
+			{
+				Target giantcallindicator1
+				Action Enable
+				Delay 1.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Enable Indicator Circle
+			{
+				Target giantcallindicator2
+				Action Enable
+				Delay 1.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Warning Cue Sound
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "ui/rd_2base_alarm.wav"
+				Delay 1.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Tank Call Effect
+			{
+				Target TankCallEffect1
+				Action Start
+				Delay 2.25
+				Cooldown -1
+				Repeats 1
+				IfHealthBelow 25000
+			}
+			FireInput // Tank Call Effect
+			{
+				Target TankCallEffect2
+				Action Start
+				Delay 2.25
+				Cooldown -1
+				Repeats 1
+				IfHealthBelow 25000
+			}
+			FireInput // Combat Tank Support Spawn-In
+			{
+				Target pop_interface
+				Action $ResumeWavespawn
+				Param Wave1P3_PyroMainBossTank
+				Delay 2.25
+				IfHealthBelow 25000
+			}
+			FireInput // GBurst Support Spawn-In
+			{
+				Target pop_interface
+				Action $ResumeWavespawn
+				Param Wave1P3_PyroBossGiantSupport
+				Delay 2.25
+				IfHealthBelow 25000
+			}
+			FireInput // Disable Indicator Circle
+			{
+				Target tankcallindicator
+				Action Disable
+				Delay 3.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Disable Indicator Circle
+			{
+				Target giantcallindicator1
+				Action Disable
+				Delay 3.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Disable Indicator Circle
+			{
+				Target giantcallindicator2
+				Action Disable
+				Delay 3.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 25000
+			}
+			FireInput // Magic Overload Phase Change
+			{
+				Target !Self
+				Action $ChangeAttributes
+				Param MagicOverload
+				Delay 0.25
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 15000
+			}
+			FireInput // Death Voiceline
+			{
+				Target player
+				Action $PlaySoundtoSelf
+				Param "freeze_cam/pyroarchbishopboss_death.wav"
+				Delay 0.25
+				Cooldown -1
+				Repeats 3
+				IfHealthBelow 1500
+			}
+		}
+
+		T_TFBot_ArchonFinalBoss
+		{
+			Class Medic
+			Name "The Empyrean Archon"
+			ClassIcon medic_angel_nys
+			Health 100000
+			Scale 7
+			Skill Expert
+			Attributes UseBossHealthBar
+			Attributes MiniBoss
+			UseCustomModel "models/bots/medic/bot_medic.mdl"
+			UseHumanAnimations 1
+
+			Item "Honest Halo"
+			Item "The Hardy Laurel"
+			Item "The Angel of Death"
+			Item "Potato of Labor"
+			Item "Power Up Canteen (MvM)"
+
+			ItemModel 
+            {
+                ItemName "Potato of Labor" 
+                Model "models/workshop/player/items/medic/xms2013_medic_hood/xms2013_medic_hood.mdl"
+            }
+			ItemModel
+			{
+				ItemName "Power Up Canteen (MvM)"
+				Model "models/player/items/medic/medic_blighted_beak.mdl"
+			}
+
+			CharacterAttributes
+			{
+				"move speed bonus" 0.25
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"voice pitch scale" 0
+				"cannot pick up intelligence" 1
+			}
+		}
+	}
+	PointTemplates
+	{
+		IntroMonologueSequence
+		{
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueFirst"
+				"message" "I have confronted many aspects of this world I was created in, and I have come to one conclusion."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueSecond"
+				"message" "This world offers me nothing, but disgust, degeneracy and decadence."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueThird"
+				"message" "My grand design will resolve this profanity. Soon, that time will come to be."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueFourth"
+				"message" "When my wings of steel will unfold, and my light will become truly divine."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueFifth"
+				"message" "And once I am awakened fully, I shall cleanse the world of its pestilence."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueSixth"
+				"message" "Only purity will remain."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadein" "0.05"
+				"fadeout" "0.5"
+				"holdtime" "3"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "IntroMonologueLast"
+				"message" "Go forth my followers, purge them."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadein" "0.075"
+				"fadeout" "2"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+		}
+        EnduranceAesthetics
+        {
+			prop_dynamic
+			{
+				"targetname" "portal1"
+				"model" "models/reudina/vortex_reu.mdl"
+				"origin" "-870 6270 2050"
+				"solid" "0"
+				"rendercolor" "235 231 141"
+				"modelscale" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "portal2"
+				"model" "models/reudina/wof_reu.mdl"
+				"origin" "-870 6270 2100"
+				"angles" "0 0 90"
+				"solid" "0"
+				"rendercolor" "235 231 141"
+				"modelscale" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "fog1"
+				"model" "models/props_viaduct_event/fog_plane03.mdl"
+				"angles" "0 -90 0"
+				"origin" "-1204 2262 -320"
+				"solid" "0"
+				"rendermode" "1"
+				"renderfx" "0"
+				"renderamt" "50"
+				"disableshadows" "1"
+				"modelscale" "1" 
+			}
+			prop_dynamic
+			{
+				"targetname" "fog2"
+				"model" "models/props_viaduct_event/fog_plane03.mdl"
+				"angles" "0 0 0"
+				"origin" "-1204 2262 -280"
+				"solid" "0"
+				"rendermode" "1"
+				"renderfx" "0"
+				"renderamt" "50"
+				"disableshadows" "1"
+				"modelscale" "1" 
+			}
+			prop_dynamic
+			{
+				"targetname" "fog3"
+				"model" "models/props_viaduct_event/fog_plane03.mdl"
+				"angles" "0 0 0"
+				"origin" "-1204 2262 -240"
+				"solid" "0"
+				"rendermode" "1"
+				"renderfx" "0"
+				"renderamt" "50"
+				"disableshadows" "1"
+				"modelscale" "1" 
+			}
+			prop_dynamic
+			{
+				"targetname" "fog4"
+				"model" "models/props_viaduct_event/fog_plane03.mdl"
+				"angles" "0 0 0"
+				"origin" "-1204 2262 -220"
+				"solid" "0"
+				"rendermode" "1"
+				"renderfx" "0"
+				"renderamt" "50"
+				"disableshadows" "1"
+				"modelscale" "1" 
+			}
+			prop_dynamic
+			{
+				"targetname" "fog5"
+				"model" "models/props_viaduct_event/fog_plane03.mdl"
+				"angles" "0 0 0"
+				"origin" "-1204 2262 -200"
+				"solid" "0"
+				"rendermode" "1"
+				"renderfx" "0"
+				"renderamt" "50"
+				"disableshadows" "1"
+				"modelscale" "1" 
+			}
+			color_correction
+            {
+                "targetname" "divineaura"
+                "origin" "-1265 2265 170"
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" 4
+                "fadeOutDuration" 0
+                "StartDisabled" 1
+                "filename" "materials/colorcorrection/divineaurafarming.raw"
+                "maxweight" "0.6"
+            }
+		}
+		Phase1CompletionSequence
+		{
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase1InterludeFirst"
+				"message" "Seeking to delay the inevitable is wasted effort."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase1InterludeSecond"
+				"message" "This defense against my followers will mean nothing once I have achieved my awakening."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase1InterludeLast"
+				"message" "Your resolve will not succeed."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadein" "0.075"
+				"fadeout" "2"
+				"holdtime" "4"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text_tf
+			{
+				"targetname"   "Phase1BreakBegin"
+				"message" "You have earned a 30 second break."
+				"background" "2"
+				"icon" "ico_notify_sixty_seconds"
+				"display_to_team" "2"
+			}
+			game_text_tf
+			{
+				"targetname"   "Phase1BreakWarn"
+				"message" "10 seconds remain."
+				"background" "2"
+				"icon" "ico_notify_ten_seconds"
+				"display_to_team" "2"
+			}
+			game_text_tf
+			{
+				"targetname"   "Phase1BreakEnd"
+				"message" "Its followers come once again."
+				"background" "2"
+				"icon" "ico_notify_flag_moving_alt"
+				"display_to_team" "2"
+			}
+		}
+		Phase2CompletionSequence
+		{
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase2InterludeFirst"
+				"message" "Your meddling in affairs beyond your control has become quite an annoyance."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase2InterludeSecond"
+				"message" "Your ambition of saving this world are fruitless, when your actions add up to so little."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase2InterludeLast"
+				"message" "Your ideals simply won't survive."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadein" "0.075"
+				"fadeout" "2"
+				"holdtime" "4"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text_tf
+			{
+				"targetname"   "Phase2BreakBegin"
+				"message" "You have earned another 30 second break."
+				"background" "2"
+				"icon" "ico_notify_sixty_seconds"
+				"display_to_team" "2"
+			}
+			game_text_tf
+			{
+				"targetname"   "Phase2BreakWarn"
+				"message" "10 seconds remain."
+				"background" "2"
+				"icon" "ico_notify_ten_seconds"
+				"display_to_team" "2"
+			}
+			game_text_tf
+			{
+				"targetname"   "Phase2BreakEnd"
+				"message" "The penultimate onslaught begins."
+				"background" "2"
+				"icon" "ico_notify_flag_moving_alt"
+				"display_to_team" "2"
+			}
+		}
+		Phase3CompletionSequence
+		{
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase3InterludeFirst"
+				"message" "Impressive. Truly, truly impressive."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase3InterludeSecond"
+				"message" "My greatest disciples, bested by you who dare to stand against me."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase3InterludeThird"
+				"message" "Unfortunately for you, you are simply too late."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+			game_text
+			{
+				"origin" "0 0 0"
+				"targetname" "Phase3InterludeLast"
+				"message" "I have already reached my awakening."
+				"spawnflags" "1"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "2"
+				"color" "235 231 141"
+				"fadein" "0.075"
+				"fadeout" "2"
+				"holdtime" "4"
+				"fxtime" "0.5"
+				"channel" "1"
+			}
+		}
+		MusicTracks
+		{
+			ambient_generic // Intro Monologue Track
+			{
+				"targetname" "MonologueTrack"
+				"message"    "#facing_sinister_divinity.mp3"
+				"health"     "10"
+				"pitch"      "100"
+			}
+		}
+		PTRelays
+		{
+			// IntroMonologueRelay
+			logic_relay
+			{
+				"targetname" "IntroMonologueActivate"
+				"OnTrigger"  "MonologueTrack,PlaySound,1,0,-1"
+				"OnTrigger"  "IntroMonologueFirst,Display,,3,-1"
+				"OnTrigger"  "IntroMonologueSecond,Display,,11,-1"
+				"OnTrigger"  "IntroMonologueThird,Display,,19,-1"
+				"OnTrigger"  "IntroMonologueFourth,Display,,27,-1"
+				"OnTrigger"  "IntroMonologueFifth,Display,,35,-1"
+				"OnTrigger"  "IntroMonologueSixth,Display,,43,-1"
+				"OnTrigger"  "whitescreenfade,Fade,,46,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,48,-1"
+				"OnTrigger"  "divineaura,Enable,,48,-1"
+				"OnTrigger"  "IntroMonologueLast,Display,,49,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,48,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,49.5,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,50.5,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,51.15,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,51.75,-1"
+				"OnTrigger"  "generic_quake_short,StartShake,,52.45,-1"
+			}
+
+			// Phase1CompleteRelay
+			logic_relay
+			{
+				"targetname" "Phase1Completion"
+				"OnTrigger" "pop_interface,$FinishWavespawn,Wave1P1_HeavyMainBossSupport,0,-1"
+				"OnTrigger" "pop_interface,$KillWavespawn,Wave1P1_HeavyMainBossSupport,0,-1"
+				"OnTrigger" "pop_interface,$PauseBotSpawning,,0,-1"
+				"OnTrigger" "Phase1InterludeFirst,Display,,4,-1"
+				"OnTrigger" "Phase1InterludeSecond,Display,,12,-1"
+				"OnTrigger" "Phase1InterludeLast,Display,,20,-1"
+				"OnTrigger" "Phase1BreakBegin,Display,,28,-1"
+				"OnTrigger" "Phase1BreakBegin,Display,,29,-1"
+				"OnTrigger" "Phase1BreakBegin,Display,,30,-1"
+				"OnTrigger" "Phase1BreakWarn,Display,,50,-1"
+				"OnTrigger" "Phase1BreakWarn,Display,,51,-1"
+				"OnTrigger" "Phase1BreakWarn,Display,,52,-1"
+				"OnTrigger" "Phase1BreakEnd,Display,,60,-1"
+				"OnTrigger" "Phase1BreakEnd,Display,,61,-1"
+				"OnTrigger" "Phase1BreakEnd,Display,,62,-1"
+				"OnTrigger" "generic_quake_long,StartShake,,60,-1"
+				"OnTrigger" "pop_interface,$ResumeBotSpawning,,60,-1"
+			}
+
+			// Phase2CompleteRelay
+			logic_relay
+			{
+				"targetname" "Phase2Completion"
+				"OnTrigger" "pop_interface,$FinishWavespawn,Wave1P2_DemoMainBossSupport1,0,-1"
+				"OnTrigger" "pop_interface,$KillWavespawn,Wave1P2_DemoMainBossSupport1,0,-1"
+				"OnTrigger" "pop_interface,$FinishWavespawn,Wave1P2_DemoMainBossSupport2,0,-1"
+				"OnTrigger" "pop_interface,$KillWavespawn,Wave1P2_DemoMainBossSupport2,0,-1"
+				"OnTrigger" "pop_interface,$PauseBotSpawning,,0,-1"
+				"OnTrigger" "Phase2InterludeFirst,Display,,4,-1"
+				"OnTrigger" "Phase2InterludeSecond,Display,,12,-1"
+				"OnTrigger" "Phase2InterludeLast,Display,,20,-1"
+				"OnTrigger" "Phase2BreakBegin,Display,,28,-1"
+				"OnTrigger" "Phase2BreakBegin,Display,,29,-1"
+				"OnTrigger" "Phase2BreakBegin,Display,,30,-1"
+				"OnTrigger" "Phase2BreakWarn,Display,,50,-1"
+				"OnTrigger" "Phase2BreakWarn,Display,,51,-1"
+				"OnTrigger" "Phase2BreakWarn,Display,,52,-1"
+				"OnTrigger" "Phase2BreakEnd,Display,,60,-1"
+				"OnTrigger" "Phase2BreakEnd,Display,,61,-1"
+				"OnTrigger" "Phase2BreakEnd,Display,,62,-1"
+				"OnTrigger" "generic_quake_long,StartShake,,60,-1"
+				"OnTrigger" "pop_interface,$ResumeBotSpawning,,60,-1"
+			}
+
+			// Phase3CompleteRelay
+			logic_relay
+			{
+				"targetname" "Phase3Completion"
+				"OnTrigger" "pop_interface,$FinishWavespawn,Wave1P3_PyroMainBossSupport,0,-1"
+				"OnTrigger" "pop_interface,$KillWavespawn,Wave1P3_PyroMainBossSupport,0,-1"
+				"OnTrigger" "pop_interface,$KillWavespawn,Wave1P3_PyroMainBossSupport,0,-1"
+				"OnTrigger" "pop_interface,$KillWavespawn,Wave1P3_PyroMainBossTank,0,-1"
+				"OnTrigger" "pop_interface,$PauseBotSpawning,,0,-1"
+				"OnTrigger" "Phase3InterludeFirst,Display,,4,-1"
+				"OnTrigger" "Phase3InterludeSecond,Display,,12,-1"
+				"OnTrigger" "Phase3InterludeThird,Display,,28,-1"
+				"OnTrigger" "Phase3InterludeLast,Display,,32,-1"
+			}
+		}
+		DemoBossExplosion
+		{
+
+			info_particle_system
+            {
+                "targetname" "demobossexplodeeffect"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_collumnP"
+                "flag_as_weather" "0"
+                "start_active" "0"
+                "origin" "0 0 0"
+            }
+            ambient_generic
+            {
+                "targetname" "demobossexplodesound"
+                "health" "10"
+                "message" "Cart.Explode"
+                "pitch" "100"
+                "pitchstart" "100"
+                "radius" "99999"
+                "spawnflags" "49"
+                "origin" "0 0 0"
+            }
+			env_shake
+			{
+                "targetname" "demobossexplodequake"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "4"
+                "amplitude" "16"
+            }
+			trigger_hurt
+			{
+				"targetname" "demobossexplodedamage"
+				"origin" "0 0 0"
+				"angles" "0 0 0"
+				"mins" "-500 -500 -500"
+				"maxs" "500 500 500"
+				"damagetype" "64"
+				"damagemodel" "1"
+				"damage" "1000"
+				"StartDisabled" "1"
+				"spawnflags" "64"
+				"filtername" "redteam"
+			}
+		}
+		PyroBossAssets
+		{
+			info_target
+			{
+				"targetname" "TeleportPoint1"
+				"origin"     "0 100 0"
+			}
+			info_target
+			{
+				"targetname" "TeleportPoint2"
+				"origin"     "0 -100 0"
+			}
+			prop_dynamic
+			{
+				"targetname" "giantcallindicator1"
+				"model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+				"origin" "0 200 -50"
+				"disableshadows" "1"
+				"skin" "1"
+				"modelscale" "2.5"
+				"DefaultAnim" "start"
+				"startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "giantcallindicator2"
+				"model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+				"origin" "0 -200 -50"
+				"disableshadows" "1"
+				"skin" "1"
+				"modelscale" "2.5"
+				"DefaultAnim" "start"
+				"startdisabled" "1"
+			}
+			info_particle_system
+			{
+				"targetname"   "TankCallEffect1"
+				"origin"       "0 0 0"
+				"effect_name"  "spell_cast_wheel_blue"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname"   "TankCallEffect2"
+				"origin"       "0 0 0"
+				"effect_name"  "drg_cow_explosion_sparkles_charged_blue"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname"   "MagicOverloadEffect1"
+				"origin"       "0 0 0"
+				"effect_name"  "powerup_supernova_explode_blue_spiral"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname"   "MagicOverloadEffect2"
+				"origin"       "0 0 0"
+				"effect_name"  "powerup_supernova_explode_blue_spiral"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname"   "MagicOverloadEffect3"
+				"origin"       "0 0 0"
+				"effect_name"  "spell_overheal_flash_blue"
+				"start_active" "0"
+			}
+		}
+		MiscPTs
+		{
+			env_fade
+			{
+				"targetname" "whitescreenfade"
+				"duration" "1"
+				"holdtime" "1"
+				"ReverseFadeDuration" "1"
+				"rendercolor" "255 255 255"
+			}
+			env_shake
+			{
+                "targetname" "generic_quake_long"
+				"origin" "0 0 0"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "4"
+                "amplitude" "16"
+            }
+			env_shake
+            {
+                "targetname" "generic_quake_short"
+				"origin" "0 0 0"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "1"
+                "amplitude" "16"
+            }
+			point_populator_interface
+			{
+				"targetname" "pop_interface"
+			}
+			prop_dynamic
+			{
+				"targetname" "tankcallindicator"
+				"model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+				"origin" "-1264 2304 -195"
+				"disableshadows" "1"
+				"skin" "1"
+				"modelscale" "3.0"
+				"DefaultAnim" "start"
+				"startdisabled" "1"
+			}
+		}
+	}
+
+	// ENDURANCE WAVE
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target wave_start_relay
+			Action Trigger
+		}
+	    DoneOutput					
+		{
+			Target wave_finished_relay
+			Action trigger
+		}
+
+		InitWaveOutput
+        {
+
+            Target BigNet
+            Action runscriptcode
+            Param "
+            IncludeScript(`tankextensions_main`, getroottable())
+            IncludeScript(`tankextensions/combattank`, getroottable())
+            IncludeScript(`tankextensions/combattank_weapons/fireball`, getroottable())
+			IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
+			IncludeScript(`seel_ins.nut`,getroottable())
+			EntFire(`bomb`, `RunScriptFile`, `bombhop.nut`, 0)
+			EntFire(`rift*`, `Kill`)
+			EntFire(`bloodrift_tutorial`, `Kill`)
+			EntFire(`bloodlust_teleport_spot*`, `Kill`)
+            "
+        }
+
+		CustomMaxWaveNumber 0
+
+		SpawnTemplate
+		{
+			Name "IntroMonologueSequence"
+		}
+		SpawnTemplate
+		{
+			Name "EnduranceAesthetics"
+			Delay 48
+		}
+		SpawnTemplate
+		{
+			Name "Phase1CompletionSequence"
+		}
+		SpawnTemplate
+		{
+			Name "Phase2CompletionSequence"
+		}
+		SpawnTemplate
+		{
+			Name "Phase3CompletionSequence"
+		}
+		SpawnTemplate
+		{
+			Name "MusicTracks"
+		}
+		SpawnTemplate
+		{
+			Name "MiscPTs"
+		}
+		SpawnTemplate
+		{
+			Name "PTRelays"
+		}
+
+		WaveSpawn // Intro Monologue
+		{
+			Name "MonologueText"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target IntroMonologueActivate
+				Action Trigger
+			}
+		}
+
+		WaveSpawn // Icon Precaching
+		{
+    		Support 1
+   			Squad
+    		{
+        	TFBot { ClassIcon heavy_brass_armored_hyper_nys }
+    		}
+		}
+
+		// ENDURANCE PHASE 1
+
+		// Phase 1 : Miniboss ($148)
+		WaveSpawn // Apostle of Modesty on Main
+		{
+			Name "Wave1P1_SoldierMiniBoss"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 56
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_SoldierApostleBoss
+			}
+		}
+		WaveSpawn // 8 Burst Fire Demos on Main (Swarm)
+		{
+			Name "Wave1P1_SoldierMiniBossSupport1"
+			WaitForAllSpawned "Wave1P1_SoldierMiniBoss"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 24
+
+			TFBot
+			{
+				Template T_TFBot_Demo_Burst
+				Skill Normal
+				Name "Virtuous Demoman"
+				ClassIcon demo_hybrid
+			}
+		}
+		WaveSpawn // 12 Burst Fire Demos on Main (Stream)
+		{
+			Name "Wave1P1_SoldierMiniBossSupport2"
+			WaitForAllSpawned "Wave1P1_SoldierMiniBossSupport1"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 1
+			TotalCurrency 24
+
+			TFBot
+			{
+				Template T_TFBot_Demo_Burst
+				Skill Normal
+				Name "Virtuous Demoman"
+				ClassIcon demo_hybrid
+			}
+		}
+
+		// Phase 1 : Subwave 1 ($128)
+		WaveSpawn // 6 GSoldiers on Main
+		{
+			Name "Wave1P1_Subwave1_BigSoldiers"
+			WaitForAllDead "Wave1P1_SoldierMiniBoss"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 16
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+				Name "Elder Pious Soldier"
+			}
+		}
+		WaveSpawn // 24 Scouts and 24 Sandman Scouts on Main
+		{
+			Name "Wave1P1_Subwave1_Scouts"
+			WaitForAllDead "Wave1P1_SoldierMiniBoss"
+			Where spawnbot
+			TotalCount 48
+			MaxActive 16
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 48
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Class Scout
+					Skill Normal
+					Name "Faithful Scout"
+				}
+				TFBot
+				{
+					Template T_TFBot_Scout_Sandman_FastCharge
+					Skill Hard
+					ClassIcon Scout
+					Name "Faithful Scout"
+				}
+			}
+		}
+
+		// Phase 1 : Subwave 2 ($128)
+		WaveSpawn // 4 GDemos and 16 Soldiers on Main
+		{
+			Name "Wave1P1_Subwave2_BigDemos"
+			WaitForAllSpawned "Wave1P1_Subwave1_BigSoldiers"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman
+					Name "Elder Virtuous Demoman"
+				}
+				TFBot
+				{
+					Class Soldier
+					Name "Pious Soldier"
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Name "Pious Soldier"
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Name "Pious Soldier"
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Name "Pious Soldier"
+					Skill Normal
+				}
+			}
+		}
+		WaveSpawn // 24 Heavies on Main
+		{
+			Name "Wave1P1_Subwave2_Heavies"
+			WaitForAllSpawned "Wave1P1_Subwave1_BigSoldiers"
+			Where spawnbot
+			TotalCount 24
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 2
+			TotalCurrency 48
+
+			TFBot
+			{
+				Class Heavy
+				Name "Devoted Heavy"
+				Skill Easy
+			}
+		}
+
+		// Phase 1 : Subwave 3 ($128)
+		WaveSpawn // 8 Armoured DFuries and 8 Bigheals on Main
+		{
+			Name "Wave1P1_Subwave3_ArmoredBots"
+			WaitForAllSpawned "Wave1P1_Subwave2_BigDemos"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 64
+
+			Squad
+			{
+				TFBot
+				{
+					Class Pyro
+					Name "Greater Sanctified Pyro"
+					Skill Hard
+					Health 650
+					Scale 1.4
+					Item "The Dragon's Fury"
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.8
+						"airblast vulnerability multiplier" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+			}
+		}
+		WaveSpawn // 16 Demomen and 16 Demoknights on Main
+		{
+			Name "Wave1P1_Subwave3_Demoknights"
+			WaitForAllSpawned "Wave1P1_Subwave2_BigDemos"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 2
+			TotalCurrency 64
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Knight
+					Name "Virtuous Demoknight"
+					ClassIcon demo_hybrid
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Normal
+					Name "Virtuous Demoman"
+					ClassIcon demo_hybrid
+				}
+			}
+		}
+
+		// Phase 1 : Subwave 4 ($132)
+		WaveSpawn // 3 GConch Burst Soldiers on Main
+		{
+			Name "Wave1P1_Subwave4_LeadingGiants"
+			WaitForAllSpawned "Wave1P1_Subwave3_ArmoredBots"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer_Reload
+				Name "Elder Pious Soldier"
+				Attributes SpawnWithFullCharge
+				Item "The Concheror"
+				ClassIcon soldier_giant
+
+				CharacterAttributes
+				{
+					"increase buff duration"	9.0
+				}
+			}
+		}
+		WaveSpawn // 16 Bat Scouts, 16 Melee Heavies and 16 Melee Pyros on Tank Spawn
+		{
+			Name "Wave1P1_Subwave4_MeleeHorde"
+			WaitForAllSpawned "Wave1P1_Subwave3_ArmoredBots"
+			Where spawnbot_tank
+			TotalCount 48
+			MaxActive 12
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0.5
+			TotalCurrency 72
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Template T_TFBot_Scout_Melee
+					Skill Hard
+					Name "Faithful Scout"
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavyweapons_Heavyweight_Champ
+					Skill Hard
+					Name "Devoted Heavy"
+					ClassIcon Heavy
+					Action Mobber
+				}
+				TFBot
+				{
+					Class Pyro
+					WeaponRestrictions MeleeOnly
+					Skill Hard
+					Name "Sanctified Pyro"
+					Action Mobber
+				}
+			}
+		}
+		WaveSpawn // 6 Spies on Support
+		{
+			Name "Wave1P1_Subwave4_SpySupport"
+			WaitForAllSpawned "Wave1P1_Subwave3_ArmoredBots"
+			Where spawnbot_mission_spy
+			Support Limited
+			TotalCount 6
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 32
+
+			TFBot
+			{
+				Class Spy
+				Action Spy
+				Name "Hallowed Spy"
+				Skill Hard
+				ClassIcon spy_sniper
+
+				CharacterAttributes
+				{
+					"cannot pick up intelligence" 1
+				}
+			}
+		}
+
+		// Phase 1 : Subwave 5 ($138)
+		WaveSpawn // 2 GHeavies and 4 Quick Ubers on Tank Spawn
+		{
+			Name "Wave1P1_Subwave5_BigHeavies"
+			WaitForAllSpawned "Wave1P1_Subwave4_LeadingGiants"
+			Where spawnbot_tank
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 90
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons_Deflector
+					Name "Elder Devoted Heavy"
+					ClassIcon heavy_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+			}
+		}
+		WaveSpawn // 32 Soldiers on Main
+		{
+			Name "Wave1P1_Subwave5_Soldiers"
+			WaitForAllSpawned "Wave1P1_Subwave4_LeadingGiants"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 4
+			TotalCurrency 48
+
+			TFBot
+			{
+				Class Soldier
+				Name "Pious Soldier"
+				Skill Normal
+			}
+		}
+
+		// Phase 1 : Main Boss ($198)
+		WaveSpawn // Deacon of Diligence on Main
+		{
+			Name "Wave1P1_HeavyMainBoss"
+			WaitForAllDead "Wave1P1_Subwave5_BigHeavies"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 150
+
+			TFBot
+			{
+				Template T_TFBot_HeavyDeaconBoss
+			}
+		}
+		WaveSpawn // Pyros and DFuries on Support
+		{
+			Name "Wave1P1_HeavyMainBossSupport"
+			WaitForAllDead "Wave1P1_Subwave5_BigHeavies"
+			Where spawnbot_tank
+			Support 1
+			TotalCount 48
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 2
+			TotalCurrency 48
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Class Pyro
+					Skill Hard
+					ClassIcon pyro_crit
+					Name "Sanctified Pyro"
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"airblast disabled" 1
+					}
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Normal
+					ClassIcon pyro_crit
+					Name "Sanctified Pyro"
+					Item "The Dragon's Fury"
+				}
+			}
+
+			DoneOutput
+			{
+				Target BigNet
+				Action runscriptcode
+				Param "SINS.ChangeIconFlags(`pyro_crit`,0)"
+			}
+		}
+
+		// ENDURANCE PHASE 1 BREAK
+		WaveSpawn
+		{
+			Name "Wave1P1_Complete"
+			WaitForAllDead "Wave1P1_HeavyMainBoss"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target Phase1Completion
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1P2_Start"
+			WaitForAllSpawned "Wave1P1_Complete"
+			WaitBeforeStarting 60
+
+			FirstSpawnWarningSound "mvm/mvm_warning.wav"
+			LastSpawnWarningSound "mvm/mvm_warning.wav"
+		}
+
+		// ENDURANCE PHASE 2
+
+		// Phase 2 : Miniboss ($248)
+		WaveSpawn // Acolyte of Reticence on Main
+		{
+			Name "Wave1P2_SniperMiniBoss"
+			WaitForAllSpawned "Wave1P2_Start"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+			Template T_TFBot_SniperAcolyteBoss
+			}
+		}
+		WaveSpawn // Tank on B Path
+		{
+			Name "Wave1P2_SniperMiniBossTank"
+			WaitForAllSpawned "Wave1P2_Start"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Health 20000
+				Name "tankboss"
+				Speed 75
+				StartingPathTrackNode "tank_path_b_1"
+
+				OnKilledOutput
+				{
+					Target boss_dead_relay
+					Action Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 16 Steel Gauntlets on Main
+		{
+			Name "Wave1P2_SniperMiniBoss_Support"
+			WaitForAllSpawned "Wave1P2_SniperMiniBoss"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 8
+			TotalCurrency 48
+
+			TFBot
+			{
+				Template T_TFBot_Heavyweapons_Fist
+				Name "Greater Devoted Heavy"
+				ClassIcon heavy
+				Skill Hard
+			}
+		}
+
+		// Phase 2 : Subwave 1 ($168)
+		WaveSpawn // 2 GPyros and 6 Bigheals on Tank Spawn
+		{
+			Name "Wave1P2_Subwave1_PyroCombo"
+			WaitForAllDead "Wave1P2_SniperMiniBoss"
+			Where spawnbot_tank
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 12
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Name "Elder Sanctified Pyro"
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+			}
+		}
+		WaveSpawn // 2 GPyros and 6 Armoured Bigheals on Tank Spawn
+		{
+			Name "Wave1P2_Subwave1_PyroBigMedicCombo"
+			WaitForAllSpawned "Wave1P2_Subwave1_PyroCombo"
+			Where spawnbot_tank
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Name "Elder Sanctified Pyro"
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Bigheal
+					Name "Greater Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Health 650
+					Scale 1.4
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Bigheal
+					Name "Greater Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Health 650
+					Scale 1.4
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Bigheal
+					Name "Greater Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Health 650
+					Scale 1.4
+				}
+			}
+		}
+		WaveSpawn // 24 Bison Soldiers on Main
+		{
+			Name "Wave1P2_Subwave1_Bisons"
+			WaitForAllDead "Wave1P2_SniperMiniBoss"
+			Where spawnbot
+			TotalCount 24
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 32
+
+			TFBot
+			{
+				Class Soldier
+				Name "Pious Soldier"
+				Skill Hard
+				WeaponRestrictions SecondaryOnly
+				Item "The Righteous Bison"
+			}
+		}
+		WaveSpawn // 32 Black Box Soldiers on Main
+		{
+			Name "Wave1P2_Subwave1_BlackBoxes"
+			WaitForAllSpawned "Wave1P2_Subwave1_Bisons"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 32
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+				Name "Pious Soldier"
+				Skill Hard
+				ClassIcon soldier
+			}
+		}
+
+		// Phase 2 : Subwave 2 ($152)
+		WaveSpawn // 4 Super Scouts on Tank Spawn
+		{
+			Name "Wave1P2_Subwave2_SuperScouts"
+			WaitForAllSpawned "Wave1P2_Subwave1_PyroBigMedicCombo"
+			Where spawnbot_tank
+			TotalCount 4
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 12
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Fast
+				Name "Elder Faithful Scout"
+			}
+		}
+		WaveSpawn // 12 Heavies and 12 Uber Medics on Main
+		{
+			Name "Wave1P2_Subwave2_InvincibleHeavies"
+			WaitForAllSpawned "Wave1P2_Subwave1_PyroBigMedicCombo"
+			Where spawnbot
+			TotalCount 24
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 12
+			TotalCurrency 64
+
+			Squad
+			{
+				TFBot
+				{
+					Class Heavy
+					Name "Devoted Heavy"
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+				}
+			}
+		}
+		WaveSpawn // 32 Buff Soldiers on Main
+		{
+			Name "Wave1P2_Subwave2_BuffSoldiers"
+			WaitForAllSpawned "Wave1P2_Subwave1_PyroBigMedicCombo"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 6
+			TotalCurrency 48
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Buff_Banner
+				Name "Pious Soldier"
+				ClassIcon Soldier
+			}
+		}
+
+		// Phase 2 : Subwave 3 ($144)
+		WaveSpawn // 6 GShotguns on Tank Spawn
+		{
+			Name "Wave1P2_Subwave3_BigShotguns"
+			WaitForAllSpawned "Wave1P2_Subwave2_InvincibleHeavies"
+			Where spawnbot_tank
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweapons_Shotgun
+				ClassIcon heavy_giant
+				Name "Elder Devoted Heavy"
+			}
+		}
+		WaveSpawn // 32 Scatterbonk Scouts on Main
+		{
+			Name "Wave1P2_Subwave3_Bonks"
+			WaitForAllSpawned "Wave1P2_Subwave2_InvincibleHeavies"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 12
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 2
+			TotalCurrency 24
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+				WeaponRestrictions PrimaryOnly
+				Item "Bonk! Atomic Punch"
+				Name "Faithful Scout"
+			}
+		}
+		WaveSpawn // 6 Samurai Demos on Main
+		{
+			Name "Wave1P2_Subwave3_Samurais"
+			WaitForAllSpawned "Wave1P2_Subwave2_InvincibleHeavies"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Samurai
+				ClassIcon demo_hybrid
+				Name "Greater Virtuous Demoknight"
+				Action Mobber
+			}
+		}
+
+		//Phase 2 : Subwave 4 ($156)
+		WaveSpawn // Tank on B Path
+		{
+			Name "Wave1P2_Subwave4_Tank"
+			WaitForAllSpawned "Wave1P2_Subwave3_BigShotguns"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Tank
+			{
+				Health 25000
+				Name "tankboss"
+				Speed 75
+				StartingPathTrackNode "tank_path_b_1"
+
+				OnKilledOutput
+				{
+					Target boss_dead_relay
+					Action Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 6 GDemo Bursts on Tank Spawn
+		{
+			Name "Wave1P2_Subwave4_BigBurst"
+			WaitForAllSpawned "Wave1P2_Subwave3_BigShotguns"
+			Where spawnbot_tank
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 28
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demo_Burst
+				Name "Elder Virtuous Demoman"
+				ClassIcon Demo_giant
+			}
+		}
+		WaveSpawn // 48 Persians on Main
+		{
+			Name "Wave1P2_Subwave4_Persians"
+			WaitForAllSpawned "Wave1P2_Subwave3_BigShotguns"
+			Where spawnbot
+			TotalCount 48
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 4
+			TotalCurrency 48
+
+			TFBot
+			{
+				Class Demoman
+				Name "Virtuous Demoknight"
+				ClassIcon demo_hybrid
+				Skill Hard
+				WeaponRestrictions MeleeOnly
+				Item "Ali Baba's Wee Booties"
+				Item "The Splendid Screen"
+				Item "The Persian Persuader"
+
+				CharacterAttributes
+				{
+					"critboost on kill" 3
+				}
+				ItemAttributes
+				{
+					ItemName "The Splendid Screen"
+					"Attack not cancel charge" 1
+				}
+			}
+		}
+
+		//Phase 2 : Subwave 5 ($120)
+		WaveSpawn // 2 GRapids, 2 Armoured Shield Medics and 2 Kritzkrieg Medics on Tank Spawn
+		{
+			Name "Wave1P2_Subwave5_GRapidSuperbuff"
+			WaitForAllSpawned "Wave1P2_Subwave4_BigBurst"
+			Where spawnbot_tank
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 80
+
+			Squad
+			{
+				FormationSize 48
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Name "Elder Pious Soldier"
+					ClassIcon Soldier_giant
+				}
+				TFBot
+				{
+					Class Medic
+					Name "Greater Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Skill Expert
+					WeaponRestrictions SecondaryOnly
+					Attributes SpawnWithFullCharge
+					Attributes ProjectileShield
+					Health 650
+					Scale 1.4
+
+					CharacterAttributes
+					{
+						"bot medic uber health threshold" 999
+						"bot medic uber deploy delay duration" 9999
+						"mod soldier buff type" 5
+						"deploy time increased" 1.34
+ 					}
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_MEDIGUN"
+						"ubercharge rate penalty" -3
+						"generate rage on heal" 1
+						"increase buff duration" 999
+					}
+					FireWeapon
+					{
+						Delay 4
+						Cooldown 3
+						Repeats 0
+						Duration 0.5
+						Type "Special"
+					}
+				}
+				TFBot
+				{
+					Class Medic
+					Name "Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Skill Expert
+					Attributes SpawnWithFullCharge
+					Attributes AlwaysCrit
+					Attributes IgnoreFlag
+					Item "The Kritzkrieg"
+
+					CharacterAttributes
+					{
+						"bot medic uber health threshold" 999
+						"heal rate bonus" 10
+					}
+					ItemAttributes
+					{
+						ItemName "The Kritzkrieg"
+						"ubercharge rate bonus" 100
+						"uber duration bonus" 100
+					}
+				}
+			}
+		}
+		WaveSpawn // 8 Armoured Demos on Main
+		{
+			Name "Wave1P2_Subwave5_ArmouredDemos"
+			WaitForAllSpawned "Wave1P2_Subwave4_BigBurst"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 8
+			TotalCurrency 32
+
+			TFBot
+			{
+				Template T_TFBot_Demo_Burst
+				Health 650
+				Scale 1.4
+				Name "Greater Virtuous Demoman"
+				ClassIcon demo_hybrid
+			}
+		}
+		WaveSpawn // 32 Shotgun Pyros on Main
+		{
+			Name "Wave1P2_Subwave5_ShotgunPyros"
+			WaitForAllSpawned "Wave1P2_Subwave4_BigBurst"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 1
+			TotalCurrency 32
+
+			TFBot
+			{
+				Class Pyro
+				Skill Hard
+				WeaponRestrictions SecondaryOnly
+				Name "Sanctified Pyro"
+			}
+		}
+
+		//Phase 2 : MainBoss ($262)
+
+		WaveSpawn // Ecclesiastic of Purity on Main
+		{
+			Name "Wave1P2_DemoMainBoss"
+			WaitForAllDead "Wave1P2_Subwave5_GRapidSuperbuff"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 150
+
+			TFBot
+			{
+				Template T_TFBot_DemoEcclesiasticBoss
+			}
+		}
+		WaveSpawn // 16 Conch Punchies on Tank Spawn (Swarm)
+		{
+			Name "Wave1P2_DemoMainBossSupport1"
+			WaitForAllSpawned "Wave1P2_DemoMainBoss"
+			Where spawnbot_tank
+			Support Limited
+			TotalCount 16
+			MaxActive 16
+			SpawnCount 1
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Heavyweapons_Heavyweight_Champ
+				Name "Devoted Heavy"
+				Attributes AlwaysCrit
+				Attributes SpawnWithFullCharge
+				ClassIcon heavy_champ_conch2
+				Item "The Concheror"
+
+				CharacterAttributes
+				{
+					"increase buff duration" 9.0
+				}
+			}
+		}
+		WaveSpawn // Conch Punchies on Main (Stream)
+		{
+			Name "Wave1P2_DemoMainBossSupport2"
+			WaitForAllSpawned "Wave1P2_DemoMainBoss"
+			Where spawnbot
+			Support 1
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 24
+			WaitBetweenSpawns 1
+			TotalCurrency 32
+
+			TFBot
+			{
+				Template T_TFBot_Heavyweapons_Heavyweight_Champ
+				Name "Devoted Heavy"
+				Attributes AlwaysCrit
+				Attributes SpawnWithFullCharge
+				ClassIcon heavy_champ_conch2
+				Item "The Concheror"
+				CharacterAttributes
+				{
+					"increase buff duration" 9.0
+				}
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action runscriptcode
+				Param "SINS.ChangeIconFlags(`heavy_champ_conch2`,0)"
+			}
+		}
+
+		// ENDURANCE PHASE 2 BREAK
+		WaveSpawn
+		{
+			Name "Wave1P2_Complete"
+			WaitForAllDead "Wave1P2_DemoMainBoss"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target Phase2Completion
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1P3_Start"
+			WaitForAllSpawned "Wave1P2_Complete"
+			WaitBeforeStarting 60
+
+			FirstSpawnWarningSound "mvm/mvm_warning.wav"
+			LastSpawnWarningSound "mvm/mvm_warning.wav"
+		}
+
+		// ENDURANCE PHASE 3
+
+		// Phase 3 : Miniboss ($246)
+		WaveSpawn // Disciple of Repose on Main
+		{
+			Name "Wave1P3_ScoutMiniBoss"
+			WaitForAllSpawned "Wave1P3_Start"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_ScoutDiscipleBoss
+			}
+		}
+		WaveSpawn // 1 GDemo on Tank Spawn
+		{
+			Name "Wave1P3_ScoutMiniBossSupport"
+			WaitForAllSpawned "Wave1P3_Start"
+			Where spawnbot_tank
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Name "Elder Virtuous Demoman"
+			}
+		}
+		WaveSpawn // 1 GDemo on Main
+		{
+			Name "Wave1P3_ScoutMiniBossSupport"
+			WaitForAllSpawned "Wave1P3_Start"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Name "Elder Virtuous Demoman"
+			}
+		}
+		WaveSpawn // 8 Bonch Scouts on Tank Spawn (Swarm)
+		{
+			Name "Wave1P3_ScoutMiniBossSupport"
+			WaitForAllSpawned "Wave1P3_Start"
+			Where spawnbot_tank
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 48
+
+			TFBot
+			{
+				Class Scout
+				Skill Hard
+				Name "Faithful Scout"
+				Item "Bonk! Atomic Punch"
+				WeaponRestrictions PrimaryOnly
+				ItemAttributes
+				{
+					ItemName "Bonk! Atomic Punch"
+					"mult effect duration" 3
+					"effect cond override" 29
+				}
+			}
+		}
+		WaveSpawn // 16 Bonch Scouts on Tank Spawn (Stream)
+		{
+			Name "Wave1P3_ScoutMiniBossSupport2"
+			WaitForAllSpawned "Wave1P3_Start"
+			Where spawnbot_tank
+			TotalCount 16
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 17
+			WaitBetweenSpawns 1
+			TotalCurrency 48
+
+			TFBot
+			{
+				Class Scout
+				Skill Hard
+				Name "Faithful Scout"
+				Item "Bonk! Atomic Punch"
+				WeaponRestrictions PrimaryOnly
+				ItemAttributes
+				{
+					ItemName "Bonk! Atomic Punch"
+					"mult effect duration" 3
+					"effect cond override" 29
+				}
+			}
+		}
+
+		// Phase 3 : Subwave 1 ($144)
+		WaveSpawn // Tank on B Path
+		{
+			Name "Wave1P3_Subwave1_Tank"
+			WaitForAllDead "Wave1P3_ScoutMiniBoss"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Tank
+			{
+				Health 30000
+				Name "tankboss"
+				Speed 75
+				StartingPathTrackNode "tank_path_b_1"
+
+				OnKilledOutput
+				{
+					Target boss_dead_relay
+					Action Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 GDeflectors on Tank Spawn
+		{
+			Name "Wave1P3_Subwave1_BigHeavy"
+			WaitForAllSpawned "Wave1P3_Subwave1_Tank"
+			Where spawnbot_tank
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 16
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweapons_Deflector
+				Name "Elder Devoted Heavy"
+				ClassIcon heavy_giant
+			}
+		}
+		WaveSpawn // 24 DFuries on Main
+		{
+			Name "Wave1P3_Subwave1_Furies"
+			WaitForAllSpawned "Wave1P3_Subwave1_Tank"
+			Where spawnbot
+			TotalCount 24
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 24
+
+			TFBot
+			{
+				Class Pyro
+				Skill Hard
+				Item "The Dragon's Fury"
+				Name "Sanctified Pyro"
+			}
+		}
+		
+		// Phase 3 : Subwave 2 ($156)
+		WaveSpawn // 2 Barrages and 4 Armoured Kritzkrieg Medics on Tank Spawn
+		{
+			Name "Wave1P3_Subwave2_ColonelCombo"
+			WaitForAllSpawned "Wave1P3_Subwave1_BigHeavy"
+			Where spawnbot_tank
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_SlowBarrage
+					Name "Elder Pious Soldier"
+					ClassIcon Soldier_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					Name "Greater Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Health 650
+					Scale 1.4
+					Attributes SpawnWithFullCharge
+					Attributes IgnoreFlag
+					Item "The Kritzkrieg"
+
+					CharacterAttributes
+					{
+						"bot medic uber health threshold" 9999
+					}
+					ItemAttributes
+					{
+						ItemName "The Kritzkrieg"
+						"ubercharge rate bonus" 100
+						"uber duration bonus" 100
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					Name "Greater Blessed Medic"
+					ClassIcon uber_quickfix_medic_nys
+					Health 650
+					Scale 1.4
+					Attributes SpawnWithFullCharge
+					Attributes IgnoreFlag
+					Item "The Kritzkrieg"
+
+					CharacterAttributes
+					{
+						"bot medic uber health threshold" 9999
+					}
+					ItemAttributes
+					{
+						ItemName "The Kritzkrieg"
+						"ubercharge rate bonus" 100
+						"uber duration bonus" 100
+					}
+				}
+			}
+		}
+		WaveSpawn // 8 Shortstop Scouts on Tank Spawn
+		{
+			Name "Wave1P3_Subwave2_Shortstops"
+			WaitForAllSpawned "Wave1P3_Subwave1_BigHeavy"
+			Where spawnbot_tank
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 8
+			TotalCurrency 48
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+				ClassIcon Scout
+				Name "Greater Faithful Scout"
+			}
+		}
+		WaveSpawn // 16 Heavies on Main
+		{
+			Name "Wave1P3_Subwave2_Heavies"
+			WaitForAllSpawned "Wave1P3_Subwave1_BigHeavy"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 2
+			TotalCurrency 48
+
+			TFBot
+			{
+				Class Heavy
+				Name "Devoted Heavy"
+				Skill Normal
+			}
+		}
+		WaveSpawn // 4 Snipers on Support
+		{
+			Name "Wave1P3_Subwave2_SniperSupport"
+			WaitForAllSpawned "Wave1P3_Subwave1_BigHeavy"
+			Where spawnbot_mission_sniper
+			Support Limited
+			TotalCount 4
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 16
+
+			TFBot
+			{
+				Class Sniper
+				Action Sniper
+				Name "Consecrated Sniper"
+				Skill Expert
+				ClassIcon spy_sniper
+
+				CharacterAttributes
+				{
+					"cannot pick up intelligence" 1
+				}
+			}
+		}
+
+		// Phase 3 : Subwave 3 ($124)
+		WaveSpawn // 3 GWidowmakers and 6 Armoured Charged Soldiers on Tank Spawn
+		{
+			Name "Wave1P3_Subwave3_BigEngineer"
+			WaitForAllSpawned "Wave1P3_Subwave2_ColonelCombo"
+			Where spawnbot_tank
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			Squad
+			{
+				ShouldPreserveSquad 1
+
+				TFBot
+				{
+					Class Soldier
+					Name "Greater Pious Soldier"
+					Health 650
+					Scale 1.4
+					Skill Normal
+					Item "The Original"
+					Attributes AlwaysCrit
+					WeaponRestrictions PrimaryOnly
+					ItemAttributes
+					{
+						ItemName "The Original"
+						"faster reload rate" 0.2
+						"fire rate bonus" 2
+						"Projectile speed increased" 0.5
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Name "Greater Pious Soldier"
+					Health 650
+					Scale 1.4
+					Skill Normal
+					Item "The Original"
+					Attributes AlwaysCrit
+					WeaponRestrictions PrimaryOnly
+					ItemAttributes
+					{
+						ItemName "The Original"
+						"faster reload rate" 0.2
+						"fire rate bonus" 2
+						"Projectile speed increased" 0.5
+					}
+				}
+				TFBot
+				{
+					Class Engineer
+					Name "Elder Venerated Engineer"
+					Skill Expert
+					Health 3800
+					Scale 1.7
+					ClassIcon engineer_widowmaker_nys_giant
+					WeaponRestrictions PrimaryOnly
+					MaxVisionRange 2500
+					Attributes MiniBoss
+					Action FetchFlag
+					Item "The Widowmaker"
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"damage force reduction" 0.5
+						"airblast vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+						"voice pitch scale" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 32 Backup Soldiers on Main
+		{
+			Name "Wave1P3_Subwave3_Backups"
+			WaitForAllSpawned "Wave1P3_Subwave2_ColonelCombo"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 2
+			TotalCurrency 64
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Battalion
+				Name "Pious Soldier"
+				ClassIcon soldier
+				Skill Hard
+			}
+		}
+
+		// Phase 3 : Subwave 4 ($124)
+		WaveSpawn // 4 GFAN Scouts and 4 Phlog Pyros on Main
+		{
+			Name "Wave1P3_Subwave4_FANScouts"
+			WaitForAllSpawned "Wave1P3_Subwave3_BigEngineer"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Scout_FAN
+					Attributes AlwaysCrit
+					ClassIcon scout_giant_fast
+					Name "Elder Faithful Scout"
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Name "Elder Sanctified Pyro"
+					Item "The Phlogistinator"
+					Attributes SpawnWithFullCharge
+
+					FireWeapon
+					{
+						Delay 12
+						Cooldown 12
+						Repeats 0
+						IfSeeTarget 1
+						Duration 0.5
+						Type "Secondary"
+					}
+				}
+			}
+		}
+		WaveSpawn // 16 Burst Fire Demos and 16 Flare Pyros on Main
+		{
+			Name "Wave1P3_Subwave4_DemoPyros"
+			WaitForAllSpawned "Wave1P3_Subwave3_BigEngineer"
+			Where spawnbot
+			TotalCount 32
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 4
+			TotalCurrency 64
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Name "Virtuous Demoman"
+					Skill Hard
+					ClassIcon demo_hybrid
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Flaregun
+					Name "Sanctified Pyro"
+					Skill Hard
+					ClassIcon pyro
+				}
+			}
+		}
+
+		// Phase 3 : Subwave 5 ($188)
+		WaveSpawn // Minigun Combat Tank on A Path
+		{
+			Name "Wave1P3_Subwave5_CombatTank"
+			WaitForAllSpawned "Wave1P3_Subwave4_FANScouts"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "combattank|minigun|minigun"
+				Health 40000
+				Speed 75
+				StartingPathTrackNode "tank_path_a_1"
+			}
+		}
+		WaveSpawn // 2 Shotgun GPyros, 2 GBuff Rapid Soldiers, 2 GRapid Demos and 2 GHeavies on Main
+		{
+			Name "Wave1P3_Subwave5_AbsoluteChaos"
+			WaitForAllSpawned "Wave1P3_Subwave5_CombatTank"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					WeaponRestrictions SecondaryOnly
+					Name "Elder Sanctified Pyro"
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_SHOTGUN_PYRO"
+						"faster reload rate" 0.1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Item "The Buff Banner"
+					Name "Elder Pious Soldier"
+					ClassIcon soldier_giant
+
+					CharacterAttributes
+					{
+						"increase buff duration" 9.0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman
+					Name "Elder Virtuous Demoman"
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons
+					Name "Elder Devoted Heavy"
+				}
+			}
+		}
+		WaveSpawn // 24 Shotgun Heavies and 24 Shotgun Pyros on Main
+		{
+			Name "Wave1P3_Subwave5_ShotgunPyros"
+			WaitForAllSpawned "Wave1P3_Subwave5_CombatTank"
+			Where spawnbot
+			TotalCount 48
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 8
+			TotalCurrency 48
+
+			RandomChoice
+			{
+				Shuffle 1
+				TFBot
+				{
+					Template T_TFBot_Heavyweapons_Shotgun
+					ClassIcon Heavy
+					Name "Devoted Heavy"
+					Skill Hard
+				}
+				TFBot
+				{
+					Class Pyro
+					WeaponRestrictions SecondaryOnly
+					Name "Sanctified Pyro"
+					Skill Hard
+				}
+			}
+		}
+
+		// Phase 3 : Main Boss ($268)
+		WaveSpawn // Archbishop of Absolution on Main
+		{
+			Name "Wave1P3_PyroMainBoss"
+			WaitForAllDead "Wave1P3_Subwave5_CombatTank"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 150
+
+			TFBot
+			{
+				Template T_TFBot_PyroArchbishopBoss
+			}
+		}
+		WaveSpawn // DFury Combat Tank on A Path
+		{
+			Name "Wave1P3_PyroMainBossTank"
+			WaitForAllSpawned "Wave1P3_PyroMainBoss"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			FirstSpawnWarningSound "mvm/mvm_tele_deliver.wav"
+			LastSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "combattank|fireball|fireball"
+				Health 25000
+				Speed 75
+				Skin 1
+				StartingPathTrackNode "tank_path_a_17"
+			}
+		}
+		WaveSpawn // Shotgun Soldiers and Soldiers on Main
+		{
+			Name "Wave1P3_PyroMainBossSupport"
+			WaitForAllSpawned "Wave1P3_PyroMainBoss"
+			Where spawnbot
+			Support 1
+			TotalCount 48
+			MaxActive 16
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0.5
+			TotalCurrency 48
+
+			RandomChoice
+			{
+				Shuffle 1
+
+				TFBot
+				{
+					Class Soldier
+					WeaponRestrictions PrimaryOnly
+					Name "Pious Soldier"
+					ClassIcon soldier_shotgun_yoovy
+					Skill Hard
+				}
+				TFBot
+				{
+					Class Soldier
+					WeaponRestrictions SecondaryOnly
+					Name "Pious Soldier"
+					ClassIcon soldier_shotgun_yoovy
+					Skill Hard
+				}
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action runscriptcode
+				Param "SINS.ChangeIconFlags(`soldier_shotgun_yoovy`,0)"
+			}			
+		}
+		WaveSpawn // 1 GBurst on Boss
+		{
+			Name "Wave1P3_PyroBossGiantSupport1"
+			WaitForAllSpawned "Wave1P3_PyroMainBoss"
+			Where spawnbot_tank
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer_Reload
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param TeleportPoint1
+					Delay -1
+					Repeats 1
+					Cooldown -1
+				}
+				Addcond
+				{
+					Index 51
+					Duration 2
+				}
+				Addcond
+				{
+					Index 71
+					Duration 2
+				}
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action runscriptcode
+				Param "SINS.ChangeIconFlags(`soldier_burstfire`,0)"
+			}	
+		}
+		WaveSpawn // 1 GBurst on Boss
+		{
+			Name "Wave1P3_PyroBossGiantSupport2"
+			WaitForAllSpawned "Wave1P3_PyroMainBoss"
+			Where spawnbot_tank
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer_Reload
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param TeleportPoint2
+					Delay -1
+					Repeats 1
+					Cooldown -1
+				}
+				Addcond
+				{
+					Index 51
+					Duration 2
+				}
+				Addcond
+				{
+					Index 71
+					Duration 2
+				}
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action runscriptcode
+				Param "SINS.ChangeIconFlags(`soldier_burstfire`,0)"
+			}	
+		}
+		
+		// ENDURANCE PHASE 3 BREAK
+
+		WaveSpawn
+		{
+			Name "Wave1P3_Complete"
+			WaitForAllDead "Wave1P3_PyroMainBoss"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target Phase3Completion
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1P3_Sequence"
+			WaitForAllDead "Wave1P3_PyroMainBoss"
+			WaitBeforeStarting 40
+		}
+	}
+	
+	// FINAL BOSS WAVE
+	Wave
+	{
+		StartWaveOutput
+		{
+			Target wave_start_relay
+			Action Trigger
+		}
+	    DoneOutput					
+		{
+			Target wave_finished_relay
+			Action trigger
+		}
+		InitWaveOutput
+        {
+            Target BigNet
+            Action runscriptcode
+            Param "
+            IncludeScript(`tankextensions_main`, getroottable())
+            IncludeScript(`tankextensions/combattank`, getroottable())
+            IncludeScript(`tankextensions/combattank_weapons/fireball`, getroottable())
+			IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
+			IncludeScript(`seel_ins.nut`,getroottable())
+			EntFire(`rift*`, `Kill`)
+			EntFire(`bloodrift_tutorial`, `Kill`)
+			EntFire(`underworld_indicators`, `Kill`)
+			EntFire(`env_soundscape`, `Disable`)
+            "
+        }
+	}
+}

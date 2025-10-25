@@ -1,0 +1,572 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 3000
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    WaveStartCountdown 5
+
+    AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+    //// PRECACHES ////
+
+    //// PRECACHED EXTRAS ////
+
+    PrecacheGeneric "materials/colorcorrection/stormlight.raw"
+
+    //// POINT TEMPLATES ////
+
+    PointTemplates
+    {
+        MainMissionAssets
+        {
+            // Atmosphere Setting //
+            logic_relay
+            {
+                "targetname" "MainSetupRelay"
+
+                "OnTrigger" "bombpath_general_arrows,Disable,,0.5,-1"
+
+                "OnTrigger" "init_skybox_change,Trigger,,0,-1"
+
+                "OnTrigger" "fog_outside,setstartdist,500,0,-1"
+                "OnTrigger" "fog_outside,setenddist,5500,0,-1"
+                "OnTrigger" "fog_outside,setcolor,96 96 96,0,-1"
+                "OnTrigger" "fog_outside,setcolorsecondary,96 96 96,0,-1"
+
+                "OnTrigger" "snowstorm,Start,,0,-1"
+            }
+
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-2044 -1183 -961"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-1843 -2505 -962"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-2081 55 -960"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-3234 -972 -876"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-877 -1253 -851"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-1706 -1880 -967"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "snowstorm"
+                "origin"       "-1701 -450 -824"
+                "angles" "0 90 0"
+                "effect_name"  "env_snow_stormfront_001"
+                "startactive" "1"
+            }
+            skybox_swapper
+            {
+                "targetname" "init_skybox_change"
+                "skyboxname" "sky_alpinestorm_01"
+            }
+            color_correction
+            {
+                "targetname" "stormlight"
+                "origin" "0 0 0"
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" "0"
+                "fadeOutDuration" "0"
+                "filename" "materials/colorcorrection/stormlight.raw"
+            }
+
+            // New Spawn Location //
+            trigger_teleport
+           	{
+                "targetname" "newspawn"
+                "origin" "1128 -3492 64"
+                "spawnflags" "1"
+                "StartDisabled" "0"
+                "maxs" "600 600 600"
+                "mins" "-600 -600 -600"
+                "target" "newspawntarget"
+            }
+            info_target
+           	{
+                "targetname" "newspawntarget"
+                "origin" "256 -2467 -639"
+			    "angles" "0 90 0"
+            }
+
+            // Resupply Cabinet //
+            prop_dynamic
+			{
+				"targetname" "locker_model"
+                "origin" "256 -1924 -639"
+				"model"      "models/props_gameplay/resupply_locker.mdl"
+				"solid"      "6"
+				"angles"     "0 -90 0"
+			}
+			func_regenerate
+			{
+				"targetname" "regenerate"
+				"associatedmodel" "locker_model"
+				"TeamNum" "2"
+                "origin" "256 -1924 -639"
+				"mins" "-20 -48 0"
+				"maxs" "40 48 128"
+
+				"OnStartTouchAll" "locker_model,SetAnimation,open,0,-1"
+				"OnEndTouchAll" "locker_model,SetAnimation,close,0,-1"
+			}
+
+            // Boss Stage Setup//
+
+            prop_dynamic
+            {
+                "targetname" "newspawnroom"
+                "model"      "models/props_medieval/portcullis.mdl"
+                "angles" "0 -90 0"
+                "solid"      "6"
+                "origin"     "256 -2640 -639"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroom"
+                "model"      "models/props_medieval/portcullis.mdl"
+                "solid"      "6"
+                "modelscale" "2"
+                "origin"     "2240 -1488 -639"
+                "disableshadows" "1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_lakeside/wood_crate_01.mdl"
+                "solid"      "6"
+                "origin"     "512 -1968 -639"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_lakeside/wood_crate_01.mdl"
+                "solid"      "6"
+                "origin"     "512 -1968 -537"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_lakeside/wood_crate_01.mdl"
+                "solid"      "6"
+                "origin"     "512 -2080 -639"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_trainyard/distillery_barrel001.mdl"
+                "solid"      "6"
+                "origin"     "506 -2056 -498"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_trainyard/distillery_barrel001.mdl"
+                "solid"      "6"
+                "origin"     "511 -2170 -482"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_hydro/barrel_crate_half.mdl"
+                "solid"      "6"
+                "modelscale" "0.8"
+                "angles" "0 0 -15"
+                "origin"     "511 -2120 -537"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_mvm/barrel_crate.mdl"
+                "solid"      "6"
+                "modelscale" "1"
+                "angles" "0 0 0"
+                "origin"     "511 -2170 -640"
+                "disableshadows" "1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container02.mdl"
+                "solid"      "6"
+                "angles" "4 270 0"
+                "origin"     "510 -868 -810"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container02.mdl"
+                "solid"      "6"
+                "angles" "4 270 0"
+                "origin"     "510 -874 -702"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "solid"      "6"
+                "angles" "0 285 0"
+                "origin"     "564 -1314 -828"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "solid"      "6"
+                "angles" "0 285 0"
+                "origin"     "564 -1314 -668"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "solid"      "6"
+                "angles" "0 105 0"
+                "origin"     "526 -1172 -828"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "solid"      "6"
+                "angles" "0 285 0"
+                "origin"     "526 -1172 -668"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "solid"      "6"
+                "angles" "6 270 0"
+                "origin"     "618 -1740 -800"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "newspawnroomprops"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "solid"      "6"
+                "angles" "-7 270 0"
+                "origin"     "550 -1488 -800"
+                "disableshadows" "1"
+            }
+
+            func_forcefield
+            {
+                "targetname" "newspawnforcefield"
+                "origin" "512 -1024 -440"
+                "teamnum" "3"
+                "mins" "-64 -1000 -400"
+                "maxs" "64 1000 400"
+            }
+            func_forcefield
+            {
+                "targetname" "newspawnforcefield"
+                "origin" "618 -1740 -440"
+                "teamnum" "3"
+                "mins" "-64 -1000 -400"
+                "maxs" "64 1000 400"
+            }
+            func_forcefield
+            {
+                "targetname" "newspawnforcefield"
+                "origin" "-490 -1040 -63"
+                "teamnum" "3"
+                "mins" "-16 -600 -200"
+                "maxs" "16 600 800"
+            }
+            func_forcefield
+            {
+                "targetname" "newspawnforcefield"
+                "origin" "-536 -512 -63"
+                "teamnum" "3"
+                "mins" "-16 -300 -200"
+                "maxs" "16 300 800"
+            }
+            func_forcefield
+            {
+                "targetname" "newspawnforcefield"
+                "origin" "-864 4 -40"
+                "angles" "0 45 0"
+                "teamnum" "3"
+                "mins" "-16 -300 -200"
+                "maxs" "16 300 800"
+            }
+            func_nobuild
+            {
+                "targetname" "newspawnnobuild"
+                "origin" "-375 -525 -63"
+                "mins" "-1000 -1000 -200"
+                "maxs" "1000 1000 800"
+            }
+            func_nobuild
+            {
+                "targetname" "newspawnnobuild"
+                "origin" "255 -2800 -640"
+                "mins" "-100 -150 -200"
+                "maxs" "100 150 200"
+            }
+
+            // New Spawn Doors //
+            prop_dynamic
+            {
+                "targetname" "newspawnroomleft"
+                "parentname" "newspawnroomleftdoor"
+                "model"      "models/props_medieval/portcullis.mdl"
+                "solid"      "0"
+                "modelscale" "1.35"
+                "origin"     "-504 -2048 -639"
+                "disableshadows" "1"
+            }
+            func_door
+            {
+                "targetname" "newspawnroomleftdoor"
+                "origin" "-504 -2048 -515"
+                "mins" "-16 -128 -150"
+                "maxs" "16 128 150"
+                "movedir" "-90 0 0"
+                "speed" "800"
+                "lip" "-160"
+                "wait" "-1"
+            }
+            trigger_multiple
+            {
+                "targetname" "newspawnroomlefttrigger"
+                "filtername" "filter_redteam"
+                "origin" "-504 -2048 -639"
+                "mins" "-128 -128 -300"
+                "maxs" "128 128 300"
+                "wait" "0.5"
+                "spawnflags" "1"
+
+                "OnStartTouchAll" "newspawnroomleftdoor,Open,,0,-1"
+                "OnEndTouchAll" "newspawnroomleftdoor,Close,,0,-1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "newspawnroomright"
+                "parentname" "newspawnroomrightdoor"
+                "model"      "models/props_medieval/portcullis.mdl"
+                "solid"      "0"
+                "modelscale" "1.65"
+                "origin"     "-448 -1248 -831"
+                "disableshadows" "1"
+            }
+            func_door
+            {
+                "targetname" "newspawnroomrightdoor"
+                "origin" "-448 -1248 -658"
+                "mins" "-16 -128 -200"
+                "maxs" "16 128 200"
+                "movedir" "-90 0 0"
+                "speed" "800"
+                "lip" "-160"
+                "wait" "-1"
+            }
+            trigger_multiple
+            {
+                "targetname" "newspawnroomrighttrigger"
+                "filtername" "filter_redteam"
+                "origin" "-448 -1248 -831"
+                "mins" "-128 -128 -300"
+                "maxs" "128 128 300"
+                "wait" "0.5"
+                "spawnflags" "1"
+
+                "OnStartTouchAll" "newspawnroomrightdoor,Open,,0,-1"
+                "OnEndTouchAll" "newspawnroomrightdoor,Close,,0,-1"
+            }
+        }
+        Pickups
+		{
+			NoFixup 1
+			item_healthkit_medium
+			{
+				"classname" "item_healthkit_medium"
+				"origin" "-1232 -2898 -931"
+			}
+
+			NoFixup 1
+			item_ammokit_medium
+			{
+				"classname" "item_ammopack_medium"
+				"origin" "-1295 -2905 -942"
+			}
+
+			NoFixup 1
+			item_healthkit_medium
+			{
+				"classname" "item_healthkit_medium"
+				"origin" "-2322 -2888 -962"
+			}
+
+			NoFixup 1
+			item_ammokit_medium
+			{
+				"classname" "item_ammopack_medium"
+				"origin" "-2252 -2888 -962"
+			}
+
+			NoFixup 1
+			item_healthkit_medium
+			{
+				"classname" "item_healthkit_medium"
+				"origin" "-2402 493 -962"
+			}
+
+			NoFixup 1
+			item_ammokit_medium
+			{
+				"classname" "item_ammopack_medium"
+				"origin" "-2332 493 -962"
+			}
+
+			NoFixup 1
+			item_healthkit_full
+			{
+				"classname" "item_healthkit_full"
+				"origin" "-620 -1320 -831"
+			}
+
+			NoFixup 1
+			item_ammokit_full
+			{
+				"classname" "item_ammopack_full"
+				"origin" "-620 -1170 -831"
+			}
+
+			NoFixup 1
+			item_ammokit_full
+			{
+				"classname" "item_ammopack_full"
+				"origin" "-3109 -912 -876"
+			}
+		}
+    }
+
+    //// SPAWNED TEMPLATES ////
+
+    SpawnTemplate MainMissionAssets
+    SpawnTemplate Pickups
+
+    //// TEMPLATES ////
+
+    Templates
+    {
+        T_TFBot_Boss
+        {
+
+        }
+    }
+
+    //// MISSION BOTS ////
+
+    Mission
+    {
+
+    }
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Passage of Permafrost`)
+                    EntFire(`MainSetupRelay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        WaveSpawn
+        {
+            Name "TheBoss"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+
+            TFBot
+            {
+                Template T_TFBot_Boss
+            }
+        }
+    }
+}

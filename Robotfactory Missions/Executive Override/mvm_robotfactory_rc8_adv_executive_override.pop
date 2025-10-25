@@ -1,0 +1,5305 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 1000
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+    //// PRECACHES ////
+
+    //// PRECACHED MODELS ////
+
+    PrecacheModel "models/mvm/barrier/barrier_spawn_blue1.mdl"
+
+    //// PRECACHED SOUNDS ////
+
+    PrecacheSound "freeze_cam/mvm_demoman_detonator_windup.wav"
+    PrecacheSound "freeze_cam/spy_boss_teleport_in.wav"
+    PrecacheSound "freeze_cam/spy_boss_teleport_out.wav"
+
+    //// PRECACHED PARTICLES ////
+    PrecacheParticle "utaunt_electricity_discharge"
+
+    //// TANK PATHS ////
+    ExtraTankPath // Boss Intro Camera 1
+    {
+        Name "Wave8BossCamera_A"
+        Node "1496 256 310"
+        Node "1544 256 236"
+        Node "1592 256 196"
+        Node "1616 256 172"
+        Node "1676 256 160"
+        Node "1702 256 154"
+    }
+    ExtraTankPath // Boss Intro Camera 2
+    { 
+        Name "Wave8BossCamera_B"
+        Node "-1536 808 76"
+        Node "-1536 920 52"
+        Node "-1536 1040 20"
+        Node "-1536 1224 -52"
+        Node "-1536 1464 -92"
+    }
+
+    //// SPAWN POINTS ////
+
+    // Wave 1 Spawnpoints
+
+    ExtraSpawnPoint // Door B1 Spawn
+    {
+        Name "spawnbot_doorb1"
+        X -979 Y -922 Z 0
+        TeamNum 3
+        StartDisabled 0
+    }
+    ExtraSpawnPoint // Door B1 Giant Spawn
+    {
+        Name "spawnbot_doorb1_giant"
+        X -1200 Y -936 Z 0
+        TeamNum 3
+        StartDisabled 0
+    } 
+    ExtraSpawnPoint // Door A1 Spawn
+    {
+        Name "spawnbot_doora1"
+        X 353 Y -255 Z 3
+        TeamNum 3
+        StartDisabled 0
+    }
+    ExtraSpawnPoint // Door A1 Giant Spawn
+    {
+        Name "spawnbot_doora1_giant"
+        X 317 Y -196 Z 15
+        TeamNum 3
+        StartDisabled 0
+    }
+    ExtraSpawnPoint // Security Room Breach Spawn
+    {
+        Name "spawnbot_breach"
+        X 435 Y 1500 Z 0
+        TeamNum 3
+        StartDisabled 0
+    }
+    ExtraSpawnPoint // Security Room Breach Spawn
+    {
+        Name "spawnbot_breach_giant"
+        X 435 Y 1460 Z 0
+        TeamNum 3
+        StartDisabled 0
+    }
+    ExtraSpawnPoint // Boss Spawn
+    {
+        Name "spawnbot_spy_boss"
+        X -1536 Y 1606 Z -191
+        TeamNum 3
+        StartDisabled 0
+    }
+
+    //// CUSTOM WEAPONS ////
+
+    CustomWeapon
+    {
+        "BatsaberThrow"
+        {
+            OriginalItemName "The Rescue Ranger"
+            "projectile gravity" -1
+            "projectile speed increased" 0.4
+            "arrow hit kill time" 0.1
+
+            "no damage falloff" 1
+            "damage bonus" 1
+
+            "fire rate bonus" 1
+            "faster reload rate" 1
+
+            "add damage type" 128
+            "remove damage type" 2
+
+            "custom item model" "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"
+            "custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+            "custom weapon fire sound" "common/null.wav"
+            "custom kill icon" "batsaber"
+        }
+        "ThrowingKnife"
+        {
+            OriginalItemName "The Flying Guillotine"
+            "projectile gravity" -1
+            "projectile speed decreased" 0.3
+            "arrow hit kill time" 0.1
+
+            "no damage falloff" 1
+            "damage bonus" 1
+
+            "override projectile type" 18
+            "effect bar recharge rate increased" -1
+
+            "add damage type" 128
+            "remove damage type" 2
+
+            "custom item model" "models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl"
+            "custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+            "custom weapon fire sound" "common/null.wav"
+            "custom kill icon" "big_earner"
+        }
+    }
+
+    //// POINT TEMPLATES ////
+
+    PointTemplates
+    {
+        MainLockdownAssets
+        {
+            // Interface Entities
+
+            point_populator_interface
+            {
+                "targetname" "pop_interface"
+            }
+            tf_point_nav_interface
+            {
+                "targetname" "nav_interface"
+            }
+
+            logic_auto // Primarily for Wallbreaker Section
+            {
+                "targetname" "wallbreakerrelay"
+
+                "OnMapSpawn" "wallbreaker_path_1,AddOutput,OnPass b1_wall_lockdown_relay:Trigger::0:-1,0,-1"
+
+                "OnMapSpawn" "wallbreaker_path_2,AddOutput,OnPass drilltank_watermine:SetSpeed:1.5:0:-1,0,-1"
+                "OnMapSpawn" "wallbreaker_path_2,AddOutput,OnPass B1_wall_drill_relay:Trigger::0:-1,0,-1"
+                "OnMapSpawn" "wallbreaker_path_2,AddOutput,OnPass b1_wall_destroy_relay:Trigger::59:-1,0,-1"
+                "OnMapSpawn" "wallbreaker_path_2,AddOutput,OnPass b1_wall_destroy_animation:$setkey$renderfx:5:72:-1,0,-1"
+
+                "OnMapSpawn" "wallbreaker_path_3,AddOutput,OnPass drilltank_watermine:SetSpeed:75:0:-1,0,-1"
+
+                "OnMapSpawn" "wallbreaker_path_4,AddOutput,OnPass drilltank_watermine:SetSpeed:1.5:0:-1,0,-1"
+                "OnMapSpawn" "wallbreaker_path_4,AddOutput,OnPass C1_wall_drill_relay:Trigger::0:-1,0,-1"
+                "OnMapSpawn" "wallbreaker_path_4,AddOutput,OnPass c1_wall_destroy_relay:Trigger::59:-1,0,-1"
+                "OnMapSpawn" "wallbreaker_path_4,AddOutput,OnPass c1_wall_destroy_animation:$setkey$renderfx:5:72:-1,0,-1"
+
+                "OnMapSpawn" "wallbreaker_path_5,AddOutput,OnPass drilltank_watermine:SetSpeed:75:0:-1,0,-1"
+            }
+
+            logic_relay
+            {
+                "targetname" "LockdownCleanupRelayWave4"
+
+                "OnTrigger" "W3Bomb*,Kill,,0,-1"
+            }
+            logic_relay
+            {
+                "targetname" "LockdownCleanupRelayWave5"
+
+                "OnTrigger" "W3Bomb*,Kill,,0,-1"
+                "OnTrigger" "W4Breach*,Kill,,0,-1"
+            }
+            logic_relay
+            {
+                "targetname" "LockdownCleanupRelayWave8"
+
+                "OnTrigger" "W3Bomb*,Kill,,0,-1"
+                "OnTrigger" "W4Breach*,Kill,,0,-1"
+                "OnTrigger" "W7Bomb*,Kill,,0,-1"
+            }
+
+            // Robot Electricity Effects
+
+            trigger_particle
+            {
+                "targetname" "HiTechDefaultEffect"
+                "particle_name" "utaunt_electricity_purple_discharge"
+                "attachment_type" "1"
+                "spawnflags" "64"
+            }
+            trigger_particle
+            {
+                "targetname" "HiTechRageEffect"
+                "particle_name" "utaunt_electricity_discharge"
+                "attachment_type" "1"
+                "spawnflags" "64"
+            }
+
+            // Robot Forward Spawns
+
+            // A1 Door Spawn
+            func_forcefield
+            {
+                "targetname" "A1_door_forcefield"
+                "origin" "1 -375 0"
+                "teamnum" "3"
+                "mins" "-150 8 0"
+                "maxs" "150 -8 225"
+            }
+            trigger_multiple
+            {
+                "targetname" "A1_door_respawnroom"
+                "origin" "0 -7 16"
+                "spawnflags" "1"
+                "mins" "460 -360 700"
+                "maxs" "-420 400 -700"
+                "startdisabled" "0"
+                "OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+                "OnStartTouch" "!activator,$Addcond,51,0,-1"
+                "OnStartTouch" "!activator,$Addcond,130,0,-1"
+                "OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+                "OnEndTouch" "!activator,$Removecond,51,0,-1"
+                "OnEndTouch" "!activator,$Removecond,130,0,-1"
+            }
+            func_nobuild
+            {
+                "targetname" "A1_door_nobuild"
+                "origin" "0 -7 16"
+                "mins" "460 -360 700"
+                "maxs" "-420 400 -700"
+            }
+            trigger_hurt
+            {
+                "targetname" "A1_door_moneycollector"
+                "origin" "0 -7 16"
+                "mins" "460 -360 700"
+                "maxs" "-420 400 -700"
+                "spawnflags" "64"
+                "damage"     "0"
+                "damagetype" "0"
+            }
+            prop_dynamic
+            {
+                "targetname" "A1_door_barrier"
+                "origin"     "0 -385 96"
+                "angles" "0 -90 0"
+                "model"      "models/mvm/barrier/barrier_spawn_blue1.mdl"
+                "modelscale" "0.75"
+                "solid" "0"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+				"disablereceiveshadows" "1"
+            }
+
+            // B1 Door Spawn
+            func_forcefield
+            {
+                "targetname" "B1_door_forcefield"
+                "origin" "-645 -1280 0"
+                "teamnum" "3"
+                "mins" "8 -150 0"
+                "maxs" "-8 150 225"
+            }
+            trigger_multiple
+            {
+                "targetname" "B1_door_respawnroom"
+                "origin" "-1017 -1260 0"
+                "spawnflags" "1"
+                "mins" "350 -300 650"
+                "maxs" "-350 400 -650"
+                "startdisabled" "0"
+                "OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+                "OnStartTouch" "!activator,$Addcond,51,0,-1"
+                "OnStartTouch" "!activator,$Addcond,130,0,-1"
+                "OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+                "OnEndTouch" "!activator,$Removecond,51,0,-1"
+                "OnEndTouch" "!activator,$Removecond,130,0,-1"
+            }
+            func_nobuild
+            {
+                "targetname" "B1_door_nobuild"
+                "origin" "-1017 -1260 0"
+                "mins" "350 -300 650"
+                "maxs" "-350 400 -650"
+            }
+            trigger_hurt
+            {
+                "targetname" "B1_door_moneycollector"
+                "origin" "-1017 -1260 0"
+                "mins" "350 -300 650"
+                "maxs" "-350 400 -650"
+                "spawnflags" "64"
+                "damage"     "0"
+                "damagetype" "0"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_door_barrier"
+                "origin"     "-640 -1280 96"
+                "model"      "models/mvm/barrier/barrier_spawn_blue1.mdl"
+                "modelscale" "0.75"
+                "solid" "0"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+				"disablereceiveshadows" "1"
+            }
+
+            // Security Room Breach Spawn
+            func_forcefield
+            {
+                "targetname" "securityroom_breach_forcefield"
+                "origin" "563 662 25"
+                "teamnum" "3"
+                "mins" "8 -150 0"
+                "maxs" "-8 150 225"
+            }
+            trigger_multiple
+            {
+                "targetname" "securityroom_breach_respawnroom"
+                "origin" "257 668 0"
+                "spawnflags" "1"
+                "mins" "250 -200 300"
+                "maxs" "-250 200 -300"
+                "startdisabled" "0"
+                "OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+                "OnStartTouch" "!activator,$Addcond,51,0,-1"
+                "OnStartTouch" "!activator,$Addcond,130,0,-1"
+                "OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+                "OnEndTouch" "!activator,$Removecond,51,0,-1"
+                "OnEndTouch" "!activator,$Removecond,130,0,-1"
+            }
+            func_nobuild
+            {
+                "targetname" "securityroom_breach_nobuild"
+                "origin" "257 668 0"
+                "mins" "250 -200 300"
+                "maxs" "-250 200 -300"
+            }
+            func_nobuild
+            {
+                "targetname" "securityroom_breach_nobuild"
+                "origin" "512 -767 256"
+                "mins" "150 -200 100"
+                "maxs" "-150 200 -100"
+            }
+            trigger_hurt
+            {
+                "targetname" "securityroom_breach_moneycollector"
+                "origin" "257 668 0"
+                "mins" "200 -360 700"
+                "maxs" "-200 400 -700"
+                "spawnflags" "64"
+                "damage"     "0"
+                "damagetype" "0"
+            }
+            prop_dynamic
+            {
+                "targetname" "securityroom_breach_barrier"
+                "origin"     "550 662 128"
+                "angles" "0 0 0"
+                "model"      "models/mvm/barrier/barrier_spawn_blue1.mdl"
+                "modelscale" "1"
+                "solid" "0"
+                "startdisabled" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+				"disablereceiveshadows" "1"
+            }
+
+            // B1 Lava Pit Shortcut Blockers
+            func_forcefield
+            {
+                "targetname" "B1_shortcut_forcefield"
+                "origin" "-1267 -1580 -11"
+                "teamnum" "3"
+                "mins" "620 -32 800"
+                "maxs" "-1000 16 -800"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_shortcut_props"
+                "model"      "models/props_urban/urban_shipping_container02.mdl"
+                "origin"     "-1918 -1700 -1"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_shortcut_props"
+                "model"      "models/props_urban/urban_shipping_container02.mdl"
+                "origin"     "-1918 -1700 108"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_shortcut_props"
+                "model"      "models/props_urban/urban_shipping_container01.mdl"
+                "origin"     "-1021 -1456 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_shortcut_props"
+                "model"      "models/props_mvm/barrel_crate.mdl"
+                "origin"     "-1661 -1629 -4"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_shortcut_props"
+                "model"      "models/props_mvm/barrel_crate.mdl"
+                "origin"     "-1573 -1605 -3"
+                "angles"     "0 -90 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "B1_shortcut_props"
+                "model"      "models/props_lakeside/wood_crate_01.mdl"
+                "origin"     "-1494 -1512 0"
+                "angles"     "0 -90 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            
+            // Carrier Area Containers
+
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model" "models/props_urban/urban_shipping_container02.mdl"
+                "origin" "-1726 1426 -191"
+                "angles" "0 -115 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model" "models/props_urban/urban_shipping_container02.mdl"
+                "origin" "-1726 1426 -84"
+                "angles" "0 -115 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model" "models/props_urban/urban_shipping_container02.mdl"
+                "origin" "-1821 1812 -191"
+                "angles" "0 -55 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model"      "models/props_mvm/barrel_crate.mdl"
+                "modelscale" "0.75"
+                "origin"     "-1840 1669 -191"
+                "angles" "0 -55 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model"      "models/props_hydro/barrel_crate_half.mdl"
+                "modelscale" "0.75"
+                "origin"     "-1883 1723 -191"
+                "angles" "0 -55 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model"      "models/props_hydro/barrel_crate_half.mdl"
+                "modelscale" "0.75"
+                "origin"     "-1915 1649 -191"
+                "angles" "0 -55 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model" "models/props_urban/urban_shipping_container01.mdl"
+                "origin" "-1918 2258 -191"
+                "angles" "0 -30 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+            prop_dynamic
+            {
+                "targetname" "front_area_container"
+                "model" "models/props_urban/urban_shipping_container01.mdl"
+                "origin" "-1918 2258 -31"
+                "angles" "0 -30 0"
+                "disablereceiveshadows" "1"
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+                "solid" "6"
+            }
+
+            // Spy Model in Manufactory Tube
+            OnSpawnOutput
+            {
+                Target tube_bot_model
+                Action Disable
+            }
+            OnSpawnOutput
+			{
+				Target robot_arm
+				Action SetAnimation
+				Param Idle
+			}
+            prop_dynamic
+            {
+                "targetname" "spy_boss_tube"
+                "origin" "1800 254 74"
+                "angles" "0 180 0"
+                "model" "models/bots/spy/bot_spy.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "primary_stun_middle"
+                "disablebonefollowers" "1"
+            }
+
+            // Manufactory Rayguns
+            prop_dynamic
+            {
+                "targetname" "manufactoryraygun"
+                "model" "models/props_spytech/radar002.mdl"
+                "modelscale" "0.5"
+                "origin" "1408 960 672"
+                "angles" "0 0 180"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "manufactoryraygun"
+                "model" "models/props_spytech/raygun003.mdl"
+                "modelscale" "0.5"
+                "origin" "1408 935 568"
+                "angles" "30 270 -180"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "manufactoryraygun"
+                "model" "models/props_spytech/radar002.mdl"
+                "modelscale" "0.5"
+                "origin" "1408 576 672"
+                "angles" "0 0 180"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "manufactoryraygun"
+                "model" "models/props_spytech/raygun003.mdl"
+                "modelscale" "0.5"
+                "origin" "1408 601 568"
+                "angles" "30 90 -180"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+
+            // Lava Lake Rayguns
+            prop_dynamic
+            {
+                "targetname" "lavalakeraygun"
+                "model" "models/props_spytech/radar002.mdl"
+                "modelscale" "0.5"
+                "origin" "-2168 -1040 364"
+                "angles" "-90 180 0"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "lavalakeraygun"
+                "model" "models/props_spytech/raygun003.mdl"
+                "modelscale" "0.5"
+                "origin" "-2084 -1040 364"
+                "angles" "30 300 -180"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "lavalakeraygun"
+                "model" "models/props_spytech/radar002.mdl"
+                "modelscale" "0.5"
+                "origin" "-2168 -1520 364"
+                "angles" "-90 180 0"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "lavalakeraygun"
+                "model" "models/props_spytech/raygun003.mdl"
+                "modelscale" "0.5"
+                "origin" "-2084 -1520 364"
+                "angles" "30 60 180"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+
+            // Intersection Rayguns
+            prop_dynamic
+            {
+                "targetname" "intersectionraygun"
+                "model" "models/props_spytech/radar002.mdl"
+                "modelscale" "0.5"
+                "origin" "-16 -1552 256"
+                "angles" "0 180 0"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "intersectionraygun"
+                "model" "models/props_spytech/raygun003.mdl"
+                "modelscale" "0.5"
+                "origin" "-16 -1552 336"
+                "angles" "75 75 0"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "intersectionraygun"
+                "model" "models/props_spytech/radar002.mdl"
+                "modelscale" "0.5"
+                "origin" "272 -1008 256"
+                "angles" "0 180 0"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "intersectionraygun"
+                "model" "models/props_spytech/raygun003.mdl"
+                "modelscale" "0.5"
+                "origin" "272 -1008 336"
+                "angles" "75 225 0"
+                "solid" "6"
+                "disableshadows" "1"
+            }
+        }
+
+        //// WAVE 1 ////
+
+        Wave1LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave1SetupRelay"
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_1_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_2_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "B1_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A2_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A1_door_lock_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "C1_door,SetAnimation,open,0.5,-1"
+                "OnTrigger" "C1_door,DisableCollision,,0.5,-1"
+
+                "OnTrigger" "door_front_l,Close,,0.5,-1"
+                "OnTrigger" "door_front_r,Close,,0.5.-1"
+                "OnTrigger" "door_front_l,Lock,,0.51,-1"
+                "OnTrigger" "door_front_r,Lock,,0.51,-1"
+
+                "OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,1,-1"
+
+                "OnTrigger" "carrier_lift_raise_relay,Trigger,,1,-1"
+                "OnTrigger" "container_lift_raise_relay,Trigger,,1,-1"
+
+                "OnTrigger" "relay_D,Trigger,,1,-1"
+                "OnTrigger" "holograms,Disable,,1.5,-1"
+                "OnTrigger" "D_E_holograms,Disable,,1.5,-1"
+            }
+        }
+        
+        //// WAVE 2 ////
+
+        Wave2LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave2SetupRelay"
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_1_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_2_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "B1_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A2_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A1_door_lock_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "C1_door,SetAnimation,open,0.5,-1"
+                "OnTrigger" "C1_door,DisableCollision,,0.5,-1"
+
+                "OnTrigger" "door_front_l,Close,,0.5,-1"
+                "OnTrigger" "door_front_r,Close,,0.5.-1"
+                "OnTrigger" "door_front_l,Lock,,0.51,-1"
+                "OnTrigger" "door_front_r,Lock,,0.51,-1"
+
+                "OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,1,-1"
+
+                "OnTrigger" "carrier_lift_raise_relay,Trigger,,1,-1"
+                "OnTrigger" "container_lift_raise_relay,Trigger,,1,-1"
+
+                "OnTrigger" "relay_D,Trigger,,1,-1"
+                "OnTrigger" "holograms,Disable,,1.5,-1"
+                "OnTrigger" "D_E_holograms,Disable,,1.5,-1"
+            }
+        }
+
+        //// WAVE 3 ////
+
+        Wave3LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave3SetupRelay"
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_1_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_2_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "B1_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A2_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A1_door_lock_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "C1_door,SetAnimation,open,0.5,-1"
+                "OnTrigger" "C1_door,DisableCollision,,0.5,-1"
+
+                "OnTrigger" "door_front_l,Close,,0.5,-1"
+                "OnTrigger" "door_front_r,Close,,0.5.-1"
+                "OnTrigger" "door_front_l,Lock,,0.51,-1"
+                "OnTrigger" "door_front_r,Lock,,0.51,-1"
+
+                "OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,1,-1"
+
+                "OnTrigger" "carrier_lift_raise_relay,Trigger,,1,-1"
+                "OnTrigger" "container_lift_raise_relay,Trigger,,1,-1"
+
+                "OnTrigger" "relay_D,Trigger,,1,-1"
+                "OnTrigger" "holograms,Disable,,1.5,-1"
+                "OnTrigger" "D_E_holograms,Disable,,1.5,-1"
+            }
+
+            env_shake // Explosion Shake for both Sequences
+			{
+				"targetname" "W3BombExplosionShake"
+				"spawnflags" "5"
+				"amplitude"  "10"
+				"duration"   "4"
+				"frequency"  "15"
+				"radius"     "99999"
+			}
+            
+            training_annotation // Annotation for Extra Bomb
+            {
+                "targetname"   "W3BombIncoming"
+                "display_text" "Another bomb!"
+                "lifetime"     "4"
+                "origin"       "1 -375 0"
+            }
+
+            //// 1ST BOMB SEQUENCE ////
+
+            // Bomb Drop Point
+            prop_dynamic
+            {
+                "targetname" "W3BombDropHint1"
+                "origin" "1413 -1146 16"
+                "angles" "0 90 0"
+                "model" "models/props_lakeside_event/bomb_temp.mdl"
+                "modelscale" "1.5"
+                "solid" "0"
+                "renderfx" "15"
+                "disableshadows" "1"
+                "disablereceiveshadows" "1"
+                "disablebonefollowers" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "W3BombFlagProp1"
+                "origin" "1413 -1146 24"
+                "angles" "0 90 0"
+                "model" "models/props_lakeside_event/bomb_temp.mdl"
+                "modelscale" "1"
+                "solid" "0"
+                "disableshadows" "1"
+                "disablereceiveshadows" "1"
+                "disablebonefollowers" "1"
+                "startdisabled" "1"
+            }
+            tf_glow
+            {
+                "targetname" "W3BombDropHintGlow1"
+                "target" "W3BombDropHint1"
+                "glowcolor" "88 133 162 255"
+                "startdisabled" "1"
+            }
+            func_flagdetectionzone
+            {
+                "targetname" "W3BombDropPoint1"
+                "origin" "1411 -1163 16"
+                "teamnum" "2"
+                "mins" "-24 -24 -32"
+                "maxs" "24 24 32"
+                "OnStartTouchFlag" "W3BombFlag1,ForceDrop,,0,-1"
+                "OnDroppedFlag" "W3BombFlag1,SetTeam,2,0,-1"
+                "OnDroppedFlag" "W3BombFlag1,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombDropHint1,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombBeep1A,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombBeep1B,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombDropTickingRelay1,Trigger,,0,-1"
+                "OnDroppedFlag" "W3BombFlagProp1,Enable,,0,-1"
+            }
+            training_annotation
+            {
+                "targetname"   "W3BombDropPointHint1"
+                "display_text" "Plant the bomb here!"
+                "lifetime"     "6"
+                "origin"       "1411 -1163 16"
+            }
+
+            // Bomb Explosion Sequence
+            logic_relay // Ticking Relay
+            {
+                "targetname" "W3BombDropTickingRelay1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,2.7,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,5.4,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,8.1,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,10.8,-1"
+                "OnTrigger" "tf_gamerules,$StopVO,pl_hoodoo/alarm_clock_ticking_3.wav,12,-1"
+                "OnTrigger" "W3BombDropExplosionRelay1,Trigger,,12,-1"
+
+            }
+            logic_relay // Explosion Relay
+            {
+                "targetname" "W3BombDropExplosionRelay1"
+
+                "OnTrigger" "W3BombFlagProp1,Kill,,0,-1"
+                "OnTrigger" "W3BombDropPointForcefield1,Kill,,0,-1"
+                "OnTrigger" "W3BombDropPoint1,Kill,,0,-1"
+
+                "OnTrigger" "W3Bomb1Explosion,Start,,0,-1"
+                "OnTrigger" "W3Bomb1Explosion,Stop,,4,-1"
+                "OnTrigger" "W3BombExplosionShake,StartShake,,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_2.wav,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_1.wav,0,-1"
+
+                "OnTrigger" "A_route_wall_1_break_relay,Trigger,,0,-1"
+
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave3_ShotgunSoldiers,4,-1"
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave3_SoldierBuffSquad,4,-1"
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave3_Demos,4,-1"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W3Bomb1Explosion"
+                "origin" "1408 -1104 1"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+
+            //// 2ND BOMB SEQUENCE ////
+
+            // Bomb Drop Point
+            prop_dynamic
+            {
+                "targetname" "W3BombDropHint2"
+                "origin" "1407 -882 16"
+                "angles" "0 90 0"
+                "model" "models/props_lakeside_event/bomb_temp.mdl"
+                "modelscale" "1.5"
+                "solid" "0"
+                "renderfx" "15"
+                "disableshadows" "1"
+                "disablereceiveshadows" "1"
+                "disablebonefollowers" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "W3BombFlagProp2"
+                "origin" "1407 -882 24"
+                "angles" "0 90 0"
+                "model" "models/props_lakeside_event/bomb_temp.mdl"
+                "modelscale" "1"
+                "solid" "0"
+                "disableshadows" "1"
+                "disablereceiveshadows" "1"
+                "disablebonefollowers" "1"
+                "startdisabled" "1"
+            }
+            tf_glow
+            {
+                "targetname" "W3BombDropHintGlow2"
+                "target" "W3BombDropHint2"
+                "glowcolor" "88 133 162 255"
+                "startdisabled" "1"
+            }
+            func_flagdetectionzone
+            {
+                "targetname" "W3BombDropPoint2"
+                "origin" "1407 -882 16"
+                "teamnum" "2"
+                "mins" "-24 -24 -32"
+                "maxs" "24 24 32"
+                "OnStartTouchFlag" "W3BombFlag2,ForceDrop,,0,-1"
+                "OnDroppedFlag" "W3BombFlag2,SetTeam,2,0,-1"
+                "OnDroppedFlag" "W3BombFlag2,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombDropHint2,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombBeep2A,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombBeep2B,Kill,,0,-1"
+                "OnDroppedFlag" "W3BombDropTickingRelay2,Trigger,,0,-1"
+                "OnDroppedFlag" "W3BombFlagProp2,Enable,,0,-1"
+            }
+            training_annotation
+            {
+                "targetname"   "W3BombDropPointHint2"
+                "display_text" "Plant the bomb here!"
+                "lifetime"     "6"
+                "origin"       "1407 -882 16"
+            }
+
+            // Bomb Explosion Sequence
+            logic_relay // Ticking Relay
+            {
+                "targetname" "W3BombDropTickingRelay2"
+
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,2.7,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,5.4,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,8.1,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,pl_hoodoo/alarm_clock_ticking_3.wav,10.8,-1"
+                "OnTrigger" "tf_gamerules,$StopVO,pl_hoodoo/alarm_clock_ticking_3.wav,12,-1"
+                "OnTrigger" "W3BombDropExplosionRelay2,Trigger,,12,-1"
+
+            }
+            logic_relay // Explosion Relay
+            {
+                "targetname" "W3BombDropExplosionRelay2"
+
+                "OnTrigger" "W3BombFlagProp2,Kill,,0,-1"
+                "OnTrigger" "W3BombDropPointForcefield2,Kill,,0,-1"
+                "OnTrigger" "W3BombDropPoint2,Kill,,0,-1"
+
+                "OnTrigger" "W3Bomb2Explosion,Start,,0,-1"
+                "OnTrigger" "W3Bomb2Explosion,Stop,,4,-1"
+                "OnTrigger" "W3BombExplosionShake,StartShake,,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_2.wav,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_1.wav,0,-1"
+
+                "OnTrigger" "A_route_wall_2_break_relay,Trigger,0,-1"
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_MiniBossCondition,0,-1"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W3Bomb2Explosion"
+                "origin" "1321 -676 50"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W3Bomb2Explosion"
+                "origin" "1421 -676 50"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W3Bomb2Explosion"
+                "origin" "1421 -676 50"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+                "start_active" "0"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W3Bomb2Explosion"
+                "origin" "1521 -676 50"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+        }
+
+        // Additional Bomb for Players to Blow up Walls
+        Wave3BombProp
+        {
+            prop_dynamic_ornament
+            {
+                "targetname" "W3BombBotProp"
+                "model" "models/props_lakeside_event/bomb_temp.mdl"
+                "skin" "1"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            OnSpawnOutput
+            {
+                Target W3BombBotProp
+                Action TurnOn
+            }
+        }
+        Wave3BombLogic1
+        {
+            KeepAlive 1
+
+            OnParentKilledOutput
+            {
+                Target W3BombFlag1
+                Action Enable
+            }
+            OnParentKilledOutput
+            {
+                Target W3BombFlag1
+                Action SetTeam
+                Param 3
+            }
+            OnParentKilledOutput
+            {
+                Target W3BombArrow1
+                Action ShowSprite
+            }
+            OnParentKilledOutput
+            {
+                Target W3BombGlow1
+                Action Enable
+            }
+
+            item_teamflag
+            {
+                "targetname" "W3BombFlag1"
+                "origin" "0 0 0"
+                "flag_model" "models/props_lakeside_event/bomb_temp.mdl"
+                "modelscale" "1"
+                "teamnum" "2"
+                "startdisabled" "1"
+                "OnPickup1" "W3BombArrow1,hidesprite,,0,-1"
+                "OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
+                "OnPickup1" "W3BombDropHint1,Enable,,0,-1"
+                "OnPickup1" "W3BombDropHintGlow1,Enable,,0,-1"
+                "OnPickup1" "W3BombDropPointHint1,Show,,0,-1"
+                "OnPickup1" "W3BombBeepLoop1,Trigger,,0,-1"
+            }
+            env_sprite
+            {
+                "targetname" "W3BombArrow1"
+                "origin" "0 0 100"
+                "model" "materials/hud/arrow_big_down.vmt"
+                "scale" "0.2"
+                "framerate" "10.0"
+                "rendermode" "1"
+                "GlowProxySize" "8"
+                "mincpulevel" "0"
+                "maxcpulevel" "0"
+                "disablereceiveshadows" "1"
+            }
+            tf_glow
+            {
+                "targetname" "W3BombGlow1"
+                "target" "W3BombFlag1"
+                "glowcolor" "88 133 162 255"
+                "startdisabled" "1"
+            }
+
+            ambient_generic
+            {
+                "targetname" "W3BombBeep1A"
+                "parentname" "W3BombFlag1"
+                "message"    "buttons/blip1.wav"
+                "health"     "10"
+                "pitch"      "100"
+                "radius"     "1500"
+                "spawnflags" "33"
+                "origin"     "0 0 0"
+            }
+            ambient_generic
+            {
+                "targetname" "W3BombBeep1B"
+                "parentname" "W3BombFlag1"
+                "message"    "buttons/blip1.wav"
+                "health"     "10"
+                "pitch"      "100"
+                "radius"     "1500"
+                "spawnflags" "33"
+                "origin"     "0 0 0"
+            }
+            logic_relay
+            {
+                "targetname" "W3BombBeepLoop1"
+                "OnTrigger" "W3BombBeep1A,PlaySound,,0,-1"
+                "OnTrigger" "W3BombBeep1B,PlaySound,,1,-1"
+                "OnTrigger" "W3BombBeepLoop1,Trigger,,4,-1"
+
+                "spawnflags" "2"
+            }
+        }
+        Wave3BombLogic2
+        {
+            KeepAlive 1
+
+            OnParentKilledOutput
+            {
+                Target W3BombFlag2
+                Action Enable
+            }
+            OnParentKilledOutput
+            {
+                Target W3BombFlag2
+                Action SetTeam
+                Param 3
+            }
+            OnParentKilledOutput
+            {
+                Target W3BombArrow2
+                Action ShowSprite
+            }
+            OnParentKilledOutput
+            {
+                Target W3BombGlow2
+                Action Enable
+            }
+
+            item_teamflag
+            {
+                "targetname" "W3BombFlag2"
+                "origin" "0 0 0"
+                "flag_model" "models/props_lakeside_event/bomb_temp.mdl"
+                "modelscale" "1"
+                "teamnum" "2"
+                "startdisabled" "1"
+                "OnPickup1" "W3BombArrow2,hidesprite,,0,-1"
+                "OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
+                "OnPickup1" "W3BombDropHint2,Enable,,0,-1"
+                "OnPickup1" "W3BombDropHintGlow2,Enable,,0,-1"
+                "OnPickup1" "W3BombDropPointHint2,Show,,0,-1"
+                "OnPickup1" "W3BombBeepLoop2,Trigger,,0,-1"
+            }
+            env_sprite
+            {
+                "targetname" "W3BombArrow2"
+                "origin" "0 0 100"
+                "model" "materials/hud/arrow_big_down.vmt"
+                "scale" "0.2"
+                "framerate" "10.0"
+                "rendermode" "1"
+                "GlowProxySize" "8"
+                "mincpulevel" "0"
+                "maxcpulevel" "0"
+                "disablereceiveshadows" "1"
+            }
+            tf_glow
+            {
+                "targetname" "W3BombGlow2"
+                "target" "W3BombFlag2"
+                "glowcolor" "88 133 162 255"
+                "startdisabled" "1"
+            }
+
+            ambient_generic
+            {
+                "targetname" "W3BombBeep2A"
+                "parentname" "W3BombFlag2"
+                "message"    "buttons/blip1.wav"
+                "health"     "10"
+                "pitch"      "100"
+                "radius"     "1500"
+                "spawnflags" "33"
+                "origin"     "0 0 0"
+            }
+            ambient_generic
+            {
+                "targetname" "W3BombBeep2B"
+                "parentname" "W3BombFlag2"
+                "message"    "buttons/blip1.wav"
+                "health"     "10"
+                "pitch"      "100"
+                "radius"     "1500"
+                "spawnflags" "33"
+                "origin"     "0 0 0"
+            }
+            logic_relay
+            {
+                "targetname" "W3BombBeepLoop2"
+                "OnTrigger" "W3BombBeep2A,PlaySound,,0,-1"
+                "OnTrigger" "W3BombBeep2B,PlaySound,,1,-1"
+                "OnTrigger" "W3BombBeepLoop2,Trigger,,4,-1"
+
+                "spawnflags" "2"
+            }
+        }
+
+        //// WAVE 4 ////
+
+        Wave4LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "W4SetupRelay"
+
+                "OnTrigger" "LockdownCleanupRelayWave4,Trigger,,0,-1"
+
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "B1_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A2_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A1_door_lock_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "door_front_l,Close,,0.5,-1"
+                "OnTrigger" "door_front_r,Close,,0.5.-1"
+                "OnTrigger" "cylindrical_upgrades_deploy_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,1,-1"
+
+                "OnTrigger" "carrier_lift_raise_relay,Trigger,,1,-1"
+                "OnTrigger" "container_lift_raise_relay,Trigger,,1,-1"
+
+                "OnTrigger" "relay_A,Trigger,,1,-1"
+                "OnTrigger" "holograms,Disable,,1.5,-1"
+                "OnTrigger" "A_B_C_holograms,Disable,,1.5,-1"
+
+                "OnTrigger" "A1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "A1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "A1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "A1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "A1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "B1_shortcut_forcefield,Kill,,2,-1"
+                "OnTrigger" "B1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "B1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "B1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "B1_door_barrier,Kill,,2,-1"
+
+                "OnTrigger" "A1_door_unlock_relay,Trigger,,4,-1"
+                "OnTrigger" "DoorA1Unlock,Show,,4,-1"
+                "OnTrigger" "bridge_flank_door_C_unlock_relay,Trigger,,8,-1"
+                "OnTrigger" "LoadingZoneAUnlock,Show,,8,-1"
+            }
+
+            training_annotation
+            {
+                "targetname" "LoadingZoneAUnlock"
+                "display_text" "Loading Zone A has been unlocked."
+                "lifetime" "4"
+                "origin" "349 0 336"
+            }
+            training_annotation
+            {
+                "targetname" "DoorA1Unlock"
+                "display_text" "Door A1 has been unlocked."
+                "lifetime" "4"
+                "origin" "9 -366 6"
+            }
+
+            logic_relay // Wave Start Breach Relay
+            {
+                "targetname" "W4BreachRelay"
+
+                "OnTrigger" "forward_upgrade_teleport_brush,Disable,,2,-1"
+                "OnTrigger" "rev_red_spawn_visualiser,SetSolid,0,2,-1"
+                "OnTrigger" "door_front_l,Unlock,,2,-1"
+                "OnTrigger" "door_front_r,Unlock,,2,-1"
+                "OnTrigger" "door_front_l,Open,,2.5,-1"
+                "OnTrigger" "door_front_r,Open,,2.5,-1"
+                "OnTrigger" "A_route_wall_3_break_relay,Trigger,,4,-1"
+
+                "OnTrigger" "W4BreachExplosionShake,StartShake,,4,-1"
+                "OnTrigger" "W4BreachExplosion,Start,,4,-1"
+                "OnTrigger" "tf_gamerules,playvo,items/cart_explode.wav,4,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_1.wav,4,-1"
+                "OnTrigger" "W4BreachExplosion,Stop,,8,-1"
+
+                "OnTrigger" "securityroom_breach_barrier,Enable,,8,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/levels/labs/electric_explosion1.wav,8,-1"
+            }
+
+            env_shake // Explosion Shake
+			{
+				"targetname" "W4BreachExplosionShake"
+				"spawnflags" "5"
+				"amplitude"  "10"
+				"duration"   "4"
+				"frequency"  "15"
+				"radius"     "99999"
+			}
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W4BreachExplosion"
+                "origin" "842 600 80"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W4BreachExplosion"
+                "origin" "842 650 80"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W4BreachExplosion"
+                "origin" "842 550 80"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // Explosion Effect
+            {
+                "targetname" "W4BreachExplosion"
+                "origin" "842 600 80"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+                "start_active" "0"
+            }
+        }
+        
+        //// WAVE 5 ////
+
+        Wave5LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave5SetupRelay"
+
+                "OnTrigger" "LockdownCleanupRelayWave5,Trigger,,0,-1"
+
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "B1_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A2_door_lock_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "door_front_l,Close,,0.5,-1"
+                "OnTrigger" "door_front_r,Close,,0.5.-1"
+                "OnTrigger" "cylindrical_upgrades_deploy_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,1,-1"
+
+                "OnTrigger" "carrier_lift_raise_relay,Trigger,,1,-1"
+                "OnTrigger" "container_lift_raise_relay,Trigger,,1,-1"
+
+                "OnTrigger" "relay_A,Trigger,,1,-1"
+                "OnTrigger" "holograms,Disable,,1.5,-1"
+                "OnTrigger" "A_B_C_holograms,Disable,,1.5,-1"
+                "OnTrigger" "securityroom_breach_barrier,Enable,,1.5,-1"
+
+                "OnTrigger" "A1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "A1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "A1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "A1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "A1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "B1_shortcut_forcefield,Kill,,2,-1"
+                "OnTrigger" "B1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "B1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "B1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "B1_door_barrier,Kill,,2,-1"
+                
+            }
+            logic_relay // Wave Start Relay
+            {
+                "targetname" "Wave5StartRelay"
+
+                "OnTrigger" "forward_upgrade_teleport_brush,Disable,,0,-1"
+                "OnTrigger" "rev_red_spawn_visualiser,SetSolid,0,0,-1"
+                "OnTrigger" "door_front_l,Unlock,,0,-1"
+                "OnTrigger" "door_front_r,Unlock,,0,-1"
+                "OnTrigger" "door_front_l,Open,,0.5,-1"
+                "OnTrigger" "door_front_r,Open,,0.5,-1"
+            }
+        }
+
+        //// WAVE 6 ////
+
+        Wave6LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave6SetupRelay"
+
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "B1_door_lock_relay,Trigger,,0.5,-1"
+                "OnTrigger" "A2_door_lock_relay,Trigger,,0.5,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,1,-1"
+                "OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,1,-1"
+
+                "OnTrigger" "B1_door_unlock_relay,Trigger,,4,-1"
+                "OnTrigger" "A2_door_unlock_relay,Trigger,,4,-1"
+                "OnTrigger" "DoorsUnlock,Show,,4,-1"
+                "OnTrigger" "bridge_flank_door_B_unlock_relay,Trigger,,8,-1"
+                "OnTrigger" "bridge_flank_door_A_unlock_relay,Trigger,,8,-1"
+                "OnTrigger" "LoadingZonesUnlock,Show,,8,-1"
+
+                "OnTrigger" "carrier_door_front_close_relay,Trigger,,1,-1"
+                "OnTrigger" "carrier_lift_lower_relay,Trigger,,1,-1"
+                "OnTrigger" "container_lift_lower_relay,Trigger,,1,-1"
+
+                "OnTrigger" "spawn_visualiser_left,SetSolid,1,,2,-1"
+                "OnTrigger" "spawn_visualiser_right,SetSolid,1,,2,-1"
+
+                "OnTrigger" "relay_E,Trigger,,1,-1"                
+
+                "OnTrigger" "A1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "A1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "A1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "A1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "A1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "B1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "B1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "B1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "B1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "B1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_forcefield,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_respawnroom,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_nobuild,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_moneycollector,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_barrier,Kill,,2,-1"
+            }
+            training_annotation
+            {
+                "targetname" "LoadingZonesUnlock"
+                "display_text" "Loading Zone B Corridor has been unlocked."
+                "lifetime" "4"
+                "origin" "-604 0 300"
+            }
+            training_annotation
+            {
+                "targetname" "DoorsUnlock"
+                "display_text" "Doors A2 and B1 have been unlocked."
+                "lifetime" "4"
+                "origin" "0 -1280 36"
+            }
+        }
+
+        //// WAVE 7 ////
+
+        Wave7LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave7SetupRelay"
+
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "b1_wall_destroy_relay,Disable,,0,-1"
+                "OnTrigger" "c1_wall_destroy_relay,Disable,,0,-1"
+
+                "OnTrigger" "C1_wall_fix_relay,Trigger,,0.25,-1"
+                "OnTrigger" "B1_wall_fix_relay,Trigger,,0.25,-1"
+
+                "OnTrigger" "relay_D,Trigger,,1,-1"
+
+                "OnTrigger" "A1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "A1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "A1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "A1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "A1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "B1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "B1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "B1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "B1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "B1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_forcefield,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_respawnroom,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_nobuild,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_moneycollector,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_barrier,Kill,,2,-1"
+            }
+
+            //// DETONATOR RELAYS ////
+
+            logic_case
+            {
+                "targetname" "W7DetonationVoiceCase"
+                "OnCase01" "tf_gamerules,PlayVO,vo/mvm/mght/demoman_mvm_m_battlecry02.mp3,0,-1"
+                "OnCase02" "tf_gamerules,PlayVO,vo/mvm/mght/demoman_mvm_m_battlecry03.mp3,0,-1"	
+                "OnCase03" "tf_gamerules,PlayVO,vo/mvm/mght/demoman_mvm_m_battlecry04.mp3,0,-1"
+                "OnCase04" "tf_gamerules,PlayVO,vo/mvm/mght/demoman_mvm_m_battlecry05.mp3,0,-1"
+            }
+
+            //// DESTRUCTION SEQUENCES ////
+            env_shake // Break Shake for Sequences
+			{
+				"targetname" "W7BombExplosionShake"
+				"spawnflags" "5"
+				"amplitude"  "10"
+				"duration"   "6"
+				"frequency"  "15"
+				"radius"     "99999"
+			}
+
+            logic_relay // Front Container Break
+            {
+                "targetname" "front_container_destroy_relay"
+
+                "spawnflags" "2"
+
+                "OnTrigger" "front_area_container,Kill,,0,-1"
+
+                "OnTrigger" "W7Bomb_BotsB1TargetSwitch,Trigger,,0,-1"
+                "OnTrigger" "W7BombExplosionShake,StartShake,,0,-1"
+
+                "OnTrigger" "W7BombA1Explosion,Start,,0,-1"
+                "OnTrigger" "W7BombA1Explosion,Stop,,4,-1"
+                "OnTrigger" "tf_gamerules,playvo,items/cart_explode.wav,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_1.wav,0,-1"
+            }
+            info_particle_system // Container Explosion
+            {
+                "targetname" "W7BombA1Explosion"
+                "origin" "-1726 1426 -191"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // Container Explosion
+            {
+                "targetname" "W7BombA1Explosion"
+                "origin" "-1726 1426 -191"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+                "start_active" "0"
+            }
+
+            logic_relay // B1 Wall Break
+            {
+                "targetname" "b1_wall_destroy_relay"
+
+                "spawnflags" "2"
+
+                "OnTrigger" "W7Bomb_BotsC1TargetSwitch,Trigger,,0,-1"
+                "OnTrigger" "player,$PlaySoundToSelf,denominator/drill2.wav,0,-1"
+                "OnTrigger" "W7BombExplosionShake,StartShake,,0,-1"
+                "OnTrigger" "player,$PlaySoundToSelf,ambient\machines\wall_crash1.wav,1.2,-1"
+
+                "OnTrigger" "b1_wall_destroy_animation,Enable,,1,-1"
+                "OnTrigger" "b1_wall_destroy_animation,SetAnimation,drill_break,1,-1"
+                "OnTrigger" "b1_wall_break_relay,Trigger,,1,-1"
+                "OnTrigger" "b1_wall_destroy_animation,$SetKey$renderfx,5,4,-1"
+                "OnTrigger" "b1_wall_destroy_animation,Disable,8,-1"
+                "OnTrigger" "b1_wall_destroy_animation,SetAnimation,idle,8,-1"
+
+                "OnTrigger"	"b1wallbreakdust,start,,0,-1"
+				"OnTrigger"	"b1wallbreakdust,Stop,,4,-1"
+
+                "OnTrigger" "W7BombB1Explosion,Start,,0,-1"
+                "OnTrigger" "W7BombB1Explosion,Stop,,4,-1"
+                "OnTrigger" "tf_gamerules,playvo,items/cart_explode.wav,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_1.wav,0,-1"
+            }
+            info_particle_system // First Wall Break Dust
+			{
+				"targetname" "b1wallbreakdust"
+				"origin" "-573 -1276 556"
+				"angles" "0 0 180"
+				"effect_name" "base_destroyed_smoke_doomsday"
+			}
+            info_particle_system // First Wall Break Explosion
+            {
+                "targetname" "W7BombB1Explosion"
+                "origin" "-704 -1280 0"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // First Wall Break Explosion
+            {
+                "targetname" "W7BombB1Explosion"
+                "origin" "-704 -1280 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+                "start_active" "0"
+            }
+
+            logic_relay // Changes Target of Bomber Bots
+            {
+                "targetname" "W7Bomb_BotsB1TargetSwitch"
+
+                "OnTrigger" "front_container_destroy_relay,Disable,,5,-1"
+                "OnTrigger" "b1_wall_destroy_relay,Enable,,5,-1"
+                "OnTrigger" "W7BombTarget,Kill,,0,-1"
+                "OnTrigger" "Wave7B1Target,ForceSpawn,,4,-1"
+            }
+
+            logic_relay // Changes Target of Bomber Bots
+            {
+                "targetname" "W7Bomb_BotsC1TargetSwitch"
+
+                "OnTrigger" "b1_wall_destroy_relay,Disable,,5,-1"
+                "OnTrigger" "c1_wall_destroy_relay,Enable,,5,-1"
+                "OnTrigger" "W7BombTarget,Kill,,0,-1"
+                "OnTrigger" "Wave7C1Target,ForceSpawn,,4,-1"
+            }
+
+            logic_relay // C1 Wall Break
+            {
+                "targetname" "c1_wall_destroy_relay"
+
+                "spawnflags" "2"
+
+                "OnTrigger" "W7Bomb_BotsTargetComplete,Trigger,,0,-1"
+                "OnTrigger" "player,$PlaySoundToSelf,denominator/drill2.wav,0,-1"
+                "OnTrigger" "crashshake,StartShake,,1,-1"
+                "OnTrigger" "player,$PlaySoundToSelf,ambient\machines\wall_crash1.wav,1.2,-1"
+
+                "OnTrigger" "c1_wall_destroy_animation,Enable,,1,-1"
+                "OnTrigger" "c1_wall_destroy_animation,SetAnimation,drill_break,1,-1"
+                "OnTrigger" "c1_wall_break_relay,Trigger,,1,-1"
+                "OnTrigger" "c1_wall_destroy_animation,$SetKey$renderfx,5,4,-1"
+                "OnTrigger" "c1_wall_destroy_animation,Disable,8,-1"
+                "OnTrigger" "c1_wall_destroy_animation,SetAnimation,idle,8,-1"
+
+                "OnTrigger"	"c1wallbreakdust,start,,0,-1"
+				"OnTrigger"	"c1wallbreakdust,Stop,,4,-1"
+
+                "OnTrigger" "W7BombC1Explosion,Start,,0,-1"
+                "OnTrigger" "W7BombC1Explosion,Stop,,4,-1"
+                "OnTrigger" "tf_gamerules,playvo,items/cart_explode.wav,0,-1"
+                "OnTrigger" "tf_gamerules,playvo,ambient/explosions/explode_1.wav,0,-1"
+            }
+            info_particle_system // Second Wall Break Dust
+			{
+				"targetname" "c1wallbreakdust"
+				"origin" "827 -1287 597"
+				"angles" "0 90 180"
+				"effect_name" "base_destroyed_smoke_doomsday"
+			}
+            info_particle_system // First Wall Break Explosion
+            {
+                "targetname" "W7BombC1Explosion"
+                "origin" "832 -1280 0"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system // First Wall Break Explosion
+            {
+                "targetname" "W7BombC1Explosion"
+                "origin" "832 -1280 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+                "start_active" "0"
+            }
+
+            logic_relay // Removes Bomber Bots
+            {
+                "targetname" "W7Bomb_BotsTargetComplete"
+
+                "OnTrigger" "c1_wall_destroy_relay,Disable,,8,-1"
+                "OnTrigger" "W7BombTarget,Kill,,0,-1"
+                "OnTrigger" "pop_interface,$FinishWaveSpawn,Wave7_Support_HitechDemo,0,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,Wave7_Support_HitechDemo,0,-1"
+            }
+        }
+
+        Wave7DetonatorEffect
+        {
+            NoFixUp 1
+
+            tf_generic_bomb
+            {
+                "targetname" "W7BombDetonator"
+                "damage" "1000"
+                "health" "1000000"
+                "radius" "256"
+                "explode_particle" "drg_cow_explosion_sparkles_charged_blue"
+                "friendlyfire" "1"
+            }
+            env_shake
+            {
+                "targetname" "W7BombDetonatorShake"
+                "spawnflags" "5"
+                "amplitude" "10"
+                "duration" "4"
+                "frequency" "15"
+                "radius" "512"
+            }
+            info_particle_system
+            {
+                "targetname" "W7BombDetonatorEffect"
+                "origin" "0 0 0"
+                "effect_name" "cinefx_goldrush"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname" "W7BombSecondWind"
+                "origin" "0 0 0"
+                "effect_name" "spell_overheal_blue"
+                "start_active" "0"
+            }
+
+            logic_relay // Wall Detonation Relay
+            {
+                "targetname" "W7WallDetonationRelay"
+
+                "OnTrigger" "!activator,$PlaySequence,taunt04,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,freeze_cam/mvm_demoman_detonator_windup.wav,0,-1"
+                "OnTrigger" "W7DetonationVoiceCase,PickRandomShuffle,,0,-1"
+                "OnTrigger" "front_container_destroy_relay,Trigger,,2,-1"
+                "OnTrigger" "b1_wall_destroy_relay,Trigger,,2,-1"
+                "OnTrigger" "c1_wall_destroy_relay,Trigger,,2,-1"
+                "OnTrigger" "!activator,$Suicide,,2.1,-1"
+            }
+            logic_relay // Death Detonation Relay
+            {
+                "targetname" "W7DeathDetonationRelay"
+
+                "OnTrigger" "!activator,$PlaySequence,taunt04,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,freeze_cam/mvm_demoman_detonator_windup.wav,0,-1"
+                "OnTrigger" "W7DetonationVoiceCase,PickRandomShuffle,,0,-1"
+                "OnTrigger" "W7BombDetonator,Detonate,,2,-1"
+                "OnTrigger" "W7BombDetonatorEffect,Start,,2,-1"
+                "OnTrigger" "W7BombDetonatorShake,StartShake,,2,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,mvm/sentrybuster/mvm_sentrybuster_explode.wav,2,-1"
+                "OnTrigger" "!activator,$Suicide,,2.1,-1"
+            }
+
+            OnParentKilledOutput
+            {
+                Target W7WallDetonationRelay
+                Action CancelPending
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+            OnParentKilledOutput
+            {
+                Target W7DeathDetonationRelay
+                Action CancelPending
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+        }
+
+        Wave7A1Target
+        {
+            info_target
+            {
+                "targetname" "W7BombTarget"
+                "origin"     "-1863 1512 -180"
+            }
+        }
+
+        Wave7B1Target
+        {
+            info_target
+            {
+                "targetname" "W7BombTarget"
+                "origin"     "-704 -1280 16"
+            }
+        }
+
+        Wave7C1Target
+        {
+            info_target
+            {
+                "targetname" "W7BombTarget"
+                "origin"     "832 -1280 16"
+            }
+        }
+
+        RotatingBatsaberAsset
+        {
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+            prop_dynamic
+            {
+                "targetname" "thebat"
+                "modelscale" "1"
+                "skin" "1"
+                "parentname" "batrotator"
+                "model" "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"
+                "angles" "90 0 0"
+            }
+            func_rotating
+            {
+                "targetname" "batrotator"
+                "spawnflags" "65"
+                "fanfriction" 100
+                "maxspeed" 500
+            }
+        }
+
+        //// WAVE 8 ////
+
+        Wave8LockdownSetup
+        {
+            logic_relay // Setup Relay
+            {
+                "targetname" "Wave8SetupRelay"
+
+                "OnTrigger" "spy_model_cosmetic,TurnOff,,0,-1"
+                "OnTrigger" "spy_boss_spawnin_real,TurnOff,,0,-1"
+
+                "OnTrigger" "LockdownCleanupRelayWave8,Trigger,,0,-1"
+
+                "OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+                "OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+                "OnTrigger" "A1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "A1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "A1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "A1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "A1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "B1_door_forcefield,Kill,,2,-1"
+                "OnTrigger" "B1_door_respawnroom,Kill,,2,-1"
+                "OnTrigger" "B1_door_nobuild,Kill,,2,-1"
+                "OnTrigger" "B1_door_moneycollector,Kill,,2,-1"
+                "OnTrigger" "B1_door_barrier,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_forcefield,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_respawnroom,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_nobuild,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_moneycollector,Kill,,2,-1"
+                "OnTrigger" "securityroom_breach_barrier,Kill,,2,-1"
+                "OnTrigger" "front_area_container,Kill,,2,-1"
+            }
+
+            logic_relay // Boss Intro Relay
+            {
+                "targetname" "Wave8BossIntroRelay"
+
+                "OnTrigger" "Wave8CameraFade,Fade,,0,-1"
+                "OnTrigger" "Wave8CameraA,$EnableAll,,0.75,-1"
+                "OnTrigger" "Wave8BossCameraAMovement,SetSpeed,64,0.75,-1"
+                "OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/spy_mvm_battlecry01.mp3`);EmitSoundEx({sound_name=`vo/mvm/norm/spy_mvm_battlecry01.mp3`, pitch = 90});EmitSoundEx({sound_name=`vo/mvm/norm/spy_mvm_battlecry01.mp3`, pitch = 90})6.61"
+                "OnTrigger" "spy_boss_tube,Disable,,8.5,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`freeze_cam/spy_boss_teleport_out.wav`});EmitSoundEx({sound_name=`freeze_cam/spy_boss_teleport_out.wav`})8.51"
+                "OnTrigger" "W8SpyBossCameraAEffect,Start,,8.5,-1"
+                "OnTrigger" "Wave8TeleportFlash,Fade,,8.5,-1"
+                "OnTrigger" "Wave8CameraFade,Fade,,9.25,-1"
+                "OnTrigger" "Wave8CameraA,$DisableAll,,10,-1"
+                "OnTrigger" "Wave8CameraB,$EnableAll,,10,-1"
+                "OnTrigger" "Wave8BossCameraBMovement,SetSpeed,96,10,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`freeze_cam/spy_boss_teleport_in.wav`});EmitSoundEx({sound_name=`freeze_cam/spy_boss_teleport_in.wav`})121"
+                "OnTrigger" "spy_boss_spawnin,Enable,,12,-1"
+                "OnTrigger" "spy_boss_spawnin_real,TurnOn,,12,-1"
+                "OnTrigger" "W8SpyBossCameraBEffect,Start,,12,-1"
+                "OnTrigger" "Wave8TeleportFlash,Fade,,12,-1"
+                "OnTrigger" "spy_boss_spawnin,SetAnimation,taunt01,14,-1"
+                "OnTrigger" "W8SpyBossCameraCEffect,Start,,14,-1"
+                "OnTrigger" "BigNetRunScriptCodePrecacheSound(`weapons/sticky_jumper_explode1.wav`);EmitSoundEx({sound_name=`weapons/sticky_jumper_explode1.wav`})141"
+                "OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/taunts/spy_mvm_taunts01.mp3`);EmitSoundEx({sound_name=`vo/mvm/norm/taunts/spy_mvm_taunts01.mp3`, pitch = 90});EmitSoundEx({sound_name=`vo/mvm/norm/taunts/spy_mvm_taunts01.mp3`, pitch = 90})141"
+                "OnTrigger" "BigNetRunScriptCodePrecacheSound(`player/spy_uncloak.wav`);EmitSoundEx({sound_name=`player/spy_uncloak.wav`});EmitSoundEx({sound_name=`player/spy_uncloak.wav`});EmitSoundEx({sound_name=`player/spy_uncloak.wav`});EmitSoundEx({sound_name=`player/spy_uncloak.wav`})161"
+                "OnTrigger" "spy_boss_spawnin,SetAnimation,stand_secondary,18,-1"
+                "OnTrigger" "spy_model_cosmetic,TurnOn,,18,-1"
+                "OnTrigger" "BigNetRunScriptCodePrecacheSound(`misc/freeze_cam.wav`);EmitSoundEx({sound_name=`misc/freeze_cam.wav`});EmitSoundEx({sound_name=`misc/freeze_cam.wav`});EmitSoundEx({sound_name=`misc/freeze_cam.wav`})201"
+                "OnTrigger" "W8BossNamecard_UpperText,Display,,20,-1"
+                "OnTrigger" "W8BossNamecard_LowerText,Display,,20,-1"
+                "OnTrigger" "Wave8CameraFade,Fade,,23.25,-1"
+                "OnTrigger" "Wave8CameraB,$DisableAll,,24,-1"
+                "OnTrigger" "spy_boss_spawnin,Disable,,24,-1"
+                "OnTrigger" "spy_boss_spawnin_real,TurnOff,,24,-1"
+                "OnTrigger" "spy_model_cosmetic,TurnOff,,24,-1"
+                "OnTrigger" "W8BossPlayerTeleport,Enable,,24,-1"
+                "OnTrigger" "W8BossPlayerTeleport,Disable,,24.1,-1"
+
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave8_Boss,24,-1"
+            }
+
+            // Boss Cutscene Camera
+            env_fade
+            {
+                "targetname" "Wave8CameraFade"
+
+                "duration" "0.75"
+                "holdtime" "0.25"
+                "rendercolor" "0 0 0"
+                "spawnflags" "0"
+            }
+
+            func_tracktrain
+            {
+                "targetname" "Wave8BossCameraAMovement"
+
+                "target" "Wave8BossCamera_A_1"
+                "mins" "-8 -8 -8"
+                "maxs" "8 8 8"
+                "startspeed" "64"
+                "velocitytype" "2"
+                "spawnflags" "8"
+            }
+            point_viewcontrol
+            {
+                "targetname" "Wave8CameraA"
+                "parentname" "Wave8BossCameraAMovement"
+                "target" "spy_boss_tube"
+                "targetattachment" "head"
+                "spawnflags" "4"
+                "interpolatepositiontoplayer" "0"
+                "speed" "0"
+                "acceleration" "0"
+                "deceleration" "0"
+                "wait" "16"
+            }
+            func_tracktrain
+            {
+                "targetname" "Wave8BossCameraBMovement"
+
+                "target" "Wave8BossCamera_B_1"
+                "mins" "-8 -8 -8"
+                "maxs" "8 8 8"
+                "startspeed" "96"
+                "velocitytype" "2"
+                "spawnflags" "8"
+            }
+            point_viewcontrol
+            {
+                "targetname" "Wave8CameraB"
+                "parentname" "Wave8BossCameraBMovement"
+                "target" "Wave8CameraTarget"
+                "spawnflags" "4"
+                "interpolatepositiontoplayer" "0"
+                "speed" "0"
+                "acceleration" "0"
+                "deceleration" "0"
+                "wait" "16"
+            }
+
+            // Boss Cutscene Effects
+
+            prop_dynamic
+            {
+                "targetname" "spy_boss_spawnin"
+                "origin" "-1536 1606 -191"
+                "angles" "0 -90 0"
+                "model" "models/player/spy.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "rendermode" "10"
+                "defaultanim" "stand_secondary"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_boss_spawnin_real"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/bots/spy/bot_spy.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_boss_spawnin_real"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/workshop/weapons/c_models/c_ttg_sam_gun/c_ttg_sam_gun.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_model_cosmetic"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/workshop/player/items/spy/dec15_a_hat_to_kill_for/dec15_a_hat_to_kill_for.mdl"
+                "solid" "0"
+                "skin" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_model_cosmetic"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/workshop/player/items/spy/hwn2016_showstopper/hwn2016_showstopper.mdl"
+                "solid" "0"
+                "skin" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_model_cosmetic"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/workshop/player/items/spy/dec24_le_frosteaux/dec24_le_frosteaux.mdl"
+                "solid" "0"
+                "skin" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_model_cosmetic"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/workshop/player/items/all_class/jul13_sweet_shades/jul13_sweet_shades_spy.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_model_cosmetic"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/player/items/engineer/engineer_blueprints_back.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "spy_model_cosmetic"
+                "initialowner" "spy_boss_spawnin"
+                "model" "models/workshop_partner/player/items/engineer/bet_pb/bet_pb.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraAEffect"
+                "origin" "1800 254 74"
+                "effect_name"  "drg_cow_explosion_sparkles_charged_blue"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraAEffect"
+                "origin" "1800 254 74"
+                "effect_name"  "wrenchmotron_teleport_beam"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraAEffect"
+                "origin" "1800 254 74"
+                "effect_name"  "teleportedin_blue"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraBEffect"
+                "origin" "-1536 1606 -191"
+                "effect_name"  "drg_cow_explosion_sparkles_charged_blue"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraBEffect"
+                "origin" "-1536 1606 -191"
+                "effect_name"  "wrenchmotron_teleport_beam"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraBEffect"
+                "origin" "-1536 1606 -191"
+                "effect_name"  "teleportedin_blue"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraCEffect"
+                "origin" "-1516 1606 -191"
+                "effect_name"  "grenade_smoke_cycle"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraCEffect"
+                "origin" "-1516 1606 -191"
+                "effect_name"  "grenade_smoke"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraCEffect"
+                "origin" "-1516 1606 -181"
+                "effect_name"  "grenade_smoke_cycle"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraCEffect"
+                "origin" "-1516 1606 -181"
+                "effect_name"  "grenade_smoke"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraCEffect"
+                "origin" "-1516 1606 -171"
+                "effect_name"  "grenade_smoke_cycle"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossCameraCEffect"
+                "origin" "-1516 1606 -171"
+                "effect_name"  "grenade_smoke"
+                "start_active" "0"
+            }
+
+            game_text
+            {
+                "targetname" "W8BossNamecard_UpperText"
+                "message" "MASTERMIND OF CYBERNETICS"
+                "x" "-1"
+                "y" "0.6"
+                "spawnflags" "1"
+                "effect" "2"
+                "channel" "1"
+                "color" "255 255 255"
+                "fxtime" "0.2"
+                "fadeout" "1"
+                "holdtime" "3"
+            }
+            game_text
+            {
+                "targetname" "W8BossNamecard_LowerText"
+                "message" "THE ARCHITECT"
+                "x" "-1"
+                "y" "0.65"
+                "channel" "0"
+                "spawnflags" "1"
+                "color" "0 192 255"
+                "fadein" "0.2"
+                "fadeout" "1"
+                "holdtime" "3"
+            }
+
+            trigger_teleport
+            {
+				"spawnflags" "1"
+				"targetname" "W8BossPlayerTeleport"
+                "filtername" "red_team_filter"
+				"origin" "0 0 0"
+				"target" "W8BossPlayerTeleportSpawn"
+				"mins" "-5000 -5000 -5000"
+				"maxs" "5000 5000 5000"
+				"StartDisabled" "1"
+                "disableshadows" "1"
+			}
+            info_target
+            {
+				"targetname" "W8BossPlayerTeleportSpawn"
+				"origin" "-1558 1094 -191" 
+				"angles" "0 90 0"
+            }
+
+            // Boss Main Effects
+            env_fade
+            {
+                "targetname" "Wave8TeleportFlash"
+
+                "duration" "0.5"
+                "holdtime" "0.25"
+                "renderamt" "50"
+                "rendercolor" "255 255 255"
+                "spawnflags" "9"
+            }
+            env_shake
+            {
+                "targetname" "generic_quake_short"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "1"
+                "amplitude" "16"
+            }
+            env_shake
+            {
+                "targetname" "generic_quake_long"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "1"
+                "amplitude" "16"
+            }
+        }
+
+        // Boss Assets
+        Wave8BossMainAssets
+        {
+            info_target
+            {
+                Name "Wave8CameraTarget"
+            }
+            //// PHASE 1 ////
+        }
+        Wave8BossTeleportationAssets
+        {
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossTeleportEffect"
+                "effect_name"  "drg_cow_explosion_sparkles_charged_blue"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossTeleportEffect"
+                "effect_name"  "wrenchmotron_teleport_beam"
+                "start_active" "0"
+            }
+            info_particle_system
+            {
+                "targetname"   "W8SpyBossTeleportEffect"
+                "effect_name"  "teleportedin_blue"
+                "start_active" "0"
+            }
+        }
+        Wave8BossThrowingKnifeAssets
+        {
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+            prop_dynamic
+            {
+                "targetname" "theknife"
+                "modelscale" "1"
+                "model" "models/workshop/weapons/c_models/c_switchblade/c_switchblade.mdl"
+                "angles" "90 90 0"
+            }
+        }
+        Wave8BossSapperThrowAssets
+        {
+            prop_dynamic
+            {
+                "targetname" "thesapper"
+                "model" "models/weapons/c_models/c_sapper/c_sapper.mdl"
+                "modelscale" "1"
+            }
+        }
+    }
+
+    //// SPAWNED TEMPLATES ////
+
+    SpawnTemplate MainLockdownAssets
+
+    //// ROBOT TEMPLATES ////
+
+    Templates
+    {
+        T_TFBot_Pyro_Phlogistinator
+        {
+            Class Pyro
+            Skill Hard
+            Name "Phlogistinator Pyro"
+            ClassIcon pyro_phlog_v2
+            Attributes SpawnWithFullCharge
+
+            Item "The Phlogistinator"
+
+            Item "Propaniac"
+            Item "Potato of Labor"
+            ItemModel
+            {
+                ItemName "Potato of Labor"
+                Model "models/player/items/pyro/bio_fireman.mdl"
+            }
+
+            FireWeapon
+            {
+                Delay 2
+                Cooldown 2
+                Repeats 0
+                IfSeeTarget 1
+                Duration 0.5
+                Type Secondary
+            }
+        }
+        T_TFBot_Demo_Detonator
+        {
+            Name "Volatile Detonator Demoman"
+            Class Demoman
+            ClassIcon demo_caber_nuke_revamp
+            Health 2000
+            Scale 1.5
+            Skill Expert
+            Attributes AlwaysCrit
+            Attributes MiniBoss
+            WeaponRestrictions MeleeOnly
+            UseCustomModel "models/bots/demo/bot_demo.mdl"
+            Action Mobber
+
+            AlwaysGlow 1
+
+            Item "The Ullapool Caber"
+
+            Item "The Hurt Locher"
+            Item "A Whiff of the Old Brimstone"
+            Item "The Shrapnel Shell"
+            Item "Potato of Labor"
+            ItemModel
+            {
+                ItemName "Potato of Labor"
+                Model "models/bots/gameplay_cosmetic/light_demo_on.mdl"
+            }
+
+            CharacterAttributes
+            {
+                "move speed bonus" 0.8
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "override footstep sound set" 7
+            }
+
+            FireInput
+            {
+                Target HiTechRageEffect
+                Action StartTouch
+                Param !activator
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+
+            SpawnTemplate
+            {
+                Name Wave7DetonatorEffect
+                Bone bip_spine_2
+            }
+
+            InterruptAction
+            {
+                Target "W7BombTarget"
+                Distance 50
+                Delay 0.1
+                Duration 0
+                Repeats 1
+                Cooldown -1
+                WaitUntilDone 1
+                OnDoneChangeAttributes "DeployBomb"
+            }
+
+            ChangeAttributes
+            {
+                Name "DeathDetonation"
+                Delay 0
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 500
+            }
+                    
+            EventChangeAttributes
+            {
+                DeployBomb
+                {
+                    ActionOverride Idle
+                        
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 0.001
+                        "no_jump" 1
+                    }
+
+                    FireInput
+                    {
+                        Target W7DeathDetonationRelay
+                        Action Disable
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput
+                    {
+                        Target W7WallDetonationRelay
+                        Action Trigger
+                        Delay 0.1
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                DeathDetonation
+                {
+                    ActionOverride Idle
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 0.001
+                        "no_jump" 1
+                    }
+
+                    FireInput
+                    {
+                        Target W7BombSecondWind
+                        Action Start
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput
+                    {
+                        Target !self
+                        Action SetHealth
+                        Param 500
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target W7WallDetonationRelay
+                        Action Disable
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput
+                    {
+                        Target W7DeathDetonationRelay
+                        Action Trigger
+                        Delay 0.1
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }
+        T_TFBot_Scout_Bat_Throw
+        {
+            Name "Bat-Throwing Scout"
+            Class Scout
+            WeaponRestrictions PrimaryOnly
+            Skill Hard
+            Health 300
+            Scale 1.1
+            ClassIcon scout_batsaber_nys
+                
+            Item "BatsaberThrow" [$SIGSEGV]
+            Item "Batsaber"
+
+            Item "Cadet Visor"
+            Item "Orion's Belt"
+            Item "The Caffeine Cooler"
+            Item "Flak Jack"
+
+            CharacterAttributes
+            {
+                "move speed bonus" 0.8
+            }
+
+            ItemAttributes
+            {
+                ItemName "Batsaber"
+                "is_passive_weapon" 1
+            }
+
+            ShootTemplate
+            {
+                Name RotatingBatsaberAsset
+                AttachToProjectile 1
+                ItemName "BatsaberThrow" [$SIGSEGV]
+            }
+        }
+        T_TFBot_Giant_Pyro_Phlogistinator
+        {
+            Class Pyro
+            Skill Expert
+            Health 20000
+            Scale 1.75
+            Name "Giant Phlogistinator Pyro"
+            ClassIcon pyro_phlog_v2_giant
+            Attributes SpawnWithFullCharge
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+
+            Item "The Phlogistinator"
+
+            Item "Propaniac"
+            Item "Potato of Labor"
+
+            ItemModel
+            {
+                ItemName "Potato of Labor"
+                Model "models/player/items/pyro/bio_fireman.mdl"
+            }
+                
+            CharacterAttributes
+            {
+                "move speed bonus" 0.5
+                "damage force reduction" 0.5
+                "airblast vulnerability multiplier" 0.5
+                "override footstep sound set" 6
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Phlogistinator"
+                "increase buff duration" 9.0
+            }
+
+            FireWeapon
+            {
+                Delay 2
+                Cooldown 2
+                Repeats 0
+                IfSeeTarget 1
+                Duration 0.5
+                Type Secondary
+            }
+        }
+        T_TFBot_Spy_Architect
+        {
+            Class Spy
+            Skill Expert
+            Health 50000
+            Scale 1.5
+            Name "The Architect"
+            ClassIcon spy_boss_architect_kai
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+
+            UseHumanAnimations 1
+            AlwaysGlow 1
+            Action Mobber
+
+            Item "Showstopper"
+            Item "Le Frosteaux"
+            Item "Graybanns"
+            Item "A Hat to Kill For"
+            Item "The Idea Tube"
+            Item "Pip-Boy"
+
+            SpawnTemplate Wave8BossMainAssets
+            SpawnTemplate Wave8BossTeleportationAssets
+
+            CharacterAttributes
+            {
+                "cannot disguise" 1
+                "move speed bonus" 0.8
+                "damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"override footstep sound set" 5
+                "voice pitch scale" 0
+            }
+
+            FireInput
+            {
+                Target !self
+                Action $SetLocalOrigin
+                Param "-1536 1606 -94"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+
+            FireInput // To Start the Attack Pattern
+            {
+                Target !self
+                Action $ChangeAttributes
+                Param Phase1MainRevolverAttack
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+
+            EventChangeAttributes
+            {
+                //// PHASE 1 ////
+                Phase1MainRevolverAttack // His Favourite Gun (Basically Faster Stock)
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Item "TTG Sam Revolver"
+                    Item "TF_WEAPON_KNIFE"
+
+                    ItemAttributes
+                    {
+                        ItemName "TTG Sam Revolver"
+                        "fire rate bonus" 0.75
+                        "faster reload rate" 0.5
+                    }
+
+                    InterruptAction // Stay at the Front Nerd
+					{
+						Target "-1536 1606 -191"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+
+                    FireInput
+                    {
+                        Target !self
+                        Action $ChangeAttributes
+                        Param Phase1BurstRevolverAttack
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                Phase1BurstRevolverAttack // Burst of 6 Shots, Less Accurate
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Item "The Diamondback"
+
+                    ItemAttributes
+                    {
+                        ItemName "The Diamondback"
+                        "fire rate bonus" 0.1
+                        "spread penalty" 1.5
+                    }
+
+                    InterruptAction // Stay at the Front Nerd
+					{
+						Target "-1536 1606 -191"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+
+                    FireInput
+                    {
+                        Target !self
+                        Action $ChangeAttributes
+                        Param Phase1ThrowingKnivesAttack
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                Phase1ThrowingKnivesAttack // Like the Bat Throwing Scouts
+                {
+                    WeaponRestrictions SecondaryOnly
+                    Item "ThrowingKnife" [$SIGSEGV]
+                    Item "The Big Earner"
+                    
+                    ItemAttributes
+                    {
+                        ItemName "The Big Earner"
+                        "max health additive bonus" 0
+                        "is_passive_weapon" 1
+                    }
+
+                    ShootTemplate
+                    {
+                        Name Wave8BossThrowingKnifeAssets
+                        AttachToProjectile 1
+                        ItemName "ThrowingKnife" [$SIGSEGV]
+                    }
+
+                    FireWeapon
+                    {
+                        Type "Primary"
+                        Duration 1
+                        Delay 0.5
+                        Repeats 0
+                        Cooldown -1
+                        IfSeeTarget 1
+                        MinTargetRange	1
+                        MaxTargetRange	1200
+                    }
+
+                    InterruptAction // Stay at the Front Nerd
+					{
+						Target "-1536 1606 -191"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+
+                    FireInput
+                    {
+                        Target !self
+                        Action $ChangeAttributes
+                        Param Phase1MainRevolverAttack
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                Phase1SapperThrowingAttack // Throws Sappers with AOE Zapping
+                {
+                    WeaponRestrictions SecondaryOnly
+                    Item "TF_WEAPON_BUILDER_SPY"
+
+                }
+            }
+        }
+    }
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster (Wave 1-3)
+    {
+        Objective DestroySentries
+        Where spawnbot_doora1_giant [$SIGSEGV]
+        BeginAtWave 1
+        RunForThisManyWaves 3
+        DesiredCount 1
+
+        InitialCooldown 30
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        }   
+    }
+    Mission // Sniper (Wave 4)
+    {
+        Objective Sniper
+        Where spawnbot_A_route_giant [$SIGSEGV]
+        BeginAtWave 4
+        RunForThisManyWaves 1
+        DesiredCount 2
+
+        InitialCooldown 8
+        CooldownTime 32
+
+        TFBot
+        {
+            Class Sniper
+        }
+    }
+    Mission // Sentry Buster (Wave 4-5)
+    {
+        Objective DestroySentries
+        Where spawnbot_breach_giant [$SIGSEGV]
+        BeginAtWave 4
+        RunForThisManyWaves 2
+        DesiredCount 1
+
+        InitialCooldown 30
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        } 
+    }
+    Mission // Sentry Buster (Wave 6-8)
+    {
+        Objective DestroySentries
+        Where spawnbot_right_tank [$SIGSEGV]
+        BeginAtWave 6
+        RunForThisManyWaves 3
+        DesiredCount 1
+
+        InitialCooldown 30
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        } 
+    }
+    Mission // Spy (Wave 6)
+    {
+        Objective Spy
+        Where spawnbot_right
+        BeginAtWave 6
+        RunForThisManyWaves 1
+        DesiredCount 2
+
+        InitialCooldown 8
+        CooldownTime 32
+
+        TFBot
+        {
+            Class Spy
+        }
+    }
+    Mission // Sniper (Wave 7)
+    {
+        Objective Sniper
+        Where spawnbot_left_tank
+        BeginAtWave 7
+        RunForThisManyWaves 1
+        DesiredCount 2
+
+        InitialCooldown 16
+        CooldownTime 32
+
+        TFBot
+        {
+            Class Sniper
+        }
+    }
+    Mission // Engineer (Wave 7-8)
+    {
+        Objective Engineer
+        Where spawnbot_right
+        BeginAtWave 7
+        RunForThisManyWaves 1
+        DesiredCount 1
+
+        InitialCooldown 32
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_Engineer_Sentry_Teleporter
+            Attributes TeleportToHint
+            TeleportWhere spawnbot_right
+            TeleportWhere spawnbot_left
+            TeleportWhere spawnbot_left_tank
+            TeleportWhere spawnbot_right_tank
+        }
+    }
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Executive Override (Adv)`)
+                    EntFire(`Wave1LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave1SetupRelay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`C1_door_unlock_relay`, `Trigger`)
+                    EntFire(`B1_door_unlock_relay`, `Trigger`)
+                    EntFire(`A2_door_unlock_relay`, `Trigger`)
+                    EntFire(`A1_door_unlock_relay`, `Trigger`)
+                    EntFire(`A1_door_barrier`, `Enable`)
+                    EntFire(`B1_door_barrier`, `Enable`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                    EntFire(`C1_door_unlock_relay`, `Trigger`)
+                  "
+		}
+
+        // Subwave 1
+        WaveSpawn // 16 Shotgun Heavies on Door B1
+        {
+            Name "Wave1_Subwave1_Shotguns"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Shotgun
+                Name "Shotgun Heavy"
+            }
+        }
+        WaveSpawn // 16 Pyros on Door B1 and A1
+        {
+            Name "Wave1_Subwave1_Pyros"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Where spawnbot_doora1 [$SIGSEGV]
+            RandomSpawn 1
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 36
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 8 Soldiers on Door B1
+        {
+            Name "Wave1_Subwave2_Soldiers"
+            WaitForAllSpawned "Wave1_Subwave1_Shotguns"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 48
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+            }
+
+        }
+        WaveSpawn // 8 Scouts on Door B1 and A1
+        {
+            Name "Wave1_Subwave2_Scouts"
+            WaitForAllSpawned "Wave1_Subwave1_Shotguns"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Where spawnbot_doora1 [$SIGSEGV]
+            RandomSpawn 1
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+        WaveSpawn // 12 Soldiers on Door B1
+        {
+            Name "Wave1_Subwave2_Soldiers2"
+            WaitForAllSpawned "Wave1_Subwave2_Soldiers"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 2
+            TotalCurrency 48
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+            }
+        }
+        WaveSpawn // 12 Scouts on Door A1
+        {
+            Name "Wave1_Subwave2_ScoutFlank"
+            WaitForAllSpawned "Wave1_Subwave2_Scouts"
+            Where spawnbot_doora1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 2 GPyros on Door B1
+        {
+            Name "Wave1_Subwave3_GPyro"
+            WaitForAllSpawned "Wave1_Subwave2_Soldiers2"
+            Where spawnbot_doorb1_giant [$SIGSEGV]
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 16
+            TotalCurrency 64
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Pyro
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // Support Bonk Scouts on Door B1
+        {
+            Name "Wave1_Subwave3_BonkScouts"
+            WaitForAllSpawned "Wave1_Subwave2_Soldiers2"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Support 1
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 2
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave2LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave2SetupRelay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`C1_door_unlock_relay`, `Trigger`)
+                    EntFire(`B1_door_unlock_relay`, `Trigger`)
+                    EntFire(`A2_door_unlock_relay`, `Trigger`)
+                    EntFire(`A1_door_unlock_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        // Subwave 1
+        WaveSpawn // 3 GDemos on Door B1
+        {
+            Name "Wave2_Subwave1_GDemo"
+            Where spawnbot_doorb1_giant [$SIGSEGV]
+            TotalCount 3
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 16
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demo_RapidFire
+                Name "Giant Demoman"
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 16 Heavies on Door B1 and A1
+        {
+            Name "Wave2_Subwave1_Heavies"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Where spawnbot_doora1 [$SIGSEGV]
+            TotalCount 24
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0.05
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 Major League on Door B1
+        {
+            Name "Wave2_Subwave2_MajorLeague"
+            WaitForAllSpawned "Wave2_Subwave1_GDemo"
+            Where spawnbot_doorb1_giant [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 20 Demomen on Doors B1 and A1
+        {
+            Name "Wave2_Subwave2_Demomen"
+            WaitForAllSpawned "Wave2_Subwave1_GDemo"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Where spawnbot_doora1 [$SIGSEGV]
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0.1
+            TotalCurrency 100
+
+            TFBot
+            {
+                Class Demoman
+                Skill Normal
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 3 GSoldiers on Door B1
+        {
+            Name "Wave2_Subwave3_GSoldier"
+            WaitForAllSpawned "Wave2_Subwave2_MajorLeague"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 3
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 120
+            
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 16 Scouts and 16 Demomen on Door B1
+        {
+            Name "Wave2_Subwave3_ScoutsandDemos"
+            WaitForAllSpawned "Wave2_Subwave2_MajorLeague"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 32
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            RandomChoice
+            {
+                Shuffle 1
+
+                TFBot
+                {
+                    Class Scout
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave3LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave3SetupRelay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`B1_door_unlock_relay`, `Trigger`)
+                    EntFire(`A2_door_unlock_relay`, `Trigger`)
+                    EntFire(`A1_door_unlock_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        //Subwave 1
+        WaveSpawn // 12 Flare Pyros on Doors B1 and A1
+        {
+            Name "Wave3_Subwave1_FlarePyros"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Where spawnbot_doora1 [$SIGSEGV]
+            RandomSpawn 1
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 12
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Flaregun
+            }
+        }
+        WaveSpawn // 3 Armoured Conches and 9 Black Boxes on Door B1
+        {
+            Name "Wave3_Subwave1_BlackBoxConchSquad"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 4
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 8
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Concheror
+                    Health 900
+                    Scale 1.4
+                    Name "Armoured Concheror Soldier"
+                    ClassIcon soldier_armored_conch
+
+                    InterruptAction
+                    {
+                        Target "-384 -1280 4"
+                        Delay 4
+                        Duration 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    CharacterAttributes
+                    {
+                        "deploy time decreased" 0.5
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_RocketShotgun
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_RocketShotgun
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_RocketShotgun
+                }
+            }
+        }
+        WaveSpawn // 12 Pyros on Door A1
+        {
+            Name "Wave3_Subwave1_Pyros"
+            Where spawnbot_doora1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GBurst and 2 Steel Gauntlets on Door A1
+        {
+            Name "Wave3_Subwave2_GBurst"
+            WaitForAllSpawned "Wave3_Subwave1_BlackBoxConchSquad"
+            Where spawnbot_doora1_giant [$SIGSEGV]
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            FirstSpawnWarningSound "vo/mvm_another_bomb06.mp3"
+
+            FirstSpawnOutput
+            {
+                Target W3BombIncoming
+                Action Show
+            }
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer_Reload
+                    Action Mobber
+                    Tag bot_giant
+
+                    AlwaysGlow 1
+
+                    SpawnTemplate
+                    {
+                        Name Wave3BombProp
+                        Bone bip_spine_2
+                    }
+                    SpawnTemplate
+                    {
+                        Name Wave3BombLogic1
+                    }
+
+                    InterruptAction
+                    {
+                        Target "1279 -2817 0"
+                        Delay 0.1
+                        Duration 2
+                        Repeats 1
+                        Cooldown 0
+                        WaitUntilDone 1
+                        OnDoneChangeAttributes "DeployBomb"
+                    }
+                    
+                    EventChangeAttributes
+                    {
+                        DeployBomb
+                        {
+                            ActionOverride Idle
+                            
+                            CharacterAttributes
+                            {
+                                "move speed bonus" 0.001
+                                "no_jump" 1
+                            }
+
+                            FireInput
+							{
+								Target !self
+								Action $PlaySequence
+								Param "melee_deploybomb"
+								Delay 0
+								Repeats 1
+								Cooldown -1
+							}
+							FireInput
+							{
+								Target tf_gamerules
+								Action PlayVO
+								Param "mvm/mvm_deploy_giant.wav"
+								Delay 0
+								Repeats 1
+								Cooldown -1
+							}
+                            FireInput
+                            {
+                                Target bomb_deploy_relay
+                                Action Trigger
+                                Delay 2
+                                Repeats 1
+                                Cooldown -1 
+                            }
+                        }
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+            }
+        }
+        WaveSpawn // 12 Scouts on Door B1
+        {
+            Name "Wave3_Subwave2_Scouts"
+            WaitForAllSpawned "Wave3_Subwave1_BlackBoxConchSquad"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 1
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+        WaveSpawn // 1 GCharged Soldier on Door B1
+        {
+            Name "Wave3_Subwave2_GCharged"
+            WaitForAllSpawned "Wave3_Subwave2_GBurst"
+            Where spawnbot_doorb1_giant [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Crit
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 16 Scouts on Door B1
+        {
+            Name "Wave3_Subwave2_Scouts"
+            WaitForAllSpawned "Wave3_Subwave2_GBurst"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 1
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+
+        //Subwave 3
+        WaveSpawn // 12 Shotgun Soldiers on Doors B1 and A1
+        {
+            Name "Wave3_Subwave3_ShotgunSoldiers"
+            WaitForAllSpawned "Wave3_Subwave2_GCharged"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            Where spawnbot_doora1 [$SIGSEGV]
+            RandomSpawn 1
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 12
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 32
+
+            StartDisabled 1
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+                WeaponRestrictions SecondaryOnly
+                ClassIcon heavy_shotgun
+                Name "Shotgun Soldier"
+            }
+        }
+        WaveSpawn // 3 Armoured Buffs and 9 Soldiers on Door B1
+        {
+            Name "Wave3_Subwave3_SoldierBuffSquad"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 8
+            TotalCurrency 40
+
+            StartDisabled 1
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+                    Health 900
+                    Scale 1.4
+                    Name "Armoured Buff Banner Soldier"
+                    ClassIcon soldier_armored_buff
+
+                    InterruptAction
+                    {
+                        Target "-384 -1280 4"
+                        Delay 4
+                        Duration 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    CharacterAttributes
+                    {
+                        "deploy time decreased" 0.5
+                    }
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+            }
+        }
+        WaveSpawn // 12 Demomen on Door A1
+        {
+            Name "Wave3_Subwave3_Demos"
+            Where spawnbot_doora1 [$SIGSEGV]
+            TotalCount 12
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            StartDisabled 1
+
+            TFBot
+            {
+                Class Demoman
+                Skill Normal
+            }
+        }
+
+        // Subwave 4
+        WaveSpawn // 1 GBurst Demo and 2 Steel Gauntlets on Door A1
+        {
+            Name "Wave3_Subwave4_GBurstDemo"
+            WaitForAllSpawned "Wave3_Subwave3_SoldierBuffSquad"
+            Where spawnbot_doora1_giant [$SIGSEGV]
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            FirstSpawnWarningSound "vo/mvm_another_bomb08.mp3"
+
+            FirstSpawnOutput
+            {
+                Target W3BombIncoming
+                Action Show
+            }
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demo_Burst
+                    Action Mobber
+                    Tag bot_giant
+
+                    AlwaysGlow 1
+
+                    SpawnTemplate
+                    {
+                        Name Wave3BombProp
+                        Bone bip_spine_2
+                    }
+                    SpawnTemplate
+                    {
+                        Name Wave3BombLogic2
+                    }
+
+                    InterruptAction
+                    {
+                        Target "1279 -2817 0"
+                        Delay 0.1
+                        Duration 2
+                        Repeats 1
+                        Cooldown 0
+                        WaitUntilDone 1
+                        OnDoneChangeAttributes "DeployBomb"
+                    }
+                    
+                    EventChangeAttributes
+                    {
+                        DeployBomb
+                        {
+                            ActionOverride Idle
+                            
+                            CharacterAttributes
+                            {
+                                "move speed bonus" 0.001
+                                "no_jump" 1
+                            }
+
+                            FireInput
+							{
+								Target !self
+								Action $PlaySequence
+								Param "melee_deploybomb"
+								Delay 0
+								Repeats 1
+								Cooldown -1
+							}
+							FireInput
+							{
+								Target tf_gamerules
+								Action PlayVO
+								Param "mvm/mvm_deploy_giant.wav"
+								Delay 0
+								Repeats 1
+								Cooldown -1
+							}
+                            FireInput
+                            {
+                                Target bomb_deploy_relay
+                                Action Trigger
+                                Delay 2
+                                Repeats 1
+                                Cooldown -1 
+                            }
+                        }
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+            }
+        }
+        WaveSpawn // 6 Heavies on Door B1
+        {
+            Name "Wave3_Subwave4_Heavies"
+            WaitForAllSpawned "Wave3_Subwave3_SoldierBuffSquad"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 2
+            TotalCurrency 16
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+        WaveSpawn // 1 GCharged Soldier on Door B1
+        {
+            Name "Wave3_Subwave4_GCharged"
+            WaitForAllSpawned "Wave3_Subwave4_GBurstDemo"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Crit
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 8 Heavies on Door B1
+        {
+            Name "Wave3_Subwave4_Heavies"
+            WaitForAllSpawned "Wave3_Subwave4_GBurstDemo"
+            Where spawnbot_doorb1 [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 2
+            TotalCurrency 16
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+
+        // Miniboss
+        WaveSpawn
+        {
+            Name "Wave3_MiniBossCondition"
+            WaitBeforeStarting 0
+
+            StartDisabled 1
+        }
+        WaveSpawn // 1 Giant Widowmaker Engineer next to Security Room
+        {
+            Name "Wave3_EngineerMiniboss"
+            WaitForAllSpawned "Wave3_MiniBossCondition"
+            Where spawnbot_A_route
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 64
+
+            TFBot
+            {
+                Name "Giant Widowmaker Engineer"
+                Class Engineer
+                ClassIcon engineer_widowmaker_shield_nys_giant
+                Health 8000
+                Scale 1.75
+                Skill Expert
+                Attributes MiniBoss
+                Attributes UseBossHealthBar
+                WeaponRestrictions PrimaryOnly
+                Action FetchFlag
+                Tag bot_giant
+
+                AlwaysGlow 1
+
+                Item "The Widowmaker"
+                
+                Item "Hazard Handler"
+                Item "Delldozer"
+
+                CharacterAttributes
+                {
+                    "move speed bonus"	0.5
+                    "damage force reduction" 0.6
+                    "airblast vulnerability multiplier" 0.6
+                    "override footstep sound set" 6
+                }
+            }
+        }
+        WaveSpawn // Shotgun Engibots on Support
+        {
+            Name "Wave3_EngineerMiniBossSupport"
+            WaitForAllSpawned "Wave3_EngineerMiniboss"
+            Where spawnbot_A_route
+            Support Limited
+            TotalCount 32
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Engineer
+                WeaponRestrictions PrimaryOnly
+                Skill Normal
+                Name "Shotgun Engineer"
+                ClassIcon engineer_shotgun_revamp
+                Action Mobber
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave4LockdownSetup`, `ForceSpawn`)
+                    EntFire(`W4SetupRelay`, `Trigger`)
+                    EntFire(`cylindrical_upgrades_deploy_relay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`W4BreachRelay`, `Trigger`)
+                    EntFire(`cylindrical_upgrades_retract_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        // Subwave 1
+        WaveSpawn // 1 Major League on Breach Left
+        {
+            Name "Wave4_Subwave1_MajorLeague"
+            Where spawnbot_breach_giant [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 7.95
+            WaitBetweenSpawns 16
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 8 Steel Gauntlets on Breach Left
+        {
+            Name "Wave4_Subwave1_Steels"
+            Where spawnbot_breach [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 8
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Fist
+            }
+        }
+        WaveSpawn // 8 Pyros on Breach Right
+        {
+            Name "Wave4_Subwave1_Pyros"
+            Where spawnbot_A_route_giant [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Pyro
+                Skill Normal
+
+                ItemAttributes
+                {
+                    ItemName "TF_WEAPON_FLAMETHROWER"
+                    "airblast disabled" 1
+                }
+            }
+        }
+        WaveSpawn // 1 GBurst and 2 Bigheal Medics on Breach Left
+        {
+            Name "Wave4_Subwave1_GBurst"
+            WaitForAllSpawned "Wave4_Subwave1_MajorLeague"
+            Where spawnbot_breach_giant [$SIGSEGV]
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 36
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer_Reload
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+            }
+        }
+        WaveSpawn // 8 Steel Gauntlets on Breach Right
+        {
+            Name "Wave4_Subwave1_Steels"
+            WaitForAllSpawned "Wave4_Subwave1_MajorLeague"
+            Where spawnbot_A_route_giant [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 8
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Fist
+            }
+        }
+        WaveSpawn // 8 Pyros on Breach Left
+        {
+            Name "Wave4_Subwave1_Pyros"
+            WaitForAllSpawned "Wave4_Subwave1_MajorLeague"
+            Where spawnbot_breach [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 1
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Pyro
+                Skill Normal
+
+                ItemAttributes
+                {
+                    ItemName "TF_WEAPON_FLAMETHROWER"
+                    "airblast disabled" 1
+                }
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GPyro and 2 Bigheal Medics on Breach Right
+        {
+            Name "Wave4_Subwave2_GPyroCombo"
+            WaitForAllSpawned "Wave4_Subwave1_GBurst"
+            Where spawnbot_A_route_giant [$SIGSEGV]
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+            }
+        }
+        WaveSpawn // 6 Soldiers on Breach Left (Swarm)
+        {
+            Name "Wave4_Subwave2_SoldierSwarm"
+            WaitForAllSpawned "Wave4_Subwave1_GBurst"
+            Where spawnbot_breach [$SIGSEGV]
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 30
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+            }
+        }
+        WaveSpawn // 8 Soldiers on Breach Left and Right (Stream)
+        {
+            Name "Wave4_Subwave2_SoldierStream"
+            WaitForAllSpawned "Wave4_Subwave2_SoldierSwarm"
+            Where spawnbot_breach [$SIGSEGV]
+            Where spawnbot_A_route_giant
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+            }
+        }
+        WaveSpawn // 6 Soldiers on Breach Right (Swarm)
+        {
+            Name "Wave4_Subwave2_SoldierSwarm2"
+            WaitForAllSpawned "Wave4_Subwave2_SoldierStream"
+            Where spawnbot_A_route_giant
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 1
+            WaitBetweenSpawns 0
+            TotalCurrency 30
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+            }
+        }
+        WaveSpawn // 1 GShotgun Pyro on Breach Right
+        {
+            Name "Wave4_Subwave2_GPyroCombo2"
+            WaitForAllSpawned "Wave4_Subwave2_GPyroCombo"
+            Where spawnbot_A_route_giant [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Pyro
+                WeaponRestrictions SecondaryOnly
+                ClassIcon heavy_shotgun_spammer_pda_giant
+                Name "Giant Rapid Shotgun Pyro"
+                Tag bot_giant
+
+                ItemAttributes
+                {
+                    ItemName "TF_WEAPON_SHOTGUN_PYRO"
+                    "faster reload rate" -0.8
+                }
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 GPyro and 2 Bigheal Medics on Breach Right
+        {
+            Name "Wave4_Subwave3_GPyroCombo"
+            WaitForAllDead "Wave4_Subwave2_GPyroCombo2"
+            Where spawnbot_A_route_giant [$SIGSEGV]
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+            }
+        }
+        WaveSpawn // 6 Burst Demos on Breach Left (Swarm)
+        {
+            Name "Wave4_Subwave3_BurstDemoSwarm"
+            WaitForAllSpawned "Wave4_Subwave2_GPyroCombo2"
+            Where spawnbot_breach [$SIGSEGV]
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 30
+
+            TFBot
+            {
+                Template T_TFBot_Demo_Burst
+            }
+        }
+        WaveSpawn // 8 Burst Demos on Breach Left and Right (Stream)
+        {
+            Name "Wave4_Subwave2_BurstDemoStream"
+            WaitForAllSpawned "Wave4_Subwave3_BurstDemoSwarm"
+            Where spawnbot_breach [$SIGSEGV]
+            Where spawnbot_A_route_giant
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Demo_Burst
+            }
+        }
+        WaveSpawn // 6 Burst Demos on Breach Right (Swarm)
+        {
+            Name "Wave4_Subwave3_BurstDemoSwarm2"
+            WaitForAllSpawned "Wave4_Subwave2_BurstDemoStream"
+            Where spawnbot_A_route_giant
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 1
+            WaitBetweenSpawns 0
+            TotalCurrency 30
+
+            TFBot
+            {
+                Template T_TFBot_Demo_Burst
+            }
+        }
+        WaveSpawn // 1 GShotgun Pyro on Breach Right
+        {
+            Name "Wave4_Subwave3_GPyroCombo2"
+            WaitForAllSpawned "Wave4_Subwave3_GPyroCombo"
+            Where spawnbot_A_route_giant [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Pyro
+                WeaponRestrictions SecondaryOnly
+                ClassIcon heavy_shotgun_spammer_pda_giant
+                Name "Giant Rapid Shotgun Pyro"
+                Tag bot_giant
+
+                ItemAttributes
+                {
+                    ItemName "TF_WEAPON_SHOTGUN_PYRO"
+                    "faster reload rate" -0.8
+                }
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave5LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave5SetupRelay`, `Trigger`)
+                    EntFire(`cylindrical_upgrades_deploy_relay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`Wave5StartRelay`, `Trigger`)
+                    EntFire(`cylindrical_upgrades_retract_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        // Subwave 1
+        WaveSpawn // 2 GConches and 6 Steel Gauntlets on Breach Left
+        {
+            Name "Wave5_Subwave1_GConches"
+            Where spawnbot_breach_giant [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 16
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Extended_Concheror
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+            }
+        }
+        WaveSpawn // 16 Phlog Pyros on Breach Left and Right
+        {
+            Name "Wave5_Subwave1_Pyros"
+            Where spawnbot_breach [$SIGSEGV]
+            Where spawnbot_A_route_giant
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 4
+            TotalCurrency 64
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Phlogistinator
+            }
+        }
+        WaveSpawn // 8 Bonk Scouts on Breach Right
+        {
+            Name "Wave5_Subwave1_BonkScouts"
+            Where spawnbot_A_route_giant
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 2 Rapid GDemos and 6 Rapid Fire Bowmen on Breach Left
+        {
+            Name "Wave5_Subwave2_GDemos"
+            WaitForAllSpawned "Wave5_Subwave1_GConches"
+            Where spawnbot_breach_giant [$SIGSEGV]
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 48
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Sniper_Huntsman_Spammer
+                    Name "Rapid Fire Bowman"
+                    ClassIcon sniper_bow_multi
+                }
+                TFBot
+                {
+                    Template T_TFBot_Sniper_Huntsman_Spammer
+                    Name "Rapid Fire Bowman"
+                    ClassIcon sniper_bow_multi
+                }
+                TFBot
+                {
+                    Template T_TFBot_Sniper_Huntsman_Spammer
+                    Name "Rapid Fire Bowman"
+                    ClassIcon sniper_bow_multi
+                }
+            }
+        }
+        WaveSpawn // 8 Heavies on Breach Right
+        {
+            Name "Wave5_Subwave2_Heavies"
+            Where spawnbot_A_route_giant
+            WaitForAllSpawned "Wave5_Subwave1_GConches"
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 8
+            TotalCurrency 64
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+        WaveSpawn // 8 Bonk Scouts on Breach Right
+        {
+            Name "Wave5_Subwave2_BonkScouts"
+            WaitForAllSpawned "Wave5_Subwave1_GConches"
+            Where spawnbot_A_route_giant
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 2 GHeaters on Breach Left
+        {
+            Name "Wave5_Subwave3_GHeaters"
+            WaitForAllSpawned "Wave5_Subwave2_GDemos"
+            Where spawnbot_breach_giant [$SIGSEGV]
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 40
+
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Heater
+                Name "Giant Heater Heavy"
+                Tag bot_giant
+            }
+
+        }
+        WaveSpawn // 1 Tank on Breach Right
+        {
+            Name "Wave5_Subwave3_Tank"
+            WaitForAllSpawned "Wave5_Subwave2_GDemos"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Tank
+            {
+                Name "tankboss"
+                Health 22000
+                Speed 75
+                StartingPathTrackNode "tank_path_A_forward"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+        WaveSpawn // 16 Demomen on Breach Left and Right
+        {
+            Name "Wave5_Subwave3_Demomen"
+            WaitForAllSpawned "Wave5_Subwave2_GDemos"
+            Where spawnbot_breach [$SIGSEGV]
+            Where spawnbot_A_route_giant
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 48
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+            }
+        }
+        WaveSpawn // Support Black Boxes on Breach Right
+        {
+            Name "Wave5_Subwave3_BlackBoxes"
+            WaitForAllSpawned "Wave5_Subwave2_GDemos"
+            Where spawnbot_A_route_giant
+            Support 1
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_RocketShotgun
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave6LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave6SetupRelay`, `Trigger`)
+                    EntFire(`securityroom_breach_barrier`, `Disable`)
+                    EntFire(`tf_gamerules`, `PlayVO`, `ambient/levels/labs/electric_explosion5.wav`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`carrier_door_front_open_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                    EntFire(`monorail_holograms_clear_relay`, `Trigger`)       
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 2 GRapids and 2 Uber Medics on Carrier
+        {
+            Name "Wave7_Subwave1_GRapidSquad"
+            Where spawnbot_right
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 16
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic
+                }
+            }
+        }
+        WaveSpawn // 16 Widowmakers on Carrier
+        {
+            Name "Wave6_Subwave1_Widowmakers"
+            Where spawnbot_right
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 64
+
+            TFBot
+            {
+                Name "Widowmaker Engineer"
+                Class Engineer
+                ClassIcon engineer_widowmaker_shield_nys
+                Skill Normal
+                Health 300
+                Scale 1.3
+                WeaponRestrictions PrimaryOnly
+                Action FetchFlag
+
+                Item "The Widowmaker"
+
+                Item "Hazard Handler"
+                Item "Delldozer"
+            }
+        }
+        WaveSpawn // 6 Demomen on Right Tank
+        {
+            Name "Wave6_Subwave1_Demomen"
+            Where spawnbot_right_tank
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 30
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+            }
+        }
+        WaveSpawn // 6 Demomen on Right Tank
+        {
+            Name "Wave6_Subwave1_Demomen"
+            Where spawnbot_right_tank
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 30
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 3 Super Steel Gauntlets on Carrier
+        {
+            Name "Wave6_Subwave2_SuperSteels"
+            WaitForAllSpawned "Wave7_Subwave1_GRapidSquad"
+            Where spawnbot_right
+            TotalCount 3
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 60
+
+            TFBot
+            {
+                Name "Super Steel Gauntlet Pusher"
+                Template T_TFBot_Giant_Boxing_Heavy
+                ClassIcon heavy_steelfist_pusher
+                Tag bot_giant
+                
+                Item "The Carl"
+                Item "Fists of Steel"
+
+                ItemAttributes
+                {
+                    ItemName "Fists of Steel"
+                    "damage causes airblast" 1
+                    "damage bonus" 1.5
+                }
+            }
+        }
+        WaveSpawn // 8 Soldiers and 8 Bigheal Medics on Right Tank
+        {
+            Name "Wave6_Subwave2_SoldierSquad"
+            WaitForAllSpawned "Wave7_Subwave1_GRapidSquad"
+            Where spawnbot_right_tank
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Soldier
+                    Skill Hard
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                    Name "Bigheal Medic"
+                }
+            }
+        }
+        WaveSpawn // 16 Banner Soldiers on Carrier
+        {
+            Name "Wave6_Subwave2_Conches"
+            WaitForAllSpawned "Wave7_Subwave1_GRapidSquad"
+            Where spawnbot_right
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Extended_Buff_Banner
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Monorail Tank on D Path
+        {
+            Name "Wave6_Subwave3_MonorailLeft"
+            WaitForAllSpawned "Wave6_Subwave2_SuperSteels"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Tank
+            {
+                Name "tankboss"
+                ClassIcon tank_monorail
+                Health 13000
+                Speed 75
+                StartingPathTrackNode "monorail_path_d"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target relay_monorail_hologram_D
+                Action Trigger
+            }
+        }
+        WaveSpawn // 1 Monorail Tank on C Path
+        {
+            Name "Wave6_Subwave3_MonorailRight"
+            WaitForAllSpawned "Wave6_Subwave2_SuperSteels"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 28
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Tank
+            {
+                Name "tankboss"
+                ClassIcon tank_monorail
+                Health 10000
+                Speed 75
+                StartingPathTrackNode "monorail_path_c"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target relay_monorail_hologram_C
+                Action Trigger
+            }
+        }
+
+        WaveSpawn // Support Giant FAN Scouts on Carrier
+        {
+            Name "Wave6_Subwave3_Support"
+            WaitForAllSpawned "Wave6_Subwave2_SuperSteels"
+            Where spawnbot_right
+            Support 1
+            TotalCount 4
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 48
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_FAN
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // Support Scouts on Carrier
+        {
+            Name "Wave6_Subwave3_Support"
+            WaitForAllSpawned "Wave6_Subwave2_SuperSteels"
+            Where spawnbot_right
+            Support 1
+            TotalCount 16
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 24
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+        WaveSpawn // Support Shortstops on Carrier
+        {
+            Name "Wave6_Subwave3_Support"
+            WaitForAllSpawned "Wave6_Subwave2_SuperSteels"
+            Where spawnbot_right
+            Support 1
+            TotalCount 16
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 32
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Shortstop
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave7LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave7A1Target`, `ForceSpawn`)
+                    EntFire(`Wave7SetupRelay`, `Trigger`)
+                    IncludeScript(`seel_ins.nut`,getroottable())
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`W7WallDetonationRelay`, `Enable`)
+                    EntFire(`W7DeathDetonationRelay`, `Enable`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        // Intro
+        WaveSpawn // 1 Volatile Detonator Demo on Left Tank
+        {
+            Name "Wave7_Intro_DetonatorDemo"
+            Where spawnbot_left_tank
+            Support Limited
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+
+            TFBot
+            {
+                Template T_TFBot_Demo_Detonator
+            }
+        }
+
+        WaveSpawn // Support Volatile Detonator Demos on Left Tank
+        {
+            Name "Wave7_Support_HitechDemo"
+            WaitForAllDead "Wave7_Intro_DetonatorDemo"
+            Where spawnbot_left_tank
+            Support 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawnsAfterDeath 12
+
+            TFBot
+            {
+                Template T_TFBot_Demo_Detonator
+            }
+            DoneOutput
+			{
+				Target BigNet
+				Action runscriptcode
+				Param "SINS.ChangeIconFlags(`demo_hitech_hyper_kai`,0)"
+			}
+        }
+
+        // Subwave 1
+        WaveSpawn // 3 GBurst Demos on Carrier
+        {
+            Name "Wave7_Subwave1_GBursts"
+            WaitForAllDead "Wave7_Intro_DetonatorDemo"
+            Where spawnbot_right
+            TotalCount 3
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 3.95
+            WaitBetweenSpawns 16
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demo_Burst
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 16 Bat-Flinging Scouts on Container
+        {
+            Name "Wave7_Subwave1_BatFlingerScouts"
+            WaitForAllDead "Wave7_Intro_DetonatorDemo"
+            Where spawnbot_left
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bat_Throw
+            }
+        }
+        WaveSpawn // 24 Heavies on Left and Right Tank
+        {
+            Name "Wave7_Subwave1_Heavies"
+            WaitForAllDead "Wave7_Intro_DetonatorDemo"
+            Where spawnbot_right_tank
+            Where spawnbot_left_tank
+            RandomSpawn 1
+            TotalCount 24
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 4
+            TotalCurrency 48
+
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 3 Colonels and 3 Uber Medics on Carrier
+        {
+            Name "Wave7_Subwave2_Colonels"
+            WaitForAllSpawned "Wave7_Subwave1_GBursts"
+            Where spawnbot_right
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_SlowBarrage
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic
+                }
+            }
+        }
+        WaveSpawn // 20 Phlog Pyros on Left and Right Tank
+        {
+            Name "Wave7_Subwave2_Phlogs"
+            WaitForAllSpawned "Wave7_Subwave1_GBursts"
+            Where spawnbot_left_tank
+            Where spawnbot_right_tank
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 8
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Phlogistinator
+            }
+        }
+        WaveSpawn // 16 Demomen on Carrier and Container
+        {
+            Name "Wave7_Subwave2_Demomen"
+            WaitForAllSpawned "Wave7_Subwave1_GBursts"
+            Where spawnbot_right
+            Where spawnbot_left
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 2
+            TotalCurrency 32
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 2 GHeavies and 8 Battalion Soldiers on Carrier
+        {
+            Name "Wave7_Subwave3_GHeavies"
+            WaitForAllSpawned "Wave7_Subwave2_Colonels"
+            Where spawnbot_right
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 100
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavyweapons
+                    Tag bot_giant
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion
+
+                    CharacterAttributes
+                    {
+                        "deploy time decreased" 0.5
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion
+
+                    CharacterAttributes
+                    {
+                        "deploy time decreased" 0.5
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion
+
+                    CharacterAttributes
+                    {
+                        "deploy time decreased" 0.5
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion
+
+                    CharacterAttributes
+                    {
+                        "deploy time decreased" 0.5
+                    }
+                }
+            }
+        }
+        WaveSpawn // 24 Charged Soldiers on Container
+        {
+            Name "Wave7_Subwave3_ChargedSoldiers"
+            WaitForAllSpawned "Wave7_Subwave2_Colonels"
+            Where spawnbot_left
+            TotalCount 24
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 48
+
+            TFBot
+            {
+                Name "Charged Soldier"
+                Class Soldier
+                ClassIcon soldier_crit
+                Skill Normal
+                Attributes AlwaysCrit
+
+                Item "The Original"
+
+                ItemAttributes
+                {
+                    ItemName "The Original"
+                    "faster reload rate" 0.2
+                    "fire rate bonus" 2
+                    "Projectile speed increased" 0.5
+                }
+            }
+        }
+        WaveSpawn // 8 Support Persians on Left and Right Tank
+        {
+            Name "Wave7_Subwave3_Demoknights"
+            WaitForAllSpawned "Wave7_Subwave2_Colonels"
+            Where spawnbot_left_tank
+            Where spawnbot_right_tank
+            Support Limited
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 48
+
+            TFBot
+            {
+                Name "Persian Demoknight"
+                Class Demoman
+                ClassIcon demoknight_persian_nys
+                Skill Hard
+                WeaponRestrictions MeleeOnly
+
+                Item "Ali Baba's Wee Booties"
+                Item "The Splendid Screen"
+                Item "The Persian Persuader"
+
+                Item "Sultan's Ceremonial"
+
+                CharacterAttributes
+                {
+                    "critboost on kill" 3
+                }
+
+                ItemAttributes
+                {
+                    ItemName "The Splendid Screen"
+                    "Attack not cancel charge" 1
+                }
+            }
+        }
+
+        // Subwave 4
+        WaveSpawn // 1 Giant Phlogistinator on Carrier
+        {
+            Name "Wave7_Subwave4_GiantPhlogistinator"
+            WaitForAllSpawned "Wave7_Subwave3_GHeavies"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 24
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Pyro_Phlogistinator
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // Support Persians on Left and Right Tank
+        {
+            Name "Wave7_Subwave4_DemoknightsContinued"
+            WaitForAllSpawned "Wave7_Subwave3_GHeavies"
+            Where spawnbot_left_tank
+            Where spawnbot_right_tank
+            Support 1
+            TotalCount 24
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 24
+            WaitBetweenSpawns 2
+            TotalCurrency 72
+
+            TFBot
+            {
+                Name "Persian Demoknight"
+                Class Demoman
+                ClassIcon demoknight_persian_nys
+                Skill Hard
+                WeaponRestrictions MeleeOnly
+
+                Item "Ali Baba's Wee Booties"
+                Item "The Splendid Screen"
+                Item "The Persian Persuader"
+
+                Item "Sultan's Ceremonial"
+
+                CharacterAttributes
+                {
+                    "critboost on kill" 3
+                }
+
+                ItemAttributes
+                {
+                    ItemName "The Splendid Screen"
+                    "Attack not cancel charge" 1
+                }
+            }
+        }
+        WaveSpawn // Support Conches on Carrier and Container
+        {
+            Name "Wave7_Subwave4_Conches"
+            WaitForAllSpawned "Wave7_Subwave3_GHeavies"
+            Where spawnbot_left
+            Where spawnbot_right
+            Support 1
+            TotalCount 24
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 24
+            WaitBetweenSpawns 2
+            TotalCurrency 72
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Extended_Concheror
+                Skill Hard
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`Wave8LockdownSetup`, `ForceSpawn`)
+                    EntFire(`Wave8SetupRelay`, `Trigger`)
+                    IncludeScript(`seel_ins.nut`,getroottable())
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`Wave8BossIntroRelay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        // Boss Phase 1
+        WaveSpawn // Spy Boss
+        {
+            Name "Wave8_Boss"
+            Where spawnbot_spy_boss [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            
+            StartDisabled 1
+
+            TFBot
+            {
+                Template T_TFBot_Spy_Architect
+            }
+        }
+    }
+}

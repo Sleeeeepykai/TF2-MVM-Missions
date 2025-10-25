@@ -1,0 +1,815 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 1000
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    WaveStartCountdown 5
+
+    PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
+
+    // Boss Spawn
+    ExtraSpawnPoint
+    {
+        Name "himspawn"
+        TeamNum 3
+        X	"-2037"                     
+        Y	"-1242"               
+        Z	"-961"        
+    }
+
+    // Boss Weapons
+    CustomWeapon
+    {
+        "RocketRainLauncher"
+        {
+            OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+            "projectile spread angle penalty" 45
+            "projectile speed increased" 0.45
+        }
+        "ShovelThrow"
+        {
+            OriginalItemName "The Rescue Ranger"
+            "projectile gravity" -1
+            "projectile speed increased" 0.6
+
+            "penetrate teammates" 1
+            "projectile penetration" 1
+            "arrow hit kill time" 0.1
+
+            "no damage falloff" 1
+            "damage bonus" 1.5
+
+            "fire rate bonus" 1
+            "faster reload rate" -1
+
+            "custom item model" "models/weapons/c_models/c_market_gardener/c_market_gardener.mdl"
+            "custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+            "custom weapon fire sound" "common/null.wav"
+            "custom kill icon" "marketgardener"
+        }
+    }
+
+    Templates
+    {
+        T_TFBot_JohnBoss
+        {
+            Name "John Boss"
+            Class Soldier
+            ClassIcon soldier_hellmet_lite
+            Skill Expert
+            Scale 2
+            Health 75000
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            UseHumanAnimations 1
+            Action Mobber
+
+            Item "The Killer's Kit"
+            Item "EOTL_Coldfront Curbstompers"
+            Item "The Hellmet"
+            Item "Batter's Bracers"
+
+            SpawnTemplate RocketRainAssets
+            SpawnTemplate GrenadeExplosionAssets
+            SpawnTemplate ExtraAssets
+            SpawnTemplate BossLogic
+
+            FireInput
+            {
+                Target "phase1attackpicker"
+                Action Enable
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+            FireInput
+            {
+                Target "phase1attackloadout"
+                Action PickRandomShuffle
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+            CharacterAttributes
+            {
+                "move speed bonus" 0.4
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "airblast vertical vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+                "cancel falling damage" 1
+            }
+
+            EventChangeAttributes
+            {
+                // Rocket Rain Attack
+                RocketRain
+                {   
+                    WeaponRestrictions PrimaryOnly
+                    Attributes HoldFireUntilFullReload
+                    Item "The Liberty Launcher"
+                    Item "The Buff Banner"
+                    Item "The Market Gardener"
+
+                    FireInput // Gives Full Banner Meter
+                    {
+                        Target !self
+                        Action RunScriptCode
+                        Param "self.SetRageMeter(100)"
+                        Repeats 1
+                        Delay 0
+                    }
+                    FireInput // Plays Banner Sound
+                    {
+                        Target player
+                        Action $PlaySoundtoSelf
+                        Param "weapons/buff_banner_horn_blue.wav"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enables Warning Indicators
+                    {
+                        Target rocketrainindicator*
+                        Action Enable
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Resets Animation
+                    {
+                        Target rocketrainindicator*
+                        Action SetAnimation
+                        Param "start"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Plays Warning Sound
+                    {
+                        Target player
+                        Action $PlaySoundtoSelf
+                        Param "ui/rd_2base_alarm.wav"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Plays Final Warning Sound
+                    {
+                        Target player
+                        Action $PlaySoundtoSelf
+                        Param "mvm/mvm_cpoint_klaxon.wav"
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Changes Warning Indicators to Red
+                    {
+                        Target rocketrainindicator*
+                        Action RunScriptCode
+                        Param "self.SetSkin(5)"
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Rotates Rocket Rain Points
+                    {
+                        Target rocketrainrotator
+                        Action Start
+                        Delay 6
+                    }
+                    FireInput // Triggers Rocket Rain
+                    {
+                        Target rocketrainlauncher1
+                        Action $StartFiring
+                        Delay 6
+                    }
+                    FireInput // Triggers Rocket Rain
+                    {
+                        Target rocketrainlauncher2
+                        Action $StartFiring
+                        Delay 6.25
+                    }
+                    FireInput // Triggers Rocket Rain
+                    {
+                        Target rocketrainlauncher3
+                        Action $StartFiring
+                        Delay 6.5
+                    }
+                    FireInput // Triggers Rocket Rain
+                    {
+                        Target rocketrainlauncher4
+                        Action $StartFiring
+                        Delay 6.75
+                    }
+                    FireInput // Stops Rotator
+                    {
+                        Target rocketrainrotator
+                        Action StopAtStartPos
+                        Delay 16
+                    }
+                    FireInput // Disables Warning Indicators
+                    {
+                        Target rocketrainindicator*
+                        Action Disable
+                        Delay 16
+                    }
+                    FireInput // Stops Rocket Rain
+                    {
+                        Target rocketrainlauncher1
+                        Action $StopFiring
+                        Delay 16
+                    }
+                    FireInput // Stops Rocket Rain
+                    {
+                        Target rocketrainlauncher2
+                        Action $StopFiring
+                        Delay 16.25
+                    }
+                    FireInput // Stops Rocket Rain
+                    {
+                        Target rocketrainlauncher3
+                        Action $StopFiring
+                        Delay 16.5
+                    }
+                    FireInput // Stops Rocket Rain
+                    {
+                        Target rocketrainlauncher4
+                        Action $StopFiring
+                        Delay 16.75
+                    }
+                    FireInput // Changes Warning Indicators to Blue
+                    {
+                        Target rocketrainindicator*
+                        Action RunScriptCode
+                        Param "self.SetSkin(1)"
+                        Delay 16.8
+                    }
+                    FireInput
+                    {
+                        Target "phase1attackpicker"
+                        Action Trigger
+                        Delay 17
+                        Repeats 1
+                        Cooldown 17.1
+                    }
+                }
+                // Grenade Explosion Attack
+                Grenade
+                {
+                    WeaponRestrictions MeleeOnly
+                    Item "The Gunboats"
+                    Item "The Equalizer"
+
+                    Taunt // Executes Grenade Taunt
+                    {
+                        Delay 0.25
+                        Cooldown 0.25
+                        Repeats 0
+                    }
+                    FireInput // Creates Explosion Particles
+                    {
+                        Target bigexplosioneffect
+                        Action Start
+                        Delay 3.8
+                    }
+                    FireInput // Stops Explosion Particles
+                    {
+                        Target bigexplosioneffect
+                        Action Stop
+                        Delay 4.3
+                    }
+                    FireInput // Creates Explosion Sound
+                    {
+                        Target bigexplosionsound
+                        Action PlaySound
+                        Delay 3.8
+                    }
+                    FireInput // Creates Explosion Shake
+                    {
+                        Target generic_quake_long
+                        Action StartShake
+                        Delay 3.8
+                    }
+                    FireInput // Triggers Explosion Damage
+                    {
+                        Target theworkingone
+                        Action Enable
+                        Delay 3.8
+                    }
+                    FireInput // Disables Explosion Damage
+                    {
+                        Target theworkingone
+                        Action Disable
+                        Delay 4
+                    }
+                    FireInput
+                    {
+                        Target "phase1attackpicker"
+                        Action Trigger
+                        Delay 5
+                        Repeats 1
+                        Cooldown 5.1
+                    }
+                }
+                // Rocket Jump to Air Barrage Attack
+                RocketJumptoBarrage
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Item "Rocket Jumper"
+                    Item "The B.A.S.E. Jumper"
+                    Item "The Market Gardener"
+                    RocketJump 1
+
+                    AimOffset "0 0 -10000"
+                    
+                    ItemAttributes
+                    {
+                        ItemName "Rocket Jumper"
+                        "self dmg push force increased" 50
+                    }
+
+                    FireWeapon // Makes the Boss Crouch
+                    {
+                        Delay 0.3
+                        Duration 0.25
+                        Type "Crouch"
+                    }
+                    FireWeapon // Makes the Boss Fire
+                    {
+                        Delay 0.5
+                        Cooldown 0.02
+                        Repeats 1
+                        Duration 0.25
+                        Type "Primary"
+                    }
+                    FireInput
+                    {
+                        Target pop_interface
+                        Action ChangeBotAttributes
+                        Param RocketJumpBarrage
+                        Delay 2
+                    }
+                }
+                // Rocket Jump Air Barrage
+                RocketJumpBarrage
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Attributes SuppressFire
+                    Attributes HoldFireUntilFullReload
+                    Item "The Direct Hit"
+                    Item "The B.A.S.E. Jumper"
+                    Item "The Market Gardener"
+
+                    FireWeapon
+                    {
+                        Delay 0.25
+                        Duration 0.25
+                        Type "Primary"
+                    }
+                    FireWeapon
+                    {
+                        Delay 3
+                        Duration 0.25
+                        Type "Jump"
+                    }
+
+                    HomingRockets
+                    {
+                        IgnoreDisguisedSpies 1
+                        IgnoreStealthedSpies 1
+                        RocketSpeed 0.25
+                        TurnPower 90
+                        MaxAimError 90
+                        AimTime 1.5
+                        Acceleration 9999
+                        AccelerationTime 9999
+                        AccelerationStartTime 1.5
+                        FollowCrosshair 1
+                    }
+
+                    ItemAttributes
+                    {
+                        ItemName "The Direct Hit"
+                        "spread angle pattern" "-60 90 0|-45 90 0|-30 90 0|-15 90 0|0 90 0|-60 -90 0|-45 -90 0|-30 -90 0|-15 -90 0|0 -90 0"
+                        "mult projectile count" 10
+                        "ignores other projectiles" 1
+                        "projectile trail particle" "halloween_rockettrail"
+                        "projectile no deflect" 1
+                    }
+
+                    FireInput
+                    {
+                        Target "phase1attackpicker"
+                        Action Trigger
+                        Delay 5
+                        Repeats 1
+                        Cooldown 5.1
+                    }
+                }
+                // Shovel Throwing
+                ShovelThrowing
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Attributes SuppressFire
+                    Item "ShovelThrow" [$SIGSEGV]
+                    Item "The Market Gardener"
+
+                    ItemAttributes
+                    {
+                        ItemName "The Market Gardener"
+                        "is_passive_weapon" 1
+                    }
+                    ShootTemplate
+                    {
+                        Name RotatingShovelAsset
+                        AttachToProjectile 1
+                        ItemName "ShovelThrow" [$SIGSEGV]
+                    }
+
+                    Addcond
+                    {
+                        Index 56
+                        Duration 6
+                    }
+
+                    FireWeapon
+                    {
+                        Type "Primary"
+                        Cooldown 0.75
+                        Duration 0.1
+                        Repeats 6
+                        Delay 0.75
+                        IfSeeTarget 1
+                    }
+
+                    FireInput
+                    {
+                        Target "phase1attackpicker"
+                        Action Trigger
+                        Delay 6
+                        Repeats 1
+                        Cooldown 6.1
+                    }
+                }
+                // Bazooka Barrage
+                BazookaBarrage
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Attributes AlwaysFireWeapon
+                    Item "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                    Item "TF_WEAPON_SHOTGUN_SOLDIER"
+                    Item "The Market Gardener"
+
+                    Item "The Beggar's Bazooka"
+                    ItemAttributes
+                    {
+                        ItemName "The Beggar's Bazooka"
+                        "is_passive_weapon" 1
+                    }
+
+                    ItemAttributes
+                    {
+                        ItemName "The Beggar's Bazooka"
+                        "ignores other projectiles" 1
+                        "clip size upgrade atomic" 36
+                        "fire rate bonus" 0.4
+                        "projectile spread angle penalty" 10
+                        "projectile speed increased" 0.5
+                        "faster reload rate" -1
+                    }
+
+                    FireInput
+                    {
+                        Target "phase1attackpicker"
+                        Action Trigger
+                        Delay 10
+                        Repeats 1
+                        Cooldown 10.1
+                    }
+                }
+                // Cow Mangler Laser
+                BigLaserBeam
+                {
+                    WeaponRestrictions PrimaryOnly
+                    Attributes SuppressFire
+                    Item "The Cow Mangler 5000"
+                    Item "The Concheror"
+                    Item "The Market Gardener"
+
+                    FireInput // Gives Full Banner Meter
+                    {
+                        Target !self
+                        Action RunScriptCode
+                        Param "self.SetRageMeter(100)"
+                        Repeats 1
+                        Delay 0
+                    }
+                    FireInput // Plays Warning Sound
+                    {
+                        Target player
+                        Action $PlaySoundToSelf
+                        Param "mvm/mvm_cpoint_klaxon.wav"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput
+                    {
+                        Target lasercharge
+                        Action Start
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }
+    }
+
+    PointTemplates
+    {
+        RocketRainAssets
+        {
+            info_target // Fake Parent for Rocket Rain
+            {
+                "targetname" "rocketrainparent"
+                "origin"     "0 0 0"
+                "$modules" "fakeparent"
+                "$positiononly" "1"
+            }
+            func_rotating // Rocket Rain Rotator
+            {
+                "targetname" "rocketrainrotator"
+                "parentname" "rocketrainparent"
+                "origin" "0 0 0"
+                "fanfriction" "100"
+                "maxspeed" "45"
+                "spawnflags" "64"
+                "$modules" "fakeparent"
+                "$positiononly" "1"
+            }
+            OnSpawnOutput // To Set Owner to Boss
+            {
+                Target "rocketrainparent"
+                Action "$SetOwner"
+                Param "!activator"
+            }
+            OnSpawnOutput // To Fake Parent to Boss
+            {
+                Target "rocketrainparent"
+                Action "$SetFakeParent"
+                Param "!activator"
+            }
+            OnSpawnOutput // To Reset Main Parent, making this function
+            {
+                Target "rocketrainparent"
+                Action "SetParent"
+                Param ""
+            }
+            prop_dynamic // Rocket Rain Indicator
+            {
+                "targetname" "rocketrainindicator1"
+                "parentname" "rocketrainrotator"
+                "model"      "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "origin"     "350 0 500"
+                "disableshadows" "1"
+                "skin" "1"
+                "modelscale" "2.0"
+                "DefaultAnim" "start"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Rocket Rain Indicator
+            {
+                "targetname" "rocketrainindicator2"
+                "parentname" "rocketrainrotator"
+                "model"      "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "origin"     "0 350 500"
+                "disableshadows" "1"
+                "skin" "1"
+                "modelscale" "2.0"
+                "DefaultAnim" "start"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Rocket Rain Indicator
+            {
+                "targetname" "rocketrainindicator3"
+                "parentname" "rocketrainrotator"
+                "model"      "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "origin"     "-350 0 500"
+                "disableshadows" "1"
+                "skin" "1"
+                "modelscale" "2.0"
+                "DefaultAnim" "start"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Rocket Rain Indicator
+            {
+                "targetname" "rocketrainindicator4"
+                "parentname" "rocketrainrotator"
+                "model"      "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "origin"     "0 -350 500"
+                "disableshadows" "1"
+                "skin" "1"
+                "modelscale" "2.0"
+                "DefaultAnim" "start"
+                "startdisabled" "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname"     "rocketrainlauncher1"
+                "parentname" "rocketrainrotator"
+                "origin"         "350 0 500"
+                "angles"         "90 0 0"
+                "teamnum"        "3"
+                "$weaponname"    "RocketRainLauncher"
+                "$firetime"      "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname"     "rocketrainlauncher2"
+                "parentname" "rocketrainrotator"
+                "origin"         "0 350 500"
+                "angles"         "90 0 0"
+                "teamnum"        "3"
+                "$weaponname"    "RocketRainLauncher"
+                "$firetime"      "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname"     "rocketrainlauncher3"
+                "parentname" "rocketrainrotator"
+                "origin"         "-350 0 500"
+                "angles"         "90 0 0"
+                "teamnum"        "3"
+                "$weaponname"    "RocketRainLauncher"
+                "$firetime"      "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname"     "rocketrainlauncher4"
+                "parentname" "rocketrainrotator"
+                "origin"         "0 -350 500"
+                "angles"         "90 0 0"
+                "teamnum"        "3"
+                "$weaponname"    "RocketRainLauncher"
+                "$firetime"      "1"
+            }
+        }
+        GrenadeExplosionAssets
+        {
+            ambient_generic // Grenade Explosion Sound
+            {
+                "targetname" "bigexplosionsound"
+                "health" "10"
+                "message" "Cart.Explode"
+                "pitch" "100"
+                "pitchstart" "100"
+                "radius" "99999"
+                "spawnflags" "49"
+                "origin" "0 0 0"
+            }
+            info_particle_system // Grenade Explosion Particles
+            {
+                "targetname" "bigexplosioneffect"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+                "flag_as_weather" "0"
+                "start_active" "0"
+                "origin" "0 0 0"
+            }
+            trigger_hurt // Grenade Explosion Damage
+			{
+				"targetname" "theworkingone"
+				"origin" "0 0 0"
+				"angles" "0 0 0"
+				"mins" "-500 -500 -500"
+				"maxs" "500 500 500"
+				"damagetype" "64"
+				"damagemodel" "1"
+				"damage" "2000"
+				"StartDisabled" "1"
+				"spawnflags" "64"
+				"filtername" "redteam"
+			}
+        }
+        RotatingShovelAsset
+        {
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+            prop_dynamic
+            {
+                "targetname" "theshovel"
+                "modelscale" "1.5"
+                "parentname" "shovelrotator"
+                "model" "models/weapons/c_models/c_market_gardener/c_market_gardener.mdl"
+                "angles" "90 0 0"
+            }
+            func_rotating
+            {
+                "targetname" "shovelrotator"
+                "spawnflags" "65"
+                "fanfriction" 100
+                "maxspeed" 500
+            }
+        }
+        BigLaserAsset
+        {
+            info_particle_system
+            {
+                "targetname"   "lasercharge"
+                "parentname"   ""
+                "origin"       "0 0 0"
+                "effect_name"  "charge_up"
+                "start_active" "0"
+            }
+            env_laser
+            {
+                "targetname" "thelaser"
+                "LaserTarget" ""
+            }
+        }
+        ExtraAssets
+        {
+            env_shake // Short Shake
+            {
+                "targetname" "generic_quake_short"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "1"
+                "amplitude" "16"
+            }
+            env_shake // Long Shake
+            {
+                "targetname" "generic_quake_long"
+                "spawnflags" "1"
+                "radius" "99999"
+                "frequency" "40"
+                "duration" "1"
+                "amplitude" "16"
+            }
+            point_populator_interface // To Control Aspects of the Boss Wave
+			{
+				"targetname" "pop_interface"
+			}
+        }
+        BossLogic
+        {
+            logic_relay // Phase 1 Attack Randomiser
+            {
+                "targetname" "phase1attackpicker"
+                "OnTrigger" "phase1attackloadout,PickRandomShuffle,,0,-1"
+                "spawnflags" "2"
+                "startdisabled" "1"
+            }
+            logic_case // Phase 1 Attack Loadout
+            {
+                "targetname" "phase1attackloadout"
+                "OnCase01" "pop_interface,ChangeBotAttributes,RocketRain,0.0,-1"
+                "OnCase02" "pop_interface,ChangeBotAttributes,Grenade,0.0,-1"
+                "OnCase03" "pop_interface,ChangeBotAttributes,RocketJumptoBarrage,0.0,-1"
+                "OnCase04" "pop_interface,ChangeBotAttributes,ShovelThrowing,0.0,-1"
+                "OnCase05" "pop_interface,ChangeBotAttributes,BazookaBarrage,0.0,-1"
+            }
+        }
+    }
+
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target wave_start_relay
+            Action Trigger
+        }
+        DoneOutput					
+		{
+			Target wave_finished_relay
+			Action Trigger
+		}
+
+        WaveSpawn
+        {
+            Name "TheBoss"
+            Where himspawn [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+
+            TFBot
+            {
+                Template T_TFBot_JohnBoss
+            }
+        }
+    }
+}

@@ -1,0 +1,75 @@
+#base robot_standard.pop
+#base robot_giant.pop
+#base kai_hyper_upgrades.pop
+
+WaveSchedule
+{
+    StartingCurrency 5000
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    AddSentryBusterWhenDamageDealtExceeds 5000
+    AddSentryBusterWhenKillCountExceeds 15
+
+    MaxRedPlayers 6
+    AllowBotExtraSlots 1
+    RobotLimit 40
+
+    //// PRECACHES ////
+
+    //// POINT TEMPLATES ////
+
+    //// SPAWNED TEMPLATES ////
+
+    //// ROBOT TEMPLATES ////
+
+    //// MISSION BOTS ////
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_choose_random_relay`, `Trigger`)
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Crashout Course (Invasion)`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        WaveSpawn
+        {
+            Name "Wave1_Subwave1_22Soldiers"
+            Where spawnbot
+            TotalCount 22
+            MaxActive 22
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 220
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
+    }
+}

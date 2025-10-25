@@ -1,0 +1,442 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 0
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    WaveStartCountdown 5 [$SIGSEGV]
+
+    AddSentryBusterWhenDamageDealtExceeds 5000
+    AddSentryBusterWhenKillCountExceeds 15
+
+    //// PRECACHES ////
+
+    //// TANK PATHS ////
+
+    //// ROBOT TEMPLATES ////
+    Templates
+    {
+        // Wave 1 Templates //
+        T_TFBot_Pyro_Backscratcher
+        {
+            Name "Back Scratcher Pyro"
+            Class Pyro
+            ClassIcon pyro_backscratcher_lite
+            Skill Hard
+            WeaponRestrictions MeleeOnly
+            Item "The Back Scratcher"
+        }
+        T_TFBot_Heavy_Armoured
+        {
+            Name "Armoured Heavy"    
+            Class Heavy
+            ClassIcon heavy_armored_revamp
+            Health 900
+            Scale 1.5
+            Skill Easy
+        }
+
+        // Wave 2 Templates //
+        T_TFBot_Heavyweapons_Heavyweight_Champ_Concheror
+        {
+            Name "Concherorweight Champ"
+            Class Heavy
+            ClassIcon heavy_champ_conch2
+			Skill Hard
+			WeaponRestrictions MeleeOnly
+            Attributes SpawnWithFullCharge
+
+            Item "The Concheror"
+            Item "The Killing Gloves of Boxing"
+
+			Item "Pugilist's Protector"
+        }
+
+        // Wave 5 Templates //
+        T_TFBot_Giant_Pyro_Phlogistinator
+        {
+            Name "Giant Phlogistinator Pyro"
+            Class Pyro
+            ClassIcon pyro_phlog_v2_giant
+            Health 3000
+            Scale 1.75
+            Skill Expert
+            WeaponRestrictions PrimaryOnly
+            Attributes MiniBoss
+            Attributes SpawnWithFullCharge
+
+            Item "The Phlogistinator"
+
+            Item "Propaniac"
+
+            Item "Potato of Labor"
+            ItemModel [$SIGSEGV]
+            {
+                ItemName "Potato of Labor"
+                Model "models/workshop/player/items/pyro/hw2013_hardheaded_hardware/hw2013_hardheaded_hardware.mdl"
+            }
+
+            Item "Power Up Canteen (MvM)"
+            ItemModel [$SIGSEGV]
+            {
+                ItemName "Power Up Canteen (MvM)"
+                Model "models/workshop/player/items/heavy/robo_heavy_chief/robo_heavy_chief.mdl"
+            }
+                
+            CharacterAttributes
+            {
+                "move speed bonus" 0.5
+                "damage force reduction" 0.5
+                "airblast vulnerability multiplier" 0.5
+                "override footstep sound set" 6
+            }
+
+            FireWeapon [$SIGSEGV]
+            {
+                Type Secondary
+                Duration 0.5
+                IfSeeTarget 1
+                Delay 2
+                Cooldown 2
+                Repeats 0
+            }
+        }
+        T_TFBot_Giant_Pyro_Flaregun_SlowBarrage
+        {
+            Name "Giant Flare Barrage Pyro"
+            Class Pyro
+            ClassIcon pyro_flare_rain_nys_giant
+            Health 3000
+            Scale 1.75
+            Skill Expert
+            WeaponRestrictions SecondaryOnly
+            Attributes MiniBoss
+
+            Item "The Flare Gun"
+
+            Item "Propaniac"
+
+            Item "Potato of Labor"
+            ItemModel [$SIGSEGV]
+            {
+                ItemName "Potato of Labor"
+                Model "models/player/items/pyro/bio_fireman.mdl"
+            }
+
+            Item "Power Up Canteen (MvM)"
+            ItemModel [$SIGSEGV]
+            {
+                ItemName "Power Up Canteen (MvM)"
+                Model "models/workshop/player/items/heavy/robo_heavy_chief/robo_heavy_chief.mdl"
+            }
+
+            CharacterAttributes
+            {
+                "move speed bonus" 0.5
+                "damage force reduction" 0.5
+                "airblast vulnerability multiplier" 0.5
+                "override footstep sound set" 6
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Flare Gun"
+                "damage bonus" 1.5
+                "fire rate bonus" 0.3
+                "faster reload rate" 0.3
+                "projectile spread angle penalty" 5
+                "projectile speed decreased" 0.25
+                "projectile gravity" -1
+            }
+        }
+        T_TFBot_Heavy_Heater_Common
+        {
+            Name "Heater Heavy"
+            Class Heavy
+            ClassIcon heavy_heater
+            Skill Easy
+
+            Item "The Huo Long Heatmaker"
+        }
+
+        // Wave 6 Templates //
+        T_TFBot_Giant_Demoman_Clusterbomb
+        {
+            Name "Giant Clusterbomb Demoman"
+            Class Demoman
+            ClassIcon demo_sticky_daan
+            Health 4000
+            Scale 1.75
+            Skill Expert
+            Attributes MiniBoss
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions SecondaryOnly
+
+            Tag clusterbombdemo
+
+            CharacterAttributes
+            {
+                "move speed bonus"	0.5
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+                "is_passive_weapon" 1
+                "override projectile type" 27
+                "fire rate penalty" 1000
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+                "fire rate penalty" 4
+                "faster reload rate" -1
+                "stickybomb charge rate" 0.001
+                "max pipebombs decreased" -7
+                "projectile range decreased" 0.35
+            }
+        }
+    }
+
+    //// MISSION BOTS ////
+    Mission // Sentry Buster
+    {
+        Objective DestroySentries
+        Where spawnbot_mission_sentrybuster
+        BeginAtWave 1
+        RunForThisManyWaves 6
+        DesiredCount 1
+
+        InitialCooldown 30
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        }   
+    }
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Shattered Glass by Midnight (Adv)`)
+                    IncludeScript(`clusterbomb_demoman`, getroottable())
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+        WaveSpawn
+        {
+            Name "ClusterTest"
+            Where spawnbot_boss
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman_Clusterbomb
+                Tag clusterbombdemo
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+    Wave
+    {
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+		}
+	    DoneOutput					
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+    }
+}

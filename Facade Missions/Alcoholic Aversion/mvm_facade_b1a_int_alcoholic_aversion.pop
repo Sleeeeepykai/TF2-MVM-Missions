@@ -1,0 +1,2181 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 1000
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    AddSentryBusterWhenDamageDealtExceeds 5000
+    AddSentryBusterWhenKillCountExceeds 15
+
+    //// ROBOT TEMPLATES ////
+
+    Templates
+    {
+        // Wave 1 Templates //
+        T_TFBot_Heavy_Warrior_Spirit
+        {
+            Name "Warrior's Spirit Heavy"
+            Class Heavy
+            ClassIcon heavy_warrior
+            Skill Hard
+            WeaponRestrictions MeleeOnly
+
+            Item "Warrior's Spirit"
+            Item "The One-Man Army"
+        }
+    }
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+    {
+        Objective DestroySentries
+        Where spawnbot_mission_sentrybuster
+        BeginAtWave 1
+        RunForThisManyWaves 6
+        DesiredCount 1
+
+        InitialCooldown 32
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        }   
+    }
+    Mission // Sniper (Wave 3)
+    {
+        Objective Sniper
+        Where spawnbot_mission_sniper
+        BeginAtWave 3
+        RunForThisManyWaves 1
+        DesiredCount 2
+
+        InitialCooldown 16
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_Sniper
+        }   
+    }
+    Mission // Spy (Wave 4)
+    {
+        Objective Spy
+        Where spawnbot_mission_spy
+        BeginAtWave 4
+        RunForThisManyWaves 1
+        DesiredCount 4
+
+        InitialCooldown 16
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_Spy
+        }   
+    }
+    Mission // Spy (Wave 6)
+    {
+        Objective Spy
+        Where spawnbot_mission_spy
+        BeginAtWave 6
+        RunForThisManyWaves 1
+        DesiredCount 2
+
+        InitialCooldown 16
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_Spy
+        }   
+    }
+    Mission // Sniper (Wave 7)
+    {
+        Objective Sniper
+        Where spawnbot_mission_sniper
+        BeginAtWave 7
+        RunForThisManyWaves 1
+        DesiredCount 2
+
+        InitialCooldown 4
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_Sniper
+        }   
+    }
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Alcoholic Aversion (Int)`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 20 Punchies
+        {
+            Name "Wave1_Subwave1_Punchies"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 20
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Heavyweight_Champ
+            }
+        }
+        WaveSpawn // 1 GSoldier
+        {
+            Name "Wave1_Subwave1_GSoldier"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+            
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+            }
+        }
+
+        WaveSpawn // 20 Warriors
+        {
+            Name "Wave1_Subwave1_Warriors"
+            WaitForAllDead "Wave1_Subwave1_GSoldier"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 20
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+            }
+        }
+        WaveSpawn // 1 GSoldier
+        {
+            Name "Wave1_Subwave1_GSoldier2"
+            WaitForAllSpawned "Wave1_Subwave1_Warriors"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+            }
+        }
+
+        // Subwave 2
+        
+        WaveSpawn // 4 Demomen and 8 Soldiers
+        {
+            Name "Wave1_Subwave2_SoldierSquad"
+            WaitForAllDead "Wave1_Subwave1_GSoldier2"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Demoman
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+            }
+        }
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave1_Subwave2_Scouts"
+            WaitForAllDead "Wave1_Subwave1_GSoldier2"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // 4 Demomen and 8 Soldiers
+        {
+            Name "Wave1_Subwave2_SoldierSquad2"
+            WaitForAllSpawned "Wave1_Subwave2_SoldierSquad"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Demoman
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Soldier
+                    Skill Easy
+                }
+            }
+        }
+        WaveSpawn // 8 Warriors
+        {
+            Name "Wave1_Subwave2_Warriors"
+            WaitForAllSpawned "Wave1_Subwave2_SoldierSquad"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave1_Subwave3_GBurst"
+            WaitForAllSpawned "Wave1_Subwave2_SoldierSquad2"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+        WaveSpawn // 12 Warriors
+        {
+            Name "Wave1_Subwave3_Warriors"
+            WaitForAllSpawned "Wave1_Subwave3_GBurst"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0.1
+            TotalCurrency 80
+
+            TFBot
+            {
+            Template T_TFBot_Heavy_Warrior_Spirit
+            }
+        }
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave1_Subwave3_Scouts"
+            WaitForAllSpawned "Wave1_Subwave3_GBurst"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave2_Subwave1_GDemo"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Name "Giant Demoman"
+                Template T_TFBot_Giant_Demo_RapidFire
+            }
+        }
+        WaveSpawn // 1 GSoldier
+        {
+            Name "Wave2_Subwave1_GSoldier"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+            }
+        }
+
+        WaveSpawn // 8 Demomen
+        {
+            Name "Wave2_Subwave1_Demos"
+            WaitForAllDead "Wave2_Subwave1_GDemo"
+            Where spawnbot_left
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Demoman
+                Skill Easy
+            }
+        }
+        WaveSpawn // 8 Soldiers
+        {
+            Name "Wave2_Subwave1_Soldiers"
+            WaitForAllDead "Wave2_Subwave1_GSoldier"
+            Where spawnbot_right
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // GDemo Dead Check
+        {
+            Name "Wave1_Subwave1_GiantsDead"
+            WaitForAllDead "Wave2_Subwave1_GDemo"
+        }
+        WaveSpawn // GSoldier Dead Check
+        {
+            Name "Wave1_Subwave1_GiantsDead"
+            WaitForAllDead "Wave2_Subwave1_GSoldier"
+        }
+
+        // Subwave 2
+        WaveSpawn // 12 Heavies
+        {
+            Name "Wave2_Subwave2_Heavies"
+            WaitForAllSpawned "Wave1_Subwave1_GiantsDead"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0.1
+            TotalCurrency 120
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave2_Subwave2_GScout"
+            WaitForAllSpawned "Wave2_Subwave2_Heavies"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+            }
+        }
+
+        WaveSpawn // 8 Pyros
+        {
+            Name "Wave2_Subwave2_Pyros"
+            WaitForAllSpawned "Wave2_Subwave2_GScout"
+            Where spawnbot_left
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+            }
+        }
+        WaveSpawn // 8 Pyros
+        {
+            Name "Wave2_Subwave2_Pyros"
+            WaitForAllSpawned "Wave2_Subwave2_GScout"
+            Where spawnbot_right
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+            }
+        }
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave2_Subwave2_GScout2"
+            WaitForAllSpawned "Wave2_Subwave2_Pyros"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Tank
+        {
+            Name "Wave2_Subwave3_Tank"
+            WaitForAllDead "Wave2_Subwave2_GScout2"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 120
+
+            FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+            Tank
+            {
+                Name "tankboss"
+                Health 20000
+                Speed 75
+                StartingPathTrackNode "boss_path_1"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave2_Subwave3_GDemo"
+            WaitForAllSpawned "Wave2_Subwave3_Tank"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Name "Giant Demoman"
+                Template T_TFBot_Giant_Demo_RapidFire
+            }
+        }
+        WaveSpawn // 1 GSoldier
+        {
+            Name "Wave2_Subwave3_GSoldier"
+            WaitForAllSpawned "Wave2_Subwave3_Tank"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+            }
+        }
+        
+        WaveSpawn // 16 Demomen
+        {
+            Name "Wave2_Subwave3_Demomen"
+            WaitForAllSpawned "Wave2_Subwave3_Tank"
+            Where spawnbot_left
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Demoman
+                Skill Easy
+            }
+        }
+        WaveSpawn // 16 Soldiers
+        {
+            Name "Wave2_Subwave3_Soldiers"
+            WaitForAllSpawned "Wave2_Subwave3_Tank"
+            Where spawnbot_right
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 4
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 32 Warriors
+        {
+            Name "Wave3_Subwave1_Warriors"
+            Where spawnbot_left
+            Support Limited
+            TotalCount 32
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 160
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+            }
+        }
+        WaveSpawn // 32 Scouts
+        {
+            Name "Wave3_Subwave1_Scouts"
+            Where spawnbot_right
+            Support Limited
+            TotalCount 32
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 160
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // 2 GDemos
+        {
+            Name "Wave3_Subwave1_GDemo"
+            Where spawnbot_giant
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 80
+
+            TFBot
+            {
+                Name "Giant Demoman"
+                Template T_TFBot_Giant_Demo_RapidFire
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 16 Scouts
+        {
+            Name "Wave3_Subwave2_Scouts"
+            WaitForAllSpawned "Wave3_Subwave1_GDemo"
+            Where spawnbot
+            Support Limited
+            TotalCount 16
+            MaxActive 16
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0.1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave3_Subwave2_GBurst"
+            WaitForAllSpawned "Wave3_Subwave2_Scouts"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+
+        WaveSpawn // 8 Warriors
+        {
+            Name "Wave3_Subwave2_Warriors"
+            WaitForAllDead "Wave3_Subwave2_GBurst"
+            Where spawnbot_left
+            Support Limited
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+                BehaviorModifiers Push
+                Tag flankers
+            }
+        }
+        WaveSpawn // 8 Warriors
+        {
+            Name "Wave3_Subwave2_Warriors"
+            WaitForAllDead "Wave3_Subwave2_GBurst"
+            Where spawnbot_right
+            Support Limited
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+                BehaviorModifiers Push
+                Tag flankers
+            }
+        }
+
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave3_Subwave2_GBurst2"
+            WaitForAllSpawned "Wave3_Subwave2_Warriors"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave3_Subwave2_GBurst2"
+            WaitForAllSpawned "Wave3_Subwave2_Warriors"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 16 Warriors
+        {
+            Name "Wave3_Subwave3_Warriors"
+            WaitForAllDead "Wave3_Subwave2_GBurst2"
+            Where spawnbot_left
+            Support Limited
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+            }
+        }
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave3_Subwave3_Scouts"
+            WaitForAllDead "Wave3_Subwave2_GBurst2"
+            Where spawnbot_right
+            Support Limited
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+                BehaviorModifiers Push
+                Tag flankers
+            }
+        }
+        WaveSpawn // 1 GHeavy
+        {
+            Name "Wave3_Subwave3_GHeavy"
+            WaitForAllDead "Wave3_Subwave2_GBurst2"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Heavyweapons
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action runscriptcode
+            Param "
+            IncludeScript(`tankextensions_main`, getroottable())
+            IncludeScript(`tankextensions/teletank`, getroottable())
+            "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        WaveSpawn // 1 Teleporter Tank
+        {
+            Name "Wave4_Subwave1_TeleporterTank"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 300
+
+            FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+            Tank
+            {
+                Name "teletank"
+                ClassIcon tank_tele [$SIGSEGV]
+                Health 50000
+                Speed 75
+                StartingPathTrackNode "boss_path_1"
+            }
+        }
+
+        // Subwave 1
+        WaveSpawn // Support Scouts
+        {
+            Name "Wave4_Subwave1_Scouts"
+            WaitForAllSpawned "Wave4_Subwave1_TeleporterTank"
+            Where spawnbot
+            Support 1
+            TotalCount 32
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 12
+            TotalCurrency 300
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+                Tag bot_teletank
+            }
+        }
+        WaveSpawn // Support Warriors
+        {
+            Name "Wave4_Subwave1_Warriors"
+            WaitForAllSpawned "Wave4_Subwave1_TeleporterTank"
+            Where spawnbot
+            Support 1
+            TotalCount 32
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 26
+            WaitBetweenSpawns 16
+            TotalCurrency 300
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Warrior_Spirit
+                BehaviorModifiers Push
+                Tag bot_teletank
+                Tag flankers
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave5_Subwave1_GScout"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+            }
+        }
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave5_Subwave1_GScout"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+            }
+        }
+        WaveSpawn // 16 Scouts
+        {
+            Name "Wave5_Subwave1_Scouts"
+            WaitForAllSpawned "Wave5_Subwave1_GScout"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 16
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave5_Subwave1_GScout2"
+            WaitForAllSpawned "Wave5_Subwave1_Scouts"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+            }
+        }
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave5_Subwave1_GScout2"
+            WaitForAllSpawned "Wave5_Subwave1_Scouts"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Baseball
+            }
+        }
+
+        WaveSpawn // 16 Blast Soldiers
+        {
+            Name "Wave5_Subwave1_BlastSoldiers"
+            WaitForAllSpawned "Wave5_Subwave1_GScout2"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 16
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0.1
+            TotalCurrency 80
+            
+            TFBot
+            {
+                Template T_TFBot_Soldier_RocketPush
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // Support Demomen
+        {
+            Name "Wave5_Subwave2_Demomen"
+            WaitForAllSpawned "Wave5_Subwave1_BlastSoldiers"
+            Where spawnbot_left
+            Support 1
+            TotalCount 32
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 2
+            TotalCurrency 160
+
+            TFBot
+            {
+                Class Demoman
+                Skill Normal
+            }
+        }
+        WaveSpawn // Support Heavies
+        {
+            Name "Wave5_Subwave2_Heavies"
+            WaitForAllSpawned "Wave5_Subwave1_BlastSoldiers"
+            Where spawnbot_right
+            Support 1
+            TotalCount 32
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 4
+            TotalCurrency 160
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // 1 GPyro and 4 Hyper Leagues
+        {
+            Name "Wave5_Subwave2_GPyro"
+            WaitForAllDead "Wave5_Subwave1_BlastSoldiers"
+            Where spawnbot_giant
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+            }
+        }
+        WaveSpawn // 10 Scouts
+        {
+            Name "Wave5_Subwave2_Scouts"
+            WaitForAllSpawned "Wave5_Subwave2_GPyro"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 1 GPyro and 4 Hyper Leagues
+        {
+            Name "Wave5_Subwave2_GPyro2"
+            WaitForAllDead "Wave5_Subwave2_GPyro"
+            Where spawnbot_giant
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+            }
+        }
+        WaveSpawn // 16 Scouts
+        {
+            Name "Wave5_Subwave2_Scouts"
+            WaitForAllSpawned "Wave5_Subwave2_GPyro2"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 16
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 GRapid and 4 Hyper Leagues
+        {
+            Name "Wave5_Subwave3_GRapid"
+            WaitForAllDead "Wave5_Subwave2_GPyro2"
+            Where spawnbot_giant
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_FastCharge
+                }
+            }
+        }
+        WaveSpawn // 12 Blast Soldiers
+        {
+            Name "Wave5_Subwave3_BlastSoldiers"
+            WaitForAllSpawned "Wave5_Subwave3_GRapid"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_RocketPush
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 Warrior and 1 Bigheal
+        {
+            Name "Wave6_Subwave1_Warrior"
+            Where spawnbot_left
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Warrior_Spirit
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 1 Warrior and 1 Bigheal
+        {
+            Name "Wave6_Subwave1_Warrior"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Warrior_Spirit
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+
+        WaveSpawn // 8 Warriors and 8 Bigheals
+        {
+            Name "Wave6_Subwave1_Warriors2"
+            WaitForAllDead "Wave6_Subwave1_Warrior"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+            
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Warrior_Spirit
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 8 Pyros and 8 Bigheals
+        {
+            Name "Wave6_Subwave1_Pyros"
+            WaitForAllSpawned "Wave6_Subwave1_Warriors2"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Pyro
+                    Skill Hard
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GRapid and 12 Bigheals
+        {
+            Name "Wave6_Subwave2_GRapid"
+            WaitForAllSpawned "Wave6_Subwave1_Pyros"
+            Where spawnbot_giant
+            TotalCount 13
+            MaxActive 13
+            SpawnCount 13
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 120
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 20 Soldiers
+        {
+            Name "Wave6_Subwave2_Soldiers"
+            WaitForAllSpawned "Wave6_Subwave2_GRapid"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Soldier
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 1 GRapid and 8 Bigheals
+        {
+            Name "Wave6_Subwave2_GRapid2"
+            WaitForAllSpawned "Wave6_Subwave2_GRapid"
+            Where spawnbot_giant
+            TotalCount 9
+            MaxActive 9
+            SpawnCount 9
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 10 Pyros
+        {
+            Name "Wave6_Subwave2_Pyros"
+            WaitForAllSpawned "Wave6_Subwave2_GRapid2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0.1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Pyro
+                Skill Hard
+                Attributes AlwaysFireWeapon
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 5 Warriors and 5 Bigheals
+        {
+            Name "Wave6_Subwave3_Warriors"
+            WaitForAllSpawned "Wave6_Subwave2_GRapid2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Warrior_Spirit
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+
+        WaveSpawn // 1 GRapid
+        {
+            Name "Wave6_Subwave3_GRapid"
+            WaitForAllSpawned "Wave6_Subwave3_Warriors"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer
+            }
+        }
+        WaveSpawn // 5 Warriors and 5 Bigheals
+        {
+            Name "Wave6_Subwave3_Warriors2"
+            WaitForAllSpawned "Wave6_Subwave3_GRapid"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Warrior_Spirit
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+
+        WaveSpawn // 1 GRapid
+        {
+            Name "Wave6_Subwave3_GRapid2"
+            WaitForAllSpawned "Wave6_Subwave3_GRapid"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer
+            }
+        }
+        WaveSpawn // 4 Warriors and 4 Bigheals
+        {
+            Name "Wave6_Subwave3_Warriors3"
+            WaitForAllSpawned "Wave6_Subwave3_GRapid2"
+            Where spawnbot_left
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Warrior_Spirit
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 4 Pyros and 4 Bigheals
+        {
+            Name "Wave6_Subwave3_Pyros"
+            WaitForAllSpawned "Wave6_Subwave3_GRapid2"
+            Where spawnbot_right
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Pyro
+                    Skill Hard
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finish_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave7_Subwave1_GBurst"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave7_Subwave1_GBurst"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+        WaveSpawn // 16 Scouts
+        {
+            Name "Wave7_Subwave1_Scouts"
+            WaitForAllSpawned "Wave7_Subwave1_GBurst"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+                BehaviorModifiers Push
+                Tag flankers
+            }
+        }
+
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave7_Subwave1_GBurst2"
+            WaitForAllSpawned "Wave7_Subwave1_GBurst"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave7_Subwave1_GBurst2"
+            WaitForAllSpawned "Wave7_Subwave1_GBurst"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+        WaveSpawn // 16 Heavies
+        {
+            Name "Wave7_Subwave1_Heavies"
+            WaitForAllSpawned "Wave7_Subwave1_GBurst2"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 8
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+                BehaviorModifiers Push
+                Tag flankers
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GDemo and 4 Bigheals
+        {
+            Name "Wave7_Subwave2_GDemo"
+            WaitForAllSpawned "Wave7_Subwave1_GBurst2"
+            Where spawnbot_giant
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Name "Giant Demoman"
+                    Template T_TFBot_Giant_Demo_RapidFire
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 16 Heavies
+        {
+            Name "Wave7_Subwave2_Heavies"
+            WaitForAllSpawned "Wave7_Subwave2_GDemo"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+            
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 1 GDemo and 8 Bigheals
+        {
+            Name "Wave7_Subwave2_GDemo2"
+            WaitForAllSpawned "Wave7_Subwave2_GDemo"
+            Where spawnbot_giant
+            TotalCount 9
+            MaxActive 9
+            SpawnCount 9
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Name "Giant Demoman"
+                    Template T_TFBot_Giant_Demo_RapidFire
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 16 Heavies
+        {
+            Name "Wave7_Subwave2_Heavies"
+            WaitForAllSpawned "Wave7_Subwave2_GDemo2"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 160
+
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Tele Tank
+        {
+            Name "Wave7_Subwave3_TeleTank"
+            WaitForAllDead "Wave7_Subwave2_GDemo2"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+            Tank
+            {
+                Name "teletank"
+                ClassIcon tank_tele [$SIGSEGV]
+                Health 60000
+                Speed 75
+                Skin 1
+                StartingPathTrackNode "boss_path_a_1"
+            }
+        }
+
+        WaveSpawn // 16 Scouts
+        {
+            Name "Wave7_Subwave3_Scouts"
+            WaitForAllSpawned "Wave7_Subwave3_TeleTank"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 5
+            TotalCurrency 40
+            
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave6_Subwave3_GDemo"
+            WaitForAllSpawned "Wave7_Subwave3_TeleTank"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Name "Giant Demoman"
+                Template T_TFBot_Giant_Demo_RapidFire
+            }
+        }
+        WaveSpawn // 10 Demos
+        {
+            Name "Wave6_Subwave3_Demos"
+            WaitForAllSpawned "Wave7_Subwave3_TeleTank"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0.1
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+                Tag bot_teletank
+            }
+        }
+
+        WaveSpawn // 20 Demos
+        {
+            Name "Wave7_Subwave3_Demos2"
+            WaitForAllSpawned "Wave6_Subwave3_GDemo"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 2
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+                Tag bot_teletank
+            }
+        }
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave7_Subwave3_GDemo"
+            WaitForAllSpawned "Wave7_Subwave3_Demos2"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Name "Giant Demoman"
+                Template T_TFBot_Giant_Demo_RapidFire
+            }
+        }
+        WaveSpawn // 1 GBurst
+        {
+            Name "Wave7_Subwave3_GBurst"
+            WaitForAllSpawned "Wave7_Subwave3_GDemo"
+            Where spawnbot_giant
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+    }
+}
