@@ -153,7 +153,28 @@ WaveSchedule
                     IncludeScript(`tankextensions/helicopter`, getroottable())
 
                     TankExt.CreateLoopPaths({
-                    
+                        tank_loop = [
+                            Vector(-832, 3840, 1152)
+                            Vector(-576, 3840, 1280)
+                            Vector(-384, 3712, 1536)
+                            Vector(-128, 3392, 1664)
+                            Vector(0, 2112, 1024)
+                            Vector(0, 768, 832)
+                            Vector(-64, 640, 832)
+                            Vector(-256, 384, 832)
+                            Vector(-704, 256, 832)
+                            Vector(-768, -320, 832)
+                            Vector(-768, -1600, 832)
+                            Vector(-640, -1728, 832)
+                            Vector(64, -1856, 832)
+                            Vector(576, -1728, 832)
+                            Vector(832, -1536, 768)
+                            Vector(704, -832, 704)
+                            Vector(576, -576, 832)
+                            Vector(384, -64, 832)
+                            Vector(128, 320, 832)
+                            Vector(-256, 384, 832)
+                        ]                 
                     })
                   "
         }
@@ -1535,7 +1556,7 @@ WaveSchedule
         }
 
         // Subwave 10
-        WaveSpawn
+        WaveSpawn // 1 Helicopter
         {
             Name "Endurance_Subwave10_Helicopter"
             WaitForAllSpawned "Endurance_Subwave9_GDemo3"
@@ -1555,6 +1576,159 @@ WaveSchedule
                 Health 30000
                 Speed 100
                 StartingPathTrackNode "tank_loop_1"
+            }
+        }
+
+        WaveSpawn // 16 Sticky Demos
+        {
+            Name "Endurance_Subwave10_Stickies"
+            WaitForAllSpawned "Endurance_Subwave10_Helicopter"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Demo_Stickybomb
+            }
+        }
+        WaveSpawn // 16 Homewrecker Pyros
+        {
+            Name "Endurance_Subwave10_Homewreckers"
+            WaitForAllSpawned "Endurance_Subwave10_Helicopter"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 1
+            TotalCurrency 80
+            
+            TFBot
+            {
+                Template T_TFBot_Pyro_Homewrecker
+            }
+        }
+
+        WaveSpawn // 1 GBurst and 4 Heavies
+        {
+            Name "Endurance_Subwave10_GBurst"
+            WaitForAllSpawned "Endurance_Subwave10_Stickies"
+            Where spawnbot
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Spammer_Reload
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+            }
+        }
+        WaveSpawn // 12 Demos
+        {
+            Name "Endurance_Subwave10_Demos"
+            WaitForAllSpawned "Endurance_Subwave10_GBurst"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 3
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+            }
+        }
+
+        WaveSpawn // 1 GHeavy and 4 Bigheals
+        {
+            Name "Endurance_Subwave10_GHeavy"
+            WaitForAllSpawned "Endurance_Subwave10_GBurst"
+            Where spawnbot
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavyweapons
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Bigheal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 8 Demos
+        {
+            Name "Endurance_Subwave10_Demos"
+            WaitForAllSpawned "Endurance_Subwave10_GHeavy"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
             }
         }
     }
