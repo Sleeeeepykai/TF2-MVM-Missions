@@ -23,6 +23,8 @@ WaveSchedule
             Skill Hard
             WeaponRestrictions MeleeOnly
         }
+
+        // Wave 2 Templates //
         T_TFBot_Giant_Engineer_Crit
         {
             Name "Giant Charged Engineer"
@@ -73,6 +75,10 @@ WaveSchedule
         {
             Template T_TFBot_SentryBuster
         }   
+    }
+    Mission
+    {
+
     }
 
     //// WAVES ////
@@ -650,6 +656,82 @@ WaveSchedule
             {
                 Class Soldier
                 Skill Normal
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_pumpkin_bomb*`, `Kill`)
+                    EntFire(`close_tank_door_relay`, `Disable`)
+                    EntFire(`tank_start_sound`, `Disable`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`door_gateway`, `Open`)
+                    EntFire(`door_gateway_tank`, `Open`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                    EntFire(`door_gateway`, `Close`)
+                    EntFire(`door_gateway_tank`, `Close`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 Tank
+        {
+            Name "Wave3_Subwave1_Tank"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Tank
+            {
+                Name "tankboss"
+                Health 20000
+                Speed 75
+                StartingPathTrackNode "tank_path_b_1"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+        WaveSpawn // 1 GSoldier
+        {
+            Name "Wave3_Subwave1_GSoldier"
+            WaitForAllSpawned "Wave3_Subwave1_Tank"
+            Where spawnbot_mission_finalboss
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
             }
         }
     }
