@@ -1,0 +1,72 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 0
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    AddSentryBusterWhenDamageDealtExceeds 5000
+    AddSentryBusterWhenKillCountExceeds 15
+
+    //// ROBOT TEMPLATES ////
+
+    Templates
+    {
+
+    }
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+    {
+        Objective DestroySentries
+        Where spawnbot_mission_sentrybuster
+        BeginAtWave 1
+        RunForThisManyWaves 6
+        DesiredCount 1
+
+        InitialCooldown 32
+        CooldownTime 32
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        }   
+    }
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Castle Crashers (Int)`)
+                    EntFire(`pumpkinManager`, `Kill`)
+                    EntFire(`tf_pumpkin_bomb*`, `Kill`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`door_gateway`, `Open`)
+                    EntFire(`door_gateway_tank`, `Open`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+    }
+}
