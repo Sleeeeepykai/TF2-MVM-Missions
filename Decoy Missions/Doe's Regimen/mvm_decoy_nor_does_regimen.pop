@@ -1,0 +1,407 @@
+#base robot_giant.pop 
+#base robot_standard.pop
+
+WaveSchedule
+{
+    StartingCurrency		400
+	RespawnWaveTime 		2
+	CanBotsAttackWhileInSpawnRoom No
+
+    //// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+
+		InitialCooldown 30
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 8
+
+		CooldownTime 40            
+
+        TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+    //// WAVES ////
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Doe's Regimen (Normal)`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+
+        // Subwave 1
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave1_Subwave1_ScoutSwarm"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+        WaveSpawn // 8 Bat Scouts
+        {
+            Name "Wave1_Subwave1_BatSwarm"
+            WaitForAllSpawned "Wave1_Subwave1_ScoutSwarm"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 0.1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Name "Bat Scout"
+                Class Scout
+                Skill Easy
+                WeaponRestrictions MeleeOnly
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 12 Scouts
+        {
+            Name "Wave1_Subwave2_Scouts"
+            WaitForAllDead "Wave1_Subwave1_BatSwarm"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 120
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+        WaveSpawn // 12 Bat Scouts
+        {
+            Name "Wave1_Subwave2_Scouts"
+            WaitForAllDead "Wave1_Subwave1_BatSwarm"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 120
+
+            TFBot
+            {
+                Name "Bat Scout"
+                Class Scout
+                Skill Easy
+                WeaponRestrictions MeleeOnly
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 12 Pyros
+        {
+            Name "Wave1_Subwave3_Pyros"
+            WaitForAllDead "Wave1_Subwave2_Scouts"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 3
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 8
+            TotalCurrency 100
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+            }
+        }
+        WaveSpawn // 8 Flare Pyros
+        {
+            Name "Wave1_Subwave3_FlarePyros"
+            WaitForAllDead "Wave1_Subwave2_Scouts"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 8
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Flaregun
+                Skill Easy
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // Support Punchies
+        {
+            Name "Wave2_Subwave1_Punchies"
+            Where spawnbot
+            TotalCount 40
+            MaxActive 8
+            SpawnCount 4
+            Support 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 8
+            TotalCurrency 200
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Heavyweight_Champ
+            }
+        }
+
+        WaveSpawn // 12 Soldiers
+        {
+            Name "Wave2_Subwave1_Soldiers"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 8
+            TotalCurrency 120
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 12 Demomen
+        {
+            Name "Wave2_Subwave2_Demos"
+            WaitForAllDead "Wave2_Subwave1_Soldiers"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 8
+            TotalCurrency 120
+
+            TFBot
+            {
+                Class Demoman
+                Skill Easy
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 10 Soldiers
+        {
+            Name "Wave2_Subwave3_SoldierSwarm"
+            WaitForAllDead "Wave2_Subwave2_Demos"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0.1
+            TotalCurrency 160
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 16 Bat Scouts
+        {
+            Name "Wave3_Subwave1_Scouts"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 80
+
+            TFBot
+            {
+                Name "Bat Scout"
+                Class Scout
+                Skill Easy
+                WeaponRestrictions MeleeOnly
+            }
+        }
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave3_Subwave1_ScoutLeft"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+                BehaviorModifiers Push
+                Tag nav_prefer_flank_left
+            }
+        }
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave3_Subwave1_ScoutRight"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+                BehaviorModifiers Push
+                Tag nav_prefer_flank_left
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 12 Heavies
+        {
+            Name "Wave3_Subwave2_Heavies"
+            WaitForAllDead "Wave3_Subwave1_Scouts"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 3
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 6
+            TotalCurrency 200
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+        WaveSpawn // 12 Scouts
+        {
+            Name "Wave3_Subwave2_Scouts"
+            WaitForAllDead "Wave3_Subwave1_Scouts"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 2
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+        
+        // Subwave 3
+        WaveSpawn // 12 Heavies
+        {
+            Name "Wave3_Subwave3_Heavies"
+            WaitForAllDead "Wave3_Subwave2_Heavies"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 1
+            TotalCurrency 100
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+    }
+}
