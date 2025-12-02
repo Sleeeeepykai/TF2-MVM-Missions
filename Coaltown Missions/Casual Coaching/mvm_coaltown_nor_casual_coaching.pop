@@ -1,0 +1,92 @@
+#base robot_giant.pop
+#base robot_standard.pop
+
+WaveSchedule
+{
+    StartingCurrency 400
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+
+		InitialCooldown 5
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 6
+
+		CooldownTime 35            
+
+            TFBot
+			{
+				Template T_TFBot_SentryBuster
+            }
+	}
+    Mission // Spy (Wave 3)
+	{
+		Objective Spy  
+
+		InitialCooldown 20
+		Where spawnbot_mission_spy
+		BeginAtWave 3
+		RunForThisManyWaves 1
+		CooldownTime 15
+		DesiredCount 1
+
+		TFBot
+		{
+			Class Spy
+			Skill Expert
+		}
+	}
+	Mission // Sniper (Wave 4)
+	{
+		Objective Sniper
+
+		InitialCooldown 15
+		Where spawnbot_mission_sniper
+		BeginAtWave 4
+		RunForThisManyWaves 1
+		CooldownTime 35
+		DesiredCount 2
+
+		TFBot
+		{
+			Class Sniper
+			Skill Expert
+		}
+    }
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfilename`, `Doe's Regimen (Normal)`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+    }
+}
