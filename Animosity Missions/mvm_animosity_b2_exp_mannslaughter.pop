@@ -5,7 +5,7 @@ WaveSchedule
 {
 	StartingCurrency 400
 	CanBotsAttackWhileInSpawnRoom No
-	RespawnWaveTime 7
+	RespawnWaveTime 2
 	
 	//// ROBOT TEMPLATES ////
 
@@ -60,6 +60,23 @@ WaveSchedule
 			Template T_TFBot_Sniper_Sydney_Sleeper
 		}
 	}
+	Mission // Spy (Wave 1)
+	{
+		Objective Spy
+		
+		Where spawnbot_mission_spy
+		
+		BeginAtWave	1
+		RunForThisManyWaves 1
+		CooldownTime 45
+		InitialCooldown 45
+		DesiredCount 3
+		
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
 
 	Mission // Sniper (Wave 2)
 	{
@@ -78,6 +95,23 @@ WaveSchedule
 			Template T_TFBot_Sniper_Razorback
 		}
 	}	
+	Mission // Spy (Wave 2)
+	{
+		Objective Spy
+		
+		Where spawnbot_mission_spy
+		
+		BeginAtWave	2
+		RunForThisManyWaves 1
+		CooldownTime 90
+		InitialCooldown 30
+		DesiredCount 2
+		
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
 
 	Mission // Sniper (Wave 3)
 	{
@@ -94,6 +128,24 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_Sniper_Razorback
+		}
+	}
+
+	Mission // Spy (Wave 4)
+	{
+		Objective Spy
+		
+		Where spawnbot_mission_spy
+		
+		BeginAtWave	4
+		RunForThisManyWaves 1
+		CooldownTime 60
+		InitialCooldown 5
+		DesiredCount 3
+		
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -114,61 +166,6 @@ WaveSchedule
 			Template T_TFBot_Sniper_Sydney_Sleeper
 		}
 	}
-	
-	Mission // Spy (Wave 1)
-	{
-		Objective Spy
-		
-		Where spawnbot_mission_spy
-		
-		BeginAtWave	1
-		RunForThisManyWaves 1
-		CooldownTime 45
-		InitialCooldown 45
-		DesiredCount 3
-		
-		TFBot
-		{
-			Template T_TFBot_Spy
-		}
-	}
-	
-	Mission // Spy (Wave 2)
-	{
-		Objective Spy
-		
-		Where spawnbot_mission_spy
-		
-		BeginAtWave	2
-		RunForThisManyWaves 1
-		CooldownTime 90
-		InitialCooldown 30
-		DesiredCount 2
-		
-		TFBot
-		{
-			Template T_TFBot_Spy
-		}
-	}
-	
-	Mission // Spy (Wave 4)
-	{
-		Objective Spy
-		
-		Where spawnbot_mission_spy
-		
-		BeginAtWave	4
-		RunForThisManyWaves 1
-		CooldownTime 60
-		InitialCooldown 5
-		DesiredCount 3
-		
-		TFBot
-		{
-			Template T_TFBot_Spy
-		}
-	}
-
 	Mission // Spy (Wave 5)
 	{
 		Objective Spy
@@ -185,25 +182,23 @@ WaveSchedule
 		{
 			Template T_TFBot_Spy
 		}
-	}
-	
+	}	
 
 	//// WAVES ////
-
 	Wave
 	{
 		Checkpoint Yes
-		
+
 		InitWaveOutput
         {
             Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Mannslaughter (Exp)`)
-					EntFire(`bombpath_lower_relay`, `Trigger`)
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Mannslaughter (Exp)`)
+					EntFire(`bombpath_random_choose_relay`, `Trigger`)
                   "
         }
-        StartWaveOutput
+		StartWaveOutput
         {
             Target BigNet
             Action RunScriptCode
@@ -226,7 +221,8 @@ WaveSchedule
 			
 			Name "stage1"
 			
-			Where spawnbot_invasion
+			Where spawnbot_left
+			Where spawnbot_right
 			RandomSpawn 1
 			TotalCount 12
 			SpawnCount 2
@@ -239,7 +235,8 @@ WaveSchedule
 				Template T_TFBot_Pyro
 				Skill Hard
 			}
-		}	
+		}
+		
 		WaveSpawn
 		{
 			TotalCurrency 700
@@ -247,7 +244,6 @@ WaveSchedule
 			Name "stage1"
 			
 			Where spawnbot
-			RandomSpawn 1
 			TotalCount 35
 			SpawnCount 5
 			MaxActive 15
@@ -259,6 +255,7 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demo_RapidFire
+					Tag bot_giant
 				}
 				
 				TFBot
@@ -293,7 +290,7 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`bombpath_upper_relay`, `Trigger`)
+					EntFire(`bombpath_random_choose_relay`, `Trigger`)
                   "
         }
 		StartWaveOutput
@@ -421,23 +418,44 @@ WaveSchedule
 		
 		WaveSpawn
 		{
-			TotalCurrency 100
+			TotalCurrency 50
 			
 			Name "stage2"
 			WaitForAllSpawned "stage1"
 			
-			Where spawnbot_left
-			Where spawnbot_right
-			RandomSpawn 1
-			TotalCount 8
-			SpawnCount 2
-			MaxActive 4
+			Where spawnbot
+			TotalCount 4
+			SpawnCount 1
+			MaxActive 2
 			WaitBetweenSpawns 10
 			WaitBeforeStarting 10
 			
 			TFBot
 			{
 				Template T_TFBot_Giant_Soldier_Crit
+				Tag bot_giant
+				Tag spawnbot_prefer_left
+			}
+		}
+		WaveSpawn
+		{
+			TotalCurrency 50
+			
+			Name "stage2"
+			WaitForAllSpawned "stage1"
+			
+			Where spawnbot
+			TotalCount 4
+			SpawnCount 1
+			MaxActive 2
+			WaitBetweenSpawns 10
+			WaitBeforeStarting 10
+			
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Crit
+				Tag bot_giant
+				Tag spawnbot_prefer_right
 			}
 		}
 	}
@@ -445,13 +463,13 @@ WaveSchedule
 	Wave
 	{
 		Checkpoint Yes
-
+		
 		InitWaveOutput
         {
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`bombpath_lower_relay`, `Trigger`)
+					EntFire(`bombpath_random_choose_relay`, `Trigger`)
                   "
         }
 		StartWaveOutput
@@ -477,7 +495,7 @@ WaveSchedule
 			
 			Name "stage1"
 			
-			Where spawnbot
+			Where spawnbot_invasion
 			RandomSpawn 1
 			TotalCount 6
 			SpawnCount 2
@@ -488,6 +506,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout_Fast
+				Tag bot_giant
 			}
 		}
 
@@ -526,7 +545,7 @@ WaveSchedule
 				Health 12000
 				Speed 75
 				Name "tankboss_right"
-				StartingPathTrackNode "tank_path_b_1"
+				StartingPathTrackNode "tank_path_e_1"
 				
 				OnBombDroppedOutput
 				{
@@ -543,7 +562,7 @@ WaveSchedule
 			Name "stage2"
 			WaitForAllSpawned "stage1"
 			
-			Where spawnbot_invasion
+			Where spawnbot_left
 			TotalCount 20
 			SpawnCount 4
 			MaxActive 16
@@ -565,7 +584,7 @@ WaveSchedule
 			Name "stage2"
 			WaitForAllSpawned "stage1"
 			
-			Where spawnbot
+			Where spawnbot_right
 			TotalCount 20
 			SpawnCount 4
 			MaxActive 4
@@ -588,7 +607,7 @@ WaveSchedule
 			WaitForAllSpawned "stage1"
 
 			
-			Where spawnbot
+			Where spawnbot_invasion
 			RandomSpawn 1
 			TotalCount 6
 			SpawnCount 2
@@ -599,6 +618,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout_Fast
+				Tag bot_giant
 			}
 		}
 		
@@ -612,6 +632,7 @@ WaveSchedule
 			Support 1 // fix the timing issue so these don't just end mid way
 			
 			Where spawnbot_invasion
+			RandomSpawn 1
 			TotalCount 36
 			SpawnCount 6
 			MaxActive 10
@@ -627,17 +648,15 @@ WaveSchedule
 		
 		WaveSpawn
 		{
-			TotalCurrency 100
+			TotalCurrency 50
 			
 			Name "stage3"
 			WaitForAllSpawned "stage2"
 			
 			Where spawnbot_left
-			Where spawnbot_right
-			RandomSpawn 1
-			TotalCount 32
-			SpawnCount 8
-			MaxActive 8
+			TotalCount 16
+			SpawnCount 4
+			MaxActive 4
 			WaitBetweenSpawns 20
 			WaitBeforeStarting 0
 			
@@ -646,6 +665,45 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Heavyweapons
+					Tag bot_giant
+				}
+				
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn
+		{
+			TotalCurrency 50
+			
+			Name "stage3"
+			WaitForAllSpawned "stage2"
+			
+			Where spawnbot_right
+			TotalCount 16
+			SpawnCount 4
+			MaxActive 4
+			WaitBetweenSpawns 20
+			WaitBeforeStarting 0
+			
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons
+					Tag bot_giant
 				}
 				
 				TFBot
@@ -675,7 +733,7 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`bombpath_upper_relay`, `Trigger`)
+					EntFire(`bombpath_random_choose_relay`, `Trigger`)
                   "
         }
 		StartWaveOutput
@@ -740,12 +798,10 @@ WaveSchedule
 			
 			Name "stage1"
 			
-			Where spawnbot_left
-			Where spawnbot_right
-			RandomSpawn 1
-			TotalCount 4
-			SpawnCount 2
-			MaxActive 2
+			Where spawnbot
+			TotalCount 2
+			SpawnCount 1
+			MaxActive 1
 			WaitBetweenSpawns 20
 			WaitBeforeStarting 5
 			
@@ -753,6 +809,29 @@ WaveSchedule
 			{
 				Template T_TFBot_Giant_Pyro
 				Attributes AlwaysFireWeapon
+				Tag bot_giant
+				Tag spawnbot_prefer_left
+			}
+		}
+		WaveSpawn
+		{
+			TotalCurrency 50
+			
+			Name "stage1"
+			
+			Where spawnbot
+			TotalCount 2
+			SpawnCount 1
+			MaxActive 1
+			WaitBetweenSpawns 20
+			WaitBeforeStarting 5
+			
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysFireWeapon
+				Tag bot_giant
+				Tag spawnbot_prefer_right
 			}
 		}
 		
@@ -834,20 +913,21 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Demo_RapidFire
+				Tag bot_giant
 			}
 		}
 		
 		WaveSpawn
 		{
-			TotalCurrency 100
+			TotalCurrency 50
 			
 			Name "stage3"
 			WaitForAllSpawned "stage2"
 			
 			Where spawnbot
-			TotalCount 2
-			SpawnCount 2
-			MaxActive 2
+			TotalCount 1
+			SpawnCount 1
+			MaxActive 1
 			//WaitBetweenSpawns 0
 			WaitBeforeStarting 0
 			
@@ -855,6 +935,30 @@ WaveSchedule
 			{
 				Template T_TFBot_Giant_Pyro
 				Attributes AlwaysFireWeapon
+				Tag bot_giant
+				Tag spawnbot_prefer_left
+			}
+		}
+		WaveSpawn
+		{
+			TotalCurrency 50
+			
+			Name "stage3"
+			WaitForAllSpawned "stage2"
+			
+			Where spawnbot
+			TotalCount 1
+			SpawnCount 1
+			MaxActive 1
+			//WaitBetweenSpawns 0
+			WaitBeforeStarting 0
+			
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysFireWeapon
+				Tag bot_giant
+				Tag spawnbot_prefer_right
 			}
 		}
 		
@@ -866,9 +970,7 @@ WaveSchedule
 			Name "stage4"
 			WaitForAllSpawned "stage3"
 			
-			Where spawnbot_left
-			Where spawnbot_right
-			RandomSpawn 1
+			Where spawnbot_invasion
 			TotalCount 18
 			SpawnCount 4
 			MaxActive 8
@@ -880,6 +982,7 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demo_RapidFire
+					Tag bot_giant
 				}
 				
 				TFBot
@@ -947,13 +1050,12 @@ WaveSchedule
 	Wave
 	{
 		Checkpoint Yes
-		
 		InitWaveOutput
         {
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`bombpath_lower_relay`, `Trigger`)
+					EntFire(`bombpath_random_choose_relay`, `Trigger`)
                   "
         }
 		StartWaveOutput
@@ -991,6 +1093,7 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Spammer
+					Tag bot_giant
 				}
 				
 				TFBot
@@ -1018,6 +1121,7 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Spammer
+					Tag bot_giant
 				}
 				
 				TFBot
@@ -1099,14 +1203,13 @@ WaveSchedule
 			TotalCount 1
 			
 			WaitForAllSpawned "stage1"
-			WaitBeforeStarting 4
 			
 			Tank
 			{
 				Health 20000
 				Speed 75
 				Name "tankboss_right"
-				StartingPathTrackNode "tank_path_b_1"
+				StartingPathTrackNode "boss_path2_1"
 				
 				OnBombDroppedOutput
 				{
@@ -1144,7 +1247,7 @@ WaveSchedule
 			Name "stage3"
 			WaitForAllSpawned "stage2"
 			
-			Where spawnbot_invasion
+			Where spawnbot_mission_sniper
 			RandomSpawn 1
 			TotalCount 30
 			SpawnCount 4
@@ -1166,8 +1269,7 @@ WaveSchedule
 			Name "stage3"
 			WaitForAllSpawned "stage2"
 			
-			Where spawnbot_left
-			Where spawnbot_right
+			Where spawnbot
 			RandomSpawn 1
 			TotalCount 8
 			SpawnCount 1
@@ -1188,8 +1290,8 @@ WaveSchedule
 			Name "stage3"
 			WaitForAllSpawned "stage2"
 			
-			Where spawnbot_left
-			Where spawnbot_right
+			Where spawnbot
+			RandomSpawn 1
 			TotalCount 20
 			SpawnCount 4
 			MaxActive 12
@@ -1209,7 +1311,7 @@ WaveSchedule
 			Name "stage4"
 			WaitForAllSpawned "stage3"
 			
-			Where spawnbot_invasion
+			Where spawnbot
 			TotalCount 45
 			SpawnCount 15
 			MaxActive 18
@@ -1235,7 +1337,7 @@ WaveSchedule
 				Speed 75
 				Name "tankboss_left"
 				Skin 1
-				StartingPathTrackNode "tank_path_a_1"
+				StartingPathTrackNode "boss_path_1"
 				
 				OnBombDroppedOutput
 				{
@@ -1249,7 +1351,6 @@ WaveSchedule
 		{
 			TotalCurrency 50
 			TotalCount 1
-			WaitBeforeStarting 4
 			
 			WaitForAllSpawned "stage3"
 			
@@ -1259,7 +1360,7 @@ WaveSchedule
 				Speed 75
 				Name "tankboss_right"
 				Skin 1
-				StartingPathTrackNode "tank_path_b_1"
+				StartingPathTrackNode "boss_path2_1"
 				
 				OnBombDroppedOutput
 				{
