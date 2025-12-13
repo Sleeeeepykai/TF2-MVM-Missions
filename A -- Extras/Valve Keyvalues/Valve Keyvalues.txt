@@ -1,0 +1,209 @@
+MvM Population KeyValues
+Documentation by sigsegv
+Based on TF2 version 20160107a
+
+
+Legend
+- subtree: additional recursive level of KeyValues
+- int:     integer value
+- float:   floating-point value
+- bool:    boolean value (0 or 1)
+- string:  string value (valid values shown in braces where applicable)
+- flag:    the mere presence of the key is enough, a value isn't actually required
+
+
+Notes
+- any instance of key "Where" can be replaced with "ClosestPoint" to get slightly different spawn location behavior (warning: likely won't work in some cases on existing maps)
+- don't use these populators/spawners because they are old and crusty:
+  - Populators: RandomPlacement, PeriodicSpawn
+  - Spawners: Mob, SentryGun
+
+
+PopulationManager
+- subtree   Templates
+- int       StartingCurrency                      (default: 0)
+- int       RespawnWaveTime                       (default: 10)
+- string    EventPopfile                          { "Halloween" => 1 }
+- flag      FixedRespawnWaveTime
+- int       AddSentryBusterWhenDamageDealtExceeds (default: tf_mvm_default_sentry_buster_damage_dealt_threshold = 3000)
+- int       AddSentryBusterWhenKillCountExceeds   (default: tf_mvm_default_sentry_buster_kill_threshold = 15)
+- string    CanBotsAttackWhileInSpawnRoom         { "no"|"false" => 0, else => 1 }
+- subtree[] (populators)
+- flag      Advanced
+- flag      IsEndless
+
+
+==== POPULATORS ====
+
+RandomPlacement
+- int     Count             (default: 0)
+- float   MinimumSeparation (default: 0.0)
+- string  NavAreaFilter     { "SENTRY_SPOT" => 0x200000, "SNIPER_SPOT" => 0x400000 }
+- subtree (spawner)
+
+PeriodicSpawn
+- string  Where       { "Ahead", "Behind", "Anywhere", (name of info_teamspawn entity) }
+- subtree When        [see note 1]
+  - float MinInterval (default: 30.0)
+  - float MaxInterval (default: 30.0)
+- subtree (spawner)
+
+Mission
+- string  Where               { "Ahead", "Behind", "Anywhere", (name of info_teamspawn entity) }
+- string  Objective           { "DestroySentries"|"SeekAndDestroy" => 2, "Sniper" => 3, "Spy" => 4, "Engineer" => 5 }
+- float   InitialCooldown     (default: 0.0)
+- float   CooldownTime        (default: 0.0)
+- int     BeginAtWave         (default: 0)
+- int     RunForThisManyWaves (default: 9999)
+- int     DesiredCount        (default: 0)
+- subtree (spawner)
+
+Wave
+- subtree[] WaveSpawn
+- string    Sound
+- string    Description
+- float     WaitWhenDone    (default: 0.0)
+- flag      Checkpoint      [see note 2]
+- subtree   StartWaveOutput
+  - string  Target
+  - string  Action
+- subtree   DoneOutput
+  - string  Target
+  - string  Action
+- subtree   InitWaveOutput
+  - string  Target
+  - string  Action
+
+WaveSpawn
+- string   Template
+- string   Where                       { "Ahead", "Behind", "Anywhere", (name of info_teamspawn entity) }
+- int      TotalCount                  (default: 0)
+- int      MaxActive                   (default: 999)
+- int      SpawnCount                  (default: 1)
+- float    WaitBeforeStarting          (default: 0.0)
+- float    WaitBetweenSpawns           (default: 0.0)
+- float    WaitBetweenSpawnsAfterDeath [see note 3]
+- string   StartWaveWarningSound
+- subtree  StartWaveOutput
+  - string Target
+  - string Action
+- string   FirstSpawnWarningSound
+- subtree  FirstSpawnOutput
+  - string Target
+  - string Action
+- string   LastSpawnWarningSound
+- subtree  LastSpawnOutput
+  - string Target
+  - string Action
+- string   DoneWarningSound
+- subtree  DoneOutput
+  - string Target
+  - string Action
+- int      TotalCurrency               (default: -1)
+- string   Name
+- string   WaitForAllSpawned
+- string   WaitForAllDead
+- string   Support                     { enables support; "Limited" => TotalCount enforced, else => TotalCount ignored }
+- bool     RandomSpawn                 (default: 0)
+- subtree  (spawner)
+
+
+==== SPAWNERS ====
+
+Mob
+- int     Count     (default: 0)
+- subtree (spawner)
+
+SentryGun
+- int Level (default: 0)
+
+Tank
+- int     Health                (default: 50000)
+- float   Speed                 (default: 75.0)
+- string  Name                  (default: "Tank")
+- int     Skin                  (default: 0)
+- string  StartingPathTrackNode (default: "")
+- subtree OnKilledOutput
+  - string Target
+  - string Action
+- subtree  OnBombDroppedOutput
+  - string Target
+  - string Action
+
+TFBot
+- string      Template
+- string      Class                 (class name)
+- string      ClassIcon             (class icon texture path)
+- int         Health                (default: -1)
+- float       Scale                 (default: -1.0)
+- string      Name                  (default: class name)
+- string[]    TeleportWhere         (name of info_teamspawn entity)
+- float       AutoJumpMin           (default: 0.0)
+- float       AutoJumpMax           (default: 0.0)
+- string      Skill                 { "Easy", "Normal", "Hard", "Expert"; default: Easy }
+- string      WeaponRestrictions    { "PrimaryOnly", "SecondaryOnly", "MeleeOnly"; cannot be combined }
+- string[]    BehaviorModifiers     [see BehaviorModifiers section]
+- float       MaxVisionRange        (default: -1.0)
+- string[]    Item
+- string[]    Attributes            [see Attributes section]
+- subtree[]   ItemAttributes
+  - string    ItemName
+- subtree[]   CharacterAttributes
+- subtree     EventChangeAttributes [see note 5]
+  - subtree   default
+  - subtree[] (ecattr name)
+
+Squad
+- float     FormationSize       (default: -1.0)
+- bool      ShouldPreserveSquad (default: 0) [see note 4]
+- subtree[] (spawner)
+
+RandomChoice
+- subtree[] (spawner)
+
+
+==== TFBOT: BehaviorModifiers ====
+
+BehaviorModifiers Idle    was once valid; no longer valid
+BehaviorModifiers Push    synonym for Attributes Aggressive
+BehaviorModifiers Mobber  synonym for Attributes Aggressive
+
+
+==== TFBOT: Attributes ====
+
+Attributes RemoveOnDeath           00000001
+Attributes Aggressive              00000002
+Attributes ???                     00000004
+Attributes SuppressFire            00000008
+Attributes DisableDodge            00000010
+Attributes BecomeSpectatorOnDeath  00000020
+Attributes ???                     00000040
+Attributes RetainBuildings         00000080
+Attributes SpawnWithFullCharge     00000100
+Attributes AlwaysCrit              00000200
+Attributes IgnoreEnemies           00000400
+Attributes HoldFireUntilFullReload 00000800
+Attributes ???                     00001000
+Attributes AlwaysFireWeapon        00002000
+Attributes TeleportToHint          00004000
+Attributes MiniBoss                00008000
+Attributes UseBossHealthBar        00010000 (added for Mecha Engine?)
+Attributes IgnoreFlag              00020000 (added for Two Cities)
+Attributes AutoJump                00040000 (added for Two Cities)
+Attributes AirChargeOnly           00080000 (added for Two Cities)
+Attributes VaccinatorBullets       00100000 (added for Two Cities)
+Attributes VaccinatorBlast         00200000 (added for Two Cities)
+Attributes VaccinatorFire          00400000 (added for Two Cities)
+Attributes BulletImmune            00800000 (added for Two Cities)
+Attributes BlastImmune             01000000 (added for Two Cities)
+Attributes FireImmune              02000000 (added for Two Cities)
+Attributes Parachute               04000000 (added in 20151028)
+Attributes ProjectileShield        08000000 (added in 20151028)
+
+
+Notes:
+1. Instead of a subtree, PeriodicSpawn.When can have a single float value that will set both MinInterval and MaxInterval
+2. Wave.Checkpoint doesn't actually do anything, but its presence won't cause a parse error
+3. In a WaveSpawn, you can use either WaitBetweenSpawns or WaitBetweenSpawnsAfterDeath, but not both
+4. Squad.ShouldPreserveSquad is parsed correctly, but will cause a spurious error to show up in console; ignore the error
+5. EventChangeAttributes subtrees may contain: Skill, WeaponRestrictions, BehaviorModifiers, MaxVisionRange, Item, ItemAttributes, CharacterAttributes, Attributes
