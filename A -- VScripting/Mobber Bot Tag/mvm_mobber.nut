@@ -1,3 +1,21 @@
+// Constants Folding
+::CONST <- getconsttable()
+::ROOT <- getroottable()
+if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done once
+{
+	foreach (enum_table in Constants)
+	{
+		foreach (name, value in enum_table)
+		{
+			if (value == null)
+				value = 0
+
+			CONST[name] <- value
+			ROOT[name] <- value
+		}
+	}
+}
+
 MVM_Mobber_PlayerArray   <- []
 
 class MobberPathPoint {
