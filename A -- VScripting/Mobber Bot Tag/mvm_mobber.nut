@@ -565,9 +565,45 @@ class MVM_Mobber {
 	}
 }
 
-
 ::MVM_MobberTable <-
 {
+
+	mvm_stats = Entities.FindByClassname(null, "tf_mann_vs_machine_stats")
+
+	function Cleanup()
+    {
+        delete ::MVM_MobberTable
+    }
+    function OnGameEvent_stats_resetround(_)
+    {
+        if (GetRoundState() != GR_STATE_PREROUND)
+            return
+        if (NetProps.GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
+            return
+        Cleanup()
+    }
+	function CollectEventsInScope(events)
+	{
+		local events_id = UniqueString()
+		getroottable()[events_id] <- events
+
+		foreach (name, callback in events)
+			events[name] = callback.bindenv(this)
+
+		local cleanup_user_func, cleanup_event = "OnGameEvent_scorestats_accumulated_update"
+		if (cleanup_event in events)
+			cleanup_user_func = events[cleanup_event]
+
+		events[cleanup_event] <- function(params)
+		{
+			if (cleanup_user_func)
+				cleanup_user_func(params)
+
+			delete getroottable()[events_id]
+		}
+		__CollectGameEventCallbacks(events)
+	}
+
 	function BotTagCheck()
 	{
 		if(self.HasBotTag("Mobber"))
@@ -623,7 +659,10 @@ class MVM_Mobber {
 		}
 		MVM_MobberTable.AddThink( bot, MobberThink )
 	}
+}
 
+MVM_MobberTable.CollectEventsInScope
+({
 	OnGameEvent_player_spawn = function(params)
 	{
 		local player = GetPlayerFromUserID(params.userid)
@@ -634,7 +673,7 @@ class MVM_Mobber {
 
 		local scope = player.GetScriptScope()
 	}
-}
+})
 
 __CollectGameEventCallbacks(MVM_MobberTable)
 
