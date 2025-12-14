@@ -628,7 +628,7 @@ class MVM_Mobber {
 	{
 		if(self.HasBotTag("Mobber"))
 		{
-			self.Mobber()
+			Mobber(self)
 		}
 	}
 
@@ -677,7 +677,7 @@ class MVM_Mobber {
 			aibot.FindPathToThreat()
 			aibot.MoveToThreat()
 		}
-		MVM_MobberTable.AddThink( bot, MobberThink )
+		AddThinkToEnt( bot, MobberThink )
 	}
 }
 
