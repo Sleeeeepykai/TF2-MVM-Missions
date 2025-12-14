@@ -1,4 +1,4 @@
-MVM_Mobber.PlayerArray   <- []
+MVM_Mobber_PlayerArray   <- []
 
 class MobberPathPoint {
 
@@ -170,7 +170,7 @@ class MVM_Mobber {
 		local closest_threat = null
 		local closest_threat_dist = min_dist_sqr
 
-		foreach ( player in MVM_Mobber.PlayerArray ) {
+		foreach ( player in MVM_Mobber_PlayerArray ) {
 
 			if ( !player || !player.IsValid() )
 				continue
@@ -196,7 +196,7 @@ class MVM_Mobber {
 	function CollectThreats( maxdist = INT_MAX, disguised = false, invisible = false, alive = true ) {
 
 		local threatarray = []
-		foreach ( player in MVM_Mobber.PlayerArray ) {
+		foreach ( player in MVM_Mobber_PlayerArray ) {
 
 			if ( player == bot ||
 				player.GetTeam() == bot.GetTeam() ||
