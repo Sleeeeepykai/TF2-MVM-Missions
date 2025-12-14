@@ -1,0 +1,56 @@
+#base robot_giant.pop
+#base robot_standard.pop
+
+WaveSchedule
+{
+    StartingCurrency 400
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Mobber Test :)`)
+                    IncludeScript(`mvm_mobber`, getroottable())
+					EntFire(`bombpath_random_choose_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        WaveSpawn
+        {
+            Name "Wave1_Punchies"
+            Where spawnbot_invasion
+            TotalCount 20
+            MaxActive 20
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
+                Tag Mobber
+            }
+        }
+    }
+}
