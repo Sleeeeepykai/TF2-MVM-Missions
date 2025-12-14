@@ -16,6 +16,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
+const INT_MAX = 2147483647
+
 MVM_Mobber_PlayerArray   <- []
 
 class MobberPathPoint {
