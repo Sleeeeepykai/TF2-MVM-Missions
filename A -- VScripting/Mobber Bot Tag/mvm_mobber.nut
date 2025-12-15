@@ -268,6 +268,32 @@ class MVM_Mobber {
 		bot.SnapEyeAngles( cur_eye_ang )
 	}
 
+	function OnTakeDamage( attacker ) {
+
+		if ( time - threat_time < 3.0 )
+			return
+
+		if ( attacker != bot && threat_dist > GetThreatDistanceSqr( attacker ) )
+			SetThreat( attacker )
+	}
+
+	function OnUpdate() {
+
+		cur_pos     = bot.GetOrigin()
+		cur_vel     = bot.GetAbsVelocity()
+		cur_speed   = cur_vel.LengthSqr()
+		cur_eye_pos = bot.EyePosition()
+		cur_eye_ang = bot.EyeAngles()
+		cur_eye_fwd = cur_eye_ang.Forward()
+		time = Time()
+
+		if ( !threat || !threat.IsValid() )
+			return threat = null, threat_pos = Vector()
+
+		threat_pos  = threat.GetOrigin()
+
+		return -1
+	}
 	function FindPathToThreat() {
 
 		if ( path_recompute_time > time )
@@ -594,46 +620,53 @@ class MVM_Mobber {
     {
         delete ::MVM_MobberTable
     }
-    function OnGameEvent_stats_resetround(_)
-    {
-        if (GetRoundState() != GR_STATE_PREROUND)
-            return
-        if (NetProps.GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
-            return
-        Cleanup()
-    }
-	function CollectEventsInScope(events)
+    OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
+
+	OnGameEvent_player_hurt = function(params)
 	{
-		local events_id = UniqueString()
-		getroottable()[events_id] <- events
+		local attacker = GetPlayerFromUserID( params.attacker )
+		local scope = GetPlayerFromUserID( params.userid ).GetScriptScope()
 
-		foreach (name, callback in events)
-			events[name] = callback.bindenv(this)
+		if ( attacker && attacker.IsPlayer() && "aibot" in scope )
+			scope.aibot.OnTakeDamage( attacker )
+	}
+	// OnGameEvent_post_inventory_application = function(params)
+	// {
+	// 	local player = GetPlayerFromUserID(params.userid)
+	// 	local scope = player.GetScriptScope()
+	// 	if(player.IsBotOfType(1337)) {
+	// 		scope.aibot <- MVM_Mobber(player)
+	// 		scope.botThink <- function() {
+	// 			aibot.OnUpdate()
+	// 		}
+	// 		AddThinkToEnt( player, "botThink" )
+	// 	}
+	// }
+	OnGameEvent_player_spawn = function(params)
+	{
+		local player = GetPlayerFromUserID(params.userid)
 
-		local cleanup_user_func, cleanup_event = "OnGameEvent_scorestats_accumulated_update"
-		if (cleanup_event in events)
-			cleanup_user_func = events[cleanup_event]
+		if (player.IsBotOfType(1337)) { EntFireByHandle(player, "CallScriptFunction", "BotTagCheck", -1.0, null, null); return }
 
-		events[cleanup_event] <- function(params)
-		{
-			if (cleanup_user_func)
-				cleanup_user_func(params)
+		if (player.GetScriptScope() == null) player.ValidateScriptScope()
 
-			delete getroottable()[events_id]
-		}
-		__CollectGameEventCallbacks(events)
+		local scope = player.GetScriptScope()
 	}
 
 	function BotTagCheck()
 	{
 		if(self.HasBotTag("Mobber"))
 		{
-			Mobber(self)
+			MVM_MobberTable.Mobber(self, null)
 		}
 	}
 
 	function Mobber(bot, args)
 	{
+		bot.ValidateScriptScope()
+		local scope = bot.GetScriptScope()
+		if (!("aibot" in scope)) scope.aibot <- MVM_Mobber(player)
+
 		local threat_type = "threat_type" in args ? args.threat_type : "closest"
 		local threat_dist = "threat_dist" in args ? args.threat_dist : 256.0
 		local lookat 	  = "lookat" in args ? args.lookat : false
@@ -649,7 +682,8 @@ class MVM_Mobber {
 		local cooldown = 0.0
 		local threat_cooldown = 5.0
 
-		function MobberThink() {
+
+		scope.MobberThink <- function() {
 
 			if ( bot.GetActionPoint() && bot.GetActionPoint().IsValid() )
 				return
@@ -676,24 +710,11 @@ class MVM_Mobber {
 
 			aibot.FindPathToThreat()
 			aibot.MoveToThreat()
+			aibot.OnUpdate()
 		}
-		AddThinkToEnt( bot, MobberThink )
+		AddThinkToEnt( bot, "MobberThink" )
 	}
 }
 
-MVM_MobberTable.CollectEventsInScope
-({
-	OnGameEvent_player_spawn = function(params)
-	{
-		local player = GetPlayerFromUserID(params.userid)
-
-		if (player.IsFakeClient()) { EntFireByHandle(player, "CallScriptFunction", "BotTagCheck", -1.0, null, null); return }
-
-		if (player.GetScriptScope() == null) player.ValidateScriptScope()
-
-		local scope = player.GetScriptScope()
-	}
-})
 
 __CollectGameEventCallbacks(MVM_MobberTable)
-
