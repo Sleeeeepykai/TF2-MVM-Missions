@@ -1,6 +1,15 @@
-// Constants Folding
+printl("Mobber Script Initiated.")
+
 ::CONST <- getconsttable()
 ::ROOT <- getroottable()
+
+// Classes Folding
+foreach( _class in [ "NetProps", "Entities", "EntityOutputs", "NavMesh", "Convars" ] )
+	foreach( k, v in ROOT[_class].getclass() )
+		if ( !( k in ROOT ) && k != "IsValid" )
+			ROOT[k] <- ROOT[_class][k].bindenv( ROOT[_class] )
+
+// Constants Folding
 if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done once
 {
 	foreach (enum_table in Constants)
@@ -15,10 +24,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 }
-
 const INT_MAX = 2147483647
 
-MVM_Mobber_PlayerArray   <- []
 
 class MobberPathPoint {
 
@@ -36,6 +43,7 @@ class MobberPathPoint {
 
 class MVM_Mobber {
 
+	MAX_RECOMPUTE_TIME  = 3.0
 	MAX_THREAT_DISTANCE = 32.0 * 32.0 // use LengthSqr for performance
 
 	bot = null
@@ -43,9 +51,11 @@ class MVM_Mobber {
 	team  = null
 	time  = null
 
-	locomotion = null
+	locomotion 	= null
 
 	cur_pos     = null
+	cur_vel 	= null
+	cur_speed 	= null
 	cur_eye_pos = null
 	cur_eye_ang = null
 	cur_eye_fwd = null
@@ -116,9 +126,17 @@ class MVM_Mobber {
 		return !trace.hit
 	}
 
-	function GetThreatDistanceSqr( target ) { return ( ( target.GetOrigin() || Vector() ) - cur_pos ).LengthSqr() }
+	function IsThreatVisible( target ) 		{
+		return threat_visible = ( IsInFieldOfView( target ) && IsVisible( target ) ), threat_visible
 
-	function GetCurThreatDistanceSqr() 		{ return ( ( threat_pos || Vector() ) - ( cur_pos || Vector() ) ).LengthSqr() }
+	}
+	function GetThreatDistanceSqr( target ) {
+		return ( ( target.GetOrigin() || Vector() ) - cur_pos ).LengthSqr()
+	}
+
+	function GetCurThreatDistanceSqr() 		{
+		return ( ( threat_pos || Vector() ) - ( cur_pos || Vector() ) ).LengthSqr()
+	}
 
 
 	function NormalizeAngle( target ) {
@@ -190,7 +208,7 @@ class MVM_Mobber {
 		local closest_threat = null
 		local closest_threat_dist = min_dist_sqr
 
-		foreach ( player in MVM_Mobber_PlayerArray ) {
+		for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
 
 			if ( !player || !player.IsValid() )
 				continue
@@ -207,16 +225,13 @@ class MVM_Mobber {
 			}
 		}
 
-		if ( path_debug && closest_threat )
-			DebugDrawLine( bot.GetOrigin(), closest_threat.GetOrigin(), 255, 0, 0, false, 5.0 )
-
 		return closest_threat
 	}
 
 	function CollectThreats( maxdist = INT_MAX, disguised = false, invisible = false, alive = true ) {
 
 		local threatarray = []
-		foreach ( player in MVM_Mobber_PlayerArray ) {
+		for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
 
 			if ( player == bot ||
 				player.GetTeam() == bot.GetTeam() ||
@@ -294,6 +309,7 @@ class MVM_Mobber {
 
 		return -1
 	}
+
 	function FindPathToThreat() {
 
 		if ( path_recompute_time > time )
@@ -646,7 +662,7 @@ class MVM_Mobber {
 	{
 		local player = GetPlayerFromUserID(params.userid)
 
-		if (player.IsBotOfType(1337)) { EntFireByHandle(player, "CallScriptFunction", "BotTagCheck", -1.0, null, null); return }
+		if (player.IsBotOfType(1337)) { EntFireByHandle(player, "RunScriptCode", "MVM_MobberTable.BotTagCheck()", -1.0, player, null); return }
 
 		if (player.GetScriptScope() == null) player.ValidateScriptScope()
 
@@ -655,9 +671,9 @@ class MVM_Mobber {
 
 	function BotTagCheck()
 	{
-		if(self.HasBotTag("Mobber"))
+		if(activator.HasBotTag("Mobber"))
 		{
-			MVM_MobberTable.Mobber(self, null)
+			MVM_MobberTable.Mobber(activator, null)
 		}
 	}
 
@@ -665,7 +681,7 @@ class MVM_Mobber {
 	{
 		bot.ValidateScriptScope()
 		local scope = bot.GetScriptScope()
-		if (!("aibot" in scope)) scope.aibot <- MVM_Mobber(player)
+		if (!("aibot" in scope)) scope.aibot <- MVM_Mobber(bot)
 
 		local threat_type = "threat_type" in args ? args.threat_type : "closest"
 		local threat_dist = "threat_dist" in args ? args.threat_dist : 256.0
