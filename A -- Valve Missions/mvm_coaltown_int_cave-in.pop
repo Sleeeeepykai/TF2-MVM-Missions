@@ -3,13 +3,12 @@
 
 WaveSchedule
 {
-
 	StartingCurrency		400
 	RespawnWaveTime 		7
-	CanBotsAttackWhileInSpawnRoom no
+	CanBotsAttackWhileInSpawnRoom No
 	Advanced	1
 
-	Mission // sentry buster
+	Mission // Sentry Buster
 	{
 		Objective DestroySentries
 
@@ -20,12 +19,13 @@ WaveSchedule
 
 		CooldownTime 27         
 
-            TFBot
-			{
-				Template T_TFBot_SentryBuster
-            }
-	}	
-	Mission // Sniper - wave 3
+        TFBot
+		{
+			Template T_TFBot_SentryBuster
+        }
+	}
+
+	Mission // Sniper (Wave 3)
 	{
 		Objective Sniper
 
@@ -44,26 +44,25 @@ WaveSchedule
 			MaxVisionRange 3000
 		}
 	}
-	//WAVE 1 //Scouts and heavies//Currency 600 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	Wave
 	{
 		StartWaveOutput
 		{
-				Target wave_start_relay
-				Action Trigger
-			}
+			Target wave_start_relay
+			Action Trigger
+		}
 		DoneOutput					
 		{
-				Target wave_finished_relay
-				Action trigger
-			}
+			Target wave_finished_relay
+			Action trigger
+		}
 		WaitWhenDone 65
 		Checkpoint Yes
 
-		WaveSpawn 
+		// Subwave 1
+		WaveSpawn // 24 Scouts
 		{			
-			Name "primary_scouts"
-			
+			Name "Wave1_Subwave1_Scouts"
 			Where spawnbot
 			TotalCount 24
 			MaxActive 12
@@ -78,8 +77,9 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn 
-		{						
+		WaveSpawn // 20 Sandmen
+		{	
+			Name "Wave1_Subwave1_Sandmen"				
 			Where spawnbot_invasion
 			TotalCount 20
 			MaxActive 10
@@ -116,10 +116,12 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
-		{			
-			WaitForAllSpawned "primary_scouts"
-			
+
+		// Subwave 2
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave1_Subwave2_Heavies"		
+			WaitForAllSpawned "Wave1_Subwave1_Scouts"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 6
@@ -130,14 +132,14 @@ WaveSchedule
 			
 			TFBot
 			{
-				Class HeavyWeapons
+				Class Heavy
 				Skill Easy
 			}
 		}
-		WaveSpawn 
-		{			
-			WaitForAllSpawned "primary_scouts"
-			
+		WaveSpawn // 4 Flank Heavies
+		{
+			Name "Wave1_Subwave2_RightFlankHeavies"	
+			WaitForAllSpawned "Wave1_Subwave1_Scouts"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -148,16 +150,16 @@ WaveSchedule
 			
 			TFBot
 			{
-				Class HeavyWeapons
+				Class Heavy
 				Skill Easy
 				Tag nav_prefer_flank_right
-				BehaviorModifiers push
+				BehaviorModifiers Push
 			}
 		}
-		WaveSpawn 
-		{			
-			WaitForAllSpawned "primary_scouts"
-			
+		WaveSpawn // 4 Flank Heavies
+		{
+			Name "Wave1_Subwave2_LeftFlankHeavies"		
+			WaitForAllSpawned "Wave1_Subwave1_Scouts"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -168,16 +170,16 @@ WaveSchedule
 			
 			TFBot
 			{
-				Class HeavyWeapons
+				Class Heavy
 				Skill Easy
 				Tag nav_prefer_flank_left
-				BehaviorModifiers push
+				BehaviorModifiers Push
 			}
 		}
-		WaveSpawn 
+		WaveSpawn // 24 Random Sandmen and Scouts
 		{		
-			WaitForAllSpawned "primary_scouts"
-			
+			Name "Wave1_Subwave2_Scouts"
+			WaitForAllSpawned "Wave1_Subwave1_Scouts"
 			Where spawnbot_invasion
 			TotalCount 24
 			MaxActive 12
@@ -207,26 +209,25 @@ WaveSchedule
 			}
 		}
 	}
-	//WAVE 2 //Huntsman snipers, scouts, Tavish giant squads with huntsman and bigheal, 1x Tanks at 17.5k//Currency 800 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	Wave
 	{
 		StartWaveOutput
 		{
-				Target wave_start_relay
-				Action Trigger
-			}
+			Target wave_start_relay
+			Action Trigger
+		}
 		DoneOutput					
 		{
-				Target wave_finished_relay
-				Action trigger
-			}
+			Target wave_finished_relay
+			Action trigger
+		}
 		WaitWhenDone 65
 		Checkpoint Yes
 
-		WaveSpawn
-		{	
-			Name "primary_huntsman"
-			
+		// Subwave 1
+		WaveSpawn // 24 Huntsmen
+		{
+			Name "Wave2_Subwave1_Huntsmen"
 			Where spawnbot
 			TotalCount 24
 			MaxActive 12
@@ -240,10 +241,12 @@ WaveSchedule
 				Template T_TFBot_Sniper_Huntsman
 			}
 		}
-		WaveSpawn
-		{	
-			WaitForAllSpawned "primary_huntsman"
-			
+
+		// Subwave 2
+		WaveSpawn // 10 Sandmen
+		{
+			Name "Wave2_Subwave2_Sandmen"
+			WaitForAllSpawned "Wave2_Subwave1_Huntsmen"
 			Where spawnbot_giant
 			TotalCount 10
 			MaxActive 10
@@ -259,10 +262,10 @@ WaveSchedule
 				Template T_TFBot_Scout_Sandman
 			}
 		}
-		WaveSpawn 
-		{	
-			WaitForAllSpawned "primary_huntsman"
-			
+		WaveSpawn // 2 GKnights, 6 Huntsmen and 2 Bigheals 
+		{
+			Name "Wave2_Subwave2_GKnights"
+			WaitForAllSpawned "Wave2_Subwave1_Huntsmen"
 			Where spawnbot
 			TotalCount 10
 			MaxActive 10
@@ -295,16 +298,20 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn
+
+		// Subwave 3
+		WaveSpawn // 1 Tank
 		{
-			WaitForAllSpawned "primary_huntsman"
-		
+			Name "Wave2_Subwave3_Tank"
+			WaitForAllSpawned "Wave2_Subwave1_Huntsmen"
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 38
+			WaitBetweenSpawns 0
 			TotalCurrency 200
 			
-			FirstSpawnOutput                                                                                                                                                            
-			
+			FirstSpawnOutput
 			{
 				Target boss_spawn_relay                                            
 				Action Trigger                         
@@ -322,7 +329,6 @@ WaveSchedule
 					Target boss_dead_relay
 					Action Trigger                         
 				}
-				
 				OnBombDroppedOutput                             
 				{
 					Target boss_deploy_relay
@@ -330,45 +336,10 @@ WaveSchedule
 				}
 			}		
 		}
-		// WaveSpawn
-		// {
-			// WaitForAllSpawned "primary_huntsman"
-		
-			// TotalCount 1
-			// WaitBeforeStarting 53
-			// TotalCurrency 100
-			
-			// FirstSpawnOutput                                                                                                                                                            
-			
-			// {
-				// Target boss_spawn_relay                                            
-				// Action Trigger                         
-			// }
-
-			// Tank
-			// {
-				// Health 12500
-				// Speed 75
-				// Name "tankboss"
-				// StartingPathTrackNode "boss_path_a1"
-
-				// OnKilledOutput                                  
-				// {
-					// Target boss_dead_relay
-					// Action Trigger                         
-				// }
-				
-				// OnBombDroppedOutput                             
-				// {
-					// Target boss_deploy_relay
-					// Action Trigger                         
-				// }
-			// }		
-		// }
-		WaveSpawn 
-		{	
-			WaitForAllSpawned "primary_huntsman"
-			
+		WaveSpawn // 1 GKnight, 3 Huntsmen and 1 Bigheal
+		{
+			Name "Wave2_Subwave3_GKnight"
+			WaitForAllSpawned "Wave2_Subwave1_Huntsmen"
 			Where spawnbot
 			TotalCount 5
 			MaxActive 5
@@ -401,10 +372,10 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn
+		WaveSpawn // 10 Sandmen
 		{	
-			WaitForAllSpawned "primary_huntsman"
-			
+			Name "Wave2_Subwave3_Sandmen"
+			WaitForAllSpawned "Wave2_Subwave1_Huntsmen"
 			Where spawnbot_invasion
 			TotalCount 10
 			MaxActive 10
@@ -419,26 +390,25 @@ WaveSchedule
 			}
 		}
 	}
-	//WAVE 3 //Conch sollys with bigheal medics, rapid Giant solly squads finale//Currency 700 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	Wave
 	{
 		StartWaveOutput
 		{
-				Target wave_start_relay
-				Action Trigger
-			}
+			Target wave_start_relay
+			Action Trigger
+		}
 		DoneOutput					
 		{
-				Target wave_finished_relay
-				Action trigger
-			}
+			Target wave_finished_relay
+			Action trigger
+		}
 		WaitWhenDone 65
 		Checkpoint Yes
 
-		WaveSpawn 
-		{	
-			Name "primary_soldiers"
-			
+		// Subwave 1
+		WaveSpawn // 24 Conches and 24 Bigheal Medics
+		{
+			Name "Wave3_Subwave1_ConchSquads"
 			Where spawnbot_invasion
 			TotalCount 48
 			MaxActive 12
@@ -459,10 +429,12 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
-		{	
-			WaitForAllSpawned  "primary_soldiers"
-			
+
+		// Subwave 2
+		WaveSpawn // 2 GRapids and 4 Conches 
+		{
+			Name "Wave3_Subwave2_GRapidSquads"
+			WaitForAllSpawned "Wave3_Subwave1_ConchSquads"
 			Where spawnbot_giant
 			TotalCount 6
 			MaxActive 6
@@ -488,7 +460,6 @@ WaveSchedule
 			}
 		}
 	}
-	//WAVE 4 //3x Tanks at 13.3k each with scouts//Currency 700 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	Wave
 	{
 		StartWaveOutput
@@ -504,8 +475,10 @@ WaveSchedule
 		WaitWhenDone 65
 		Checkpoint Yes
 		
-		WaveSpawn 
-		{				
+		// Subwave 1
+		WaveSpawn // 80 Scouts, Sandmen and Flanker Scouts
+		{
+			Name "Wave4_Subwave1_Scouts"		
 			Where spawnbot_invasion
 			TotalCount 80
 			MaxActive 12
@@ -568,10 +541,12 @@ WaveSchedule
 				}
 			}
 		}
-		
-		WaveSpawn 
-		{			
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave4_Subwave1_Tank"
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 10
 			TotalCurrency 100
 
@@ -593,7 +568,6 @@ WaveSchedule
 					Target boss_dead_relay
 					Action Trigger                         
 				}
-				
 				OnBombDroppedOutput                             
 				{
 					Target boss_deploy_relay 
@@ -602,9 +576,12 @@ WaveSchedule
 
 			}			
 		}
-		WaveSpawn 
-		{			
+		WaveSpawn // 1 Tank 
+		{
+			Name "Wave4_Subwave1_Tank2"
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 38
 			TotalCurrency 100
 
@@ -626,7 +603,6 @@ WaveSchedule
 					Target boss_dead_relay
 					Action Trigger                         
 				}
-				
 				OnBombDroppedOutput                             
 				{
 					Target boss_deploy_relay 
@@ -635,9 +611,12 @@ WaveSchedule
 
 			}			
 		}
-		WaveSpawn 
-		{			
+		WaveSpawn // 1 Tank 
+		{
+			Name "Wave4_Subwave1_Tank3"	
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 62
 			TotalCurrency 100
 
@@ -659,7 +638,6 @@ WaveSchedule
 					Target boss_dead_relay
 					Action Trigger                         
 				}
-				
 				OnBombDroppedOutput                             
 				{
 					Target boss_deploy_relay 
@@ -669,26 +647,25 @@ WaveSchedule
 			}			
 		}
 	}
-	//WAVE 5 //Boxing heavies with uber medics, GRU Heavies with uber medics, sandman scouts finale//Currency 1000 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	Wave
 	{
 		StartWaveOutput
 		{
-				Target wave_start_relay
-				Action Trigger
-			}
+			Target wave_start_relay
+			Action Trigger
+		}
 		DoneOutput					
 		{
-				Target wave_finished_relay
-				Action trigger
-			}
+			Target wave_finished_relay
+			Action trigger
+		}
 		WaitWhenDone 65
 		Checkpoint Yes
 
-		WaveSpawn 
+		// Subwave 1
+		WaveSpawn // 20 Punchies and 20 Quick-Ubers
 		{	
-			Name "primary_heavies"
-			
+			Name "Wave5_Subwave1_Punchies"
 			Where spawnbot_invasion
 			TotalCount 40
 			MaxActive 16
@@ -709,11 +686,12 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
-		{	
-			Name "secondary_heavies"
-			WaitForAllSpawned "primary_heavies"
-			
+
+		// Subwave 2
+		WaveSpawn // 12 Fast Punchies and 12 Quick-Ubers
+		{
+			Name "Wave5_Subwave2_FastPunchies"
+			WaitForAllSpawned "Wave5_Subwave1_Punchies"
 			Where spawnbot_invasion
 			TotalCount 24
 			MaxActive 16
@@ -734,11 +712,10 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+		WaveSpawn // 18 Sandmen 
 		{	
-			Name "primary_scouts"
-			WaitForAllSpawned "secondary_heavies"
-			
+			Name "Wave5_Subwave2_Sandmen"
+			WaitForAllSpawned "Wave5_Subwave2_FastPunchies"
 			Where spawnbot_giant
 			TotalCount 18
 			MaxActive 18
@@ -777,10 +754,12 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
-		{	
-			WaitForAllSpawned "primary_scouts"
-			
+
+		// Subwave 3
+		WaveSpawn // 12 Sandmen
+		{
+			Name "Wave5_Subwave3_Sandmen"
+			WaitForAllSpawned "Wave5_Subwave2_Sandmen"
 			Where spawnbot_invasion
 			TotalCount 12
 			MaxActive 12
@@ -819,10 +798,10 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+		WaveSpawn // 4 Fast Punchies and 4 Quick-Ubers
 		{	
-			WaitForAllSpawned "primary_scouts"
-			
+			Name "Wave5_Subwave3_FastPunchies"
+			WaitForAllSpawned "Wave5_Subwave2_Sandmen"
 			Where spawnbot_giant
 			TotalCount 8
 			MaxActive 8
@@ -844,25 +823,25 @@ WaveSchedule
 			}
 		}
 	}
-	//WAVE 6 //Giant flare pyro squads, champ heavy cooldown, 2x Tanks at 25k and 25k with giant spammer squads and giant flare pyros//Currency 1300 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	Wave
 	{
 		StartWaveOutput
 		{
-				Target wave_start_relay
-				Action Trigger
-			}
+			Target wave_start_relay
+			Action Trigger
+		}
 		DoneOutput					
 		{
-				Target wave_finished_relay
-				Action trigger
-			}
+			Target wave_finished_relay
+			Action trigger
+		}
 		WaitWhenDone 65
 		Checkpoint Yes
 
-		WaveSpawn 
-		{	
-			
+		// Subwave 1
+		WaveSpawn // 2 GFlares, 4 Heavies and 4 Pyros
+		{
+			Name "Wave6_Subwave1_GFlareSquads"
 			Where spawnbot
 			TotalCount 10
 			MaxActive 10
@@ -879,12 +858,12 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Class HeavyWeapons
+					Class Heavy
 					Skill Easy
 				}
 				TFBot
 				{
-					Class HeavyWeapons
+					Class Heavy
 					Skill Easy
 				}
 				TFBot
@@ -899,9 +878,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+		WaveSpawn // 2 GFlares, 4 Heavies and 4 Pyros 
 		{	
-			
+			Name "Wave6_Subwave1_GFlareSquads2"
 			Where spawnbot_giant
 			TotalCount 10
 			MaxActive 10
@@ -920,12 +899,12 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Class HeavyWeapons
+					Class Heavy
 					Skill Easy
 				}
 				TFBot
 				{
-					Class HeavyWeapons
+					Class Heavy
 					Skill Easy
 				}
 				TFBot
@@ -940,10 +919,11 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+
+		// Subwave 2
+		WaveSpawn // 44 Punchies
 		{	
-			Name "primary_heavies"
-			
+			Name "Wave6_Subwave2_Punchies"
 			Where spawnbot
 			TotalCount 44
 			MaxActive 12
@@ -957,8 +937,9 @@ WaveSchedule
 				Template T_TFBot_Heavyweapons_Heavyweight_Champ
 			}
 		}
-		WaveSpawn 
-		{			
+		WaveSpawn // 36 Fast Punchies
+		{	
+			Name "Wave6_Subwave2_FastPunchies"
 			Where spawnbot_giant
 			TotalCount 36
 			MaxActive 8
@@ -983,13 +964,18 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+
+		// Subwave 3
+		WaveSpawn // 1 Tank
 		{		
-			Name "primary_tank"
-			WaitForAllSpawned "primary_heavies"
+			Name "Wave6_Subwave3_Tank"
+			WaitForAllSpawned "Wave6_Subwave2_Punchies"
 			
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 35
+			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			FirstSpawnOutput                                                                                                                                                            
@@ -1010,7 +996,6 @@ WaveSchedule
 					Target boss_dead_relay
 					Action Trigger                         
 				}
-				
 				OnBombDroppedOutput                             
 				{
 					Target boss_deploy_relay 
@@ -1019,46 +1004,10 @@ WaveSchedule
 
 			}			
 		}
-		WaveSpawn 
-		{		
-			WaitForAllSpawned "primary_heavies"
-			
-			TotalCount 1
-			WaitBeforeStarting 110
-			TotalCurrency 100
-
-			FirstSpawnOutput                                                                                                                                                            
-			{
-				Target boss_spawn_relay                                            
-				Action Trigger                         
-			}
-
-			Tank
-			{
-				Health 25000
-				Speed 75
-				Name "tankboss"
-				Skin 1
-				StartingPathTrackNode "boss_path_a1"
-
-				OnKilledOutput                                  
-				{
-					Target boss_dead_relay
-					Action Trigger                         
-				}
-				
-				OnBombDroppedOutput                             
-				{
-					Target boss_deploy_relay 
-					Action Trigger                         
-				}
-
-			}			
-		}
-		WaveSpawn 
+		WaveSpawn // 2 GRapids, 4 Heavies and 4 Pyros
 		{	
-			WaitForAllSpawned "primary_tank"
-			
+			Name "Wave6_Subwave3_GRapids"
+			WaitForAllSpawned "Wave6_Subwave3_Tank"
 			Where spawnbot_giant
 			TotalCount 10
 			MaxActive 10
@@ -1097,10 +1046,30 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+		WaveSpawn // 12 Flare Pyros
 		{	
-			WaitForAllSpawned "primary_tank"
+			Name "Wave6_Subwave3_FlarePyros"
+			WaitForAllSpawned "Wave6_Subwave3_Tank"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 1
+			TotalCurrency 100
 			
+			TFBot
+			{
+				Template T_TFBot_Pyro_Flaregun
+			}
+
+		}
+		
+		// Subwave 4
+		WaveSpawn // 2 GFlares and 2 Bigheal Medics
+		{	
+			Name "Wave6_Subwave4_GFlares"
+			WaitForAllSpawned "Wave6_Subwave2_Punchies"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -1121,23 +1090,43 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
-		{	
-			WaitForAllSpawned "primary_tank"
-			
-			Where spawnbot
-			TotalCount 12
-			MaxActive 4
-			SpawnCount 2
-			WaitBeforeStarting 30
-			WaitBetweenSpawns 1
+		WaveSpawn // 1 Tank
+		{		
+			Name "Wave6_Subwave4_Tank"
+			WaitForAllSpawned "Wave6_Subwave2_Punchies"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 110
+			WaitBetweenSpawns 0
 			TotalCurrency 100
-			
-			TFBot
+
+			FirstSpawnOutput                                                                                                                                                            
 			{
-				Template T_TFBot_Pyro_Flaregun
+				Target boss_spawn_relay                                            
+				Action Trigger                         
 			}
 
+			Tank
+			{
+				Health 25000
+				Speed 75
+				Name "tankboss"
+				Skin 1
+				StartingPathTrackNode "boss_path_a1"
+
+				OnKilledOutput                                  
+				{
+					Target boss_dead_relay
+					Action Trigger                         
+				}
+				OnBombDroppedOutput                             
+				{
+					Target boss_deploy_relay 
+					Action Trigger                         
+				}
+
+			}			
 		}
 	}
 }	
