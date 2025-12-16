@@ -111,6 +111,25 @@ class MVM_Mobber {
 		this.path_debug = false
 	}
 
+	function IsInFieldOfView( target )
+	{
+		local tolerance = 0.5736 // cos( 110/2 )
+
+		local delta = target.GetOrigin() - cur_eye_pos
+		delta.Norm()
+		if ( cur_eye_fwd.Dot( target ) >= tolerance )
+			return true
+
+		delta = target.GetCenter() - cur_eye_pos
+		delta.Norm()
+		if ( cur_eye_fwd.Dot( delta ) >= tolerance )
+			return true
+
+		delta = target.EyePosition() - cur_eye_pos
+		delta.Norm()
+		return ( cur_eye_fwd.Dot( delta ) >= tolerance )
+	}
+
 	function IsVisible( target ) {
 
 		if ( !target || !target.IsValid() )
@@ -126,10 +145,10 @@ class MVM_Mobber {
 		return !trace.hit
 	}
 
-	function IsThreatVisible( target ) 		{
+	function IsThreatVisible( target ) {
 		return threat_visible = ( IsInFieldOfView( target ) && IsVisible( target ) ), threat_visible
-
 	}
+
 	function GetThreatDistanceSqr( target ) {
 		return ( ( target.GetOrigin() || Vector() ) - cur_pos ).LengthSqr()
 	}
@@ -359,6 +378,7 @@ class MVM_Mobber {
 			if ( area_start != area_end && !path_areas.len() )
 				return false
 
+
 			// Construct path_points
 			else {
 
@@ -459,15 +479,11 @@ class MVM_Mobber {
 			path_recompute_time = time + ( path_recompute_mod > MAX_RECOMPUTE_TIME ? MAX_RECOMPUTE_TIME : path_recompute_mod )
 		}
 
-		if ( path_index == null )
+		if ( path_index == null ) {
 			path_index = path_count
+		}
 
 		if ( !(path_index in path_points) || ( path_points[path_index].pos - bot.GetOrigin() ).LengthSqr() < 64.0 ) {
-
-			// path_index++
-
-			// printf( "path_index: %d path_count: %d dist_to_target: %f\n", path_index, path_count, dist_to_target )
-			// if ( path_index >= path_count )
 			return ResetPath()
 		}
 
@@ -493,8 +509,9 @@ class MVM_Mobber {
 			}
 		}
 
-		if ( move && threat && threat.IsValid() )
+		if ( move && threat && threat.IsValid() ) {
 			MoveToThreat( lookat )
+		}
 	}
 
 	function MoveToThreat( lookat = true, turnrate_min = 600, turnrate_max = 1500 ) {
@@ -502,8 +519,9 @@ class MVM_Mobber {
 		// if ( !(path_index in path_points) )
 		// 	__DumpScope( 0, path_points )
 
-		if ( !threat || !threat.IsValid() )
+		if ( !threat || !threat.IsValid() ) {
 			return
+		}
 
 		// we're underwater or very close and can see our target, just move directly at them
 		if ( ( bot.GetWaterLevel() >= 2 || threat_dist <= MAX_THREAT_DISTANCE ) && IsVisible( threat ) ) {
@@ -515,6 +533,7 @@ class MVM_Mobber {
 
 		if ( path_index == null || !( path_index in path_points ) )
 			return UpdatePath( threat_pos, true )
+
 
 		local point = path_points[0].pos
 
@@ -544,8 +563,9 @@ class MVM_Mobber {
 
 		local look_pos = Vector( point.x, point.y, cur_eye_pos.z )
 
-		if ( lookat )
+		if ( lookat ) {
 			LookAt( look_pos, turnrate_min, turnrate_max )
+		}
 
 		if ( path_debug ) {
 
@@ -561,6 +581,7 @@ class MVM_Mobber {
 				area.DebugDrawFilled( x, (x / 2), 0, 50, 0.075, true, 0.0 )
 			}
 		}
+
 		// unstuck behavior, tell the bot to path to another nearby area
 		// if we're really stuck, teleport the bot somewhere safe
 		local stucktime = locomotion.GetStuckDuration()
@@ -701,6 +722,8 @@ class MVM_Mobber {
 
 		scope.MobberThink <- function() {
 
+			aibot.OnUpdate()
+
 			if ( bot.GetActionPoint() && bot.GetActionPoint().IsValid() )
 				return
 
@@ -726,7 +749,8 @@ class MVM_Mobber {
 
 			aibot.FindPathToThreat()
 			aibot.MoveToThreat()
-			aibot.OnUpdate()
+
+			return -1
 		}
 		AddThinkToEnt( bot, "MobberThink" )
 	}

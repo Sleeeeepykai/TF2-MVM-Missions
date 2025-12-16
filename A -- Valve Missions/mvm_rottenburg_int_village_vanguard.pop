@@ -1,7 +1,3 @@
-///////////////////////////////////////////////////////////////////////////
-// BEGIN POP FILE
-///////////////////////////////////////////////////////////////////////////
-
 #base robot_giant.pop
 #base robot_standard.pop
 
@@ -10,18 +6,9 @@ WaveSchedule
 
 	StartingCurrency 1000
 	RespawnWaveTime 6
-	CanBotsAttackWhileInSpawnRoom no
+	CanBotsAttackWhileInSpawnRoom No
 	
-/////////////////
-//MISSIONS
-/////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//SENTRY BUSTER MISSIONS
-///////////////////////////////////////////////////////////////////////////
-	
-	Mission	// Sentry Busters - All
+	Mission	// Sentry Buster
 	{
 		Objective DestroySentries
 
@@ -36,13 +23,8 @@ WaveSchedule
 				Template T_TFBot_SentryBuster
             }
 	}
-
 	
-///////////////////////////////////////////////////////////////////////////
-//SNIPER MISSIONS
-///////////////////////////////////////////////////////////////////////////
-	
-	Mission	// Sniper wave 3
+	Mission	// Sniper (Wave 3)
 	{
 		Objective Sniper
 
@@ -62,9 +44,70 @@ WaveSchedule
 				"damage bonus"	1.0
 			}
 		}
+	}
+
+	Mission // Engineer (Wave 4)
+	{
+		Objective Engineer  
+
+		InitialCooldown 45
+		Where spawnbot
+		BeginAtWave 4
+		RunForThisManyWaves 1
+		CooldownTime 45
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_Engineer_Sentry_Teleporter
+			TeleportWhere spawnbot
+			TeleportWhere flankers
+			Attributes TeleportToHint
+			Health 600
+		}
+	}
+
+	Mission // Spy (Wave 5)
+	{
+		Objective Spy  
+
+		InitialCooldown 30
+		Where spawnbot_mission_spy
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		CooldownTime 45
+		DesiredCount 2
+
+		TFBot
+		{
+			Class Spy
+			Skill Expert
+			Name Spy
+		}
 	}	
 	
-	Mission	// Sniper wave 7
+	Mission // Engineer (Wave 6)
+	{
+		Objective Engineer  
+
+		InitialCooldown 45
+		Where spawnbot
+		BeginAtWave 6
+		RunForThisManyWaves 1
+		CooldownTime 45
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_Engineer_Sentry_Teleporter
+			TeleportWhere spawnbot
+			TeleportWhere flankers
+			Attributes TeleportToHint
+			Health 600
+		}
+	}
+
+	Mission	// Sniper (Wave 7)
 	{
 		Objective Sniper
 
@@ -85,32 +128,7 @@ WaveSchedule
 			}
 		}
 	}
-
-	
-///////////////////////////////////////////////////////////////////////////
-//SPY MISSIONS
-///////////////////////////////////////////////////////////////////////////
-	
-	Mission // Spy wave 5
-	{
-		Objective Spy  
-
-		InitialCooldown 30
-		Where spawnbot_mission_spy
-		BeginAtWave 5
-		RunForThisManyWaves 1
-		CooldownTime 45
-		DesiredCount 2
-
-		TFBot
-		{
-			Class Spy
-			Skill Expert
-			Name Spy
-		}
-	}	
-	
-	Mission // Spy wave 7
+	Mission // Spy (Wave 7)
 	{
 		Objective Spy  
 
@@ -127,78 +145,7 @@ WaveSchedule
 			Skill Expert
 			Name Spy
 		}
-	}	
-	
-
-	
-///////////////////////////////////////////////////////////////////////////	
-//ENGINEER MISSIONS
-///////////////////////////////////////////////////////////////////////////	
-		
-		
-	Mission // Engineer wave 4 
-	{
-		Objective Engineer  
-
-		InitialCooldown 45
-		Where spawnbot
-		BeginAtWave 4
-		RunForThisManyWaves 1
-		CooldownTime 45
-		DesiredCount 1
-
-		TFBot
-		{
-			Template T_TFBot_Engineer_Sentry_Teleporter
-			TeleportWhere spawnbot
-			TeleportWhere flankers
-			Attributes TeleportToHint
-			Health 600
-		}
 	}
-	
-	Mission // Engineer wave 6 
-	{
-		Objective Engineer  
-
-		InitialCooldown 45
-		Where spawnbot
-		BeginAtWave 6
-		RunForThisManyWaves 1
-		CooldownTime 45
-		DesiredCount 1
-
-		TFBot
-		{
-			Template T_TFBot_Engineer_Sentry_Teleporter
-			TeleportWhere spawnbot
-			TeleportWhere flankers
-			Attributes TeleportToHint
-			Health 600
-		}
-	}	
-
-
-/////////////////
-//WAVES
-//POPFILE PAYOUT
-//START $1000
-//DROP W1 $1000 /W2 $900 /W3 $900 /W4 $900 /W5 $800 /W6 $800 /W7 $800
-//START: $1000 / DROP: $6100 / TOTAL: $7100 / TOTAL PLUS BONUS: $7800
-/////////////////	
-
-//WAVE 1  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 20 Scouts and Melee Scouts (200)
-// 12 Demoknight flood (180)
-// 20 Scouts (200)
-// 16 Soldiers (240) 
-// 1 Super Scout (180) 
-// Missions: Sentries 1/45, 
-// Cash at start is $1000
-// Total cash in this wave is $1000
-// Running Total cash is $2000
-///////////////////////////////////////////////////////////////////////////
 
 	Wave
 	{
@@ -215,13 +162,15 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 20 Scouts and Melee Scouts (200)
+		// Subwave 1
+		WaveSpawn // 20 Scouts
 		{
+			Name "Wave1_Subwave1_Scouts"
 			Where spawnbot	
-			Name "W1_01"
 			TotalCount 20			
 			MaxActive 12								
-			SpawnCount 5									
+			SpawnCount 5
+			WaitBeforeStarting 0							
 			WaitBetweenSpawns 8							
 			TotalCurrency 200	
 
@@ -240,91 +189,80 @@ WaveSchedule
 				}
 			}	
 		}
-		
-	WaveSpawn // 12 Demoknight flood (180)
+		WaveSpawn // 12 Demoknights
 		{
+			Name "Wave1_Subwave1_Demoknights"
+			WaitForAllSpawned "Wave1_Subwave1_Scouts"
 			Where spawnbot
-			Name "W1_02"
-			WaitForAllSpawned "W1_01"
-			WaitBeforeStarting 5
 			TotalCount 12			
 			MaxActive 12								
-			SpawnCount 4									
+			SpawnCount 4
+			WaitBeforeStarting 5									
 			WaitBetweenSpawns 4							
 			TotalCurrency 180	
 
 			TFBot
-				{
-					Template T_TFBot_Demoman_Knight
-				}
+			{
+				Template T_TFBot_Demoman_Knight
+			}
 		}
 		
-	WaveSpawn // 20 Scouts (200)
-		{
-			Where spawnbot	
-			WaitForAllSpawned "W1_02"
-			WaitBeforeStarting 20
+		// Subwave 2
+		WaveSpawn // 20 Scouts
+		{	
+			Name "Wave1_Subwave2_Scouts"
+			WaitForAllSpawned "Wave1_Subwave1_Demoknights"
+			Where spawnbot
 			TotalCount 20			
 			MaxActive 12								
-			SpawnCount 5									
+			SpawnCount 5	
+			WaitBeforeStarting 20								
 			WaitBetweenSpawns 18							
 			TotalCurrency 200	
 
 			TFBot
-				{
-					Class Scout
-					Skill Easy
-				}
+			{
+				Class Scout
+				Skill Easy
+			}
 		}
-		
-	WaveSpawn // 16 Soldiers (240)
+		WaveSpawn // 16 Soldiers
 		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave2_Scouts"
 			Where spawnbot
-			Name "W1_03"
-			WaitForAllSpawned "W1_02"
-			WaitBeforeStarting 20
 			TotalCount 16
 			MaxActive 8
 			SpawnCount 4
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 18							
 			TotalCurrency 240	
 
 			TFBot
-				{
-					Class Soldier
-					Skill Easy
-				}
+			{
+				Class Soldier
+				Skill Easy
+			}
 		}
 		
-	WaveSpawn // 1 Super Scout (180) 
+		WaveSpawn // 1 Super Scout
 		{
+			Name "Wave1_Subwave2_SuperScout"
+			WaitForAllSpawned "Wave1_Subwave2_Soldiers"
 			Where spawnbot
-			WaitForAllSpawned "W1_03"
 			TotalCount 1			
 			MaxActive 1								
-			SpawnCount 1			
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0			
 			TotalCurrency 180	
 
 			TFBot
-				{
-					Template T_TFBot_Giant_Scout_Fast
-				}
+			{
+				Template T_TFBot_Giant_Scout_Fast
+			}
 		}
 	}
-
-	
-//WAVE 2  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 20 Flaregun Pyros (100)
-// 1 Tank (300)
-// 40 Demoman Squads (200)
-// 1 Squad 1 Giant Soldier 3 Medics (300)
-// Missions: Sentries 1/45,
-// Cash at start is $2000
-// Total cash in this wave is $900
-// Running Total cash is $2900
-///////////////////////////////////////////////////////////////////////////
-
 	Wave
 	{
 		StartWaveOutput
@@ -340,32 +278,37 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 20 Flaregun Pyros (100)
+		// Subwave 1
+		WaveSpawn // 20 Flaregun Pyros
 		{
-			Where spawnbot	
-			Name "W2_01"
+			Name "Wave2_Subwave1_FlarePyros"
+			Where spawnbot
 			TotalCount 20			
 			MaxActive 16								
-			SpawnCount 4									
+			SpawnCount 4
+			WaitBeforeStarting 0							
 			WaitBetweenSpawns 6							
 			TotalCurrency 100	
 
 			TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun
-				}
+			{
+				Template T_TFBot_Pyro_Flaregun
+			}
 		}
 
-	WaveSpawn // Tank (300)
-		{						
-			Name "W2_02"
-			WaitForAllSpawned "W2_01"
-			WaitBeforeStarting 20
+		// Subwave 2
+		WaveSpawn // Tank
+		{
+			Name "Wave2_Subwave2_Tank"
+			WaitForAllSpawned "Wave2_Subwave1_FlarePyros"
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
 			TotalCurrency 300
 			
-			FirstSpawnOutput 
-			
+			FirstSpawnOutput
 			{
 				Target boss_spawn_relay                       
 				Action Trigger                         
@@ -383,23 +326,22 @@ WaveSchedule
 					Target boss_dead_relay					
 					Action Trigger                
 				}
-					
 				OnBombDroppedOutput                       
 				{
 					Target boss_deploy_relay 	
 					Action Trigger                  
 				}
 			}
-		}	
-		
-	WaveSpawn // 40 Demoman Squads (200)
+		}
+		WaveSpawn // 40 Demomen
 		{
-			Where spawnbot	
-			WaitForAllSpawned "W2_02"
-			WaitBeforeStarting 40
+			Name "Wave2_Subwave2_DemoSquads"
+			WaitForAllSpawned "Wave2_Subwave2_Tank"
+			Where spawnbot
 			TotalCount 40			
 			MaxActive 16								
-			SpawnCount 4									
+			SpawnCount 4
+			WaitBeforeStarting 40		
 			WaitBetweenSpawns 7							
 			TotalCurrency 200	
 				
@@ -427,16 +369,16 @@ WaveSchedule
 				}
 			}
 		}
-		
-	WaveSpawn // 1 Squad 1 Giant Soldier 3 Medics (200)
+		WaveSpawn // 1 Giant Soldier and 3 Uber Medics
 		{
-			Where spawnbot	
-			Name "W2_03"
-			WaitForAllSpawned "W2_02"
-			WaitBeforeStarting 50
+			Name "Wave2_Subwave2_GSoldier"
+			WaitForAllSpawned "Wave2_Subwave2_Tank"
+			Where spawnbot
 			TotalCount 4			
 			MaxActive 4								
-			SpawnCount 4																
+			SpawnCount 4
+			WaitBeforeStarting 50
+			WaitBetweenSpawns 0																
 			TotalCurrency 300	
 				
 			Squad 
@@ -462,20 +404,6 @@ WaveSchedule
 			}
 		}
 	}
-	
-
-//WAVE 3  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 40 Demoknights (200)
-// 3 Giant Soldiers (300)
-// 10 Steelfist Heavies (200)
-// 40 Scorchshot Pyros (200)
-// Missions: Sentry Busters: 1/30, Snipers: 1/30
-// Cash at start is $2900
-// Total cash in this wave is $900
-// Running Total cash is $3800
-///////////////////////////////////////////////////////////////////////////
-
 	Wave
 	{
 		StartWaveOutput
@@ -491,31 +419,32 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 40 Demoknights (200)
+		// Subwave 1
+		WaveSpawn // 40 Demoknights
 		{
-			Where spawnbot
-			Name "W3_01"					
+			Name "Wave3_Subwave1_Demoknights"	
+			Where spawnbot				
 			TotalCount 40			
 			MaxActive 12								
-			SpawnCount 4									
+			SpawnCount 4
+			WaitBeforeStarting 0							
 			WaitBetweenSpawns 6							
 			TotalCurrency 200	
 				
-				TFBot
-				{
-					Template T_TFBot_Demoman_Knight
-				}
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight
+			}
 		}
-
-	WaveSpawn // 3 Giant Soldiers (300)
+		WaveSpawn // 3 GSoldiers
 		{
+			Name "Wave3_Subwave1_GSoldiers"
 			Where spawnbot
-			Name "W3_02"
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 40
 			TotalCount 3			
 			MaxActive 3								
-			SpawnCount 1													
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 40													
 			TotalCurrency 300	
 				
 			TFBot
@@ -524,55 +453,42 @@ WaveSchedule
 				}
 		}
 		
-	WaveSpawn // 10 Steelfist Heavies (200)
+		// Subwave 2
+		WaveSpawn // 10 Steelfist Heavies
 		{
-			Where spawnbot
-			Name "W3_03"
-			WaitForAllSpawned "W3_01"		
+			Name "Wave3_Subwave2_SteelGauntlets"
+			WaitForAllSpawned "Wave3_Subwave1_Demoknights"	
+			Where spawnbot	
 			TotalCount 10			
 			MaxActive 6 								
-			SpawnCount 1									
+			SpawnCount 1
+			WaitBeforeStarting 0							
 			WaitBetweenSpawns 10							
 			TotalCurrency 200	
 				
 			TFBot
-				{
-					Template T_TFBot_Heavyweapons_Fist
-				}
+			{
+				Template T_TFBot_Heavyweapons_Fist
+			}
 		}
-		
-	WaveSpawn // 40 Scorchshot Pyros (200)
+		WaveSpawn // 40 Scorchshot Pyros
 		{
+			Name "Wave3_Subwave2_ScorchShots"
+			WaitForAllSpawned "Wave3_Subwave1_Demoknights"
 			Where spawnbot
-			Name "W3_04"
-			WaitForAllSpawned "W3_01"
 			TotalCount 40			
 			MaxActive 15								
-			SpawnCount 5									
+			SpawnCount 5
+			WaitBeforeStarting 0							
 			WaitBetweenSpawns 12							
 			TotalCurrency 200	
 				
-
 			TFBot
-				{
-					Template T_TFBot_ScorchShot
-				}
+			{
+				Template T_TFBot_ScorchShot
+			}
 		}
 	}
-
-
-//WAVE 4  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 1 Tank (200)
-// 50 Mixed Scouts and Baseball Scouts (250)
-// 1 Tank (200)
-// 50 Demomen (250)
-// Missions: Sentries 1/45, Engie 1/45
-// Cash at start is $3800
-// Total cash in this wave is $900
-// Running Total cash is $4700
-///////////////////////////////////////////////////////////////////////////
-
 	Wave
 	{
 		StartWaveOutput
@@ -588,14 +504,18 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 1 Tank (200)
-		{						
-			Name "W5_01"
+		// Subwave 1
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave4_Subwave1_Tank"
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
 			TotalCurrency 200
 			
 			FirstSpawnOutput 
-			
 			{
 				Target boss_spawn_relay                       
 				Action Trigger                         
@@ -612,8 +532,7 @@ WaveSchedule
 				{
 					Target boss_dead_relay					
 					Action Trigger                
-				}
-					
+				}	
 				OnBombDroppedOutput                       
 				{
 					Target boss_deploy_relay 	
@@ -621,46 +540,47 @@ WaveSchedule
 				}
 			}
 		}	
-		
-	WaveSpawn //  50 Mixed Scouts and Baseball Scouts (250)
+		WaveSpawn //  50 Mixed Scouts and Baseball Scouts
 		{
+			Name "Wave4_Subwave1_Scouts"
 			Where spawnbot
-			Name "W5_02"
-			WaitBeforeStarting 20
 			TotalCount 50			
 			MaxActive 20								
-			SpawnCount 5									
+			SpawnCount 5	
+			WaitBeforeStarting 20								
 			WaitBetweenSpawns 10							
 			TotalCurrency 250	
 				
 			RandomChoice
 			{
 				TFBot
-					{
-						Class Scout
-						Skill Easy
-					}
+				{
+					Class Scout
+					Skill Easy
+				}
 				TFBot
-					{
-						Class Scout
-						Skill Easy
-					}
+				{
+					Class Scout
+					Skill Easy
+				}
 				TFBot
-					{
-						Template T_TFBot_Scout_Sandman
-					}
+				{
+					Template T_TFBot_Scout_Sandman
+				}
 			}
 		}
 		
-	WaveSpawn // 1 Tank (200)
+		// Subwave 2
+		WaveSpawn // 1 Tank
 		{						
-			Name "W5_03"
-			WaitBeforeStarting 70
+			Name "Wave4_Subwave2_Tank"
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 70
 			TotalCurrency 200
 			
 			FirstSpawnOutput 
-			
 			{
 				Target boss_spawn_relay                       
 				Action Trigger                         
@@ -678,7 +598,6 @@ WaveSchedule
 					Target boss_dead_relay					
 					Action Trigger                
 				}
-					
 				OnBombDroppedOutput                       
 				{
 					Target boss_deploy_relay 	
@@ -686,41 +605,24 @@ WaveSchedule
 				}
 			}
 		}		
-		
-		
-
-	WaveSpawn // 50 Demomen (250)
+		WaveSpawn // 50 Demomen
 		{
+			Name "Wave4_Subwave2_Demomen"
 			Where spawnbot
-			Name "W5_04"
-			WaitBeforeStarting 90
 			TotalCount 50			
 			MaxActive 20								
-			SpawnCount 5									
+			SpawnCount 5	
+			WaitBeforeStarting 90								
 			WaitBetweenSpawns 8							
 			TotalCurrency 250		
 				
 			TFBot
-				{
-					Class Demoman
-					Skill Easy
-				}
+			{
+				Class Demoman
+				Skill Easy
+			}
 		}
 	}
-
-
-//WAVE 5  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 20 Scouts (100)
-// 5 Squads 1 Heavy 2 Medics (300)
-// 40 Pyros (200)
-// Squad 1 Giant Heavy 4 Medics (200)
-// Missions: Sentries 1/30, Spies 1/45,
-// Cash at start is $4700
-// Total cash in this wave is $800
-// Running Total cash is $5500
-///////////////////////////////////////////////////////////////////////////
-
 	Wave
 	{
 		StartWaveOutput
@@ -736,30 +638,32 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 20 Scouts (100)
+		// Subwave 1
+		WaveSpawn // 20 Scouts
 		{
+			Name "Wave5_Subwave1_Scouts"
 			Where spawnbot
-			Name "W5_01"
 			TotalCount 20			
 			MaxActive 10								
-			SpawnCount 5									
+			SpawnCount 5
+			WaitBeforeStarting 0								
 			WaitBetweenSpawns 8							
 			TotalCurrency 100	
 				
 			TFBot
-				{
-					Class Scout
-					Skill Easy
-				}
+			{
+				Class Scout
+				Skill Easy
+			}
 		}
-		
-	WaveSpawn // 5 Squads 1 Heavy 2 Medics (300)
+		WaveSpawn // 5 Heavies and 10 Uber Medics
 		{
+			Name "Wave5_Subwave1_HeavySquads"
 			Where spawnbot
-			Name "W5_02"
 			TotalCount 15			
 			MaxActive 6								
-			SpawnCount 3	
+			SpawnCount 3
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 20				
 			TotalCurrency 300
 				
@@ -767,7 +671,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class HeavyWeapons
+					Class Heavy
 					Skill Easy
 				}
 				TFBot
@@ -781,33 +685,35 @@ WaveSchedule
 			}
 		}
 		
-	WaveSpawn // 40 Pyros (200)
+		// Subwave 2
+		WaveSpawn // 40 Pyros
 		{
+			Name "Wave5_Subwave2_Pyros"
+			WaitForAllDead "Wave5_Subwave1_Scouts"
 			Where spawnbot
-			Name "W5_03"
-			WaitForAllDead "W5_01"
-			WaitBeforeStarting 10
 			TotalCount 40			
 			MaxActive 10								
-			SpawnCount 5									
+			SpawnCount 5	
+			WaitBeforeStarting 10								
 			WaitBetweenSpawns 8							
 			TotalCurrency 200	
 				
-				TFBot
-				{
-					Class Pyro
-					Skill Easy
-				}
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+			}
 		}
-		
-	WaveSpawn // Squad 1 Giant Heavy 4 Medics (200)
+		WaveSpawn // Squad 1 GHeavy 4 Uber Medics
 		{
+			Name "Wave5_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave5_Subwave1_HeavySquads"
 			Where spawnbot
-			WaitForAllSpawned "W5_02"
-			WaitBeforeStarting 30
 			TotalCount 5			
 			MaxActive 5								
-			SpawnCount 5					
+			SpawnCount 5
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0				
 			TotalCurrency 200
 				
 			Squad
@@ -835,20 +741,6 @@ WaveSchedule
 			}
 		}
 	}
-
-
-//WAVE 6  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 50 Mixed Scouts and DemoKnights (250)
-// 10 Squads 4 Soldiers 1 Medic (200)
-// 3 Giant Pyros (150)
-// 40 Huntsmen Snipers(200)
-// Missions: Sentries 1/30, Engies 1/45
-// Cash at start is $5500
-// Total cash in this wave is $800
-// Running Total cash is $6300
-///////////////////////////////////////////////////////////////////////////
-
 	Wave
 	{
 		StartWaveOutput
@@ -864,13 +756,15 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 50 Mixed Scouts, DemoKnights (150)
+		// Subwave 1
+		WaveSpawn // 50 Mixed Scouts, DemoKnights
 		{
+			Name "Wave6_Subwave1_ScoutsandDemoknights"
 			Where spawnbot
-			Name "W6_01"
 			TotalCount 50			
 			MaxActive 10								
 			SpawnCount 5
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
 			TotalCurrency 250	
 				
@@ -887,14 +781,14 @@ WaveSchedule
 					}
 				}
 		}
-	
-	WaveSpawn // 10 Squads 4 Soldiers 1 Medic (200)
+		WaveSpawn // 40 Soldiers and 10 Uber Medics
 		{
+			Name "Wave6_Subwave1_SoldierSquads"
 			Where spawnbot
-			Name "W6_02"
 			TotalCount 50			
 			MaxActive 10								
 			SpawnCount 5
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 10			
 			TotalCurrency 200	
 				
@@ -927,53 +821,42 @@ WaveSchedule
 				}
 		}
 	
-	WaveSpawn // 3 Giant Pyros (150)
+		// Subwave 2
+		WaveSpawn // 3 GPyros
 		{
+			Name "Wave6_Subwave2_GPyros"
+			WaitForAllSpawned "Wave6_Subwave1_SoldierSquads"
 			Where spawnbot
-			Name "W6_03"
-			WaitForAllSpawned "W6_02"
-			WaitBeforeStarting 30
 			TotalCount 3			
 			MaxActive 3								
 			SpawnCount 1
+			WaitBeforeStarting 30
 			WaitBetweenSpawns 20			
 			TotalCurrency 150	
 				
 			TFBot
-				{
-					Template T_TFBot_Giant_Pyro
-				}
-		}
-		
-	WaveSpawn // 40 Huntsmen Sniper (200)
+			{
+				Template T_TFBot_Giant_Pyro
+			}
+		}	
+		WaveSpawn // 40 Huntsmen
 		{
-			Where flankers	
-			WaitForAllSpawned "W6_02"
-			WaitBeforeStarting 30
+			Name "Wave6_Subwave2_Huntsmen"
+			WaitForAllSpawned "Wave6_Subwave1_SoldierSquads"
+			Where flankers
 			TotalCount 40			
 			MaxActive 16								
-			SpawnCount 4 									
+			SpawnCount 4 	
+			WaitBeforeStarting 30								
 			WaitBetweenSpawns 4							
 			TotalCurrency 200	
 				
 			TFBot
-				{
-					Template T_TFBot_Sniper_Huntsman
-				}
+			{
+				Template T_TFBot_Sniper_Huntsman
+			}
 		}
 	}
-
-	
-//WAVE 7  /////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// 4 Tanks (200)
-// Mixed Melee Scouts, Demoknights, Pyros and FastChamp Heavies
-// Missions: Sentries 1/30, Snipers 2/45, Spies 2/45,
-// Cash at start is $6300
-// Total cash in this wave is $800
-// Running Total cash is $7100
-///////////////////////////////////////////////////////////////////////////
-
 	Wave
 	{
 		StartWaveOutput
@@ -989,14 +872,18 @@ WaveSchedule
 
 		Checkpoint Yes
 		
-	WaveSpawn // 2 Tanks (200)
-		{						
+		// Subwave 1
+		WaveSpawn // 2 Tanks
+		{	
+			Name "Wave7_Subwave1_Tanks"					
 			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 14
 			TotalCurrency 200
 			
-			FirstSpawnOutput 
-			
+			FirstSpawnOutput
 			{
 				Target boss_spawn_relay                       
 				Action Trigger                         
@@ -1013,8 +900,7 @@ WaveSchedule
 				{
 					Target boss_dead_relay					
 					Action Trigger                
-				}
-					
+				}	
 				OnBombDroppedOutput                       
 				{
 					Target boss_deploy_relay 	
@@ -1022,15 +908,17 @@ WaveSchedule
 				}
 			}
 		}	
-	
-	WaveSpawn // 1 Tank (100)
-		{						
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave7_Subwave1_Tank2"			
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 7
+			WaitBetweenSpawns 0
 			TotalCurrency 100
 			
 			FirstSpawnOutput 
-			
 			{
 				Target boss_spawn_relay                       
 				Action Trigger                         
@@ -1047,8 +935,7 @@ WaveSchedule
 				{
 					Target boss_dead_relay					
 					Action Trigger                
-				}
-					
+				}	
 				OnBombDroppedOutput                       
 				{
 					Target boss_deploy_relay 	
@@ -1056,15 +943,17 @@ WaveSchedule
 				}
 			}
 		}
-
-	WaveSpawn // 1 Tank (100)
-		{						
+		WaveSpawn // 1 Tank
+		{				
+			Name "Wave7_Subwave1_Tank3"		
 			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 21
+			WaitBetweenSpawns 0
 			TotalCurrency 100
 			
 			FirstSpawnOutput 
-			
 			{
 				Target boss_spawn_relay                       
 				Action Trigger                         
@@ -1082,8 +971,7 @@ WaveSchedule
 				{
 					Target boss_dead_relay					
 					Action Trigger                
-				}
-					
+				}	
 				OnBombDroppedOutput                       
 				{
 					Target boss_deploy_relay 	
@@ -1092,13 +980,14 @@ WaveSchedule
 			}
 		}			
 	
-	WaveSpawn // Support 
+		WaveSpawn // Support 
 		{
+			Name "Wave7_Subwave1_Support"
 			Where spawnbot
-			WaitBeforeStarting 20
 			TotalCount 50			
 			MaxActive 12								
-			SpawnCount 6									
+			SpawnCount 6
+			WaitBeforeStarting 20									
 			WaitBetweenSpawns 6							
 			TotalCurrency 400	
 			
