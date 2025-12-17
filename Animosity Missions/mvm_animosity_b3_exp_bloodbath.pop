@@ -45,6 +45,10 @@ WaveSchedule
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
 					EntFire(`arena_mode_relay`, `Trigger`)
+					EntFire(`arena_mode_commandfence1_close`, `Trigger`)
+					EntFire(`arena_mode_commandfence2_close`, `Trigger`)
+					EntFire(`arena_mode_commandgate1_close`, `Trigger`)
+					EntFire(`arena_mode_commandgate1_close`, `Trigger`)
                   "
         }
         DoneOutput
@@ -56,10 +60,11 @@ WaveSchedule
                   "
         }
 
+		// Intro
 		WaveSpawn
 		{
 			Name "Wave1_SoldierVoice"
-			WaitBeforeStarting 1
+			WaitBeforeStarting 5
 
 			FirstSpawnOutput
 			{
@@ -68,6 +73,82 @@ WaveSchedule
 				Param "
 						EmitSoundEx({sound_name = `vo/mvm/norm/soldier_mvm_laughevil01.mp3`, special_dsp = 55, filter_type = 5})
 					  "
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_SoldierVoice"
+			WaitBeforeStarting 8
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({sound_name = `vo/mvm/norm/soldier_mvm_battlecry05.mp3`, special_dsp = 55, filter_type = 5})
+					  "
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_SoldierVoice"
+			WaitBeforeStarting 10
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_sidefence_disable`, `Trigger`)
+						EntFire(`arena_mode_sidefence_spawnbot_enable`, `Trigger`)
+					  "
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_ShotgunSoldiers"
+			Where spawnbot_arena_left
+			TotalCount 50
+			MaxActive 20
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 200
+
+			Squad
+			{
+				TFBot
+				{
+					Name "Extended Conch Shovel Soldier"
+					Template T_TFBot_Soldier_Extended_Concheror
+					Skill Hard
+					WeaponRestrictions MeleeOnly
+				}
+				TFBot
+				{
+					Name "Shotgun Soldier"
+					Class Soldier
+					WeaponRestrictions SecondaryOnly
+				}
+				TFBot
+				{
+					Name "Shotgun Soldier"
+					Class Soldier
+					WeaponRestrictions SecondaryOnly
+				}
+				TFBot
+				{
+					Name "Shotgun Soldier"
+					Class Soldier
+					WeaponRestrictions SecondaryOnly
+				}
+				TFBot
+				{
+					Name "Shotgun Soldier"
+					Class Soldier
+					WeaponRestrictions SecondaryOnly
+				}
 			}
 		}
 	}
