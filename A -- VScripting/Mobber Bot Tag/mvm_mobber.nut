@@ -655,6 +655,9 @@ class MVM_Mobber {
 
 	function Cleanup()
     {
+		for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
+			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
+		}
         delete ::MVM_MobberTable
     }
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
@@ -667,18 +670,12 @@ class MVM_Mobber {
 		if ( attacker && attacker.IsPlayer() && "aibot" in scope )
 			scope.aibot.OnTakeDamage( attacker )
 	}
-	// OnGameEvent_post_inventory_application = function(params)
-	// {
-	// 	local player = GetPlayerFromUserID(params.userid)
-	// 	local scope = player.GetScriptScope()
-	// 	if(player.IsBotOfType(1337)) {
-	// 		scope.aibot <- MVM_Mobber(player)
-	// 		scope.botThink <- function() {
-	// 			aibot.OnUpdate()
-	// 		}
-	// 		AddThinkToEnt( player, "botThink" )
-	// 	}
-	// }
+	OnGameEvent_player_death = function(params)
+	{
+		local player = GetPlayerFromUserID(params.userid)
+
+		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
+	}
 	OnGameEvent_player_spawn = function(params)
 	{
 		local player = GetPlayerFromUserID(params.userid)
