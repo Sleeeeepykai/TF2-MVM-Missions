@@ -1,0 +1,74 @@
+#base robot_giant.pop
+#base robot_standard.pop
+
+WaveSchedule
+{
+    StartingCurrency 500
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+    //// ROBOT TEMPLATES ////
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		CooldownTime 30
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Bloodbath (Exp)`)
+					EntFire(`arena_mode_maingate_close` `Trigger`)
+					EntFire(`arena_mode_flankgateleft_close` `Trigger`)
+					EntFire(`arena_mode_flankgateright_close` `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`arena_mode_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+		WaveSpawn
+		{
+			Name "Wave1_SoldierVoice"
+			WaitBeforeStarting 1
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({sound_name = `vo/mvm/norm/soldier_mvm_laughevil01.mp3`, special_dsp = 55, filter_type = 5})
+					  "
+			}
+		}
+	}
+}
