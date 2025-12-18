@@ -52,14 +52,6 @@ WaveSchedule
 					EntFire(`arena_mode_commandgate2_close`, `Trigger`)
                   "
         }
-        DoneOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_finished_relay`, `Trigger`)        
-                  "
-        }
 
 		// Intro
 		WaveSpawn
@@ -297,6 +289,57 @@ WaveSchedule
 				Template T_TFBot_Giant_Demoman
 				Tag Mobber
 				Tag bot_giant
+			}
+		}
+	}
+	Wave
+	{
+		WaveSpawn
+		{
+			Name "Wave1_GPyroVoice"
+			WaitBeforeStarting 3
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_taunts03.mp3`, special_dsp = 55, filter_type = 5})
+					  "
+			}
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 GPyro and 2 Uber Medics
+		{
+			Name "Wave2_Subwave1_GPyro"
+			Where spawnbot_arena_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "vo/mvm/mght/pyro_mvm_m_battlecry02.mp3"
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+					Tag Mobber
+					Tag bot_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
 			}
 		}
 	}
