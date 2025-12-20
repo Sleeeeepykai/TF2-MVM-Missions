@@ -1,0 +1,288 @@
+#base robot_giant.pop
+#base robot_standard.pop
+
+WaveSchedule
+{
+    StartingCurrency 500
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+    //// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_ArenaCarrier
+		{
+			Class Heavy
+			WeaponRestrictions MeleeOnly
+			Attributes IgnoreEnemies
+			Tag BombHolder
+
+			CharacterAttributes
+			{
+				"move speed bonus" 0.0001
+			}
+		}
+
+		T_TFBot_Objective
+		{
+			Name "The Commander"
+			Class Demoman
+			ClassIcon demo_bomber
+			Skill Expert
+			Health 20000
+			Scale 2
+			Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+			Attributes UseBossHealthBar
+			Attributes DisableDodge
+			WeaponRestrictions PrimaryOnly
+			Tag FriendlyBot
+
+			Item "Hazard Headgear"
+
+			CharacterAttributes
+			{
+				"move speed bonus"	0.4
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"override footstep sound set" 4
+			}
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+				"faster reload rate" -0.4
+				"fire rate bonus" 0.75
+			}
+		}
+	}
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		CooldownTime 30
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Bloodbath (Exp)`)
+					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					EntFire(`spawnbot_arena_objective`, `Enable`)
+					EntFire(`arena_mode_maingate_close`, `Trigger`)
+					EntFire(`arena_mode_flankgateleft_close`, `Trigger`)
+					EntFire(`arena_mode_flankgateright_close`, `Trigger`)
+
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`arena_mode_transition_relay`, `Trigger`)
+					EntFire(`arena_mode_commandfence1_close`, `Trigger`)
+					EntFire(`arena_mode_commandfence2_close`, `Trigger`)
+					EntFire(`arena_mode_commandgate1_close`, `Trigger`)
+					EntFire(`arena_mode_commandgate2_close`, `Trigger`)
+                  "
+        }
+
+		WaveSpawn
+		{
+			Name "Wave1_BombHolder"
+			Where spawnbot_right
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_ArenaCarrier
+					}
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Objective"
+			Where spawnbot_arena_objective
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_Objective
+					}
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					EntFire(`arena_mode_relay`, `Trigger`)
+					EntFire(`spawnbot_arena_objective`, `Enable`)
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+				  "
+		}
+
+		// Intro
+		WaveSpawn
+		{
+			Name "Wave1_GPyroVoice"
+			WaitBeforeStarting 2
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_taunts03.mp3`, special_dsp = 55, filter_type = 5})
+					  "
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_BombHolder"
+			Where spawnbot
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_ArenaCarrier
+					}
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Objective"
+			Where spawnbot_arena_objective
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_Objective
+					}
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`spawnbot_arena_objective`, `Disable`)
+					  "
+			}
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 GPyro and 2 Uber Medics
+		{
+			Name "Wave2_Subwave1_GPyro"
+			Where spawnbot_arena_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "vo/mvm/mght/pyro_mvm_m_battlecry02.mp3"
+
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+	}
+}
