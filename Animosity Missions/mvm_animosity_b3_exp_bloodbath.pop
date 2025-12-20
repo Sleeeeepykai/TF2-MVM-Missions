@@ -11,6 +11,21 @@ WaveSchedule
 
     //// ROBOT TEMPLATES ////
 
+	Templates
+	{
+		T_TFBot_ArenaCarrier
+		{
+			Class Heavy
+			WeaponRestrictions MeleeOnly
+			Attributes IgnoreEnemies
+
+			CharacterAttributes
+			{
+				"move speed bonus" 0.0001
+			}
+		}
+	}
+
     //// MISSION BOTS ////
 
     Mission // Sentry Buster
@@ -33,10 +48,12 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Bloodbath (Exp)`)
-					IncludeScript(`mvm_mobber`, getroottable())
+					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
 					EntFire(`arena_mode_maingate_close`, `Trigger`)
 					EntFire(`arena_mode_flankgateleft_close`, `Trigger`)
 					EntFire(`arena_mode_flankgateright_close`, `Trigger`)
+
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
                   "
         }
 		StartWaveOutput
@@ -98,6 +115,23 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn
+		{
+			Name "Wave1_BombHolder"
+			Where spawnbot_right
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_ArenaCarrier
+			}
+		}
+
 		// Subwave 1
 		WaveSpawn // 30 Scouts
 		{
@@ -116,7 +150,6 @@ WaveSchedule
 			{
 				Class Scout
 				Skill Easy
-				Tag Mobber
 			}
 		}
 		WaveSpawn // 5 Soldiers
@@ -134,7 +167,6 @@ WaveSchedule
 			{
 				Class Soldier
 				Skill Hard
-				Tag Mobber
 			}
 		}
 
@@ -171,7 +203,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Demoman
-				Tag Mobber
 				Tag bot_giant
 			}
 		}
@@ -191,7 +222,6 @@ WaveSchedule
 			{
 				Class Soldier
 				Skill Hard
-				Tag Mobber
 			}
 		}
 		WaveSpawn // 10 Scouts
@@ -210,7 +240,6 @@ WaveSchedule
 			{
 				Class Scout
 				Skill Easy
-				Tag Mobber
 			}
 		}
 
@@ -231,7 +260,6 @@ WaveSchedule
 			{
 				Class Soldier
 				Skill Hard
-				Tag Mobber
 			}
 		}
 		WaveSpawn // 6 Soldiers
@@ -250,7 +278,6 @@ WaveSchedule
 			{
 				Class Soldier
 				Skill Hard
-				Tag Mobber
 			}
 		}
 		WaveSpawn // 1 GDemo
@@ -268,7 +295,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Demoman
-				Tag Mobber
 				Tag bot_giant
 			}
 		}
@@ -287,7 +313,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Demoman
-				Tag Mobber
 				Tag bot_giant
 			}
 		}
@@ -299,8 +324,9 @@ WaveSchedule
 			Target BigNet
             Action RunScriptCode
             Param "
-					IncludeScript(`mvm_mobber`, getroottable())
+					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
 					EntFire(`arena_mode_relay`, `Trigger`)
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
 				  "
 		}
 
@@ -320,11 +346,28 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn
+		{
+			Name "Wave1_BombHolder"
+			Where spawnbot
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_ArenaCarrier
+			}
+		}
+
 		// Subwave 1
 		WaveSpawn // 1 GPyro and 2 Uber Medics
 		{
 			Name "Wave2_Subwave1_GPyro"
-			Where spawnbot_arena_right
+			Where spawnbot_arena_left
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
@@ -341,36 +384,15 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Pyro
 					Attributes AlwaysFireWeapon
-					Tag Mobber
 				}
 				TFBot
 				{
 					Template T_TFBot_Medic_QuickUber
-					Tag Mobber
 				}
 				TFBot
 				{
 					Template T_TFBot_Medic_QuickUber
-					Tag Mobber
 				}
-			}
-		}
-		WaveSpawn // 1 GPyro and 2 Uber Medics
-		{
-			Name "Wave2_Subwave1_GPyro"
-			Where spawnbot_arena_right
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 0
-			TotalCurrency 40
-
-
-			TFBot
-			{
-				Class Pyro
-				Tag Mobber
 			}
 		}
 	}
