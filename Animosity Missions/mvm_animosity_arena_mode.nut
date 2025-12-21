@@ -56,30 +56,25 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function BotTagCheck()
 	{
-		if(activator.HasBotTag("BombHolder"))
-		{
-			MVMAnimosity_ArenaMode.ArenaBombHolder(activator)
-		}
 		if(activator.HasBotTag("FriendlyBot"))
 		{
 			MVMAnimosity_ArenaMode.ArenaFriendlyBot(activator)
 		}
-	}
-
-	function ArenaBombHolder(target)
-	{
-		target.ValidateScriptScope()
-		local scope = target.GetScriptScope()
-
-		local bomb = GetPropEntity( target, "m_hItem" )
-
-		NetProps.SetPropBool(bomb, "m_bGlowEnabled", false)
+		if(activator.HasBotTag("Glow"))
+		{
+			MVMAnimosity_ArenaMode.BotGlow(activator)
+		}
 	}
 
 	function ArenaFriendlyBot(target)
 	{
 		target.ForceChangeTeam( TF_TEAM_PVE_DEFENDERS, false )
 		target.AddCustomAttribute( "ammo regen", 999.0, -1 )
+	}
+
+	function BotGlow(target)
+	{
+		NetProps.SetPropBool(target, "m_bGlowEnabled", true)
 	}
 }
 
