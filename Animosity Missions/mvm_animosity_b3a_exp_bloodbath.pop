@@ -13,24 +13,11 @@ WaveSchedule
 
 	Templates
 	{
-		T_TFBot_ArenaCarrier
-		{
-			Class Heavy
-			WeaponRestrictions MeleeOnly
-			Attributes IgnoreEnemies
-			Tag BombHolder
-
-			CharacterAttributes
-			{
-				"move speed bonus" 0.0001
-			}
-		}
-
 		T_TFBot_Objective
 		{
 			Name "The Commander"
 			Class Demoman
-			ClassIcon demo_bomber
+			ClassIcon red_lite
 			Skill Expert
 			Health 20000
 			Scale 2
@@ -106,130 +93,16 @@ WaveSchedule
 
 		WaveSpawn
 		{
-			Name "Wave1_BombHolder"
-			Where spawnbot_right
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_ArenaCarrier
-					}
-				}
-			}
-		}
-
-		WaveSpawn
-		{
 			Name "Wave1_Objective"
 			Where spawnbot_arena_objective
 			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 0
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_Objective
-					}
-				}
-			}
-		}
-
-		WaveSpawn
-		{
-			Name "Wave1_Subwave1_GDemo"
-			Where spawnbot_arena_left
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
-			TotalCurrency 40
 
-			TFBot
-			{
-				Template T_TFBot_Giant_Demoman
-			}
-		}
-	}
-	Wave
-	{
-		InitWaveOutput
-		{
-			Target BigNet
-            Action RunScriptCode
-            Param "
-					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
-					EntFire(`arena_mode_relay`, `Trigger`)
-					EntFire(`spawnbot_arena_objective`, `Enable`)
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
-				  "
-		}
-
-		// Intro
-		WaveSpawn
-		{
-			Name "Wave1_GPyroVoice"
-			WaitBeforeStarting 2
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EmitSoundEx({sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_taunts03.mp3`, special_dsp = 55, filter_type = 5})
-					  "
-			}
-		}
-
-		WaveSpawn
-		{
-			Name "Wave1_BombHolder"
-			Where spawnbot
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_ArenaCarrier
-					}
-				}
-			}
-		}
-
-		WaveSpawn
-		{
-			Name "Wave1_Objective"
-			Where spawnbot_arena_objective
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_laughhappy02.mp3"
 
 			Squad
 			{
@@ -242,6 +115,11 @@ WaveSchedule
 				}
 			}
 
+		}
+
+		WaveSpawn
+		{
+			WaitBeforeStarting 4.5
 			FirstSpawnOutput
 			{
 				Target BigNet
@@ -251,37 +129,104 @@ WaveSchedule
 					  "
 			}
 		}
-
-		// Subwave 1
-		WaveSpawn // 1 GPyro and 2 Uber Medics
+		WaveSpawn
 		{
-			Name "Wave2_Subwave1_GPyro"
-			Where spawnbot_arena_left
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			Name "Wave1_Demo"
 			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedcontrolpoint03.mp3"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_LeftSpawnBust"
+			WaitBeforeStarting 12
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_sidefence_break`, `Trigger`)
+						EntFire(`arena_mode_sidefence_spawnbot_enable`, `Trigger`)
+					  "
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Demo"
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_helpmedefend02.mp3"
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 13
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
-			FirstSpawnWarningSound "vo/mvm/mght/pyro_mvm_m_battlecry02.mp3"
-
-
-			Squad
+			TFBot
 			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro
-					Attributes AlwaysFireWeapon
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_QuickUber
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_QuickUber
-				}
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_BatScouts"
+			Where spawnbot_arena_left
+			TotalCount 20
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 24
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_Soldiers"
+			Where spawnbot_arena_left
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 24
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Hard
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_GDemo"
+			WaitForAllSpawned "Wave1_Subwave1_BatScouts"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
 			}
 		}
 	}
