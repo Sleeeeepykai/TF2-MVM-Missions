@@ -1,0 +1,175 @@
+#base robot_giant.pop
+#base robot_standard.pop
+
+WaveSchedule
+{
+    StartingCurrency 800
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    //// ROBOT TEMPLATES ////
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		CooldownTime 30
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Malignance (Adv)`)
+					EntFire(`bombpath_left_relay`, `Trigger`)
+                    EntFire(`bombpath_lowerhatch_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 12 Heavies
+        {
+            Name "Wave1_Subwave1_Heavies"
+            Where spawnbot_left
+            Where spawnbot_right
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+        WaveSpawn // 6 Bat Scouts
+        {
+            Name "Wave1_Subwave1_BatScouts"
+            WaitForAllSpawned "Wave1_Subwave1_Heavies"
+            Where spawnbot
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.5
+            TotalCurrency 30
+
+            TFBot
+            {
+                Name "Bat Scout"
+                Template T_TFBot_Scout_Melee
+                Tag spawnbot_prefer_left
+            }
+        }
+        WaveSpawn // 6 Bat Scouts
+        {
+            Name "Wave1_Subwave1_BatScouts"
+            WaitForAllSpawned "Wave1_Subwave1_Heavies"
+            Where spawnbot
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.5
+            TotalCurrency 30
+
+            TFBot
+            {
+                Name "Bat Scout"
+                Template T_TFBot_Scout_Melee
+                Tag spawnbot_prefer_right
+            }
+        }
+
+        WaveSpawn // 6 Heavies and 6 Quick-Ubers
+        {
+            Name "Wave1_Subwave1_HeavySquads"
+            WaitForAllSpawned "Wave1_Subwave1_BatScouts"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 6
+            TotalCurrency 120
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+        WaveSpawn // 6 Scouts
+        {
+            Name "Wave1_Subwave1_Scouts2"
+            WaitForAllSpawned "Wave1_Subwave1_BatScouts"
+            Where spawnbot_left
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0.1
+            TotalCurrency 30
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+        WaveSpawn // 6 Scouts
+        {
+            Name "Wave1_Subwave1_Scouts2"
+            WaitForAllSpawned "Wave1_Subwave1_BatScouts"
+            Where spawnbot_right
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 0.1
+            TotalCurrency 30
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+    }
+}
