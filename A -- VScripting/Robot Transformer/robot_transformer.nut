@@ -70,6 +70,32 @@ const MAX_WEAPONS = 8
             return
         Cleanup()
     }
+
+	function OnGameEvent_player_spawn(params)
+	{
+		local player = GetPlayerFromUserID(params.userid)
+
+		if (!player || !player.IsValid() || player.IsBotOfType(1337))
+			return
+
+		EntFireByHandle(player, "RunScriptCode", "RobotTransformerSpace.ClearPlayerModel(self)", 1, null, null)
+	}
+	function OnGameEvent_player_death(params)
+	{
+		local player = GetPlayerFromUserID(params.userid)
+
+		if (!player || !player.IsValid() || player.IsBotOfType(1337))
+			return
+
+		AddThinkToEnt(player, null)
+
+		EmitSoundEx({entity = player, flags = 4, filter_type = RECIPIENT_FILTER_GLOBAL | 512})
+
+		for ( local child = player.FirstMoveChild(); child; child = child.NextMovePeer() )
+  			if ( !(child instanceof CBaseCombatWeapon) && child instanceof CEconEntity )
+    			EntFireByHandle( child, "Kill", null, -1, null, null )
+	}
+
 	function RemoveAllTransforms()
 	{
 		for ( local i = MaxClients().tointeger(); i > 0; i-- )
@@ -89,27 +115,6 @@ const MAX_WEAPONS = 8
 			local playerclass = player.GetPlayerClass()
 			player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
 		}
-	}
-	function CollectEventsInScope(events)
-	{
-		local events_id = UniqueString()
-		getroottable()[events_id] <- events
-
-		foreach (name, callback in events)
-			events[name] = callback.bindenv(this)
-
-		local cleanup_user_func, cleanup_event = "OnGameEvent_scorestats_accumulated_update"
-		if (cleanup_event in events)
-			cleanup_user_func = events[cleanup_event]
-
-		events[cleanup_event] <- function(params)
-		{
-			if (cleanup_user_func)
-				cleanup_user_func(params)
-
-			delete getroottable()[events_id]
-		}
-		__CollectGameEventCallbacks(events)
 	}
 	function ClearPlayerModel(player)
 	{
@@ -271,34 +276,5 @@ const MAX_WEAPONS = 8
 };
 
 RobotTransformerSpace.RemoveAllTransforms()
-
-RobotTransformerSpace.CollectEventsInScope
-({
-	function OnGameEvent_player_death(params)
-	{
-		local player = GetPlayerFromUserID(params.userid)
-
-		if (!player || !player.IsValid() || player.IsBotOfType(1337))
-			return
-
-		AddThinkToEnt(player, null)
-
-		EmitSoundEx({entity = player, flags = 4, filter_type = RECIPIENT_FILTER_GLOBAL | 512})
-
-		for ( local child = player.FirstMoveChild(); child; child = child.NextMovePeer() )
-  			if ( !(child instanceof CBaseCombatWeapon) && child instanceof CEconEntity )
-    			EntFireByHandle( child, "Kill", null, -1, null, null )
-	}
-
-	function OnGameEvent_player_spawn(params)
-	{
-		local player = GetPlayerFromUserID(params.userid)
-
-		if (!player || !player.IsValid() || player.IsBotOfType(1337))
-			return
-
-		EntFireByHandle(player, "RunScriptCode", "RobotTransformerSpace.ClearPlayerModel(self)", 1, null, null)
-	}
-})
 
 __CollectGameEventCallbacks(RobotTransformerSpace)
