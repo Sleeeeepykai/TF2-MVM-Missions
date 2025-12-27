@@ -256,9 +256,9 @@ WaveSchedule
         }
 
         // Subwave 3
-        WaveSpawn // 1 GPyro and 4 Heavies
+        WaveSpawn // 1 GDemo and 4 Heavies
         {
-            Name "Wave1_Subwave3_GPyro"
+            Name "Wave1_Subwave3_GDemo"
             WaitForAllSpawned "Wave1_Subwave2_GPyro2"
             Where spawnbot
             TotalCount 5
@@ -272,8 +272,8 @@ WaveSchedule
             {
                 TFBot
                 {
-                    Template T_TFBot_Giant_Pyro
-                    Attributes AlwaysFireWeapon
+                    Name "Giant Demoman"
+                    Template T_TFBot_Giant_Demo_RapidFire
                 }
                 TFBot
                 {
@@ -300,7 +300,7 @@ WaveSchedule
         WaveSpawn // 16 Scouts
         {
             Name "Wave1_Subwave3_Scouts"
-            WaitForAllSpawned "Wave1_Subwave3_GPyro"
+            WaitForAllSpawned "Wave1_Subwave3_GDemo"
             Where spawnbot_invasion
             TotalCount 16
             MaxActive 8
@@ -315,22 +315,192 @@ WaveSchedule
                 Skill Easy
             }
         }
-        WaveSpawn // 1 GSoldier
+        WaveSpawn // 1 GDemo and 4 Heavies
         {
-            Name "Wave1_Subwave3_GSoldier"
-            WaitForAllSpawned "Wave1_Subwave3_GPyro"
+            Name "Wave1_Subwave3_GDemo2"
+            WaitForAllSpawned "Wave1_Subwave3_GDemo"
             Where spawnbot
-            TotalCount 1
-            MaxActive 1
-            SpawnCount 1
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
             WaitBeforeStarting 20
             WaitBetweenSpawns 0
-            TotalCurrency 40
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Name "Giant Demoman"
+                    Template T_TFBot_Giant_Demo_RapidFire
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Malignance (Adv)`)
+					EntFire(`bombpath_right_relay`, `Trigger`)
+                    EntFire(`bombpath_lowerhatch_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 20 Pyros
+        {
+            Name "Wave2_Subwave1_Pyros"
+            Where spawnbot_left
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 5
+            TotalCurrency 100
 
             TFBot
             {
-                Template T_TFBot_Giant_Soldier
+                Class Pyro
+                Skill Easy
             }
+        }
+        WaveSpawn // 20 Scouts
+        {
+            Name "Wave2_Subwave1_Scouts"
+            Where spawnbot_right
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 5
+            TotalCurrency 100
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // 3 Steel Gauntlets
+        {
+            Name "Wave2_Subwave1_SteelGauntlet"
+            WaitForAllSpawned "Wave2_Subwave1_Pyros"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Fist
+                Tag spawnbot_prefer_left
+            }
+        }
+        WaveSpawn // 3 Steel Gauntlets
+        {
+            Name "Wave2_Subwave1_SteelGauntlet"
+            WaitForAllSpawned "Wave2_Subwave1_Pyros"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Fist
+                Tag spawnbot_prefer_right
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 4 Pyros and 12 Demomen
+        {
+            Name "Wave2_Subwave2_PyroSquads"
+            WaitForAllSpawned "Wave2_Subwave1_SteelGauntlet"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 12
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 8
+            TotalCurrency 160
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Pyro
+                    Skill Easy
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Easy
+                }
+            }
+        }
+
+        WaveSpawn
+        {
+            Name "Wave2_Subwave2_"
         }
     }
 }
