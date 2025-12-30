@@ -31,9 +31,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
     {
 		for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
 
-			if (player.HasBotTag("FriendlyBot"))
-				player.ForceChangeTeam( TEAM_SPECTATOR, false )
-
 			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 		}
         delete ::MVMAnimosity_ArenaMode
@@ -54,11 +51,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	OnGameEvent_player_death = function(params)
 	{
 		local player = GetPlayerFromUserID(params.userid)
-
-		if (player.HasBotTag("FriendlyBot"))
-				player.ForceChangeTeam( TEAM_SPECTATOR, false )
-
-			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 
 		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 	}
