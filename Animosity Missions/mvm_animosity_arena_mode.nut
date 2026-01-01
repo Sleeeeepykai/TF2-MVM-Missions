@@ -25,6 +25,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
+::MaxPlayers <- MaxClients().tointeger()
+
 ::MVMAnimosity_ArenaMode <-
 {
 	function Cleanup()
@@ -76,6 +78,24 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	function BotGlow(target)
 	{
 		NetProps.SetPropBool(target, "m_bGlowEnabled", true)
+	}
+
+	function MovetoSpectator(target)
+	{
+		local PlayerTarget
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local player = PlayerInstanceFromIndex(i)
+			if (player == null)
+				continue
+			if (GetPlayerName(player) == target)
+			{
+				PlayerTarget = player;
+				break;
+			}
+		}
+
+		player.ForceChangeTeam(TEAM_SPECTATOR, false)
 	}
 }
 

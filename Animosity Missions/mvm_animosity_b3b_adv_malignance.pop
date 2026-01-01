@@ -107,18 +107,30 @@ WaveSchedule
                 Action SetSpeed
                 Param 0
             }
-            LastSpawnOutput
+        }
+        WaveSpawn // Combat Tank Parking Cue
+        {
+            Name "Wave1_Subwave1_RocketTankPause"
+            WaitBeforeStarting 80
+
+            FirstSpawnOutput
             {
                 Target BigNet
                 Action RunScriptCode
                 Param "
                         PrecacheScriptSound(`hl1/ambience/steamburst1.wav`)
                         PrecacheScriptSound(`doors/heavy_metal_stop1.wav`)
-                        EmitSoundEx({ sound_name = `hl1/ambience/steamburst1.wav`, entity = `tank_boss`, channel = 6, volume = 1, pitch = 100, special_dsp = 22, filter_type = 5 })
-                        EmitSoundEx({ sound_name = `doors/heavy_metal_stop1.wav`, entity = `tank_boss`, channel = 6, volume = 1, pitch = 80, special_dsp = 22, filter_type = 5 })
+
+                        for (local entity; entity = Entities.FindByClassname(entity, `tank_boss`);)
+                        {
+                            if (entity.IsAlive())
+                            {
+                                EmitSoundEx({ sound_name = `hl1/ambience/steamburst1.wav`, channel = 6, volume = 1, pitch = 100, special_dsp = 22, filter_type = 5 })
+                                EmitSoundEx({ sound_name = `doors/heavy_metal_stop1.wav`, channel = 6, volume = 1, pitch = 80, special_dsp = 22, filter_type = 5 })
+                            }
+                        }
                       "
             }
-
         }
 
         WaveSpawn // 20 Scouts
