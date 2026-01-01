@@ -31,7 +31,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 {
 	function Cleanup()
     {
-		for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
+		for ( local i = MaxClients().tointeger(); i > 0; i-- ) {
 
 			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 		}

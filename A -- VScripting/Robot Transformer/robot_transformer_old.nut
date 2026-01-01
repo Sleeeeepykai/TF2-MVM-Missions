@@ -1,9 +1,8 @@
 printl("Robot Transformer Initialised.")
 
+// Constants Folding
 ::CONST <- getconsttable()
 ::ROOT <- getroottable()
-
-// Constants Folding
 if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done once
 {
 	foreach (enum_table in Constants)
@@ -18,13 +17,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 }
-// Class Folding
-foreach( _class in [ "NetProps", "Entities", "EntityOutputs", "NavMesh", "Convars" ] )
-	foreach( k, v in ROOT[_class].getclass() )
-		if ( !( k in ROOT ) && k != "IsValid" )
-			ROOT[k] <- ROOT[_class][k].bindenv( ROOT[_class] )
 
-// Declared Root Table Content
 const MAX_WEAPONS = 8
 ::MaxPlayers <- MaxClients().tointeger()
 
@@ -44,27 +37,36 @@ const MAX_WEAPONS = 8
 
 ::RobotTransformerSpace <-
 {
-	mvm_stats = FindByClassname(null, "tf_mann_vs_machine_stats")
+	mvm_stats = Entities.FindByClassname(null, "tf_mann_vs_machine_stats")
 
 	//// CLEANUP FUNCTIONS ////
 
-	function Cleanup()
+    function Cleanup()
     {
         for ( local i = MaxClients().tointeger(); i > 0; i-- )
 		{
-			local player = PlayerInstanceFromIndex(i);
+			local player = PlayerInstanceFromIndex( i );
 			if ( !player )
 				continue;
+
+			AddThinkToEnt( player, null )
+			EmitSoundEx({entity = player, flags = 4, filter_type = RECIPIENT_FILTER_GLOBAL | 512})
+
+			for ( local child = player.FirstMoveChild(); child; child = child.NextMovePeer() )
+  				if ( !(child instanceof CBaseCombatWeapon) && child instanceof CEconEntity )
+    				EntFireByHandle( child, "Kill", null, -1, null, null )
+
+			local playerclass = player.GetPlayerClass()
+			player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
 		}
 
         delete ::RobotTransformerSpace
     }
-
-	function OnGameEvent_stats_resetround(_)
+    function OnGameEvent_stats_resetround(_)
     {
         if (GetRoundState() != GR_STATE_PREROUND)
             return
-        if (GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
+        if (NetProps.GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
             return
         Cleanup()
     }
@@ -85,8 +87,35 @@ const MAX_WEAPONS = 8
 		if (!player || !player.IsValid() || player.IsBotOfType(1337))
 			return
 
+		AddThinkToEnt(player, null)
+
+		EmitSoundEx({entity = player, flags = 4, filter_type = RECIPIENT_FILTER_GLOBAL | 512})
+
+		for ( local child = player.FirstMoveChild(); child; child = child.NextMovePeer() )
+  			if ( !(child instanceof CBaseCombatWeapon) && child instanceof CEconEntity )
+    			EntFireByHandle( child, "Kill", null, -1, null, null )
 	}
 
+	function RemoveAllTransforms()
+	{
+		for ( local i = MaxClients().tointeger(); i > 0; i-- )
+		{
+			local player = PlayerInstanceFromIndex( i );
+			if ( !player )
+				continue;
+
+			AddThinkToEnt(player, null);
+
+			EmitSoundEx({entity = player, flags = 4, filter_type = RECIPIENT_FILTER_GLOBAL | 512})
+
+			for ( local child = player.FirstMoveChild(); child; child = child.NextMovePeer() )
+  				if ( !(child instanceof CBaseCombatWeapon) && child instanceof CEconEntity )
+    				EntFireByHandle( child, "Kill", null, -1, null, null )
+
+			local playerclass = player.GetPlayerClass()
+			player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
+		}
+	}
 	function ClearPlayerModel(player)
 	{
 		local playerclass = player.GetPlayerClass()
@@ -97,28 +126,26 @@ const MAX_WEAPONS = 8
 
 	function GetPlayerName(player)
 	{
-		return GetPropString(player, "m_szNetname")
+		return NetProps.GetPropString(player, "m_szNetname")
 	}
 	function GivePlayerWeapon(player, classname, item_id)
 	{
-		local weapon = CreateByClassname(classname)
-
-		SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
-		SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-		SetPropBool(weapon, "m_bValidatedAttachedEntity", true)
-
+		local weapon = Entities.CreateByClassname(classname)
+		NetProps.SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
+		NetProps.SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
+		NetProps.SetPropBool(weapon, "m_bValidatedAttachedEntity", true)
 		weapon.SetTeam(player.GetTeam())
 		weapon.DispatchSpawn()
 
 		for (local i = 0; i < MAX_WEAPONS; i++)
 		{
-			local held_weapon = GetPropEntityArray(player, "m_hMyWeapons", i)
+			local held_weapon = NetProps.GetPropEntityArray(player, "m_hMyWeapons", i)
 			if (held_weapon == null)
 				continue
 			if (held_weapon.GetSlot() != weapon.GetSlot())
 				continue
 			held_weapon.Destroy()
-			SetPropEntityArray(player, "m_hMyWeapons", null, i)
+			NetProps.SetPropEntityArray(player, "m_hMyWeapons", null, i)
 			break
 		}
 
@@ -129,21 +156,18 @@ const MAX_WEAPONS = 8
 	}
 	function GivePlayerCosmetic(player, item_id, model_path = null)
 	{
-		local weapon = CreateByClassname("tf_weapon_parachute")
-		SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
-		SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-
+		local weapon = Entities.CreateByClassname("tf_weapon_parachute")
+		NetProps.SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
+		NetProps.SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
 		weapon.SetTeam(player.GetTeam())
 		weapon.DispatchSpawn()
 		player.Weapon_Equip(weapon)
-
-		local wearable = GetPropEntity(weapon, "m_hExtraWearable")
+		local wearable = NetProps.GetPropEntity(weapon, "m_hExtraWearable")
 		weapon.Kill()
 
-		SetPropInt(wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
-		SetPropBool(wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
-		SetPropBool(wearable, "m_bValidatedAttachedEntity", true)
-
+		NetProps.SetPropInt(wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
+		NetProps.SetPropBool(wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
+		NetProps.SetPropBool(wearable, "m_bValidatedAttachedEntity", true)
 		wearable.DispatchSpawn()
 
 		// (optional) Set the model to something new. (Obeys econ's ragdoll physics when ragdolling as well)
@@ -153,10 +177,8 @@ const MAX_WEAPONS = 8
 		// (optional) if one wants to delete the item entity, collect them within the player's scope, then send Kill() to the entities within the scope.
 		player.ValidateScriptScope()
 		local player_scope = player.GetScriptScope()
-
 		if (!("wearables" in player_scope))
 			player_scope.wearables <- []
-
 		player_scope.wearables.append(wearable)
 
 		return wearable
@@ -189,9 +211,10 @@ const MAX_WEAPONS = 8
 			}
 		}
 
+
 		// Executing Transformation
 		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_SOLDIER)
-		SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SOLDIER)
+		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SOLDIER)
 
 		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/soldier_boss/bot_soldier_boss.mdl")
 
@@ -203,12 +226,12 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
+		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
 
 		// Stripping Cosmetics and Weapons
 		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
 		{
-			SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
 
 			next = current.NextMovePeer()
 			if (current instanceof CEconEntity)
@@ -251,6 +274,8 @@ const MAX_WEAPONS = 8
 	// SNIPER TRANSFORMS //
 
 	// SPY TRANSFORMS //
-}
+};
+
+RobotTransformerSpace.RemoveAllTransforms()
 
 __CollectGameEventCallbacks(RobotTransformerSpace)
