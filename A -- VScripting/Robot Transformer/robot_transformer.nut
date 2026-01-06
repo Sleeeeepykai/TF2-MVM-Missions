@@ -1,9 +1,8 @@
 printl("Robot Transformer Initialised.")
 
+// Constants Folding
 ::CONST <- getconsttable()
 ::ROOT <- getroottable()
-
-// Constants Folding
 if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done once
 {
 	foreach (enum_table in Constants)
@@ -18,13 +17,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 }
-// Class Folding
-foreach( _class in [ "NetProps", "Entities", "EntityOutputs", "NavMesh", "Convars" ] )
-	foreach( k, v in ROOT[_class].getclass() )
-		if ( !( k in ROOT ) && k != "IsValid" )
-			ROOT[k] <- ROOT[_class][k].bindenv( ROOT[_class] )
 
-// Declared Root Table Content
 const MAX_WEAPONS = 8
 ::MaxPlayers <- MaxClients().tointeger()
 
@@ -44,27 +37,34 @@ const MAX_WEAPONS = 8
 
 ::RobotTransformerSpace <-
 {
-	mvm_stats = FindByClassname(null, "tf_mann_vs_machine_stats")
+	mvm_stats = Entities.FindByClassname(null, "tf_mann_vs_machine_stats")
 
 	//// CLEANUP FUNCTIONS ////
 
-	function Cleanup()
+    function Cleanup()
     {
         for ( local i = MaxClients().tointeger(); i > 0; i-- )
 		{
-			local player = PlayerInstanceFromIndex(i);
+			local player = PlayerInstanceFromIndex( i );
 			if ( !player )
 				continue;
+
+			foreach(wearable in player_scope.wearables)
+			{
+				wearable.Kill()
+			}
+
+			local playerclass = player.GetPlayerClass()
+			player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
 		}
 
         delete ::RobotTransformerSpace
     }
-
-	function OnGameEvent_stats_resetround(_)
+    function OnGameEvent_stats_resetround(_)
     {
         if (GetRoundState() != GR_STATE_PREROUND)
             return
-        if (GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
+        if (NetProps.GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
             return
         Cleanup()
     }
@@ -85,8 +85,11 @@ const MAX_WEAPONS = 8
 		if (!player || !player.IsValid() || player.IsBotOfType(1337))
 			return
 
+		foreach(wearable in player_scope.wearables)
+		{
+			wearable.Kill()
+		}
 	}
-
 	function ClearPlayerModel(player)
 	{
 		local playerclass = player.GetPlayerClass()
@@ -97,28 +100,26 @@ const MAX_WEAPONS = 8
 
 	function GetPlayerName(player)
 	{
-		return GetPropString(player, "m_szNetname")
+		return NetProps.GetPropString(player, "m_szNetname")
 	}
 	function GivePlayerWeapon(player, classname, item_id)
 	{
-		local weapon = CreateByClassname(classname)
-
-		SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
-		SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-		SetPropBool(weapon, "m_bValidatedAttachedEntity", true)
-
+		local weapon = Entities.CreateByClassname(classname)
+		NetProps.SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
+		NetProps.SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
+		NetProps.SetPropBool(weapon, "m_bValidatedAttachedEntity", true)
 		weapon.SetTeam(player.GetTeam())
 		weapon.DispatchSpawn()
 
 		for (local i = 0; i < MAX_WEAPONS; i++)
 		{
-			local held_weapon = GetPropEntityArray(player, "m_hMyWeapons", i)
+			local held_weapon = NetProps.GetPropEntityArray(player, "m_hMyWeapons", i)
 			if (held_weapon == null)
 				continue
 			if (held_weapon.GetSlot() != weapon.GetSlot())
 				continue
 			held_weapon.Destroy()
-			SetPropEntityArray(player, "m_hMyWeapons", null, i)
+			NetProps.SetPropEntityArray(player, "m_hMyWeapons", null, i)
 			break
 		}
 
@@ -129,21 +130,18 @@ const MAX_WEAPONS = 8
 	}
 	function GivePlayerCosmetic(player, item_id, model_path = null)
 	{
-		local weapon = CreateByClassname("tf_weapon_parachute")
-		SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
-		SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-
+		local weapon = Entities.CreateByClassname("tf_weapon_parachute")
+		NetProps.SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
+		NetProps.SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
 		weapon.SetTeam(player.GetTeam())
 		weapon.DispatchSpawn()
 		player.Weapon_Equip(weapon)
-
-		local wearable = GetPropEntity(weapon, "m_hExtraWearable")
+		local wearable = NetProps.GetPropEntity(weapon, "m_hExtraWearable")
 		weapon.Kill()
 
-		SetPropInt(wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
-		SetPropBool(wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
-		SetPropBool(wearable, "m_bValidatedAttachedEntity", true)
-
+		NetProps.SetPropInt(wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
+		NetProps.SetPropBool(wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
+		NetProps.SetPropBool(wearable, "m_bValidatedAttachedEntity", true)
 		wearable.DispatchSpawn()
 
 		// (optional) Set the model to something new. (Obeys econ's ragdoll physics when ragdolling as well)
@@ -153,10 +151,8 @@ const MAX_WEAPONS = 8
 		// (optional) if one wants to delete the item entity, collect them within the player's scope, then send Kill() to the entities within the scope.
 		player.ValidateScriptScope()
 		local player_scope = player.GetScriptScope()
-
 		if (!("wearables" in player_scope))
 			player_scope.wearables <- []
-
 		player_scope.wearables.append(wearable)
 
 		return wearable
@@ -173,7 +169,7 @@ const MAX_WEAPONS = 8
 	// SCOUT TRANSFORMS //
 
 	// SOLDIER TRANSFORMS //
-	function GigaBurst(target)
+	function BigrockBurst(target)
 	{
 		// Finding the Player to Transform
 		local TransformerTarget
@@ -191,24 +187,23 @@ const MAX_WEAPONS = 8
 
 		// Executing Transformation
 		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_SOLDIER)
-		SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SOLDIER)
+		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SOLDIER)
 
 		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/soldier_boss/bot_soldier_boss.mdl")
 
 		TransformerTarget.SetUseBossHealthBar(true)
 		TransformerTarget.SetIsMiniBoss(true)
 		TransformerTarget.SetModelScale(1.75, 0)
-		TransformerTarget.SetForcedTauntCam(1)
 		TransformerTarget.AddCondEx(56, -1, null)
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
+		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
 
 		// Stripping Cosmetics and Weapons
 		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
 		{
-			SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
 
 			next = current.NextMovePeer()
 			if (current instanceof CEconEntity)
@@ -223,7 +218,7 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCustomAttribute("max health additive bonus", 4000, 0)
 		TransformerTarget.SetHealth(4200)
 		TransformerTarget.AddCustomAttribute("ammo regen", 100.0, 0)
-		TransformerTarget.AddCustomAttribute("move speed bonus", 0.5, 0)
+		TransformerTarget.AddCustomAttribute("move speed penalty", 0.5, 0)
 		TransformerTarget.AddCustomAttribute("damage force reduction", 0.4, 0)
 		TransformerTarget.AddCustomAttribute("airblast vulnerability multiplier", 0.4, 0)
 		TransformerTarget.AddCustomAttribute("override footstep sound set", 4, 0)
@@ -243,6 +238,65 @@ const MAX_WEAPONS = 8
 	// DEMOMAN TRANSFORMS //
 
 	// HEAVY TRANSFORMS //
+	function DeflectorHeavy(target)
+	{
+		// Finding the Player to Transform
+		local TransformerTarget
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local player = PlayerInstanceFromIndex(i)
+			if (player == null)
+				continue
+			if (GetPlayerName(player) == target)
+			{
+				TransformerTarget = player;
+				break;
+			}
+		}
+
+		// Executing Transformation
+		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_HEAVYWEAPONS)
+		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_HEAVYWEAPONS)
+
+		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/heavy_boss/bot_heavy_boss.mdl")
+
+		TransformerTarget.SetUseBossHealthBar(true)
+		TransformerTarget.SetIsMiniBoss(true)
+		TransformerTarget.SetModelScale(1.75, 0)
+		TransformerTarget.AddCondEx(66, 0.25, null)
+		TransformerTarget.AddCondEx(51, 1, null)
+
+		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "heavy_deflector")
+
+		// Stripping Cosmetics and Weapons
+		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
+		{
+			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+
+			next = current.NextMovePeer()
+			if (current instanceof CEconEntity)
+				current.Destroy()
+		}
+
+		GivePlayerWeapon(TransformerTarget, "tf_weapon_minigun", 850)
+		GivePlayerCosmetic(TransformerTarget, 840, "models/player/items/mvm_loot/heavy/robo_ushanka.mdl")
+
+		// Setting Character Attributes
+		TransformerTarget.AddCustomAttribute("max health additive bonus", 4700, 0)
+		TransformerTarget.SetHealth(5000)
+		TransformerTarget.AddCustomAttribute("ammo regen", 100.0, 0)
+		TransformerTarget.AddCustomAttribute("move speed penalty", 0.5, 0)
+		TransformerTarget.AddCustomAttribute("damage force reduction", 0.3, 0)
+		TransformerTarget.AddCustomAttribute("airblast vulnerability multiplier", 0.3, 0)
+		TransformerTarget.AddCustomAttribute("override footstep sound set", 2, 0)
+		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
+
+		// Setting Item Attributes
+		local primary = GetItemInSlot(TransformerTarget, 0 )
+
+		primary.AddAttribute("damage bonus", 1.5, 0)
+		primary.AddAttribute("attack projectiles", 1, 0)
+	}
 
 	// ENGINEER TRANSFORMS //
 
@@ -251,6 +305,6 @@ const MAX_WEAPONS = 8
 	// SNIPER TRANSFORMS //
 
 	// SPY TRANSFORMS //
-}
+};
 
 __CollectGameEventCallbacks(RobotTransformerSpace)
