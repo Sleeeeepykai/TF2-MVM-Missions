@@ -73,21 +73,22 @@ const MAX_WEAPONS = 8
 	{
 		local player = GetPlayerFromUserID(params.userid)
 
+		player.ValidateScriptScope()
+		local scope = player.GetScriptScope()
+
 		if (!player || !player.IsValid() || player.IsBotOfType(1337))
 			return
 
 		EntFireByHandle(player, "RunScriptCode", "RobotTransformerSpace.ClearPlayerModel(self)", 1, null, null)
-	}
-	function OnGameEvent_player_death(params)
-	{
-		local player = GetPlayerFromUserID(params.userid)
 
-		if (!player || !player.IsValid() || player.IsBotOfType(1337))
-			return
-
-		foreach(wearable in player_scope.wearables)
+		if("wearables" in scope && scope.wearables.len()>0)
 		{
-			wearable.Kill()
+			foreach(wearable in scope.wearables)
+			{
+				wearable.Kill()
+			}
+
+			delete scope.wearables
 		}
 	}
 	function ClearPlayerModel(player)
