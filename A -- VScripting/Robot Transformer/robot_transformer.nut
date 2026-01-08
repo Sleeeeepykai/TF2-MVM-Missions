@@ -228,6 +228,7 @@ const MAX_WEAPONS = 8
 		// Setting Item Attributes
 		local primary = GetItemInSlot(TransformerTarget, 0 )
 
+		primary.SetTeam(4)
 		primary.AddAttribute("damage bonus", 2, 0)
 		primary.AddAttribute("fire rate bonus", 0.2, 0)
 		primary.AddAttribute("faster reload rate", 0.4, 0)
@@ -295,6 +296,7 @@ const MAX_WEAPONS = 8
 		// Setting Item Attributes
 		local primary = GetItemInSlot(TransformerTarget, 0 )
 
+		primary.SetTeam(4)
 		primary.AddAttribute("damage bonus", 1.5, 0)
 		primary.AddAttribute("attack projectiles", 1, 0)
 	}
