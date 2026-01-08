@@ -32,8 +32,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
-		for ( local i = MaxClients().tointeger(); i > 0; i-- ) {
-
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local player = PlayerInstanceFromIndex(i)
 			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 		}
         delete ::MVMAnimosity_ArenaMode
