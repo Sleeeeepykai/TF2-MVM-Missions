@@ -29,6 +29,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 ::MVMAnimosity_ArenaMode <-
 {
+	// Cleanup Functions
 	function Cleanup()
     {
 		for ( local i = MaxClients().tointeger(); i > 0; i-- ) {
@@ -40,6 +41,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 	OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
 
+	// Search Functions
 	OnGameEvent_player_spawn = function(params)
 	{
 		local player = GetPlayerFromUserID(params.userid)
@@ -57,6 +59,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 	}
 
+	function GetPlayerName(player)
+	{
+		return NetProps.GetPropString(player, "m_szNetname")
+	}
+
+	// Bot Tags
 	function BotTagCheck()
 	{
 		if(activator.HasBotTag("FriendlyBot"))
@@ -74,12 +82,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		target.ForceChangeTeam( TF_TEAM_PVE_DEFENDERS, false )
 		target.AddCustomAttribute( "ammo regen", 999.0, -1 )
 	}
-
 	function BotGlow(target)
 	{
 		NetProps.SetPropBool(target, "m_bGlowEnabled", true)
 	}
 
+	// Bot Manipulation Functions
 	function MovetoSpectator(target)
 	{
 		local PlayerTarget
@@ -95,7 +103,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			}
 		}
 
-		player.ForceChangeTeam(TEAM_SPECTATOR, false)
+		PlayerTarget.ForceChangeTeam(TEAM_SPECTATOR, false)
 	}
 }
 
