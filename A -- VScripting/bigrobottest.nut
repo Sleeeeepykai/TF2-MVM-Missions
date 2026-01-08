@@ -89,6 +89,28 @@ const MAX_WEAPONS = 8
 				return child
 	}
 
+	function SetWeaponModel(bot, args)
+	{
+		local wep = "slot" in args ? GetItemInSlot( bot, args.slot ) : bot.GetActiveWeapon()
+
+		local scope = bot.GetScriptScope()
+		local modelindex = PrecacheModel( "model" in args ? args.model : args.type )
+		local tp_wearable = Entities.CreateByClassname( "tf_wearable" )
+
+		NetProps.SetPropInt( wep, "m_nRenderMode", kRenderTransColor )
+		NetProps.SetPropInt( wep, "m_clrRender", 0 )
+
+		NetProps.SetPropInt( tp_wearable, "m_nModelIndex", modelindex )
+		NetProps.SetPropBool( tp_wearable, "m_AttributeManager.m_Item.m_bInitialized", true )
+		NetProps.SetPropBool( tp_wearable, "m_bValidatedAttachedEntity", true )
+		tp_wearable.SetOwner(bot)
+		NetProps.SetPropEntity( tp_wearable, "m_hOwner", bot)
+		tp_wearable.DispatchSpawn()
+		NetProps.SetPropBool( tp_wearable, "m_bForcePurgeFixedupStrings", true )
+		tp_wearable.AcceptInput( "SetParent", "!activator", bot, bot )
+		NetProps.SetPropInt( tp_wearable, "m_fEffects", EF_BONEMERGE|EF_BONEMERGE_FASTCULL )
+	}
+
 	// Bot Tag Functions
 
 	function BotTagCheck()
@@ -102,9 +124,8 @@ const MAX_WEAPONS = 8
 	function BurstFlareBot(target)
 	{
 		local secondary = GetItemInSlot(target, 1)
-
-		PrecacheModel("models/workshop/weapons/c_models/c_detonator/c_detonator.mdl")
-		secondary.SetModel("models/workshop/weapons/c_models/c_detonator/c_detonator.mdl")
+		
+		SetWeaponModel(target, "models/workshop/weapons/c_models/c_detonator/c_detonator.mdl")
 	}
 }
 
