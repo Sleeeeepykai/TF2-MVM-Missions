@@ -121,11 +121,27 @@ const MAX_WEAPONS = 8
 		}
 	}
 
+	function BurstFlareThink()
+	{
+		if (clip = maxclip)
+		{
+			bot.PressFireButton(-1)
+		}
+
+		return -1
+	}
 	function BurstFlareBot(target)
 	{
+		target.ValidateScriptScope()
+		local target_scope = target.GetScriptScope()
+
 		local secondary = GetItemInSlot(target, 1)
-		
+		local clip = secondary.Clip1()
+		local maxclip = secondary.GetMaxClip1()
+
 		SetWeaponModel(target, "models/workshop/weapons/c_models/c_detonator/c_detonator.mdl")
+
+		AddThinkToEnt(target, "BurstFlareThink")
 	}
 }
 

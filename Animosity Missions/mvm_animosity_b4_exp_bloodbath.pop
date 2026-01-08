@@ -1,6 +1,7 @@
-#base robot_giant.pop
-#base robot_standard.pop
-
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
 WaveSchedule
 {
     StartingCurrency 500
@@ -96,7 +97,7 @@ WaveSchedule
         }
 
 		// VIP Spawn
-		WaveSpawn
+		WaveSpawn // Spawn Enable
 		{
 			Name "Wave1_SpawnEnable"
 			WaitBeforeStarting 3.9
@@ -109,7 +110,7 @@ WaveSchedule
 					  "
 			}
 		}
-		WaveSpawn
+		WaveSpawn // Spawn-In
 		{
 			Name "Wave1_Objective"
 			Where spawnbot_arena_objective
@@ -139,11 +140,11 @@ WaveSchedule
 				Target BigNet
             	Action RunScriptCode
             	Param "
-                    EntFire(`bots_win`, `RoundWin`)
+                    EntFire(`arena_mode_loss_relay`, `Trigger`)
                   "
 			}
 		}
-		WaveSpawn
+		WaveSpawn // Spawn Disable
 		{
 			WaitBeforeStarting 4.1
 			FirstSpawnOutput
@@ -421,7 +422,7 @@ WaveSchedule
 		}
 		WaveSpawn // 1 GDemo
 		{
-			Name "Wave1_Subwave3_GDemo"
+			Name "Wave1_Subwave3_GDemo2"
 			WaitForAllSpawned "Wave1_Subwave3_Soldiers"
 			Where spawnbot_arena_right
 			TotalCount 1
@@ -431,8 +432,6 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
-			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence01.mp3"
-
 			TFBot
 			{
 				Template T_TFBot_Giant_Demoman
@@ -440,7 +439,40 @@ WaveSchedule
 			}
 		}
 
+		// Wavespawn Check
+		WaveSpawn // Steel Gauntlets Check
+		{
+			Name "Wave1_Subwave3_Complete"
+			WaitForAllDead "Wave1_Subwave3_GDemo"
+		}
+		WaveSpawn // GSoldier Check
+		{
+			Name "Wave1_Subwave3_Complete"
+			WaitForAllDead "Wave1_Subwave3_GDemo"
+		}
+
 		// Wave Complete
+		WaveSpawn // Victory Laugh
+		{
+			Name "Wave1_Complete"
+			WaitForAllSpawned "Wave1_Subwave3_Complete"
+			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence01.mp3"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Complete"
+			WaitForAllDead "Wave1_Subwave3_GDemo"
+			WaitBeforeStarting 3.9
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_loss_relay`, `Disable`)
+					  "
+			}
+		}
 		WaveSpawn 
 		{
 			Name "Wave1_Complete"
@@ -466,6 +498,7 @@ WaveSchedule
             Param "
 					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
 					EntFire(`arena_mode_relay`, `Trigger`)
+					EntFire(`arena_mode_loss_relay`, `Enable`)
 
 					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
                   "
@@ -480,7 +513,7 @@ WaveSchedule
         }
 
 		// VIP Spawn
-		WaveSpawn
+		WaveSpawn // Spawn Enable
 		{
 			Name "Wave1_SpawnEnable"
 			WaitBeforeStarting 1.9
@@ -493,7 +526,7 @@ WaveSchedule
 					  "
 			}
 		}
-		WaveSpawn
+		WaveSpawn // Spawn-In
 		{
 			Name "Wave1_Objective"
 			Where spawnbot_arena_objective
@@ -504,7 +537,6 @@ WaveSchedule
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 
-			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_laughhappy02.mp3"
 			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
 
 			Squad
@@ -523,11 +555,11 @@ WaveSchedule
 				Target BigNet
             	Action RunScriptCode
             	Param "
-                    EntFire(`bots_win`, `RoundWin`)
+                    EntFire(`arena_mode_loss_relay`, `Trigger`)
                   "
 			}
 		}
-		WaveSpawn
+		WaveSpawn // Spawn Disable
 		{
 			WaitBeforeStarting 2.1
 			FirstSpawnOutput
@@ -556,7 +588,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Heavyweapons_Fist
+					Template T_TFBot_Heavy_SteelFist
 					Tag Glow
 				}
 				TFBot
@@ -715,7 +747,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Heavyweapons_Fist
+					Template T_TFBot_Heavy_SteelFist
 					Tag Glow
 				}
 				TFBot
@@ -744,17 +776,33 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn
+		// Wavespawn Check
+		WaveSpawn // Steel Gauntlets Check
 		{
 			Name "Wave2_Subwave3_Complete"
 			WaitForAllDead "Wave2_Subwave3_SteelSquads"
 		}
-		WaveSpawn
+		WaveSpawn // GSoldier Check
 		{
 			Name "Wave2_Subwave3_Complete"
 			WaitForAllDead "Wave2_Subwave3_GSoldier2"
 		}
 
+		// Wave Complete
+		WaveSpawn
+		{
+			Name "Wave2_Complete"
+			WaitForAllSpawned "Wave2_Subwave3_Complete"
+			WaitBeforeStarting 3.9
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_loss_relay`, `Disable`)
+					  "
+			}
+		}
 		WaveSpawn
 		{
 			Name "Wave2_Complete"
