@@ -108,7 +108,7 @@ const MAX_WEAPONS = 8
 		tp_wearable.DispatchSpawn()
 		NetProps.SetPropBool( tp_wearable, "m_bForcePurgeFixedupStrings", true )
 		tp_wearable.AcceptInput( "SetParent", "!activator", bot, bot )
-		NetProps.SetPropInt( tp_wearable, "m_fEffects", EF_BONEMERGE|EF_BONEMERGE_FASTCULL )
+		NetProps.SetPropInt( tp_wearable, "m_fEffects", 1|128 )
 	}
 
 	// Bot Tag Functions
@@ -121,27 +121,11 @@ const MAX_WEAPONS = 8
 		}
 	}
 
-	function BurstFlareThink()
-	{
-		if (clip = maxclip)
-		{
-			bot.PressFireButton(-1)
-		}
-
-		return -1
-	}
 	function BurstFlareBot(target)
 	{
-		target.ValidateScriptScope()
-		local target_scope = target.GetScriptScope()
-
 		local secondary = GetItemInSlot(target, 1)
-		local clip = secondary.Clip1()
-		local maxclip = secondary.GetMaxClip1()
-
-		SetWeaponModel(target, "models/workshop/weapons/c_models/c_detonator/c_detonator.mdl")
-
-		AddThinkToEnt(target, "BurstFlareThink")
+		local weaponmodelinfo = {slot = 1, model = "models/workshop/weapons/c_models/c_detonator/c_detonator.mdl"}
+		SetWeaponModel(target, weaponmodelinfo)
 	}
 }
 
