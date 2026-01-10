@@ -89,7 +89,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 
 	// Bot Manipulation Functions
-	function MovetoSpectator(target)
+	function RemoveRobot(target)
 	{
 		local PlayerTarget
 		for (local i = 1; i <= MaxPlayers; i++)
@@ -104,7 +104,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			}
 		}
 
-		PlayerTarget.ForceChangeTeam(TEAM_SPECTATOR, false)
+		PlayerTarget.TakeDamage(999999, 1, null)
+		PlayerTarget.ForceChangeTeam(TEAM_SPECTATOR, true)
 	}
 }
 
