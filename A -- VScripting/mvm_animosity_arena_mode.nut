@@ -60,6 +60,21 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 	}
 
+	OnScriptHook_OnTakeDamage = function(params)
+	{
+		local attacker = params.attacker
+		local victim = params.const_entity
+		local damagevalue = params.damage
+		local attackermission = attacker.GetPrevMission()
+
+		if(attackermission != MISSION_DESTROY_SENTRIES)
+			return
+		if(!victim.HasBotTag("FriendlyBot"))
+			return
+
+		damagevalue = 600
+	}
+
 	function GetPlayerName(player)
 	{
 		return NetProps.GetPropString(player, "m_szNetname")
