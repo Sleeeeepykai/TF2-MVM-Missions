@@ -21,7 +21,7 @@ WaveSchedule
 			Class Demoman
 			ClassIcon red_lite
 			Skill Expert
-			Health 6000
+			Health 8000
 			Scale 2
 			Attributes MiniBoss
 			Attributes HoldFireUntilFullReload
@@ -125,15 +125,9 @@ WaveSchedule
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_laughhappy02.mp3"
 			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
 
-			Squad
+			TFBot
 			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_Objective
-					}
-				}
+				Template T_TFBot_Objective
 			}
 
 			DoneOutput
@@ -159,7 +153,7 @@ WaveSchedule
 			}
 		}
 
-		// Intro
+		// Subwave 1 Intro
 		WaveSpawn
 		{
 			Name "Wave1_Demo"
@@ -168,9 +162,9 @@ WaveSchedule
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedcontrolpoint03.mp3"
 		}
-		WaveSpawn
+		WaveSpawn // Pub Building Spawn Enable
 		{
-			Name "Wave1_LeftSpawnBust"
+			Name "Wave1_LeftSpawnOpen"
 			WaitBeforeStarting 12
 
 			FirstSpawnOutput
@@ -202,7 +196,269 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 12.05
 			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Tag Glow
+			}
+		}
+		WaveSpawn // 20 Bat Scouts
+		{
+			Name "Wave1_Subwave1_BatScouts"
+			WaitForAllSpawned "Wave1_Subwave1_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 5
 			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+		WaveSpawn // 8 Soldiers
+		{
+			Name "Wave1_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave1_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 8
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave1_Subwave1_GDemo2"
+			WaitForAllSpawned "Wave1_Subwave1_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+		WaveSpawn // 5 Soldiers
+		{
+			Name "Wave1_Subwave1_Soldiers2"
+			WaitForAllSpawned "Wave1_Subwave1_GDemo2"
+			Where spawnbot_arena_left
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+		WaveSpawn // 10 Bat Scouts
+		{
+			Name "Wave1_Subwave1_BatScouts2"
+			WaitForAllSpawned "Wave1_Subwave1_GDemo2"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0.1
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+
+		// Subwave 1 Check
+		WaveSpawn // GDemo Check
+		{
+			Name "Wave1_Subwave1_Check"
+			WaitForAllSpawned "Wave1_Subwave1_GDemo2"
+		}
+		WaveSpawn // Soldiers Check
+		{
+			Name "Wave1_Subwave1_Check"
+			WaitForAllSpawned "Wave1_Subwave1_Soldiers2"
+		}
+		WaveSpawn // Bat Scouts Check
+		{
+			Name "Wave1_Subwave1_Check"
+			WaitForAllSpawned "Wave1_Subwave1_BatScouts2"
+		}
+
+		// Subwave 2 Intro
+		WaveSpawn // Entrance Gate Spawn Enable
+		{
+			Name "Wave1_RightSpawnOpen"
+			WaitForAllSpawned "Wave1_Subwave1_Check"
+			WaitBeforeStarting 10
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_sidegate_open`, `Trigger`)
+						EntFire(`arena_mode_sidegate_spawnbot_enable`, `Trigger`)
+					  "
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 5 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave1_RightSpawnOpen"
+			Where spawnbot_arena_right
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Tag Glow
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Tag Glow
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Tag Glow
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Tag Glow
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Tag Glow
+				}
+			}
+		}
+		WaveSpawn // 10 Bat Scouts
+		{
+			Name "Wave1_Subwave2_BatScouts"
+			WaitForAllSpawned "Wave1_Subwave2_Soldiers"
+			Where spawnbot_arena_right
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.1
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+		
+		WaveSpawn // 12 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers2"
+			WaitForAllSpawned "Wave1_Subwave2_Soldiers"
+			Where spawnbot_arena_right
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+		WaveSpawn // 20 Bat Scouts
+		{
+			Name "Wave1_Subwave2_BatScouts2"
+			WaitForAllSpawned "Wave1_Subwave2_Soldiers"
+			Where spawnbot_arena_right
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave1_Subwave3_GDemo"
+			WaitForAllSpawned "Wave1_Subwave2_Soldiers2"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Tag Glow
+			}
+		}
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave1_Subwave3_GDemo"
+			WaitForAllSpawned "Wave1_Subwave2_Soldiers2"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 20
 
 			TFBot
 			{
@@ -211,12 +467,132 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn // 10 Bat Scouts
+		{
+			Name "Wave1_Subwave3_BatScouts"
+			WaitForAllSpawned "Wave1_Subwave3_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+		WaveSpawn // 10 Bat Scouts
+		{
+			Name "Wave1_Subwave3_BatScouts"
+			WaitForAllSpawned "Wave1_Subwave3_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave1_Subwave3_GDemo2"
+			WaitForAllSpawned "Wave1_Subwave3_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Tag Glow
+			}
+		}
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave1_Subwave3_GDemo2"
+			WaitForAllSpawned "Wave1_Subwave3_GDemo"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Tag Glow
+			}
+		}
+
+		WaveSpawn // 5 Soldiers
+		{
+			Name "Wave1_Subwave3_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave3_GDemo2"
+			Where spawnbot_arena_left
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+		WaveSpawn // 5 Soldiers
+		{
+			Name "Wave1_Subwave3_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave3_GDemo2"
+			Where spawnbot_arena_right
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+
+		// Wave Complete Check
+		WaveSpawn // GDemo Check
+		{
+			Name "Wave1_CompleteCheck"
+			WaitForAllDead "Wave1_Subwave3_GDemo2"
+		}
+		WaveSpawn // Soldier Check
+		{
+			Name "Wave1_CompleteCheck"
+			WaitForAllDead "Wave1_Subwave3_Soldiers"
+		}
 
 		// Wave Complete
 		WaveSpawn // Victory Laugh
 		{
 			Name "Wave1_Complete"
-			WaitForAllSpawned ""
+			WaitForAllSpawned "Wave1_CompleteCheck"
 			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence01.mp3"
 		}
 		WaveSpawn // De-Spawn
