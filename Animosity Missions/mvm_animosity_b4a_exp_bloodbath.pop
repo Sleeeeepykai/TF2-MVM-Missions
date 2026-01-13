@@ -72,7 +72,7 @@ WaveSchedule
 		Objective Spy
 		Where spawnbot_arena_right
 		BeginAtWave 2
-		RunForThisManyWaves 2
+		RunForThisManyWaves 1
 		InitialCooldown 8
 		CooldownTime 32
 		DesiredCount 3
@@ -623,7 +623,7 @@ WaveSchedule
 		WaveSpawn // De-Spawn
 		{
 			Name "Wave1_End"
-			WaitForAllDead "Wave1_Complete"
+			WaitForAllSpawned "Wave1_Complete"
 			WaitBeforeStarting 3.9
 
 			FirstSpawnOutput
@@ -638,7 +638,7 @@ WaveSchedule
 		WaveSpawn // De-Spawn
 		{
 			Name "Wave1_End"
-			WaitForAllDead "Wave1_Complete"
+			WaitForAllSpawned "Wave1_Complete"
 			WaitBeforeStarting 4
 			
 			FirstSpawnOutput
@@ -972,6 +972,146 @@ WaveSchedule
 			{
 				Template T_TFBot_Giant_Soldier
 			}
+		}
+
+		// Wave Complete Check
+		WaveSpawn // Steel Gauntlets Check
+		{
+			Name "Wave2_CompleteCheck"
+			WaitForAllDead "Wave1_Subwave3_SteelGauntlets"
+		}
+		WaveSpawn // GSoldier Check
+		{
+			Name "Wave2_CompleteCheck"
+			WaitForAllDead "Wave1_Subwave3_GSoldier"
+		}
+
+		// Wave Complete
+		WaveSpawn // Victory Voiceline
+		{
+			Name "Wave2_Complete"
+			WaitForAllSpawned "Wave2_CompleteCheck"
+			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence03.mp3"
+		}
+		WaveSpawn // De-Spawn
+		{
+			Name "Wave2_End"
+			WaitForAllDead "Wave2_CompleteCheck"
+			WaitBeforeStarting 3.9
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_loss_relay`, `Disable`)
+					  "
+			}
+		}
+		WaveSpawn // De-Spawn
+		{
+			Name "Wave1_End"
+			WaitForAllDead "Wave2_CompleteCheck"
+			WaitBeforeStarting 4
+			
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						MVMAnimosity_ArenaMode.RemoveRobot(`The Commander`)
+					  "
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					IncludeScript(`tankextensions_main`, getroottable())
+					EntFire(`arena_mode_relay`, `Trigger`)
+					EntFire(`arena_mode_loss_relay`, `Enable`)
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+
+		// VIP Spawn
+		WaveSpawn // Spawn Enable
+		{
+			Name "Wave1_SpawnEnable"
+			WaitBeforeStarting 3.9
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`spawnbot_arena_objective`, `Enable`)
+					  "
+			}
+		}
+		WaveSpawn // Spawn-In
+		{
+			Name "Wave1_Objective"
+			Where spawnbot_arena_objective
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry05.mp3"
+			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_Objective
+					}
+				}
+			}
+
+			DoneOutput
+			{
+				Target BigNet
+            	Action RunScriptCode
+            	Param "
+                    EntFire(`arena_mode_loss_relay`, `Trigger`)
+					MVMAnimosity_ArenaMode.RemoveRobot(`The Commander`)
+                  "
+			}
+		}
+		WaveSpawn // Spawn Disable
+		{
+			WaitBeforeStarting 4.1
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`spawnbot_arena_objective`, `Disable`)
+					  "
+			}
+		}
+
+		WaveSpawn
+		{
+			
 		}
 	}
 }
