@@ -56,11 +56,30 @@ WaveSchedule
 	{
 		Objective DestroySentries
 		Where spawnbot_arena_left
-		CooldownTime 30
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 32
+		CooldownTime 32
+		DesiredCount 1
 		
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
+		}
+	}
+	Mission // Spy (Wave 2)
+	{
+		Objective Spy
+		Where spawnbot_arena_right
+		BeginAtWave 2
+		RunForThisManyWaves 2
+		InitialCooldown 8
+		CooldownTime 32
+		DesiredCount 3
+
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -125,9 +144,15 @@ WaveSchedule
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_laughhappy02.mp3"
 			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Objective
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_Objective
+					}
+				}
 			}
 
 			DoneOutput
@@ -623,6 +648,227 @@ WaveSchedule
 				Param "
 						MVMAnimosity_ArenaMode.RemoveRobot(`The Commander`)
 					  "
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					EntFire(`arena_mode_relay`, `Trigger`)
+					EntFire(`arena_mode_loss_relay`, `Enable`)
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+
+		// VIP Spawn
+		WaveSpawn // Spawn Enable
+		{
+			Name "Wave1_SpawnEnable"
+			WaitBeforeStarting 3.9
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`spawnbot_arena_objective`, `Enable`)
+					  "
+			}
+		}
+		WaveSpawn // Spawn-In
+		{
+			Name "Wave1_Objective"
+			Where spawnbot_arena_objective
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_specialcompleted02.mp3"
+			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_Objective
+					}
+				}
+			}
+
+			DoneOutput
+			{
+				Target BigNet
+            	Action RunScriptCode
+            	Param "
+                    EntFire(`arena_mode_loss_relay`, `Trigger`)
+					MVMAnimosity_ArenaMode.RemoveRobot(`The Commander`)
+                  "
+			}
+		}
+		WaveSpawn // Spawn Disable
+		{
+			WaitBeforeStarting 4.1
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`spawnbot_arena_objective`, `Disable`)
+					  "
+			}
+		}
+
+		// Subwave 1
+		WaveSpawn // 4 Steel Gauntlets and 4 Quick-Uber Medics
+		{
+			Name "Wave2_Subwave1_SteelGauntlets"
+			Where spawnbot_arena_left
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 10 Flare Pyros
+		{
+			Name "Wave2_Subwave1_FlarePyros"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Flaregun
+			}
+		}
+
+		WaveSpawn // 4 Steel Gauntlets and 4 Quick-Uber Medics
+		{
+			Name "Wave2_Subwave1_SteelGauntlets2"
+			WaitForAllSpawned "Wave2_Subwave1_SteelGauntlets"
+			Where spawnbot_arena_left
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 20 Flare Pyros
+		{
+			Name "Wave2_Subwave1_FlarePyros"
+			Where spawnbot_arena_left
+			TotalCount 20
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Flaregun
+			}
+		}
+		
+		// Subwave 2
+		WaveSpawn // 1 GSoldier
+		{
+			Name "Wave2_Subwave2_GSoldier"
+			WaitForAllSpawned "Wave2_Subwave1_SteelGauntlets2"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
+		WaveSpawn // 12 GRU Heavies
+		{
+			Name "Wave2_Subwave2_GRUHeavies"
+			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
+			Where spawnbot_arena_left
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ_Fast
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 10 GRU Heavies
+		{
+			Name "Wave2_Subwave2_GRUHeavies"
+			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
+			Where spawnbot_arena_right
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ_Fast
+				Attributes AlwaysCrit
 			}
 		}
 	}
