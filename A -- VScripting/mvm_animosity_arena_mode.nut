@@ -64,15 +64,14 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	{
 		local attacker = params.attacker
 		local victim = params.const_entity
-		local damagevalue = params.damage
 		local attackermission = attacker.GetPrevMission()
 
-		if(attackermission != MISSION_DESTROY_SENTRIES)
+		if(!attacker.IsBotOfType(1337) && !attacker.HasBotTag("LethalBot"))
 			return
 		if(!victim.HasBotTag("FriendlyBot"))
 			return
 
-		damagevalue = 600
+		params.damage = 800
 	}
 
 	function GetPlayerName(player)
