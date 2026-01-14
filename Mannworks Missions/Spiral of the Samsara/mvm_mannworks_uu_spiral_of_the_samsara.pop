@@ -1,0 +1,98 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+
+WaveSchedule
+{
+    StartingCurrency 0
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+    AddSentryBusterWhenKillCountExceeds 10
+
+    //// ROBOT TEMPLATES ////
+
+    Templates
+    {
+
+    }
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 30
+		InitialCooldown 32
+		CooldownTime 32
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Spiral of the Samsara`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_arrows_clear_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_wavefinished`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 20 KGB Heavies
+        {
+            Name "Wave1_Subwave1_KGBHeavies"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 20
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Heavyweight_Champ
+            }
+        }
+
+        WaveSpawn
+        {
+            Name "Wave1_Subwave1_Demomen"
+            WaitForAllSpawned "Wave1_Subwave1_KGBHeavies"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 0.1
+            TotalCurrency 
+        }
+    }
+}
