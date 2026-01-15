@@ -5,7 +5,7 @@
 
 WaveSchedule
 {
-    StartingCurrency 0
+    StartingCurrency 500
     RespawnWaveTime 2
     CanBotsAttackWhileInSpawnRoom No
     AddSentryBusterWhenKillCountExceeds 10
@@ -14,7 +14,36 @@ WaveSchedule
 
     Templates
     {
+        T_TFBot_Ubup_Soldier_Boss_MKI
+        {
+            Name "Giant Uber Soldier - MK.I"
+            Class Soldier
+            ClassIcon soldier_giant
+            Skill Expert
+            Health 8000
+            Scale 2
+            Attributes MiniBoss
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
 
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "override footstep sound set" 3
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+                "fire rate bonus" 0.6
+                "reload time increased" 1.4
+                "clip size upgrade atomic" 5.0
+                "projectile speed decreased" 0.8 
+            }
+        }
     }
 
     //// MISSION BOTS ////
@@ -110,7 +139,7 @@ WaveSchedule
             SpawnCount 1
             WaitBeforeStarting 16
             WaitBetweenSpawns 0
-            TotalCurrency 40
+            TotalCurrency 20
 
             TFBot
             {
@@ -165,7 +194,7 @@ WaveSchedule
             SpawnCount 1
             WaitBeforeStarting 20
             WaitBetweenSpawns 0
-            TotalCurrency 40
+            TotalCurrency 20
 
             TFBot
             {
@@ -285,6 +314,150 @@ WaveSchedule
                 Class Soldier
                 Skill Easy
             }
+        }
+
+        WaveSpawn // Uber Soldier Boss
+        {
+            Name "Wave1_Subwave3_Boss"
+            WaitForAllSpawned "Wave1_Subwave3_Soldiers"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0.5
+            TotalCurrency 200
+
+            TFBot
+            {
+                Template T_TFBot_Ubup_Soldier_Boss_MKI
+            }
+        }
+    }
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_arrows_clear_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_wavefinished`, `Trigger`)        
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave2_Subwave1_GDemo"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman
+            }
+        }
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave2_Subwave1_GDemo"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman
+            }
+        }
+        WaveSpawn // 8 KGB Heavies
+        {
+            Name "Wave2_Subwave1_KGBHeavies"
+            WaitForAllSpawned "Wave2_Subwave1_GDemo"
+            Where spawnbot_left
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Heavyweight_Champ
+            }
+        }
+        WaveSpawn // 8 KGB Heavies
+        {
+            Name "Wave2_Subwave1_KGBHeavies"
+            WaitForAllSpawned "Wave2_Subwave1_GDemo"
+            Where spawnbot_right
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Heavyweight_Champ
+            }
+        }
+
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave2_Subwave1_GDemo2"
+            WaitForAllSpawned "Wave2_Subwave1_GDemo"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman
+            }
+        }
+        WaveSpawn // 1 GDemo
+        {
+            Name "Wave2_Subwave1_GDemo2"
+            WaitForAllSpawned "Wave2_Subwave1_GDemo"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman
+            }
+        }
+        WaveSpawn
+        {
+            Name "Wave2_Subwave1_"
         }
     }
 }
