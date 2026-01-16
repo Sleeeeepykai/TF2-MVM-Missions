@@ -690,7 +690,7 @@ WaveSchedule
 		WaveSpawn // Spawn Enable
 		{
 			Name "Wave1_SpawnEnable"
-			WaitBeforeStarting 3.9
+			WaitBeforeStarting 0.9
 
 			FirstSpawnOutput
 			{
@@ -709,7 +709,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 4
+			WaitBeforeStarting 1
 			WaitBetweenSpawns 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_specialcompleted02.mp3"
@@ -739,7 +739,7 @@ WaveSchedule
 		WaveSpawn // Spawn Disable
 		{
 			Name "Wave1_SpawnDisable"
-			WaitBeforeStarting 4.1
+			WaitBeforeStarting 1.1
 
 			FirstSpawnOutput
 			{
@@ -1027,7 +1027,7 @@ WaveSchedule
 		}
 		WaveSpawn // De-Spawn
 		{
-			Name "Wave1_End"
+			Name "Wave2_End"
 			WaitForAllDead "Wave2_CompleteCheck"
 			WaitBeforeStarting 4
 			
@@ -1124,7 +1124,7 @@ WaveSchedule
 		WaveSpawn // Spawn Enable
 		{
 			Name "Wave1_SpawnEnable"
-			WaitBeforeStarting 3.9
+			WaitBeforeStarting 0.9
 
 			FirstSpawnOutput
 			{
@@ -1143,7 +1143,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 4
+			WaitBeforeStarting 1
 			WaitBetweenSpawns 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry05.mp3"
@@ -1173,7 +1173,7 @@ WaveSchedule
 		WaveSpawn // Spawn Disable
 		{
 			Name "Wave1_SpawnDisable"
-			WaitBeforeStarting 4.1
+			WaitBeforeStarting 1.1
 
 			FirstSpawnOutput
 			{
@@ -1677,6 +1677,67 @@ WaveSchedule
 			{
 				Template T_TFBot_Giant_Pyro
 				Attributes AlwaysFireWeapon
+			}
+		}
+
+		// Wave Complete Check
+		WaveSpawn // Scouts Check
+		{
+			Name "Wave3_CompleteCheck"
+			WaitForAllDead "Wave3_Subwave3_Scouts2"
+		}
+		WaveSpawn // Demomen Check
+		{
+			Name "Wave3_CompleteCheck"
+			WaitForAllDead "Wave3_Subwave3_Demomen2"
+		}
+		WaveSpawn // GCharged Check
+		{
+			Name "Wave3_CompleteCheck"
+			WaitForAllDead "Wave3_Subwave3_GCharged2"
+		}
+		WaveSpawn // GPyro Check
+		{
+			Name "Wave3_CompleteCheck"
+			WaitForAllDead "Wave3_Subwave3_GPyro"
+		}
+
+		// Wave Complete
+		WaveSpawn // Victory Voiceline
+		{
+			Name "Wave3_Complete"
+			WaitForAllSpawned "Wave3_CompleteCheck"
+
+			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_cheers06.mp3"
+		}
+		WaveSpawn // De-Spawn
+		{
+			Name "Wave3_End"
+			WaitForAllDead "Wave3_CompleteCheck"
+			WaitBeforeStarting 3.9
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`arena_mode_loss_relay`, `Disable`)
+					  "
+			}
+		}
+		WaveSpawn // De-Spawn
+		{
+			Name "Wave3_End"
+			WaitForAllDead "Wave3_CompleteCheck"
+			WaitBeforeStarting 4
+			
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						MVMAnimosity_ArenaMode.RemoveRobot(`Guard-I.A.N`)
+					  "
 			}
 		}
 	}
