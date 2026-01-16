@@ -1,0 +1,49 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+    StartingCurrency 2000
+    RespawnWaveTime 2
+    CanBotsAttackWhileInSpawnRoom No
+
+    AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action runscriptcode
+            Param "
+                    EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Tank Test`)
+                  "
+        }
+
+        WaveSpawn // 1 Tank with 5 Scrap
+        {
+            Name "Wave1_Subwave5_Tank"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 128
+
+            Tank
+            {
+                Name "tankboss"
+                Health 16000
+                Speed 75
+                StartingPathTrackNode "tank_path_a_1"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+    }
+}
