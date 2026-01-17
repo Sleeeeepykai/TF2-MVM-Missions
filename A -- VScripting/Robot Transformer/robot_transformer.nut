@@ -35,7 +35,7 @@ const MAX_WEAPONS = 8
     "models/player/engineer.mdl",
 ]
 
-::RobotTransformerSpace <-
+::RobotTransformer <-
 {
 	mvm_stats = Entities.FindByClassname(null, "tf_mann_vs_machine_stats")
 
@@ -54,11 +54,15 @@ const MAX_WEAPONS = 8
 				wearable.Kill()
 			}
 
+			for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
+				NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
+			}
+
 			local playerclass = player.GetPlayerClass()
 			player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
 		}
 
-        delete ::RobotTransformerSpace
+        delete ::RobotTransformer
     }
     function OnGameEvent_stats_resetround(_)
     {
@@ -79,7 +83,7 @@ const MAX_WEAPONS = 8
 		if (!player || !player.IsValid() || player.IsBotOfType(1337))
 			return
 
-		EntFireByHandle(player, "RunScriptCode", "RobotTransformerSpace.ClearPlayerModel(self)", 1, null, null)
+		EntFireByHandle(player, "RunScriptCode", "RobotTransformer.ClearPlayerModel(self)", 1, null, null)
 
 		if("wearables" in scope && scope.wearables.len()>0)
 		{
@@ -164,6 +168,27 @@ const MAX_WEAPONS = 8
 			if ( child instanceof CBaseCombatWeapon && child.GetSlot() == slot )
 				return child
 	}
+	function SetWeaponModel(bot, args)
+	{
+		local wep = "slot" in args ? GetItemInSlot( bot, args.slot ) : bot.GetActiveWeapon()
+
+		local scope = bot.GetScriptScope()
+		local modelindex = PrecacheModel( "model" in args ? args.model : args.type )
+		local tp_wearable = Entities.CreateByClassname( "tf_wearable" )
+
+		NetProps.SetPropInt( wep, "m_nRenderMode", kRenderTransColor )
+		NetProps.SetPropInt( wep, "m_clrRender", 0 )
+
+		NetProps.SetPropInt( tp_wearable, "m_nModelIndex", modelindex )
+		NetProps.SetPropBool( tp_wearable, "m_AttributeManager.m_Item.m_bInitialized", true )
+		NetProps.SetPropBool( tp_wearable, "m_bValidatedAttachedEntity", true )
+		tp_wearable.SetOwner(bot)
+		NetProps.SetPropEntity( tp_wearable, "m_hOwner", bot)
+		tp_wearable.DispatchSpawn()
+		NetProps.SetPropBool( tp_wearable, "m_bForcePurgeFixedupStrings", true )
+		tp_wearable.AcceptInput( "SetParent", "!activator", bot, bot )
+		NetProps.SetPropInt( tp_wearable, "m_fEffects", 1|128 )
+	}
 
 	//// TRANSFORMER MAIN FUNCTIONS ////
 
@@ -238,6 +263,144 @@ const MAX_WEAPONS = 8
 	// PYRO TRANSFORMS //
 
 	// DEMOMAN TRANSFORMS //
+	function Hammerknight(target)
+	{
+		local TransformerTarget
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local player = PlayerInstanceFromIndex(i)
+			if (player == null)
+				continue
+			if (GetPlayerName(player) == target)
+			{
+				TransformerTarget = player;
+				break;
+			}
+		}
+
+		// Executing Transformation
+		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_DEMOMAN)
+		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_DEMOMAN)
+
+		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
+
+		TransformerTarget.SetUseBossHealthBar(true)
+		TransformerTarget.SetIsMiniBoss(true)
+		TransformerTarget.SetModelScale(1.75, 0)
+		TransformerTarget.AddCondEx(56, -1, null)
+		TransformerTarget.AddCondEx(66, 0.25, null)
+		TransformerTarget.AddCondEx(51, 1, null)
+
+		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "demoknight_giant")
+
+		// Stripping Cosmetics and Weapons
+		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
+		{
+			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+
+			next = current.NextMovePeer()
+			if (current instanceof CEconEntity)
+				current.Destroy()
+		}
+
+		GivePlayerWeapon(TransformerTarget, "tf_wearable", 405)
+		GivePlayerWeapon(TransformerTarget, "tf_wearable_demoshield", 131)
+		GivePlayerWeapon(TransformerTarget, "tf_weapon_katana", 357)
+
+		// Setting Character Attributes
+		TransformerTarget.AddCustomAttribute("max health additive bonus", 3800, 0)
+		TransformerTarget.SetHealth(4000)
+		TransformerTarget.AddCustomAttribute("move speed penalty", 0.5, 0)
+		TransformerTarget.AddCustomAttribute("damage force reduction", 0.4, 0)
+		TransformerTarget.AddCustomAttribute("airblast vulnerability multiplier", 0.4, 0)
+		TransformerTarget.AddCustomAttribute("override footstep sound set", 4, 0)
+		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
+
+		// Setting Item Attributes
+		local secondary = GetItemInSlot(TransformerTarget, 1 )
+
+		secondary.AddAttribute("mult charge turn control", 5, 0)
+
+		local melee = GetItemInSlot(TransformerTarget, 2 )
+
+		melee.AddAttribute("fire rate penalty", 1.2, 0)
+		melee.AddAttribute("restore health on kill", 10, 0)
+		melee.AddAttribute("decapitate type", 0, 0)
+		melee.AddAttribute("crit kill will gib", 1, 0)
+
+		local meleemodelinfo = {slot = 2, model = "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"}
+		SetWeaponModel(TransformerTarget, meleemodelinfo)
+
+		// Setting Hammer Functionality
+		melee.ValidateScriptScope()
+		local meleescope = melee.GetScriptScope()
+
+		function HammerStrike(wielder)
+		{
+			// used in a fire input on attack
+			EntFireByHandle(wielder, "runscriptcode", @"
+
+				local forward = self.EyeAngles().Forward(); forward.z = 0; forward.Norm();
+				local vHitPos = self.GetOrigin() + (forward * (128 * self.GetModelScale()));
+				local Trace = {
+					start = vHitPos,
+					end = vHitPos - Vector(0, 0, 1000),
+					mask = 33579137
+				}
+				TraceLineEx(Trace)
+				if (!Trace.hit) return
+
+				vHitPos = Trace.pos
+				ScreenShake(vHitPos, 15, 15, 1, 9999, 0, true)
+				DispatchParticleEffect(`hammer_impact_button`, vHitPos + Vector(0,0,25), Vector(0, 0, 0))
+				local hBomb = Entities.CreateByClassname(`tf_generic_bomb`)
+
+				hBomb.KeyValueFromInt(`damage`, 100)
+				hBomb.KeyValueFromInt(`radius`, 300)
+				hBomb.KeyValueFromInt(`friendlyfire`, 0)
+				hBomb.KeyValueFromString(`classname`, `necro_smasher`)
+				hBomb.DispatchSpawn()
+				hBomb.SetAbsOrigin(vHitPos)
+				hBomb.SetTeam(self.GetTeam())
+				hBomb.SetOwner(self)
+				hBomb.AcceptInput(`Detonate`, null, self, self)
+
+				PrecacheSound(`sound/misc/halloween/strongman_fast_impact_01.wav`)
+				EmitSoundEx({
+					sound_name = `sound/misc/halloween/strongman_fast_impact_01.wav`
+					origin = vHitPos
+					volume      = 1
+					sound_level = (40 + (20 * log10(9999 / 36))).tointeger()
+					filter_type = 5
+				})
+
+				for (local hEnt = null; hEnt = Entities.FindByClassnameWithin(hEnt, `player`, vHitPos, 300);)
+				{
+					if (!hEnt || !hEnt.IsValid()) continue
+					if (0 != NetProps.GetPropInt(hEnt, `m_lifeState`) || hEnt.GetTeam() == TEAM_SPECTATOR || hEnt.GetTeam() == self.GetTeam()) continue
+
+					hEnt.SetAbsVelocity(Vector(0, 0, 500))
+				}
+			", 0.4, wielder, wielder)
+		}
+
+		meleescope.Think <- function() {
+
+			local nextswing = NetProps.GetPropFloat(melee, "m_flNextPrimaryAttack")
+
+			if (swingpressed && nextswing < Time())
+			{
+				RobotTransformer.Hammerknight.HammerStrike(self)
+			}
+			else
+			{
+				return
+			}
+			return -1
+		}
+
+		AddThinkToEnt(melee, "Think")
+	}
 
 	// HEAVY TRANSFORMS //
 	function DeflectorHeavy(target)
@@ -310,4 +473,4 @@ const MAX_WEAPONS = 8
 	// SPY TRANSFORMS //
 };
 
-__CollectGameEventCallbacks(RobotTransformerSpace)
+__CollectGameEventCallbacks(RobotTransformer)
