@@ -49,10 +49,20 @@ const MAX_WEAPONS = 8
 			if ( !player )
 				continue;
 
-			foreach(wearable in player_scope.wearables)
-			{
-				wearable.Kill()
-			}
+			player.ValidateScriptScope()
+			local player_scope = player.GetScriptScope()
+
+			if( ("wearables" in player_scope) )
+				foreach(wearable in player_scope.wearables)
+				{
+					wearable.Kill()
+				}
+
+			if( ("tp_wearables" in player_scope) )
+				foreach(tp_wearable in player_scope.tp_wearables)
+				{
+					tp_wearable.Kill()
+				}
 
 			for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
 				NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
@@ -78,22 +88,26 @@ const MAX_WEAPONS = 8
 		local player = GetPlayerFromUserID(params.userid)
 
 		player.ValidateScriptScope()
-		local scope = player.GetScriptScope()
+		local player_scope = player.GetScriptScope()
 
 		if (!player || !player.IsValid() || player.IsBotOfType(1337))
 			return
 
 		EntFireByHandle(player, "RunScriptCode", "RobotTransformer.ClearPlayerModel(self)", 1, null, null)
 
-		if("wearables" in scope && scope.wearables.len()>0)
-		{
-			foreach(wearable in scope.wearables)
+		if( ("wearables" in player_scope) )
+			foreach(wearable in player_scope.wearables)
 			{
 				wearable.Kill()
 			}
 
-			delete scope.wearables
-		}
+		if( ("tp_wearables" in player_scope) )
+			foreach(tp_wearable in player_scope.tp_wearables)
+			{
+				tp_wearable.Kill()
+			}
+
+		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 	}
 	function ClearPlayerModel(player)
 	{
@@ -168,11 +182,11 @@ const MAX_WEAPONS = 8
 			if ( child instanceof CBaseCombatWeapon && child.GetSlot() == slot )
 				return child
 	}
-	function SetWeaponModel(bot, args)
+	function SetWeaponModel(player, args)
 	{
-		local wep = "slot" in args ? GetItemInSlot( bot, args.slot ) : bot.GetActiveWeapon()
+		local wep = "slot" in args ? GetItemInSlot( player, args.slot ) : player.GetActiveWeapon()
 
-		local scope = bot.GetScriptScope()
+		local player_scope = player.GetScriptScope()
 		local modelindex = PrecacheModel( "model" in args ? args.model : args.type )
 		local tp_wearable = Entities.CreateByClassname( "tf_wearable" )
 
@@ -182,12 +196,18 @@ const MAX_WEAPONS = 8
 		NetProps.SetPropInt( tp_wearable, "m_nModelIndex", modelindex )
 		NetProps.SetPropBool( tp_wearable, "m_AttributeManager.m_Item.m_bInitialized", true )
 		NetProps.SetPropBool( tp_wearable, "m_bValidatedAttachedEntity", true )
-		tp_wearable.SetOwner(bot)
-		NetProps.SetPropEntity( tp_wearable, "m_hOwner", bot)
+		tp_wearable.SetOwner(player)
+		NetProps.SetPropEntity( tp_wearable, "m_hOwner", player)
 		tp_wearable.DispatchSpawn()
 		NetProps.SetPropBool( tp_wearable, "m_bForcePurgeFixedupStrings", true )
-		tp_wearable.AcceptInput( "SetParent", "!activator", bot, bot )
+		tp_wearable.AcceptInput( "SetParent", "!activator", player, player )
 		NetProps.SetPropInt( tp_wearable, "m_fEffects", 1|128 )
+
+		if (!("tp_wearables" in player_scope))
+			player_scope.tp_wearables <- []
+		player_scope.tp_wearables.append(tp_wearable)
+
+		return tp_wearable
 	}
 
 	//// TRANSFORMER MAIN FUNCTIONS ////
@@ -263,7 +283,7 @@ const MAX_WEAPONS = 8
 	// PYRO TRANSFORMS //
 
 	// DEMOMAN TRANSFORMS //
-	function Hammerknight(target)
+	function HammerKnight(target)
 	{
 		local TransformerTarget
 		for (local i = 1; i <= MaxPlayers; i++)
@@ -303,9 +323,9 @@ const MAX_WEAPONS = 8
 				current.Destroy()
 		}
 
-		GivePlayerWeapon(TransformerTarget, "tf_wearable", 405)
-		GivePlayerWeapon(TransformerTarget, "tf_wearable_demoshield", 131)
-		GivePlayerWeapon(TransformerTarget, "tf_weapon_katana", 357)
+		GivePlayerWeapon(TransformerTarget, "tf_weapon_sword", 172)
+		GivePlayerCosmetic(TransformerTarget, 405, "models/workshop/player/items/demo/demo_booties/demo_booties.mdl")
+		CTFBot.GenerateAndWearItem.call(TransformerTarget, "The Chargin' Targe")
 
 		// Setting Character Attributes
 		TransformerTarget.AddCustomAttribute("max health additive bonus", 3800, 0)
@@ -315,18 +335,13 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCustomAttribute("airblast vulnerability multiplier", 0.4, 0)
 		TransformerTarget.AddCustomAttribute("override footstep sound set", 4, 0)
 		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
+		TransformerTarget.AddCustomAttribute("mult charge turn control", 6, 0)
 
 		// Setting Item Attributes
-		local secondary = GetItemInSlot(TransformerTarget, 1 )
-
-		secondary.AddAttribute("mult charge turn control", 5, 0)
-
 		local melee = GetItemInSlot(TransformerTarget, 2 )
 
-		melee.AddAttribute("fire rate penalty", 1.2, 0)
-		melee.AddAttribute("restore health on kill", 10, 0)
-		melee.AddAttribute("decapitate type", 0, 0)
-		melee.AddAttribute("crit kill will gib", 1, 0)
+		melee.AddAttribute("damage bonus", 0, 0)
+		melee.AddAttribute("fire rate penalty", 1.5, 0)
 
 		local meleemodelinfo = {slot = 2, model = "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"}
 		SetWeaponModel(TransformerTarget, meleemodelinfo)
@@ -355,7 +370,7 @@ const MAX_WEAPONS = 8
 				DispatchParticleEffect(`hammer_impact_button`, vHitPos + Vector(0,0,25), Vector(0, 0, 0))
 				local hBomb = Entities.CreateByClassname(`tf_generic_bomb`)
 
-				hBomb.KeyValueFromInt(`damage`, 100)
+				hBomb.KeyValueFromInt(`damage`, 200)
 				hBomb.KeyValueFromInt(`radius`, 300)
 				hBomb.KeyValueFromInt(`friendlyfire`, 0)
 				hBomb.KeyValueFromString(`classname`, `necro_smasher`)
@@ -365,9 +380,9 @@ const MAX_WEAPONS = 8
 				hBomb.SetOwner(self)
 				hBomb.AcceptInput(`Detonate`, null, self, self)
 
-				PrecacheSound(`sound/misc/halloween/strongman_fast_impact_01.wav`)
+				PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
 				EmitSoundEx({
-					sound_name = `sound/misc/halloween/strongman_fast_impact_01.wav`
+					sound_name = `misc/halloween/strongman_fast_impact_01.wav`
 					origin = vHitPos
 					volume      = 1
 					sound_level = (40 + (20 * log10(9999 / 36))).tointeger()
@@ -385,16 +400,13 @@ const MAX_WEAPONS = 8
 		}
 
 		meleescope.Think <- function() {
-
+			local ParentButtons = NetProps.GetPropInt(TransformerTarget, "m_nButtons")
+			local swingpressed = (ParentButtons & Constants.FButtons.IN_ATTACK) != 0;
 			local nextswing = NetProps.GetPropFloat(melee, "m_flNextPrimaryAttack")
 
-			if (swingpressed && nextswing < Time())
+			if (swingpressed && nextswing <= Time())
 			{
-				RobotTransformer.Hammerknight.HammerStrike(self)
-			}
-			else
-			{
-				return
+				RobotTransformer.HammerStrike(self)
 			}
 			return -1
 		}
