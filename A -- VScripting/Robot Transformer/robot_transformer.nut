@@ -340,8 +340,9 @@ const MAX_WEAPONS = 8
 		// Setting Item Attributes
 		local melee = GetItemInSlot(TransformerTarget, 2 )
 
-		melee.AddAttribute("damage bonus", 0, 0)
+		melee.AddAttribute("damage penalty", 0, 0)
 		melee.AddAttribute("fire rate penalty", 1.5, 0)
+		melee.AddAttribute("melee range multiplier", 0.001, 0)
 
 		local meleemodelinfo = {slot = 2, model = "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"}
 		SetWeaponModel(TransformerTarget, meleemodelinfo)
@@ -396,19 +397,27 @@ const MAX_WEAPONS = 8
 
 					hEnt.SetAbsVelocity(Vector(0, 0, 500))
 				}
-			", 0.4, wielder, wielder)
+			", 0, wielder, wielder)
 		}
 
-		meleescope.Think <- function() {
-			local ParentButtons = NetProps.GetPropInt(TransformerTarget, "m_nButtons")
-			local swingpressed = (ParentButtons & Constants.FButtons.IN_ATTACK) != 0;
-			local nextswing = NetProps.GetPropFloat(melee, "m_flNextPrimaryAttack")
+		meleescope.last_fire <- 1e30
 
-			if (swingpressed && nextswing <= Time())
-			{
-				RobotTransformer.HammerStrike(self)
+		meleescope.Think <- function() {
+
+			local parent_buttons = NetProps.GetPropInt(TransformerTarget, "m_nButtons")
+			local next_swing = NetProps.GetPropFloat(melee, "m_flNextPrimaryAttack")
+			local time = Time()
+			if (parent_buttons & IN_ATTACK && next_swing <= time) {
+				last_fire = time
 			}
-			return -1
+			else if (last_fire + 0.4 <= time) {
+				RobotTransformer.HammerStrike(self)
+				last_fire = 1e30
+			}
+
+			printl(time)
+			printl(next_swing)
+			return -1;
 		}
 
 		AddThinkToEnt(melee, "Think")
