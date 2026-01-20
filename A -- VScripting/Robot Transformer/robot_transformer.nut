@@ -415,8 +415,6 @@ const MAX_WEAPONS = 8
 				last_fire = 1e30
 			}
 
-			printl(time)
-			printl(next_swing)
 			return -1;
 		}
 
