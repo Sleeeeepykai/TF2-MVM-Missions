@@ -37,6 +37,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			local player = PlayerInstanceFromIndex(i)
 			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 		}
+		MVMAnimosity_ArenaMode.RemoveRobot("Guard-I.A.N")
         delete ::MVMAnimosity_ArenaMode
     }
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
