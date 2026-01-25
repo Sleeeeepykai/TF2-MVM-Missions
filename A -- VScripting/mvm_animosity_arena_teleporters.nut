@@ -51,7 +51,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 			telehintscope.Think <- function() {
 
-				local howner = GetPropEntity(self, "m_hOwner")
+				local howner = self.GetOwner()
 
 				if(howner)
 				{
