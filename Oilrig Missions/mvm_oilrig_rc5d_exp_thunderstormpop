@@ -44,7 +44,40 @@ WaveSchedule
         }   
     }
 
-    Wave //OBS: Payout not final
+    Mission // Sniper (Wave 2)
+    {
+        Objective Sniper
+        Where spawnbot_mission_sniper
+        BeginAtWave 2
+        RunForThisManyWaves 1
+        DesiredCount 3
+
+        InitialCooldown 120
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_Sniper
+        }
+    }
+    Mission // Spy (Wave 2)
+    {
+        Objective Spy
+        Where spawnbot_mission_spy
+        BeginAtWave 2
+        RunForThisManyWaves 1
+        DesiredCount 3
+
+        InitialCooldown 120
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_Spy
+        }
+    }
+
+    Wave
     {
         StartWaveOutput
         {
@@ -62,19 +95,6 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)        
                   "
         }
-
-        //sum ideas
-        //subwave 1
-        //Black box soldier spam + buff banners
-        //some regular soldiers to deal with sentries
-        //custom armored bots? (other than steelies)
-        //fire dmg of some kind
-        //subwave 2
-        //common support alongside some conga-lined giants (gsoldiers?)
-
-        //add medics if underwhelming
-        //3 dmg types (exp, fire and crit) since its an exp but they're still somewhat cheap
-        //commons as main threat, giants/armored bots for bulk/support
 
         //Subwave 1
         WaveSpawn // 20 Black Boxes
@@ -191,7 +211,7 @@ WaveSchedule
         {
             Name "Wave1_Subwave2_GSoldiers"
             WaitForAllSpawned "Wave1_Subwave1_BlackBoxes2"
-            Where spawnbot_right
+            Where spawnbot_left
             TotalCount 3
             MaxActive 3
             SpawnCount 1
@@ -243,7 +263,7 @@ WaveSchedule
         {
             Name "Wave1_Subwave2_GSoldiers2"
             WaitForAllSpawned "Wave1_Subwave2_GSoldiers"
-            Where spawnbot_right
+            Where spawnbot_left
             TotalCount 3
             MaxActive 3
             SpawnCount 1
@@ -292,7 +312,7 @@ WaveSchedule
         }
     }
 
-    Wave //OBS: Payout not final + add force path later
+    Wave
     {
         StartWaveOutput
         {
@@ -311,40 +331,24 @@ WaveSchedule
                   "
         }
 
-        //sum ideas
-        //subwave 1
-        //fatass tank (plenty of hp)
-        //A LOT of Sniper + Spy support (alongside other commons) (obs: make snipers and spies mainwave/support limited)
-        //subwave 2
-        //giant squads entrance
-        //armored super scouts (either very limited at mainwave or support limited)
-        //another tank spawns a bit later, less beefy, with some common support (not too much) + giants at the back
-
-        //3 dmg types (exp, fire and bullet) slightly more expensive than before
-        //commons as main threat, giants/armored bots for bulk/support
-
         //Subwave 1
-        WaveSpawn //Tank
+        WaveSpawn // 1 Tank
 		{
 			Name "Wave2_Subwave1_Tank"
-			TotalCurrency 200
 			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 20
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 200
 			
 			Tank
 			{
-				Health 25000
+                Name "tankboss"
+				Health 20000
 				Speed 75
-				Name "tankboss"
 				StartingPathTrackNode "tank_path_a_1" //left bomb path
-				
-				OnKilledOutput
-				{
-					Target boss_dead_relay
-					Action Trigger
-				}
+		
 				OnBombDroppedOutput
 				{
 					Target boss_deploy_relay
@@ -353,102 +357,110 @@ WaveSchedule
 			}
 		}
 
-        WaveSpawn //Spy among us
+        WaveSpawn // Buff Banner + Soldiers - Any
         {
             Name "Wave2_Subwave1"
-            Where spawnbot_mission_spy
-            TotalCount 30
-            MaxActive 6
-            SpawnCount 1
-            WaitBeforeStarting 0
-            WaitBetweenSpawns 0.5
-            TotalCurrency 50
+            Where spawnbot
+            TotalCount 24
+            MaxActive 12
+            SpawnCount 4
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 8
+            TotalCurrency 100
 
-            TFBot
+            Squad
             {
-                Template T_TFBot_Spy
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+                }
+
+                TFBot
+                {
+                    Class Soldier
+                    Skill Normal
+                }
+
+                TFBot
+                {
+                    Class Soldier
+                    Skill Normal
+                }
+
+                TFBot
+                {
+                    Class Soldier
+                    Skill Normal
+                }
             }
         }
-        WaveSpawn //Snoiper
-        {
-            Name "Wave2_Subwave1"
-            Where spawnbot_mission_sniper
-            TotalCount 30
-            MaxActive 6
-            SpawnCount 1
-            WaitBeforeStarting 0
-            WaitBetweenSpawns 0.5
-            TotalCurrency 50
 
-            TFBot
-            {
-                Template T_TFBot_Sniper
-            }
-        }
-        WaveSpawn //Demos - Left
+        WaveSpawn //Bat Scouts - Any
         {
             Name "Wave2_Subwave1"
-            Where spawnbot_left
-            TotalCount 20
-            MaxActive 4
+            Where spawnbot
+            TotalCount 24
+            MaxActive 8
             SpawnCount 1
-            WaitBeforeStarting 0
+            WaitBeforeStarting 10
             WaitBetweenSpawns 2
             TotalCurrency 50
 
             TFBot
             {
-                Class Demoman
-                Skill Normal
-            }
-        }
-        WaveSpawn //Shotgun Heavies - Right
-        {
-            Name "Wave2_Subwave1"
-            Where spawnbot_right
-            TotalCount 20
-            MaxActive 4
-            SpawnCount 1
-            WaitBeforeStarting 0
-            WaitBetweenSpawns 2
-            TotalCurrency 50
-
-            TFBot
-            {
-                Template T_TFBot_Heavyweapons_Shotgun
+                Template T_TFBot_Scout_Melee
+                ClassIcon scout_bat_nys
             }
         }
 
         //Subwave 2
+        WaveSpawn // GDemos - Right
+        {
+            Name "Wave2_Subwave2"
+            WaitForAllSpawned "Wave2_Subwave1"
+            Where spawnbot_right
+            TotalCount 3
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 20
+            TotalCurrency 100
 
-        //INSERT GIANT SQUAD ENTRANCE HERE (OBS: Make WBS 25 sec)
-
-        WaveSpawn //Armored Super Scouts - Any
+            TFBot
+            {
+                Template T_TFBot_Giant_Demo_RapidFire
+            }
+        }
+        WaveSpawn //Scouts - Any
         {
             Name "Wave2_Subwave2"
             WaitForAllSpawned "Wave2_Subwave1"
             Where spawnbot
-            TotalCount 12
-            MaxActive 4
-            SpawnCount 1
-            WaitBeforeStarting 30
+            RandomSpawn 1
+            TotalCount 30
+            MaxActive 10
+            SpawnCount 6
+            WaitBeforeStarting 10
             WaitBetweenSpawns 8
             TotalCurrency 50
 
             TFBot
             {
-                Template T_TFBot_Scout_Arm_Fast
+                Class Scout
+                Skill Easy
             }
         }
+
         WaveSpawn //Tank
 		{
 			Name "Wave2_Subwave2_Tank"
-            WaitForAllSpawned Wave2_Subwave1
-			TotalCurrency 200
+            WaitForAllSpawned "Wave2_Subwave2"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 60
+			WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 240
 			
 			Tank
 			{
@@ -469,66 +481,58 @@ WaveSchedule
 				}
 			}
 		}
-        WaveSpawn //Demos - Left
+        WaveSpawn // 1 GDemo
         {
-            Name "Wave2_Subwave2"
-            WaitForAllSpawned "Wave2_Subwave1"
+            Name "Wave2_Subwave2_GDemo"
+            WaitForAllSpawned "Wave2_Subwave2_Tank"
             Where spawnbot_left
-            TotalCount 24
-            MaxActive 3
+            TotalCount 1
+            MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 45
-            WaitBetweenSpawns 2
-            TotalCurrency 50
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 20
 
             TFBot
             {
-                Class Demoman
-                Skill Hard
+                Template T_TFBot_Giant_Demo_RapidFire
             }
         }
-        WaveSpawn //Pyros - Right
+        WaveSpawn // 1 GDemo
         {
-            Name "Wave2_Subwave2"
-            WaitForAllSpawned "Wave2_Subwave1"
+            Name "Wave2_Subwave2_GDemo"
+            WaitForAllSpawned "Wave2_Subwave2_Tank"
             Where spawnbot_right
-            TotalCount 24
-            MaxActive 3
+            TotalCount 1
+            MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 46
-            WaitBetweenSpawns 2
-            TotalCurrency 50
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 20
 
             TFBot
             {
-                Class Pyro
-                Skill Normal
-                CharacterAttributes
-                
-                {
-                    "airblast disabled" 1
-                }
+                Template T_TFBot_Giant_Demo_RapidFire
             }
         }
-        WaveSpawn //Shotgun Heavies - Any
+        WaveSpawn // 12 Soldiers
         {
-            Name "Wave2_Subwave2"
-            WaitForAllSpawned "Wave2_Subwave1"
+            Name "Wave2_Subwave2_Soldiers"
+            WaitForAllSpawned "Wave2_Subwave2_GDemo"
             Where spawnbot
-            TotalCount 24
-            MaxActive 3
-            SpawnCount 1
-            WaitBeforeStarting 47
+            TotalCount 12
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 0
             WaitBetweenSpawns 2
-            TotalCurrency 50
+            TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Heavyweapons_Shotgun
+                Class Soldier
+                Skill Normal
             }
         }
-
-        //INSERT GIANTS HERE (OBS: Make WBS ~70 sec, they must spawn AFTER the tank)
     }
 
     Wave
