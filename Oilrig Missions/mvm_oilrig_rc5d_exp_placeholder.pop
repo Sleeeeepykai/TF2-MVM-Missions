@@ -1,0 +1,567 @@
+#base robot_giant.pop
+#base robot_standard.pop
+//OBS: "Left" and "Right" in spawnbots is from the robot's perspective, not RED's
+
+WaveSchedule
+{
+    StartingCurrency 600 
+    RespawnWaveTime 5 
+    CanBotsAttackWhileInSpawnRoom No
+    AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 15
+
+    //// TEMPLATES ////
+    Templates
+    {
+        T_TFBot_Pyro_Armored
+        {  
+            Name "Flametosser Pyro"
+            Class Pyro
+            ClassIcon pyro_armored_revamp
+            Skill Expert
+            Health 500
+            Scale 1.3
+            WeaponRestrictions PrimaryOnly
+            Attributes AlwaysFireWeapon
+        }
+    }
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+    {
+        Objective DestroySentries
+        Where spawnbot_mission_sentrybuster
+        BeginAtWave 1
+        RunForThisManyWaves 6
+        DesiredCount 1
+
+        InitialCooldown 30
+        CooldownTime 25
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        }   
+    }
+
+    Wave //OBS: Payout not final
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        //sum ideas
+        //subwave 1
+        //Black box soldier spam + buff banners
+        //some regular soldiers to deal with sentries
+        //custom armored bots? (other than steelies)
+        //fire dmg of some kind
+        //subwave 2
+        //common support alongside some conga-lined giants (gsoldiers?)
+
+        //add medics if underwhelming
+        //3 dmg types (exp, fire and crit) since its an exp but they're still somewhat cheap
+        //commons as main threat, giants/armored bots for bulk/support
+
+        //Subwave 1
+        WaveSpawn // 20 Black Boxes
+        {
+            Name "Wave1_Subwave1_BlackBoxes"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 20
+            MaxActive 12
+            SpawnCount 10
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_RocketShotgun
+            }
+        }
+        WaveSpawn // 15 Demomen
+        {
+            Name "Wave1_Subwave1_Demomen"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 7
+            SpawnCount 3
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Demoman
+                Skill Expert
+            }
+        }
+
+        WaveSpawn // 10 Steel Gauntlets
+        {
+            Name "Wave1_Subwave1_SteelGauntlets"
+            WaitForAllSpawned "Wave1_Subwave1_BlackBoxes"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 5
+            SpawnCount 1
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 2
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Fist
+                ClassIcon heavy_steelfist_armored_revamp
+            }
+        }
+        WaveSpawn // 16 Pyros
+        {
+            Name "Wave1_Subwave1_Pyros"
+            WaitForAllSpawned "Wave1_Subwave1_BlackBoxes"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // 20 Black Boxes
+        {
+            Name "Wave1_Subwave1_BlackBoxes2"
+            WaitForAllSpawned "Wave1_Subwave1_SteelGauntlets"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 20
+            MaxActive 12
+            SpawnCount 10
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_RocketShotgun
+            }
+        }
+        WaveSpawn // 15 Demomen
+        {
+            Name "Wave1_Subwave1_Demomen2"
+            WaitForAllSpawned "Wave1_Subwave1_SteelGauntlets"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 7
+            SpawnCount 3
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 4
+            TotalCurrency 80
+
+            TFBot
+            {
+                Class Demoman
+                Skill Expert
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 3 GSoldiers
+        {
+            Name "Wave1_Subwave2_GSoldiers"
+            WaitForAllSpawned "Wave1_Subwave1_BlackBoxes2"
+            Where spawnbot_right
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 10
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+            }
+        }
+        WaveSpawn // 5 Armored Pyros
+        {
+            Name "Wave1_Subwave2_ArmoredPyros"
+            WaitForAllSpawned "Wave1_Subwave1_BlackBoxes2"
+            Where spawnbot_left
+            TotalCount 5
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 5
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Armored
+            }
+        }
+        WaveSpawn // 16 Flare Pyros
+        {
+            Name "Wave1_Subwave2_FlarePyros"
+            WaitForAllSpawned "Wave1_Subwave1_BlackBoxes2"
+            Where spawnbot
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Flaregun
+            }
+        }
+
+        WaveSpawn // 3 GSoldiers
+        {
+            Name "Wave1_Subwave2_GSoldiers2"
+            WaitForAllSpawned "Wave1_Subwave2_GSoldiers"
+            Where spawnbot_right
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 120
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+            }
+        }
+        WaveSpawn // 5 Armored Pyros
+        {
+            Name "Wave1_Subwave2_ArmoredPyros"
+            WaitForAllSpawned "Wave1_Subwave2_GSoldiers"
+            Where spawnbot_left
+            TotalCount 5
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 5
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Armored
+            }
+        }
+        WaveSpawn // 20 Flare Pyros
+        {
+            Name "Wave1_Subwave2_FlarePyros"
+            WaitForAllSpawned "Wave1_Subwave2_GSoldiers"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Flaregun
+            }
+        }
+    }
+
+    Wave //OBS: Payout not final + add force path later
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        //sum ideas
+        //subwave 1
+        //fatass tank (plenty of hp)
+        //A LOT of Sniper + Spy support (alongside other commons) (obs: make snipers and spies mainwave/support limited)
+        //subwave 2
+        //giant squads entrance
+        //armored super scouts (either very limited at mainwave or support limited)
+        //another tank spawns a bit later, less beefy, with some common support (not too much) + giants at the back
+
+        //3 dmg types (exp, fire and bullet) slightly more expensive than before
+        //commons as main threat, giants/armored bots for bulk/support
+
+        //Subwave 1
+        WaveSpawn //Tank
+		{
+			Name "Wave2_Subwave1_Tank"
+			TotalCurrency 200
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			
+			Tank
+			{
+				Health 25000
+				Speed 75
+				Name "tankboss"
+				StartingPathTrackNode "tank_path_a_1" //left bomb path
+				
+				OnKilledOutput
+				{
+					Target boss_dead_relay
+					Action Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+
+        WaveSpawn //Spy among us
+        {
+            Name "Wave2_Subwave1"
+            Where spawnbot_mission_spy
+            TotalCount 30
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.5
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Spy
+            }
+        }
+        WaveSpawn //Snoiper
+        {
+            Name "Wave2_Subwave1"
+            Where spawnbot_mission_sniper
+            TotalCount 30
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.5
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Sniper
+            }
+        }
+        WaveSpawn //Demos - Left
+        {
+            Name "Wave2_Subwave1"
+            Where spawnbot_left
+            TotalCount 20
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 50
+
+            TFBot
+            {
+                Class Demoman
+                Skill Normal
+            }
+        }
+        WaveSpawn //Shotgun Heavies - Right
+        {
+            Name "Wave2_Subwave1"
+            Where spawnbot_right
+            TotalCount 20
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Shotgun
+            }
+        }
+
+        //Subwave 2
+
+        //INSERT GIANT SQUAD ENTRANCE HERE (OBS: Make WBS 25 sec)
+
+        WaveSpawn //Armored Super Scouts - Any
+        {
+            Name "Wave2_Subwave2"
+            WaitForAllSpawned "Wave2_Subwave1"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 30
+            WaitBetweenSpawns 8
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Arm_Fast
+            }
+        }
+        WaveSpawn //Tank
+		{
+			Name "Wave2_Subwave2_Tank"
+            WaitForAllSpawned Wave2_Subwave1
+			TotalCurrency 200
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 60
+			
+			Tank
+			{
+				Health 20000
+				Speed 75
+				Name "tankboss"
+				StartingPathTrackNode "tank_path_a_1" //left bomb path
+				
+				OnKilledOutput
+				{
+					Target boss_dead_relay
+					Action Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+        WaveSpawn //Demos - Left
+        {
+            Name "Wave2_Subwave2"
+            WaitForAllSpawned "Wave2_Subwave1"
+            Where spawnbot_left
+            TotalCount 24
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 45
+            WaitBetweenSpawns 2
+            TotalCurrency 50
+
+            TFBot
+            {
+                Class Demoman
+                Skill Hard
+            }
+        }
+        WaveSpawn //Pyros - Right
+        {
+            Name "Wave2_Subwave2"
+            WaitForAllSpawned "Wave2_Subwave1"
+            Where spawnbot_right
+            TotalCount 24
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 46
+            WaitBetweenSpawns 2
+            TotalCurrency 50
+
+            TFBot
+            {
+                Class Pyro
+                Skill Normal
+                CharacterAttributes
+                
+                {
+                    "airblast disabled" 1
+                }
+            }
+        }
+        WaveSpawn //Shotgun Heavies - Any
+        {
+            Name "Wave2_Subwave2"
+            WaitForAllSpawned "Wave2_Subwave1"
+            Where spawnbot
+            TotalCount 24
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 47
+            WaitBetweenSpawns 2
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Heavyweapons_Shotgun
+            }
+        }
+
+        //INSERT GIANTS HERE (OBS: Make WBS ~70 sec, they must spawn AFTER the tank)
+    }
+
+    Wave
+    {
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        //sum ideas
+        //subwave 1
+        //Giant Pusher steelies + squadded with airblast pyros (maybe make them armored?)
+        //Armored (single shot) blast soldiers (as mobbers) with squadded uber medics 
+        //some spy + sniper support
+        //subwave 2
+        //Giant pusher heavies (with minigun) squadded with steelie pushers (keep these squads very spread out)
+        //Armored airblast pyros with uber medics (also mobbers)
+        //some spy + sniper support
+
+        //4 dmg types (exp, fire bullet and crit) idk where to put crits, maybe its not needed, but who knows
+        //changing the pace: giants as main threat, but not exactly in the lethal way
+        //healthy hard to kill giants as bomb carriers, alongside mobber commons that make killing them harder
+    }
+}
