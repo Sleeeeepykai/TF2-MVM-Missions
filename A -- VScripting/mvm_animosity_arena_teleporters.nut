@@ -55,13 +55,13 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 				if(howner)
 				{
-					EntFire("spawnbot_arena_teleporter_left", "Enable", null, null, null)
-					EntFire("spawnbot_arena_teleporter_right", "Enable", null, null, null)
+					EntFire("spawnbot_arena_teleporter_left", "Enable", null, 0.0, null)
+					EntFire("spawnbot_arena_teleporter_right", "Enable", null, 0.0, null)
 				}
 				else
 				{
-					EntFire("spawnbot_arena_teleporter_left", "Disable", null, null, null)
-					EntFire("spawnbot_arena_teleporter_right", "Disable", null, null, null)
+					EntFire("spawnbot_arena_teleporter_left", "Disable", null, 0.0, null)
+					EntFire("spawnbot_arena_teleporter_right", "Disable", null, 0.0, null)
 				}
 
 				return -1;
