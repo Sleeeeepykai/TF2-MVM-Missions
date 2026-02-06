@@ -41,33 +41,65 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 	OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
 
-	function TeleporterControl()
+	function SetDestroyCallback(entity, callback)
+    {
+        entity.ValidateScriptScope();
+        local scope = entity.GetScriptScope();
+        scope.setdelegate({}.setdelegate({
+                parent   = scope.getdelegate()
+                id       = entity.GetScriptId()
+                index    = entity.entindex()
+                callback = callback
+                _get = function(k)
+                {
+                    return parent[k];
+                }
+                _delslot = function(k)
+                {
+                    if (k == id)
+                    {
+                        entity = EntIndexToHScript(index);
+                        local scope = entity.GetScriptScope();
+                        scope.self <- entity;
+                        callback.pcall(scope);
+                    }
+                    delete parent[k];
+                }
+            })
+        );
+    }
+
+	OnGameEvent_player_builtobject = function(params)
 	{
-		for (local htelehint; htelehint = FindByClassname(htelehint, "bot_hint_teleporter_exit");)
-		{
-			htelehint.ValidateScriptScope()
-			local telehintscope = htelehint.GetScriptScope()
+		local player = GetPlayerFromUserID(params.userid)
 
+		local building = EntIndexToHScript(params.index)
 
-			telehintscope.Think <- function() {
+		if ( player.GetTeam() != 3 || !player.IsBotOfType(1337))
+			return
 
-				local howner = self.GetOwner()
+		if ( params.object != 1 )
+			return
 
-				if(howner)
-				{
-					EntFire("spawnbot_arena_teleporter_left", "Enable", null, 0.0, null)
-					EntFire("spawnbot_arena_teleporter_right", "Enable", null, 0.0, null)
-				}
-				else
-				{
-					EntFire("spawnbot_arena_teleporter_left", "Disable", null, 0.0, null)
-					EntFire("spawnbot_arena_teleporter_right", "Disable", null, 0.0, null)
-				}
+		building.ValidateScriptScope()
+		local buildingscope = building.GetScriptScope()
 
-				return -1;
+		buildingscope.Think <- function() {
+			if (NetProps.GetPropInt(self, "m_iState") != 0)
+			{
+				EntFire("spawnbot_arena_left_teleporter", "Enable", null, 0.0, null)
+				EntFire("spawnbot_arena_right_teleporter", "Enable", null, 0.0, null)
+
+				MVMAnimosity_ArenaTeleporters.SetDestroyCallback(self, function() {
+					EntFire("spawnbot_arena_left_teleporter", "Disable", null, 0.0, null)
+					EntFire("spawnbot_arena_right_teleporter", "Disable", null, 0.0, null)
+				})
+				NetProps.SetPropString(self, "m_iszScriptThinkFunction", "")
 			}
-
-			AddThinkToEnt(htelehint, "Think")
+			return 0.1
 		}
+		AddThinkToEnt(building, "Think")
 	}
 }
+
+__CollectGameEventCallbacks(MVMAnimosity_ArenaTeleporters)
