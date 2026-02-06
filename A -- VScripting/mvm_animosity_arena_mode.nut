@@ -80,7 +80,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaFriendlyBot(target)
 	{
+		NetProps.SetPropBool(gamerules, "m_bPlayingMannVsMachine", false)
 		target.ForceChangeTeam( TF_TEAM_PVE_DEFENDERS, false )
+		NetProps.SetPropBool(gamerules, "m_bPlayingMannVsMachine", true)
 		target.AddCustomAttribute( "ammo regen", 999.0, -1 )
 	}
 	function BotGlow(target)
@@ -96,9 +98,11 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			local player = PlayerInstanceFromIndex(i)
 
 			if ( player && player.IsAlive() && player.IsBotOfType(1337) && player.HasBotTag("FriendlyBot") )
+			{
 				player.TakeDamage(999999, 1, null)
 				player.ForceChangeTeam(TEAM_SPECTATOR, true)
 				break
+			}
 		}
 	}
 }
