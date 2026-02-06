@@ -32,12 +32,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
-		for (local i = 1; i <= MaxPlayers; i++)
-		{
-			local player = PlayerInstanceFromIndex(i)
-			NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
-		}
-		MVMAnimosity_ArenaMode.RemoveRobot("Guard-I.A.N")
+		MVMAnimosity_ArenaMode.RemoveRobot()
+
         delete ::MVMAnimosity_ArenaMode
     }
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
@@ -49,16 +45,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		local player = GetPlayerFromUserID(params.userid)
 
 		if (player.IsBotOfType(1337)) { EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.BotTagCheck()", -1.0, player, null); return }
-
-		if (player.GetScriptScope() == null) player.ValidateScriptScope()
-
-		local scope = player.GetScriptScope()
-	}
-	OnGameEvent_player_death = function(params)
-	{
-		local player = GetPlayerFromUserID(params.userid)
-
-		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 	}
 
 	OnScriptHook_OnTakeDamage = function(params)
@@ -77,11 +63,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		if ( attacker.HasBotTag("LethalBot") && victim.HasBotTag("FriendlyBot") )
 			params.damage = 800
-	}
-
-	function GetPlayerName(player)
-	{
-		return NetProps.GetPropString(player, "m_szNetname")
 	}
 
 	// Bot Tags
@@ -108,23 +89,17 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 
 	// Bot Manipulation Functions
-	function RemoveRobot(target)
+	function RemoveRobot()
 	{
-		local PlayerTarget
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
 			local player = PlayerInstanceFromIndex(i)
-			if (player == null)
-				continue
-			if (GetPlayerName(player) == target)
-			{
-				PlayerTarget = player;
-				break;
-			}
-		}
 
-		PlayerTarget.TakeDamage(999999, 1, null)
-		PlayerTarget.ForceChangeTeam(TEAM_SPECTATOR, true)
+			if ( player && player.IsAlive() && player.IsBotOfType(1337) && player.HasBotTag("FriendlyBot") )
+				player.TakeDamage(999999, 1, null)
+				player.ForceChangeTeam(TEAM_SPECTATOR, true)
+				break
+		}
 	}
 }
 
