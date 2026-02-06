@@ -68,10 +68,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Bot Tags
 	function BotTagCheck()
 	{
-		if(activator.HasBotTag("FriendlyBot"))
-		{
-			MVMAnimosity_ArenaMode.ArenaFriendlyBot(activator)
-		}
 		if(activator.HasBotTag("Glow"))
 		{
 			MVMAnimosity_ArenaMode.BotGlow(activator)
@@ -80,10 +76,32 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaFriendlyBot(target)
 	{
-		NetProps.SetPropBool(gamerules, "m_bPlayingMannVsMachine", false)
-		target.ForceChangeTeam( TF_TEAM_PVE_DEFENDERS, false )
-		NetProps.SetPropBool(gamerules, "m_bPlayingMannVsMachine", true)
-		target.AddCustomAttribute( "ammo regen", 999.0, -1 )
+		target.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
+		target.AddBotAttribute(REMOVE_ON_DEATH)
+		target.AddBotAttribute(HOLD_FIRE_UNTIL_FULL_RELOAD)
+		target.AddBotAttribute(MINIBOSS)
+		target.SetModelScale(2, -1)
+		target.AddBotAttribute(USE_BOSS_HEALTH_BAR)
+		target.AddWeaponRestriction(PRIMARY_ONLY)
+		target.AddBotTag("FriendlyBot")
+		target.AddBotTag("bot_giant")
+
+		target.SetMaxHealth(3000)
+		target.SetHealth(3000)
+		target.AddCustomAttribute("move speed penalty", 0.5, -1)
+		target.AddCustomAttribute("damage force reduction", 0.1, -1)
+		target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
+		target.AddCustomAttribute("health regen", 200, -1)
+		target.AddCustomAttribute("ammo regen", 1.0, -1 )
+		target.AddCustomAttribute("health from healers reduced", 0.5, -1)
+		target.AddCustomAttribute("health from packs reduced", 0.5, -1)
+		target.AddCustomAttribute("override footstep sound set", 4, -1)
+		target.AddCustomAttribute("voice pitch scale", 0, -1)
+
+		local targetprimary = target.GetActiveWeapon()
+
+		targetprimary.AddAttribute("fire rate bonus", 0.75, -1)
+		targetprimary.AddAttribute("faster reload rate", 0.6, -1)
 	}
 	function BotGlow(target)
 	{
@@ -100,7 +118,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			if ( player && player.IsAlive() && player.IsBotOfType(1337) && player.HasBotTag("FriendlyBot") )
 			{
 				player.TakeDamage(999999, 1, null)
-				player.ForceChangeTeam(TEAM_SPECTATOR, true)
 				break
 			}
 		}
