@@ -32,19 +32,55 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
-		MVMAnimosity_ArenaMode.RemoveRobot()
-
         delete ::MVMAnimosity_ArenaMode
     }
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 	OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
+
+	function SetDestroyCallback(entity, callback)
+    {
+        entity.ValidateScriptScope();
+        local scope = entity.GetScriptScope();
+        scope.setdelegate({}.setdelegate({
+                parent   = scope.getdelegate()
+                id       = entity.GetScriptId()
+                index    = entity.entindex()
+                callback = callback
+                _get = function(k)
+                {
+                    return parent[k];
+                }
+                _delslot = function(k)
+                {
+                    if (k == id)
+                    {
+                        entity = EntIndexToHScript(index);
+                        local scope = entity.GetScriptScope();
+                        scope.self <- entity;
+                        callback.pcall(scope);
+                    }
+                    delete parent[k];
+                }
+            })
+        );
+    }
 
 	// Search Functions
 	OnGameEvent_player_spawn = function(params)
 	{
 		local player = GetPlayerFromUserID(params.userid)
 
-		if (player.IsBotOfType(1337)) { EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.BotTagCheck()", -1.0, player, null); return }
+		if (player.IsBotOfType(1337))
+		{
+			// Will only work with 1 RED Robot Present
+			if ( (player.GetTeam()) == 2 )
+			{
+				EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPObjectiveInit(activator)", 0.0, player, null);
+				return
+			}
+			EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.BotTagCheck()", 0.0, player, null);
+			return
+		}
 	}
 
 	OnScriptHook_OnTakeDamage = function(params)
@@ -73,54 +109,156 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			MVMAnimosity_ArenaMode.BotGlow(activator)
 		}
 	}
-
-	function ArenaFriendlyBot(target)
+	function BotGlow(target)
 	{
-		target.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
-		target.AddBotAttribute(REMOVE_ON_DEATH)
-		target.AddBotAttribute(HOLD_FIRE_UNTIL_FULL_RELOAD)
-		target.AddBotAttribute(MINIBOSS)
-		target.SetModelScale(2, -1)
-		target.AddBotAttribute(USE_BOSS_HEALTH_BAR)
-		target.AddWeaponRestriction(PRIMARY_ONLY)
-		target.AddBotTag("FriendlyBot")
-		target.AddBotTag("bot_giant")
+		SetPropBool(target, "m_bGlowEnabled", true)
+	}
 
-		target.SetMaxHealth(3000)
+	// VIP Objective Functions //
+
+	function ArenaVIPStatsInit(target)
+	{
+		target.RemoveWeaponRestriction(7)
+		target.ClearAllBotAttributes()
+		target.ClearAllBotTags()
+		target.SetCustomModelWithClassAnimations(null)
+		target.SetDifficulty(3)
+		target.SetMaxVisionRangeOverride(9999)
+
+		SetFakeClientConVarValue(target, "name", "Guard-I.A.N.")
+		target.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
+		target.SetModelScale(2, -1)
+		SetPropBool(target, "m_bGlowEnabled", true)
+
+		target.AddBotAttribute(1)
+		target.AddBotAttribute(2048)
+		target.SetIsMiniBoss(true)
+		target.SetUseBossHealthBar(true)
+
+		target.AddWeaponRestriction(2)
+
+		target.AddBotTag("bot_giant")
+		target.AddBotTag("FriendlyBot")
+
+		SetPropString(target, "m_PlayerClass.m_iszClassIcon", "red_lite")
+
+		target.AddCustomAttribute("max health additive bonus", 2825, -1)
 		target.SetHealth(3000)
+
 		target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		target.AddCustomAttribute("damage force reduction", 0.1, -1)
 		target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
 		target.AddCustomAttribute("health regen", 200, -1)
-		target.AddCustomAttribute("ammo regen", 1.0, -1 )
-		target.AddCustomAttribute("health from healers reduced", 0.5, -1)
-		target.AddCustomAttribute("health from packs reduced", 0.5, -1)
+		target.AddCustomAttribute("ammo regen", 1, -1)
+
 		target.AddCustomAttribute("override footstep sound set", 4, -1)
 		target.AddCustomAttribute("voice pitch scale", 0, -1)
 
-		local targetprimary = target.GetActiveWeapon()
+		local weapon = target.GetActiveWeapon()
 
-		targetprimary.AddAttribute("fire rate bonus", 0.75, -1)
-		targetprimary.AddAttribute("faster reload rate", 0.6, -1)
-	}
-	function BotGlow(target)
-	{
-		NetProps.SetPropBool(target, "m_bGlowEnabled", true)
+		weapon.AddAttribute("fire rate bonus", 0.75, -1)
+		weapon.AddAttribute("faster reload rate", 0.6, -1)
 	}
 
-	// Bot Manipulation Functions
-	function RemoveRobot()
+	function ArenaVIPInit()
 	{
-		for (local i = 1; i <= MaxPlayers; i++)
+		if(!objectivenobuild)
 		{
-			local player = PlayerInstanceFromIndex(i)
-
-			if ( player && player.IsAlive() && player.IsBotOfType(1337) && player.HasBotTag("FriendlyBot") )
+			local objectivenobuild = SpawnEntityFromTable("func_nobuild",
 			{
-				player.TakeDamage(999999, 1, null)
-				break
-			}
+				targetname = "arena_mode_objective_nobuild"
+				origin = "578 2726 101"
+			})
+			objectivenobuild.SetSize(Vector(-48, -48, -32), Vector(48, 48, 32))
 		}
+
+		local objectivespawner = SpawnEntityFromTable("bot_generator",
+		{
+			targetname = "arena_mode_objective_spawner"
+			origin = "578 2726 160"
+			team = "red"
+			count = 1
+			maxActive = 1
+			interval = 0
+			useTeamSpawnPoint = 0
+			spawnOnlyWhenTriggered = 1
+
+			"OnSpawned" : "!activator,RunScriptCode,MVMAnimosity_ArenaMode.ArenaVIPStatsInit(self),0,-1"
+		})
+		SetPropString(objectivespawner, "m_className", "demoman")
+		EntFire("arena_mode_objective_spawner", "SpawnBot", null, 0.0, null)
+
+		local objectivepoint = SpawnEntityFromTable("bot_action_point",
+		{
+			targetname = "arena_mode_objective_point"
+			origin = "578 2726 160"
+			desired_distance = 64
+			stay_time = 99999
+		})
+		EntFire("arena_mode_objective_spawner", "CommandGotoActionPoint", "arena_mode_objective_point", 1.0, null)
+	}
+
+	function ArenaVIPObjectiveInit(target)
+	{
+		local objectivebombprop = SpawnEntityFromTable("prop_dynamic",
+		{
+			targetname = "arena_mode_objective_bomb"
+			model = "models/props_td/atom_bomb.mdl"
+			solid = 0
+			disableshadows = 1
+		})
+
+		EntFire("arena_mode_objective_bomb", "SetParent", "!activator", 0.0, target)
+		EntFire("arena_mode_objective_bomb", "SetParentAttachment", "flag", 0.05, target)
+
+		local objectivebombsiren = SpawnEntityFromTable("info_particle_system",
+		{
+			targetname = "arena_mode_objective_bombsiren"
+			effect_name = "cart_flashinglight"
+			start_active = 1
+		})
+
+		EntFire("arena_mode_objective_bombsiren", "SetParent", "arena_mode_objective_bomb", 0.0, null)
+		EntFire("arena_mode_objective_bombsiren", "SetParentAttachment", "siren", 0.05, null)
+
+		local objectivebombexplosion = SpawnEntityFromTable("info_particle_system",
+		{
+			targetname = "arena_mode_objective_bombexplosion"
+			effect_name = "mvm_hatch_destroy"
+			start_active = 0
+		})
+
+		EntFire("arena_mode_objective_bombexplosion", "SetParent", "!activator", 0.0, target)
+
+		target.ValidateScriptScope()
+		local targetscope = target.GetScriptScope()
+
+		targetscope.Think <- function () {
+			if (self.IsAlive())
+			{
+				MVMAnimosity_ArenaMode.SetDestroyCallback(self, function() {
+					EntFire("arena_mode_loss_relay", "Trigger", null, 0.0, null)
+					EntFire("arena_mode_objective_bombexplosion", "Start", null, 0.0, null)
+
+					PrecacheScriptSound("MVM.GiantCommonExplodes")
+					PrecacheScriptSound("MVM.BombExplodes")
+
+					EmitSoundEx({
+						sound_name = "MVM.GiantCommonExplodes"
+						channel = CHAN_STATIC
+						filter_type = RECIPIENT_FILTER_GLOBAL
+					})
+					EmitSoundEx({
+						sound_name = "MVM.BombExplodes"
+						channel = CHAN_STATIC
+						filter_type = RECIPIENT_FILTER_GLOBAL
+					})
+				})
+				NetProps.SetPropString(self, "m_iszScriptThinkFunction", "")
+			}
+			return 0.1
+		}
+		AddThinkToEnt(target, "Think")
 	}
 }
 

@@ -11,47 +11,6 @@ WaveSchedule
     AddSentryBusterWhenDamageDealtExceeds 3000
     AddSentryBusterWhenKillCountExceeds 10
 
-    //// ROBOT TEMPLATES ////
-
-	Templates
-	{
-		T_TFBot_Objective
-		{
-			Name "Guard-I.A.N"
-			Class Demoman
-			ClassIcon red_lite
-			Skill Expert
-			Health 3000
-			Scale 2
-			Attributes MiniBoss
-			Attributes HoldFireUntilFullReload
-			Attributes UseBossHealthBar
-			WeaponRestrictions PrimaryOnly
-
-			Tag FriendlyBot
-
-			Item "Hazard Headgear"
-
-			CharacterAttributes
-			{
-				"move speed bonus"	0.4
-				"damage force reduction" 0.1
-				"airblast vulnerability multiplier" 0.1
-				"override footstep sound set" 4
-				"voice pitch scale" 0
-				"health regen" 200
-				"health from healers reduced" 0.5
-				"health from packs decreased" 0.5
-			}
-			ItemAttributes
-			{
-				ItemName "TF_WEAPON_GRENADELAUNCHER"
-				"faster reload rate" -0.4
-				"fire rate bonus" 0.75
-			}
-		}
-	}
-
     //// MISSION BOTS ////
 
     Mission // Sentry Buster
@@ -88,52 +47,26 @@ WaveSchedule
 		}
 	}
 
-	Mission // Engineer (Wave 4)
-	{
-		Objective Engineer
-		Where spawnbot_arena_left
-		BeginAtWave 4
-		RunForThisManyWaves 1
-		InitialCooldown 4
-		CooldownTime 16
-		DesiredCount 1
-
-		TFBot
-		{
-			Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
-			TeleportWhere spawnbot_arena_left_teleporter
-			TeleportWhere spawnbot_arena_right_teleporter
-		}
-	}
-	Mission // Engineer (Wave 4)
-	{
-		Objective Engineer
-		Where spawnbot_arena_right
-		BeginAtWave 4
-		RunForThisManyWaves 1
-		InitialCooldown 4
-		CooldownTime 32
-		DesiredCount 1
-
-		TFBot
-		{
-			Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
-			TeleportWhere spawnbot_arena_left_teleporter
-			TeleportWhere spawnbot_arena_right_teleporter
-		}
-	}
-
 	//// WAVES ////
 
-	Wave
-	{
-		InitWaveOutput
+    Wave
+    {
+        InitWaveOutput
         {
             Target BigNet
             Action RunScriptCode
             Param "
                     NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Bloodbath (Exp)`)
+
 					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					MVMAnimosity_ArenaMode.ArenaVIPInit()
+
+					EntFire(`arena_mode_maingate_close`, `Trigger`)
+					EntFire(`arena_mode_flankgateleft_close`, `Trigger`)
+					EntFire(`arena_mode_flankgateright_close`, `Trigger`)
+
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+					Convars.SetValue(`tf_mvm_defenders_max_size`, 7)
                   "
         }
 		StartWaveOutput
@@ -142,78 +75,36 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
+
+					EntFire(`arena_mode_transition_relay`, `Trigger`)
                   "
         }
-
-		// VIP Spawn
-		WaveSpawn // Spawn Enable
+		DoneOutput
 		{
-			Name "Wave1_SpawnEnable"
-			WaitBeforeStarting 3.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Enable`)
-					  "
-			}
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EmitSoundEx({
+						sound_name = `vo/mvm/mght/demoman_mvm_m_autocappedintelligence01.mp3`
+						channel = CHAN_VOICE	
+						filter_type = RECIPIENT_FILTER_GLOBAL
+					})
+                  "
 		}
-		WaveSpawn // Spawn-In
+
+		WaveSpawn
 		{
-			Name "Wave1_Objective"
-			Where spawnbot_arena_objective
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 4
-			WaitBetweenSpawns 0
+			Name "Wave1_Demo"
+			WaitBeforeStarting 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_laughhappy02.mp3"
-			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_Objective
-					}
-				}
-			}
-
-			DoneOutput
-			{
-				Target BigNet
-            	Action RunScriptCode
-            	Param "
-                    EntFire(`arena_mode_loss_relay`, `Trigger`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
-                  "
-			}
-		}
-		WaveSpawn // Spawn Disable
-		{
-			Name "Wave1_SpawnDisable"
-			WaitBeforeStarting 4.1
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Disable`)
-					  "
-			}
 		}
 
-		// Subwave 1 Intro
+		// Intro Sequence
 		WaveSpawn // Objective 1 Display
 		{
 			Name "Wave1_Demo"
-			WaitBeforeStarting 8
+			WaitBeforeStarting 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedcontrolpoint03.mp3"
 
@@ -222,14 +113,19 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
-						EntFire(`arena_mode_objective_1`, `Show`)
+						SendGlobalGameEvent(`show_annotation`, {
+							string = `The bomb is now ours!`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
 					  "
 			}
 		}
 		WaveSpawn // Pub Building Spawn Enable
 		{
 			Name "Wave1_LeftSpawnOpen"
-			WaitBeforeStarting 12
+			WaitBeforeStarting 5
 
 			FirstSpawnOutput
 			{
@@ -238,13 +134,20 @@ WaveSchedule
 				Param "
 						EntFire(`arena_mode_sidefence_break`, `Trigger`)
 						EntFire(`arena_mode_sidefence_spawnbot_enable`, `Trigger`)
+
+						SendGlobalGameEvent(`show_annotation`, {
+							string = `But Gray Mann's robots are not happy...`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
 					  "
 			}
 		}
 		WaveSpawn // Objective 2 Display
 		{
 			Name "Wave1_Demo"
-			WaitBeforeStarting 16
+			WaitBeforeStarting 10
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_helpmedefend02.mp3"
 
@@ -253,7 +156,12 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
-						EntFire(`arena_mode_objective_2`, `Show`)
+						SendGlobalGameEvent(`show_annotation`, {
+							string = `Defend your RED Robot, or you will lose!`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
 					  "
 			}
 		}
@@ -647,80 +555,21 @@ WaveSchedule
 				Skill Expert
 			}
 		}
-
-		// Wave Complete Check
-		WaveSpawn // GDemo Check
-		{
-			Name "Wave1_CompleteCheck"
-			WaitForAllDead "Wave1_Subwave3_GDemo"
-		}
-		WaveSpawn // Bat Scouts Check
-		{
-			Name "Wave1_CompleteCheck"
-			WaitForAllDead "Wave1_Subwave3_BatScouts"
-		}
-		WaveSpawn // GDemo Check
-		{
-			Name "Wave1_CompleteCheck"
-			WaitForAllDead "Wave1_Subwave3_GDemo2"
-		}
-		WaveSpawn // Soldier Check
-		{
-			Name "Wave1_CompleteCheck"
-			WaitForAllDead "Wave1_Subwave3_Soldiers"
-		}
-
-		// Wave Complete
-		WaveSpawn // Victory Laugh
-		{
-			Name "Wave1_Complete"
-			WaitForAllSpawned "Wave1_CompleteCheck"
-
-			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence01.mp3"
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave1_End"
-			WaitForAllSpawned "Wave1_Complete"
-			WaitBeforeStarting 3.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`arena_mode_loss_relay`, `Disable`)
-					  "
-			}
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave1_End"
-			WaitForAllSpawned "Wave1_Complete"
-			WaitBeforeStarting 4
-			
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						MVMAnimosity_ArenaMode.RemoveRobot()
-					  "
-			}
-		}
-	}
-	Wave
-	{
-		InitWaveOutput
+    }
+    Wave
+    {
+        InitWaveOutput
         {
             Target BigNet
             Action RunScriptCode
             Param "
-					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+                    IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					MVMAnimosity_ArenaMode.ArenaVIPInit()
+
 					EntFire(`arena_mode_relay`, `Trigger`)
-					EntFire(`arena_mode_loss_relay`, `Enable`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
+
 					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+					Convars.SetValue(`tf_mvm_defenders_max_size`, 7)
                   "
         }
 		StartWaveOutput
@@ -731,70 +580,25 @@ WaveSchedule
                     EntFire(`wave_start_relay`, `Trigger`)
                   "
         }
-
-		// VIP Spawn
-		WaveSpawn // Spawn Enable
+		DoneOutput
 		{
-			Name "Wave2_SpawnEnable"
-			WaitBeforeStarting 0.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Enable`)
-					  "
-			}
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EmitSoundEx({
+						sound_name = `vo/mvm/mght/demoman_mvm_m_autocappedintelligence03.mp3`
+						channel = CHAN_VOICE	
+						filter_type = RECIPIENT_FILTER_GLOBAL
+					})
+                  "
 		}
-		WaveSpawn // Spawn-In
+
+		WaveSpawn
 		{
-			Name "Wave2_Objective"
-			Where spawnbot_arena_objective
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 1
-			WaitBetweenSpawns 0
+			Name "Wave2_Demo"
+			WaitBeforeStarting 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_specialcompleted02.mp3"
-			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_Objective
-					}
-				}
-			}
-
-			DoneOutput
-			{
-				Target BigNet
-            	Action RunScriptCode
-            	Param "
-                    EntFire(`arena_mode_loss_relay`, `Trigger`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
-                  "
-			}
-		}
-		WaveSpawn // Spawn Disable
-		{
-			Name "Wave2_SpawnDisable"
-			WaitBeforeStarting 1.1
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Disable`)
-					  "
-			}
 		}
 
 		// Subwave 1
@@ -864,7 +668,8 @@ WaveSchedule
 		}
 		WaveSpawn // 20 Flare Pyros
 		{
-			Name "Wave2_Subwave1_FlarePyros"
+			Name "Wave2_Subwave1_FlarePyros2"
+			WaitForAllSpawned "Wave2_Subwave1_SteelGauntlets"
 			Where spawnbot_arena_left
 			TotalCount 20
 			MaxActive 12
@@ -989,15 +794,32 @@ WaveSchedule
 		}
 
 		// Subwave 3
+		WaveSpawn // 1 GSoldier
+		{
+			Name "Wave2_Subwave3_GSoldier"
+			WaitForAllSpawned "Wave2_Subwave2_GSoldier2"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
 		WaveSpawn // 5 Steel Gauntlets, 5 Quick-Uber Medics and 5 Pyros
 		{
-			Name "Wave1_Subwave3_SteelGauntlets"
-			WaitForAllSpawned "Wave2_Subwave2_GSoldier2"
+			Name "Wave2_Subwave3_SteelGauntlets"
+			WaitForAllSpawned "Wave2_Subwave3_GSoldier"
 			Where spawnbot_arena_left
 			TotalCount 15
 			MaxActive 9
 			SpawnCount 3
-			WaitBeforeStarting 20
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 5
 			TotalCurrency 80
 
@@ -1021,75 +843,22 @@ WaveSchedule
 		}
 		WaveSpawn // 1 GSoldier
 		{
-			Name "Wave1_Subwave3_GSoldier"
-			WaitForAllSpawned "Wave1_Subwave3_SteelGauntlets"
+			Name "Wave2_Subwave3_GSoldier2"
+			WaitForAllSpawned "Wave2_Subwave3_GSoldier"
 			Where spawnbot_arena_right
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 20
 
 			TFBot
 			{
 				Template T_TFBot_Giant_Soldier
 			}
 		}
-
-		// Wave Complete Check
-		WaveSpawn // Steel Gauntlets Check
-		{
-			Name "Wave2_CompleteCheck"
-			WaitForAllDead "Wave1_Subwave3_SteelGauntlets"
-		}
-		WaveSpawn // GSoldier Check
-		{
-			Name "Wave2_CompleteCheck"
-			WaitForAllDead "Wave1_Subwave3_GSoldier"
-		}
-
-		// Wave Complete
-		WaveSpawn // Victory Voiceline
-		{
-			Name "Wave2_Complete"
-			WaitForAllSpawned "Wave2_CompleteCheck"
-
-			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence03.mp3"
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave2_End"
-			WaitForAllDead "Wave2_Complete"
-			WaitBeforeStarting 3.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`arena_mode_loss_relay`, `Disable`)
-						EntFire(`spawnbot_arena_left`, `Disable`)
-						EntFire(`spawnbot_arena_right`, `Disable`)
-					  "
-			}
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave2_End"
-			WaitForAllDead "Wave2_Complete"
-			WaitBeforeStarting 4
-			
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						MVMAnimosity_ArenaMode.RemoveRobot()
-					  "
-			}
-		}
-	}
+    }
 	Wave
 	{
 		InitWaveOutput
@@ -1097,15 +866,10 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
-					IncludeScript(`tankextensions_main`, getroottable())
-					EntFire(`arena_mode_relay`, `Trigger`)
-					EntFire(`arena_mode_loss_relay`, `Enable`)
-					EntFire(`spawnbot_arena_left`, `Enable`)
-					EntFire(`spawnbot_arena_right`, `Enable`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+                    IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					MVMAnimosity_ArenaMode.ArenaVIPInit()
 
+					IncludeScript(`tankextensions_main`, getroottable())
 					TankExt.CreatePaths({
 						tank_path_arena = [
 							Vector(224, 6304, 48)
@@ -1161,6 +925,11 @@ WaveSchedule
 							Vector(464, 2784, 208)
 						]
 					})
+
+					EntFire(`arena_mode_relay`, `Trigger`)
+
+					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+					Convars.SetValue(`tf_mvm_defenders_max_size`, 7)
                   "
         }
 		StartWaveOutput
@@ -1171,72 +940,27 @@ WaveSchedule
                     EntFire(`wave_start_relay`, `Trigger`)
                   "
         }
-
-		// VIP Spawn
-		WaveSpawn // Spawn Enable
+		DoneOutput
 		{
-			Name "Wave3_SpawnEnable"
-			WaitBeforeStarting 0.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Enable`)
-					  "
-			}
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EmitSoundEx({
+						sound_name = `vo/mvm/mght/demoman_mvm_m_cheers06.mp3`
+						channel = CHAN_VOICE	
+						filter_type = RECIPIENT_FILTER_GLOBAL
+					})
+                  "
 		}
-		WaveSpawn // Spawn-In
+
+		WaveSpawn
 		{
-			Name "Wave3_Objective"
-			Where spawnbot_arena_objective
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 1
-			WaitBetweenSpawns 0
+			Name "Wave3_Demo"
+			WaitBeforeStarting 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry05.mp3"
-			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_Objective
-					}
-				}
-			}
-
-			DoneOutput
-			{
-				Target BigNet
-            	Action RunScriptCode
-            	Param "
-                    EntFire(`arena_mode_loss_relay`, `Trigger`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
-                  	  "
-			}
 		}
-		WaveSpawn // Spawn Disable
-		{
-			Name "Wave3_SpawnDisable"
-			WaitBeforeStarting 1.1
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Disable`)
-					  "
-			}
-		}
-
+		
 		// Tank Intro
 		WaveSpawn // 1 Tank
 		{
@@ -1384,19 +1108,35 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 30 Scouts
+		WaveSpawn // 12 Scouts
 		{
 			Name "Wave3_Subwave1_Scouts"
 			WaitForAllSpawned "Wave3_Subwave1_GPyro"
 			Where spawnbot_arena_left
-			Where spawnbot_arena_right
-			RandomSpawn 1
-			TotalCount 30
-			MaxActive 15
-			SpawnCount 10
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
-			TotalCurrency 40
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // 12 Scouts
+		{
+			Name "Wave3_Subwave1_Scouts"
+			WaitForAllSpawned "Wave3_Subwave1_GPyro"
+			Where spawnbot_arena_right
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 20
 
 			TFBot
 			{
@@ -1455,19 +1195,35 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 18 Demomen
+		WaveSpawn // 12 Demomen
 		{
 			Name "Wave3_Subwave1_Demomen"
 			WaitForAllSpawned "Wave3_Subwave1_GPyro2"
 			Where spawnbot_arena_left
-			Where spawnbot_arena_right
-			RandomSpawn 1
-			TotalCount 18
-			MaxActive 9
-			SpawnCount 6
+			TotalCount 12
+			MaxActive 5
+			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 10
-			TotalCurrency 40
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Demoman
+				Skill Easy
+			}
+		}
+		WaveSpawn // 12 Demomen
+		{
+			Name "Wave3_Subwave1_Demomen"
+			WaitForAllSpawned "Wave3_Subwave1_GPyro2"
+			Where spawnbot_arena_right
+			TotalCount 12
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 5
+			TotalCurrency 20
 
 			TFBot
 			{
@@ -1517,16 +1273,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 24 Bowmen
+		WaveSpawn // 16 Bowmen
 		{
 			Name "Wave3_Subwave2_Bowmen"
 			WaitForAllSpawned "Wave3_Subwave2_GCharged"
 			Where spawnbot_arena_right
-			TotalCount 24
-			MaxActive 12
-			SpawnCount 2
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 1
+			WaitBetweenSpawns 4
 			TotalCurrency 40
 
 			TFBot
@@ -1543,7 +1299,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 16
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -1575,16 +1331,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Demomen and 16 Bowmen
+		WaveSpawn // 6 Demomen and 12 Bowmen
 		{
 			Name "Wave3_Subwave2_DemoSquads"
 			WaitForAllSpawned "Wave3_Subwave2_GCharged2"
 			Where spawnbot_arena_right
-			TotalCount 24
-			MaxActive 12
+			TotalCount 18
+			MaxActive 9
 			SpawnCount 3
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
+			WaitBetweenSpawns 3
 			TotalCurrency 40
 
 			Squad
@@ -1612,7 +1368,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave3_Subwave2_GCharged2"
 			Where spawnbot_arena_left
 			TotalCount 10
-			MaxActive 10
+			MaxActive 7
 			SpawnCount 5
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 5
@@ -1630,7 +1386,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave3_Subwave2_GCharged2"
 			Where spawnbot_arena_right
 			TotalCount 10
-			MaxActive 10
+			MaxActive 7
 			SpawnCount 5
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 5
@@ -1666,7 +1422,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave3_Subwave3_GCharged"
 			Where spawnbot_arena_left
 			TotalCount 10
-			MaxActive 10
+			MaxActive 7
 			SpawnCount 5
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 5
@@ -1684,7 +1440,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave3_Subwave3_GCharged"
 			Where spawnbot_arena_right
 			TotalCount 10
-			MaxActive 10
+			MaxActive 7
 			SpawnCount 5
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 5
@@ -1731,72 +1487,6 @@ WaveSchedule
 				Attributes AlwaysFireWeapon
 			}
 		}
-
-		// Wave Complete Check
-		WaveSpawn // GCharged Check
-		{
-			Name "Wave3_CompleteCheck"
-			WaitForAllDead "Wave3_Subwave3_GCharged"
-		}
-		WaveSpawn // Scouts Check
-		{
-			Name "Wave3_CompleteCheck"
-			WaitForAllDead "Wave3_Subwave3_Scouts2"
-		}
-		WaveSpawn // Demomen Check
-		{
-			Name "Wave3_CompleteCheck"
-			WaitForAllDead "Wave3_Subwave3_Demomen2"
-		}
-		WaveSpawn // GCharged Check
-		{
-			Name "Wave3_CompleteCheck"
-			WaitForAllDead "Wave3_Subwave3_GCharged2"
-		}
-		WaveSpawn // GPyro Check
-		{
-			Name "Wave3_CompleteCheck"
-			WaitForAllDead "Wave3_Subwave3_GPyro"
-		}
-
-		// Wave Complete
-		WaveSpawn // Victory Voiceline
-		{
-			Name "Wave3_Complete"
-			WaitForAllSpawned "Wave3_CompleteCheck"
-
-			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_cheers06.mp3"
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave3_End"
-			WaitForAllDead "Wave3_Complete"
-			WaitBeforeStarting 3.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`arena_mode_loss_relay`, `Disable`)
-					  "
-			}
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave3_End"
-			WaitForAllDead "Wave3_Complete"
-			WaitBeforeStarting 4
-			
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						MVMAnimosity_ArenaMode.RemoveRobot()
-					  "
-			}
-		}
 	}
 	Wave
 	{
@@ -1805,14 +1495,18 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+                    IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					MVMAnimosity_ArenaMode.ArenaVIPInit()
+
 					IncludeScript(`mvm_animosity_arena_teleporters`, getroottable())
+
 					EntFire(`arena_mode_relay`, `Trigger`)
-					EntFire(`arena_mode_loss_relay`, `Enable`)
+
 					EntFire(`spawnbot_arena_left_teleporter`, `Disable`)
 					EntFire(`spawnbot_arena_right_teleporter`, `Disable`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
+
 					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
+					Convars.SetValue(`tf_mvm_defenders_max_size`, 7)
                   "
         }
 		StartWaveOutput
@@ -1823,73 +1517,66 @@ WaveSchedule
                     EntFire(`wave_start_relay`, `Trigger`)
                   "
         }
-
-		// VIP Spawn
-		WaveSpawn // Spawn Enable
+		DoneOutput
 		{
-			Name "Wave4_SpawnEnable"
-			WaitBeforeStarting 0.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Enable`)
-					  "
-			}
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EmitSoundEx({
+						sound_name = `vo/mvm/mght/demoman_mvm_m_goodjob02.mp3`
+						channel = CHAN_VOICE	
+						filter_type = RECIPIENT_FILTER_GLOBAL
+					})
+                  "
 		}
-		WaveSpawn // Spawn-In
+		
+		WaveSpawn
 		{
-			Name "Wave4_Objective"
-			Where spawnbot_arena_objective
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 1
-			WaitBetweenSpawns 0
+			Name "Wave3_Demo"
+			WaitBeforeStarting 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence02.mp3"
-			DoneWarningSound "mvm/sentrybuster/mvm_sentrybuster_explode.wav"
-
-			Squad
-			{
-				Squad
-				{
-					TFBot
-					{
-						Template T_TFBot_Objective
-					}
-				}
-			}
-
-			DoneOutput
-			{
-				Target BigNet
-            	Action RunScriptCode
-            	Param "
-                    EntFire(`arena_mode_loss_relay`, `Trigger`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
-                  	  "
-			}
-		}
-		WaveSpawn // Spawn Disable
-		{
-			Name "Wave4_SpawnDisable"
-			WaitBeforeStarting 1.1
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`spawnbot_arena_objective`, `Disable`)
-					  "
-			}
 		}
 
 		// Support
+		WaveSpawn // Support Engineer
+		{
+			Name "Wave4_Engineer"
+			Where spawnbot_arena_left
+			Support 1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 20
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+				TeleportWhere spawnbot_arena_left_teleporter
+				TeleportWhere spawnbot_arena_right_teleporter
+			}
+		}
+		WaveSpawn // Support Engineer
+		{
+			Name "Wave4_Engineer"
+			Where spawnbot_arena_right
+			Support 1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 40
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+				TeleportWhere spawnbot_arena_left_teleporter
+				TeleportWhere spawnbot_arena_right_teleporter
+			}
+		}
 		WaveSpawn // Support Soldiers
 		{
 			Name "Wave4_SupportSoldiers"
@@ -1943,16 +1630,16 @@ WaveSchedule
 				Template T_TFBot_Giant_Demoman_Burst
 			}
 		}
-		WaveSpawn // 12 Heavies
+		WaveSpawn // 10 Heavies
 		{
 			Name "Wave4_Subwave1_Heavies"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier"
 			Where spawnbot_arena_left
-			TotalCount 12
-			MaxActive 6
-			SpawnCount 3
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 4
 			TotalCurrency 20
 
 			TFBot
@@ -1967,7 +1654,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave4_Subwave1_GBurstDemo"
 			Where spawnbot_arena_right
 			TotalCount 8
-			MaxActive 8
+			MaxActive 6
 			SpawnCount 4
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
@@ -1990,7 +1677,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -2007,7 +1694,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -2021,11 +1708,11 @@ WaveSchedule
 			Name "Wave4_Subwave1_Heavies"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier"
 			Where spawnbot_arena_left
-			TotalCount 12
+			TotalCount 16
 			MaxActive 6
-			SpawnCount 3
+			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 2
 			TotalCurrency 20
 
 			TFBot
@@ -2034,14 +1721,14 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 12 Pyros
+		WaveSpawn // 10 Pyros
 		{
 			Name "Wave4_Subwave1_Pyros"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstDemo"
 			Where spawnbot_arena_right
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 6
+			TotalCount 10
+			MaxActive 7
+			SpawnCount 5
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
 			TotalCurrency 20
@@ -2056,14 +1743,14 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GKnight and 3 Battalion Soldiers
+		WaveSpawn // 1 GKnight and 2 Battalion Soldiers
 		{
 			Name "Wave4_Subwave2_GKnight"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier2"
 			Where spawnbot_arena_right
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -2073,10 +1760,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Knight
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Battalion
 				}
 				TFBot
 				{
@@ -2111,7 +1794,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave4_Subwave2_GKnight"
 			Where spawnbot_arena_left
 			TotalCount 10
-			MaxActive 6
+			MaxActive 4
 			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 4
@@ -2142,14 +1825,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GKnight and 3 Battalion Soldiers
+		WaveSpawn // 1 GKnight and 2 Battalion Soldiers
 		{
 			Name "Wave4_Subwave2_GKnight2"
 			WaitForAllSpawned "Wave4_Subwave2_GKnight"
 			Where spawnbot_arena_right
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -2159,10 +1842,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Knight
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Battalion
 				}
 				TFBot
 				{
@@ -2215,7 +1894,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave4_Subwave2_GKnight2"
 			Where spawnbot_arena_right
 			TotalCount 10
-			MaxActive 6
+			MaxActive 4
 			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 4
@@ -2228,14 +1907,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GKnight and 3 Battalion Soldiers
+		WaveSpawn // 1 GKnight and 2 Battalion Soldiers
 		{
 			Name "Wave4_Subwave2_GKnight3"
 			WaitForAllSpawned "Wave4_Subwave2_GKnight2"
 			Where spawnbot_arena_right
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -2254,10 +1933,6 @@ WaveSchedule
 				{
 					Template T_TFBot_Soldier_Extended_Battalion
 				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Battalion
-				}
 			}
 		}
 		WaveSpawn // 4 Rapid Fire Bowmen
@@ -2266,7 +1941,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave4_Subwave2_GKnight3"
 			Where spawnbot_arena_left
 			TotalCount 4
-			MaxActive 4
+			MaxActive 3
 			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
@@ -2277,14 +1952,14 @@ WaveSchedule
 				Template T_TFBot_Sniper_Huntsman_Spammer
 			}
 		}
-		WaveSpawn // 6 Demomen
+		WaveSpawn // 4 Demomen
 		{
 			Name "Wave4_Subwave2_Demomen"
 			WaitForAllSpawned "Wave4_Subwave2_GKnight"
 			Where spawnbot_arena_left
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -2295,15 +1970,15 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 6 Heavies
+		WaveSpawn // 4 Heavies
 		{
 			Name "Wave4_Subwave2_Heavies"
 			WaitForAllSpawned "Wave4_Subwave2_GKnight3"
 			Where spawnbot_arena_right
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -2360,14 +2035,14 @@ WaveSchedule
 				Template T_TFBot_Giant_Demoman_Burst
 			}
 		}
-		WaveSpawn // 12 Demomen
+		WaveSpawn // 10 Demomen
 		{
 			Name "Wave4_Subwave3_Demomen"
 			WaitForAllSpawned "Wave4_Subwave3_GBurstSoldier"
 			Where spawnbot_arena_left
-			TotalCount 12
+			TotalCount 10
 			MaxActive 5
-			SpawnCount 3
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 5
 			TotalCurrency 20
@@ -2378,14 +2053,14 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 12 Pyros
+		WaveSpawn // 8 Pyros
 		{
 			Name "Wave4_Subwave3_Pyros"
 			WaitForAllSpawned "Wave4_Subwave3_GBurstDemo"
 			Where spawnbot_arena_right
-			TotalCount 12
+			TotalCount 8
 			MaxActive 8
-			SpawnCount 6
+			SpawnCount 4
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
 
@@ -2443,14 +2118,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 12 Demomen
+		WaveSpawn // 4 Demomen
 		{
 			Name "Wave4_Subwave3_Demomen2"
 			WaitForAllSpawned "Wave4_Subwave3_GBurstSoldier2"
 			Where spawnbot_arena_left
-			TotalCount 12
-			MaxActive 5
-			SpawnCount 3
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 5
 			TotalCurrency 20
@@ -2461,14 +2136,14 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 12 Heavies
+		WaveSpawn // 4 Heavies
 		{
 			Name "Wave4_Subwave3_Heavies"
 			WaitForAllSpawned "Wave4_Subwave3_GBurstDemo2"
 			Where spawnbot_arena_right
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 6
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 10
 			TotalCurrency 20
@@ -2479,154 +2154,5 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-
-		// Wave Complete Check
-		WaveSpawn
-		{
-			Name "Wave4_CompleteCheck"
-			WaitForAllDead "Wave4_Subwave3_GBurstSoldier2"
-		}
-		WaveSpawn
-		{
-			Name "Wave4_CompleteCheck"
-			WaitForAllDead "Wave4_Subwave3_GBurstDemo2"
-		}
-		WaveSpawn
-		{
-			Name "Wave4_CompleteCheck"
-			WaitForAllDead "Wave4_Subwave3_Demomen2"
-		}
-		WaveSpawn
-		{
-			Name "Wave4_CompleteCheck"
-			WaitForAllDead "Wave4_Subwave3_Heavies"
-		}
-
-		// Wave Complete
-		WaveSpawn // Victory Voiceline
-		{
-			Name "Wave4_Complete"
-			WaitForAllSpawned "Wave4_CompleteCheck"
-
-			DoneWarningSound "vo/mvm/mght/demoman_mvm_m_goodjob02.mp3"
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave4_End"
-			WaitForAllDead "Wave4_Complete"
-			WaitBeforeStarting 3.9
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`arena_mode_loss_relay`, `Disable`)
-						EntFire(`spawnbot_arena_left`, `Disable`)
-						EntFire(`spawnbot_arena_right`, `Disable`)
-						EntFire(`spawnbot_arena_left_teleporter`, `Disable`)
-						EntFire(`spawnbot_arena_right_teleporter`, `Disable`)
-					  "
-			}
-		}
-		WaveSpawn // De-Spawn
-		{
-			Name "Wave4_End"
-			WaitForAllDead "Wave4_Complete"
-			WaitBeforeStarting 4
-			
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						MVMAnimosity_ArenaMode.RemoveRobot()
-					  "
-			}
-		}
-	}
-	Wave
-	{
-		InitWaveOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-					IncludeScript(`mvm_animosity_arena_mode`, getroottable())
-					IncludeScript(`tankextensions_main`, getroottable())
-					EntFire(`arena_mode_relay`, `Trigger`)
-					EntFire(`arena_mode_loss_relay`, `Enable`)
-					EntFire(`spawnbot_arena_left`, `Enable`)
-					EntFire(`spawnbot_arena_right`, `Enable`)
-					EntFire(`spawnbot_arena_left_teleporter`, `Enable`)
-					EntFire(`spawnbot_arena_right_teleporter`, `Enable`)
-					MVMAnimosity_ArenaMode.RemoveRobot()
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
-
-					TankExt.CreatePaths({
-						tank_path_arena = [
-							Vector(224, 6304, 48)
-							Vector(224, 5792, 32)
-							Vector(224, 3792, 48)
-							Vector(208, 3712, 16)
-							Vector(160, 3648, 16)
-							Vector(80, 3616, 16)
-							Vector(-144, 3632, 32)
-							Vector(-256, 3616, 32)
-							Vector(-368, 3504, 48)
-							Vector(-368, 3120, -32)
-							Vector(-400, 3040, -16)
-							Vector(-480, 2976, -32)
-							Vector(-544, 2880, -32)
-							Vector(-560, 2496, 16)
-							Vector(-464, 2352, 0)
-							Vector(-336, 2272, 16)
-							Vector(-160, 2192, 48)
-							Vector(64, 2112, 32)
-							Vector(400, 2112, 48)
-							Vector(512, 2080, 32)
-							Vector(608, 1984, 64)
-							Vector(688, 1952, 80)
-							Vector(800, 1920, 112)
-							Vector(1024, 1920, 128)
-							Vector(1136, 2000, 112)
-							Vector(1184, 2080, 128)
-							Vector(1216, 2224, 144)
-							Vector(1184, 2304, 128)
-							Vector(1168, 2768, 64)
-							Vector(1232, 2848, 80)
-							Vector(1312, 2896, 48)
-							Vector(1376, 2928, 48)
-							Vector(1424, 2976, 64)
-							Vector(1440, 3072, 64)
-							Vector(1456, 3248, 48)
-							Vector(1392, 3328, 16)
-							Vector(1312, 3360, 16)
-							Vector(1120, 3360, 16)
-							Vector(1024, 3392, 48)
-							Vector(960, 3392, 80)
-							Vector(928, 3344, 64)
-							Vector(864, 3296, 48)
-							Vector(752, 3264, 80)
-							Vector(208, 3264, 112)
-							Vector(144, 3232, 96)
-							Vector(96, 3168, 96)
-							Vector(64, 3104, 96)
-							Vector(64, 3024, 96)
-							Vector(112, 2928, 96)
-							Vector(192, 2864, 96)
-							Vector(464, 2784, 208)
-						]
-					})
-                  "
-        }
-		StartWaveOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_start_relay`, `Trigger`)
-                  "
-        }
 	}
 }
