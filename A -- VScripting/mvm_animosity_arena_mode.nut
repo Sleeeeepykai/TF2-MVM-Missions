@@ -89,11 +89,25 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		if(player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 		{
 			MVMAnimosity_ArenaMode.ArenaVIPLoss()
+			player.ForceChangeTeam(TEAM_SPECTATOR, false)
 			return
 		}
 	}
+
+	OnGameEvent_mvm_begin_wave = function (params)
+	{
+		if(FindByName(null, "arena_mode_commentary_node"))
+			return
+
+		local objectivecommnode = SpawnEntityFromTable("point_commentary_node",
+		{
+			targetname = "arena_mode_commentary_node"
+		})
+	}
 	OnGameEvent_mvm_wave_complete = function(params)
 	{
+		EntFire("arena_mode_commentary_node", "Kill", null, 0.0, null)
+
 		for (local i = 1, player; i <= MaxPlayers; i++)
 			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
@@ -124,10 +138,19 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		{
 			MVMAnimosity_ArenaMode.BotGlow(activator)
 		}
+
+		if(activator.HasBotTag("NoGlow"))
+		{
+			MVMAnimosity_ArenaMode.NoBotGlow(activator)
+		}
 	}
 	function BotGlow(target)
 	{
 		SetPropBool(target, "m_bGlowEnabled", true)
+	}
+	function NoBotGlow(target)
+	{
+		SetPropBool(target, "m_bGlowEnabled", false)
 	}
 
 	// VIP Objective Functions //
@@ -164,7 +187,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		target.AddCustomAttribute("damage force reduction", 0.1, -1)
 		target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
-		target.AddCustomAttribute("health regen", 200, -1)
+		target.AddCustomAttribute("health regen", 100, -1)
 		target.AddCustomAttribute("ammo regen", 1, -1)
 
 		target.AddCustomAttribute("override footstep sound set", 4, -1)
@@ -256,11 +279,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		local objectivebombexplosion = SpawnEntityFromTable("info_particle_system",
 		{
 			targetname = "arena_mode_objective_bombexplosion"
+			origin = "578 2726 140"
 			effect_name = "mvm_hatch_destroy"
 			start_active = 0
 		})
-
-		EntFire("arena_mode_objective_bombexplosion", "SetParent", "!activator", 0.0, target)
 	}
 
 	function ArenaVIPReadyUp(playerIndex)
@@ -280,18 +302,21 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		EntFire("arena_mode_loss_relay", "Trigger", null, 0.0, null)
 		EntFire("arena_mode_objective_bombexplosion", "Start", null, 0.0, null)
 
+		EntFire("arena_mode_objective_bomb", "Kill", null, 0.0, null)
+		EntFire("arena_mode_objective_bomblight", "Kill", null, 0.0, null)
+
 		PrecacheScriptSound("MVM.GiantCommonExplodes")
 		PrecacheScriptSound("MVM.BombExplodes")
 
 		EmitSoundEx({
 			sound_name = "MVM.GiantCommonExplodes"
-			channel = CHAN_STATIC
-			filter_type = RECIPIENT_FILTER_GLOBAL
+			channel = 6
+			filter_type = 5
 		})
 		EmitSoundEx({
 			sound_name = "MVM.BombExplodes"
-			channel = CHAN_STATIC
-			filter_type = RECIPIENT_FILTER_GLOBAL
+			channel = 6
+			filter_type = 5
 		})
 	}
 }
