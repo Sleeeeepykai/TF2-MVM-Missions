@@ -151,6 +151,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	function NoBotGlow(target)
 	{
 		SetPropBool(target, "m_bGlowEnabled", false)
+
+		local bomb = FindByClassname(null, "item_teamflag")
+
+		SetPropBool(bomb, "m_bGlowEnabled", false)
 	}
 
 	// VIP Objective Functions //
