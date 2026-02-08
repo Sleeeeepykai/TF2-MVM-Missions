@@ -35,7 +35,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
         delete ::MVMAnimosity_ArenaMode
     }
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
-	OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
 
 	function SetDestroyCallback(entity, callback)
     {
@@ -76,11 +75,28 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			if ( (player.GetTeam()) == 2 )
 			{
 				EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPObjectiveInit(activator)", 0.0, player, null);
+				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
 				return
 			}
 			EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.BotTagCheck()", 0.0, player, null);
 			return
 		}
+	}
+	OnGameEvent_player_death = function(params)
+	{
+		local player = GetPlayerFromUserID(params.userid)
+
+		if(player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+		{
+			MVMAnimosity_ArenaMode.ArenaVIPLoss()
+			return
+		}
+	}
+	OnGameEvent_mvm_wave_complete = function(params)
+	{
+		for (local i = 1, player; i <= MaxPlayers; i++)
+			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
 	}
 
 	OnScriptHook_OnTakeDamage = function(params)
@@ -162,15 +178,18 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaVIPInit()
 	{
-		if(!objectivenobuild)
+		if(FindByName(null, "arena_mode_objective_nobuild"))
+			return
+
+		local objectivenobuild = SpawnEntityFromTable("func_nobuild",
 		{
-			local objectivenobuild = SpawnEntityFromTable("func_nobuild",
-			{
-				targetname = "arena_mode_objective_nobuild"
-				origin = "578 2726 101"
-			})
-			objectivenobuild.SetSize(Vector(-48, -48, -32), Vector(48, 48, 32))
-		}
+			targetname = "arena_mode_objective_nobuild"
+			origin = "578 2726 101"
+		})
+		objectivenobuild.SetSize(Vector(-48, -48, -32), Vector(48, 48, 32))
+
+		if(FindByName(null, "arena_mode_objective_spawner"))
+			return
 
 		local objectivespawner = SpawnEntityFromTable("bot_generator",
 		{
@@ -188,6 +207,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		SetPropString(objectivespawner, "m_className", "demoman")
 		EntFire("arena_mode_objective_spawner", "SpawnBot", null, 0.0, null)
 
+		if(FindByName(null, "arena_mode_objective_point"))
+			return
+
 		local objectivepoint = SpawnEntityFromTable("bot_action_point",
 		{
 			targetname = "arena_mode_objective_point"
@@ -200,6 +222,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaVIPObjectiveInit(target)
 	{
+
+		if(FindByName(null, "arena_mode_objective_bomb"))
+			return
+
 		local objectivebombprop = SpawnEntityFromTable("prop_dynamic",
 		{
 			targetname = "arena_mode_objective_bomb"
@@ -211,15 +237,21 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		EntFire("arena_mode_objective_bomb", "SetParent", "!activator", 0.0, target)
 		EntFire("arena_mode_objective_bomb", "SetParentAttachment", "flag", 0.05, target)
 
-		local objectivebombsiren = SpawnEntityFromTable("info_particle_system",
+		if(FindByName(null, "arena_mode_objective_bomblight"))
+			return
+
+		local objectivebomblight = SpawnEntityFromTable("info_particle_system",
 		{
-			targetname = "arena_mode_objective_bombsiren"
+			targetname = "arena_mode_objective_bomblight"
 			effect_name = "cart_flashinglight"
 			start_active = 1
 		})
 
-		EntFire("arena_mode_objective_bombsiren", "SetParent", "arena_mode_objective_bomb", 0.0, null)
-		EntFire("arena_mode_objective_bombsiren", "SetParentAttachment", "siren", 0.05, null)
+		EntFire("arena_mode_objective_bomblight", "SetParent", "arena_mode_objective_bomb", 0.0, null)
+		EntFire("arena_mode_objective_bomblight", "SetParentAttachment", "siren", 0.05, null)
+
+		if(FindByName(null, "arena_mode_objective_bombexplosion"))
+			return
 
 		local objectivebombexplosion = SpawnEntityFromTable("info_particle_system",
 		{
@@ -229,36 +261,38 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		})
 
 		EntFire("arena_mode_objective_bombexplosion", "SetParent", "!activator", 0.0, target)
+	}
 
-		target.ValidateScriptScope()
-		local targetscope = target.GetScriptScope()
+	function ArenaVIPReadyUp(playerIndex)
+	{
+		local gamerules = FindByClassname(null, "tf_gamerules")
+		SetPropBoolArray(gamerules, "m_bPlayerReady", true, playerIndex)
+	}
 
-		targetscope.Think <- function () {
-			if (self.IsAlive())
-			{
-				MVMAnimosity_ArenaMode.SetDestroyCallback(self, function() {
-					EntFire("arena_mode_loss_relay", "Trigger", null, 0.0, null)
-					EntFire("arena_mode_objective_bombexplosion", "Start", null, 0.0, null)
+	function ArenaVIPKill()
+	{
+		for (local i = 1, player; i <= MaxPlayers; i++)
+			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+				player.TakeDamage(99999, 0, null)
+	}
+	function ArenaVIPLoss()
+	{
+		EntFire("arena_mode_loss_relay", "Trigger", null, 0.0, null)
+		EntFire("arena_mode_objective_bombexplosion", "Start", null, 0.0, null)
 
-					PrecacheScriptSound("MVM.GiantCommonExplodes")
-					PrecacheScriptSound("MVM.BombExplodes")
+		PrecacheScriptSound("MVM.GiantCommonExplodes")
+		PrecacheScriptSound("MVM.BombExplodes")
 
-					EmitSoundEx({
-						sound_name = "MVM.GiantCommonExplodes"
-						channel = CHAN_STATIC
-						filter_type = RECIPIENT_FILTER_GLOBAL
-					})
-					EmitSoundEx({
-						sound_name = "MVM.BombExplodes"
-						channel = CHAN_STATIC
-						filter_type = RECIPIENT_FILTER_GLOBAL
-					})
-				})
-				NetProps.SetPropString(self, "m_iszScriptThinkFunction", "")
-			}
-			return 0.1
-		}
-		AddThinkToEnt(target, "Think")
+		EmitSoundEx({
+			sound_name = "MVM.GiantCommonExplodes"
+			channel = CHAN_STATIC
+			filter_type = RECIPIENT_FILTER_GLOBAL
+		})
+		EmitSoundEx({
+			sound_name = "MVM.BombExplodes"
+			channel = CHAN_STATIC
+			filter_type = RECIPIENT_FILTER_GLOBAL
+		})
 	}
 }
 
