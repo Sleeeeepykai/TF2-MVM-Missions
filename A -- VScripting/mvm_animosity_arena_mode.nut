@@ -32,10 +32,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
-		for (local i = 1, player; i <= MaxPlayers; i++)
+		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			local player = PlayerInstanceFromIndex(i)
+			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 			{
+				printl(player)
 				player.ForceChangeTeam(TEAM_SPECTATOR, false)
 			}
 		}
@@ -94,7 +96,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	{
 		local player = GetPlayerFromUserID(params.userid)
 
-		if(player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+		if(player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 		{
 			MVMAnimosity_ArenaMode.ArenaVIPLoss()
 			player.ForceChangeTeam(TEAM_SPECTATOR, false)
@@ -116,10 +118,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	{
 		EntFire("arena_mode_commentary_node", "Kill", null, 0.0, null)
 
-		for (local i = 1, player; i <= MaxPlayers; i++)
+		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			local player = PlayerInstanceFromIndex(i)
+			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 			{
+				printl(player)
 				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
 			}
 		}
@@ -198,7 +202,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		SetPropString(target, "m_PlayerClass.m_iszClassIcon", "red_lite")
 
 		target.AddCustomAttribute("max health additive bonus", 3825, -1)
-		target.SetHealth(3000)
+		target.SetHealth(4000)
 
 		target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		target.AddCustomAttribute("damage force reduction", 0.1, -1)
