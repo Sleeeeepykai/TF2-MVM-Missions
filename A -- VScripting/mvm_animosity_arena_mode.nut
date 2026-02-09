@@ -32,6 +32,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
+		EntFire("point_commentary_node*", "Kill", null, 0.0, null)
+
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
 			local player = PlayerInstanceFromIndex(i)
@@ -116,7 +118,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 	OnGameEvent_mvm_wave_complete = function(params)
 	{
-		EntFire("arena_mode_commentary_node", "Kill", null, 0.0, null)
+		EntFire("point_commentary_node*", "Kill", null, 0.0, null)
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
@@ -125,6 +127,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			{
 				printl(player)
 				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
+				return
 			}
 		}
 	}
@@ -144,7 +147,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			return
 
 		if ( attacker.HasBotTag("LethalBot") && victim.HasBotTag("FriendlyBot") )
-			params.damage = 600
+			params.damage = 500
 	}
 
 	// Bot Tags
@@ -207,7 +210,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		target.AddCustomAttribute("damage force reduction", 0.1, -1)
 		target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
-		target.AddCustomAttribute("health regen", 50, -1)
+		target.AddCustomAttribute("health regen", 40, -1)
 		target.AddCustomAttribute("ammo regen", 1, -1)
 
 		target.AddCustomAttribute("override footstep sound set", 4, -1)
@@ -227,9 +230,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		local objectivenobuild = SpawnEntityFromTable("func_nobuild",
 		{
 			targetname = "arena_mode_objective_nobuild"
-			origin = "578 2726 101"
+			origin = "578 2726 140"
 		})
-		objectivenobuild.SetSize(Vector(-48, -48, -32), Vector(48, 48, 32))
+		objectivenobuild.SetSize(Vector(-64, -64, -32), Vector(64, 64, 32))
 
 		if(FindByName(null, "arena_mode_objective_spawner"))
 			return
@@ -342,6 +345,17 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			channel = 6
 			filter_type = 5
 		})
+	}
+
+	// Debug Functions //
+
+	function ArenaVIPEngineerDebug()
+	{
+		for (local arenanest; arenanest = FindByClassname(arenanest, "bot_hint_engineer_nest");)
+		{
+			local arenaneststatus = GetPropBool(arenanest, "m_bDisabled")
+			printl(arenaneststatus)
+		}
 	}
 }
 
