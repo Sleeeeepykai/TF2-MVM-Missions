@@ -32,6 +32,14 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
+		for (local i = 1, player; i <= MaxPlayers; i++)
+		{
+			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			{
+				player.ForceChangeTeam(TEAM_SPECTATOR, false)
+			}
+		}
+
         delete ::MVMAnimosity_ArenaMode
     }
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
@@ -109,8 +117,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		EntFire("arena_mode_commentary_node", "Kill", null, 0.0, null)
 
 		for (local i = 1, player; i <= MaxPlayers; i++)
+		{
 			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			{
 				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
+			}
+		}
 	}
 
 	OnScriptHook_OnTakeDamage = function(params)
@@ -128,7 +140,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			return
 
 		if ( attacker.HasBotTag("LethalBot") && victim.HasBotTag("FriendlyBot") )
-			params.damage = 800
+			params.damage = 600
 	}
 
 	// Bot Tags
@@ -185,13 +197,13 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetPropString(target, "m_PlayerClass.m_iszClassIcon", "red_lite")
 
-		target.AddCustomAttribute("max health additive bonus", 2825, -1)
+		target.AddCustomAttribute("max health additive bonus", 3825, -1)
 		target.SetHealth(3000)
 
 		target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		target.AddCustomAttribute("damage force reduction", 0.1, -1)
 		target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
-		target.AddCustomAttribute("health regen", 100, -1)
+		target.AddCustomAttribute("health regen", 50, -1)
 		target.AddCustomAttribute("ammo regen", 1, -1)
 
 		target.AddCustomAttribute("override footstep sound set", 4, -1)
@@ -298,8 +310,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	function ArenaVIPKill()
 	{
 		for (local i = 1, player; i <= MaxPlayers; i++)
+		{
 			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			{
 				player.TakeDamage(99999, 0, null)
+			}
+		}
 	}
 	function ArenaVIPLoss()
 	{
