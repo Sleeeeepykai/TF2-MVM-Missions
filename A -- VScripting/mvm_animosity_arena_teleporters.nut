@@ -25,12 +25,16 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
+Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 99999)
+
 ::MaxPlayers <- MaxClients().tointeger()
 
 ::MVMAnimosity_ArenaTeleporters <-
 {
 	function Cleanup()
     {
+		Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 1300)
+
 		for (local htelehint; htelehint = FindByClassname(htelehint, "bot_hint_teleporter_exit");)
 		{
 			SetPropString(htelehint, "m_iszScriptThinkFunction", "")

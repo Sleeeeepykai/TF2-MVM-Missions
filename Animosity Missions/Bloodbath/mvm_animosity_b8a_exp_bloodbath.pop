@@ -71,21 +71,20 @@ WaveSchedule
 		}
 	}
 
-	Mission // Engineer (Wave 4)
+	Mission // Sniper (Wave 5)
 	{
-		Objective Engineer
+		Objective Sniper
+		Where spawnbot_arena_left
 		Where spawnbot_arena_right
-		BeginAtWave 4
+		BeginAtWave 5
 		RunForThisManyWaves 1
 		InitialCooldown 5
 		CooldownTime 30
-		DesiredCount 1
+		DesiredCount 3
 
 		TFBot
 		{
-			Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
-			TeleportWhere spawnbot_arena_left_teleporter
-			TeleportWhere spawnbot_arena_right_teleporter
+			Template T_TFBot_Sniper
 		}
 	}
 
@@ -106,8 +105,6 @@ WaveSchedule
 					EntFire(`arena_mode_maingate_close`, `Trigger`)
 					EntFire(`arena_mode_flankgateleft_close`, `Trigger`)
 					EntFire(`arena_mode_flankgateright_close`, `Trigger`)
-
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
                   "
         }
 		StartWaveOutput
@@ -177,7 +174,7 @@ WaveSchedule
 				Action RunScriptCode
 				Param "
 						SendGlobalGameEvent(`show_annotation`, {
-							worldPosX = 640
+							worldPosX = -640
 							worldPosY = 1525
 							worldPosZ = 80
 							id = `arena_launchpad_1`
@@ -667,8 +664,6 @@ WaveSchedule
 					MVMAnimosity_ArenaMode.ArenaVIPInit()
 
 					EntFire(`arena_mode_relay`, `Trigger`)
-
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
                   "
         }
 		StartWaveOutput
@@ -1050,9 +1045,6 @@ WaveSchedule
 					})
 
 					EntFire(`arena_mode_relay`, `Trigger`)
-
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
-					Convars.SetValue(`tf_mvm_defenders_max_size`, 7)
                   "
         }
 		StartWaveOutput
@@ -1648,9 +1640,6 @@ WaveSchedule
 					IncludeScript(`mvm_animosity_arena_teleporters`, getroottable())
 
 					EntFire(`arena_mode_relay`, `Trigger`)
-
-					Convars.SetValue(`tf_bot_flag_escort_max_count`, 0)
-					Convars.SetValue(`tf_mvm_defenders_max_size`, 7)
                   "
         }
 		StartWaveOutput
@@ -1700,13 +1689,51 @@ WaveSchedule
 
 		WaveSpawn
 		{
-			Name "Wave3_Demo"
+			Name "Wave4_Demo"
 			WaitBeforeStarting 0
 
 			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_autocappedintelligence02.mp3"
 		}
 
 		// Support
+		WaveSpawn // Support Engineer
+		{
+			Name "Wave4_Subwave1_Engineer"
+			Where spawnbot_arena_left
+			Support 1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 20
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+				TeleportWhere spawnbot_arena_left_teleporter
+				TeleportWhere spawnbot_arena_right_teleporter
+			}
+		}
+		WaveSpawn // Support Engineer
+		{
+			Name "Wave4_Subwave1_Engineer"
+			Where spawnbot_arena_right
+			Support 1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 40
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+				TeleportWhere spawnbot_arena_left_teleporter
+				TeleportWhere spawnbot_arena_right_teleporter
+			}
+		}
 		WaveSpawn // Support Soldiers
 		{
 			Name "Wave4_SupportSoldiers"
@@ -2281,6 +2308,627 @@ WaveSchedule
 			{
 				Class Heavy
 				Skill Easy
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    IncludeScript(`mvm_animosity_arena_mode`, getroottable())
+					MVMAnimosity_ArenaMode.ArenaVIPInit()
+
+					EntFire(`arena_mode_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+		DoneOutput
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EmitSoundEx({
+						sound_name = `vo/mvm/mght/demoman_mvm_m_autocappedcontrolpoint02.mp3`
+						channel = 2	
+						filter_type = 5
+					})
+                  "
+		}
+
+		WaveSpawn // Dummy Bomb Carrier
+		{
+			Name "Dummy_Bomb_Carrier"
+			Where spawnbot_left
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			Squad
+			{
+				Squad
+				{
+					TFBot
+					{
+						Template T_TFBot_Dummy_Bomb
+					}
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave5_Demo"
+			WaitBeforeStarting 0
+
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry07.mp3"
+		}
+
+		// Subwave 1
+		WaveSpawn // 6 Stickybomb Demos
+		{
+			Name "Wave5_Subwave1_StickyDemos"
+			Where spawnbot_arena_right
+			TotalCount 6
+			MaxActive 5
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+		WaveSpawn // 16 Bonk Scouts
+		{
+			Name "Wave5_Subwave1_BonkScouts"
+			WaitForAllSpawned "Wave5_Subwave1_StickyDemos"
+			Where spawnbot_arena_right
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 8
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave5_Subwave1_GScout"
+			WaitForAllSpawned "Wave5_Subwave1_StickyDemos"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave5_Subwave1_GScout"
+			WaitForAllSpawned "Wave5_Subwave1_StickyDemos"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+		WaveSpawn // 7 Bonk Scouts
+		{
+			Name "Wave5_Subwave1_BonkScouts2"
+			WaitForAllSpawned "Wave5_Subwave1_GScout"
+			Where spawnbot_arena_left
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 7 Bonk Scouts
+		{
+			Name "Wave5_Subwave1_BonkScouts2"
+			WaitForAllSpawned "Wave5_Subwave1_GScout"
+			Where spawnbot_arena_right
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave5_Subwave1_GScout2"
+			WaitForAllSpawned "Wave5_Subwave1_GScout"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave5_Subwave1_GScout2"
+			WaitForAllSpawned "Wave5_Subwave1_GScout"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+		WaveSpawn // 5 Stickybomb Demos
+		{
+			Name "Wave5_Subwave1_StickyDemos2"
+			WaitForAllSpawned "Wave5_Subwave1_GScout2"
+			Where spawnbot_arena_left
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+		WaveSpawn // 5 Stickybomb Demos
+		{
+			Name "Wave5_Subwave1_StickyDemos2"
+			WaitForAllSpawned "Wave5_Subwave1_GScout2"
+			Where spawnbot_arena_right
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 5 Soldiers and 5 Quick-Uber Medics
+		{
+			Name "Wave5_Subwave2_SoldierSquads"
+			WaitForAllSpawned "Wave5_Subwave1_GScout2"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 5 Soldiers and 5 Quick-Uber Medics
+		{
+			Name "Wave5_Subwave2_SoldierSquads"
+			WaitForAllSpawned "Wave5_Subwave1_GScout2"
+			Where spawnbot_arena_right
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 2 GDemos
+		{
+			Name "Wave5_Subwave2_GDemo"
+			WaitForAllSpawned "Wave5_Subwave2_SoldierSquads"
+			Where spawnbot_arena_right
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+
+		WaveSpawn // 5 Soldiers and 5 Quick-Uber Medics
+		{
+			Name "Wave5_Subwave2_SoldierSquads2"
+			WaitForAllSpawned "Wave5_Subwave2_GDemo"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 5 Soldiers and 5 Quick-Uber Medics
+		{
+			Name "Wave5_Subwave2_SoldierSquads2"
+			WaitForAllSpawned "Wave5_Subwave2_GDemo"
+			Where spawnbot_arena_right
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 2 GDemos
+		{
+			Name "Wave5_Subwave2_GDemo2"
+			WaitForAllSpawned "Wave5_Subwave2_SoldierSquads2"
+			Where spawnbot_arena_left
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 15 Bonk Scouts
+		{
+			Name "Wave5_Subwave3_BonkScouts"
+			WaitForAllSpawned "Wave5_Subwave2_GDemo2"
+			Where spawnbot_arena_right
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0.1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave5_Subwave3_Soldiers"
+			WaitForAllSpawned "Wave5_Subwave3_BonkScouts"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0.1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+		WaveSpawn // 1 GHeavy and 3 Stickybomb Demos
+		{
+			Name "Wave5_Subwave3_GHeavy"
+			WaitForAllSpawned "Wave5_Subwave3_Soldiers"
+			Where spawnbot_arena_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+			}
+		}
+
+		WaveSpawn // 15 Bonk Scouts
+		{
+			Name "Wave5_Subwave3_BonkScouts2"
+			WaitForAllSpawned "Wave5_Subwave3_GHeavy"
+			Where spawnbot_arena_left
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0.1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave5_Subwave3_Soldiers2"
+			WaitForAllSpawned "Wave5_Subwave3_BonkScouts2"
+			Where spawnbot_arena_right
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0.1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+		WaveSpawn // 1 GHeavy and 3 Stickybomb Demos
+		{
+			Name "Wave5_Subwave3_GHeavy2"
+			WaitForAllSpawned "Wave5_Subwave3_Soldiers2"
+			Where spawnbot_arena_left
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+			}
+		}
+
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave5_Subwave3_GScout"
+			WaitForAllSpawned "Wave5_Subwave3_GHeavy2"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave5_Subwave3_GScout"
+			WaitForAllSpawned "Wave5_Subwave3_GHeavy2"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave5_Subwave3_GDemo"
+			WaitForAllSpawned "Wave5_Subwave3_GScout"
+			Where spawnbot_arena_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave5_Subwave3_GDemo"
+			WaitForAllSpawned "Wave5_Subwave3_GScout"
+			Where spawnbot_arena_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+			}
+		}
+		
+		WaveSpawn // 1 GHeavy and 3 Stickybomb Demos
+		{
+			Name "Wave5_Subwave3_GHeavy3"
+			WaitForAllSpawned "Wave5_Subwave3_GDemo"
+			Where spawnbot_arena_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
 			}
 		}
 	}

@@ -32,6 +32,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
+		Convars.SetValue("tf_bot_flag_escort_max_count", 4)
+
 		EntFire("point_commentary_node*", "Kill", null, 0.0, null)
 
 		for (local i = 1; i <= MaxPlayers; i++)
@@ -39,7 +41,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			local player = PlayerInstanceFromIndex(i)
 			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 			{
-				printl(player)
 				player.ForceChangeTeam(TEAM_SPECTATOR, false)
 			}
 		}
@@ -122,11 +123,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex(i)
 			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 			{
-				printl(player)
-				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
+				EntFire("activator", "RunScriptCode", MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex()), 0.0, player)
 				return
 			}
 		}
@@ -224,6 +223,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaVIPInit()
 	{
+		Convars.SetValue("tf_bot_flag_escort_max_count", 0)
+
 		if(FindByName(null, "arena_mode_objective_nobuild"))
 			return
 
