@@ -224,6 +224,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaVIPInit()
 	{
+		Convars.SetValue("tf_mvm_defenders_team_size", 7)
 		Convars.SetValue("tf_bot_flag_escort_max_count", 0)
 
 		if(FindByName(null, "arena_mode_objective_nobuild"))
@@ -280,6 +281,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			model = "models/props_td/atom_bomb.mdl"
 			solid = 0
 			disableshadows = 1
+			DisableBoneFollowers = 1
 		})
 
 		EntFire("arena_mode_objective_bomb", "SetParent", "!activator", 0.0, target)

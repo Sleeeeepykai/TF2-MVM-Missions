@@ -25,7 +25,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
-Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 99999)
+Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 0)
+Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 99999)
+Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 
 ::MaxPlayers <- MaxClients().tointeger()
 
@@ -34,6 +36,8 @@ Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 99999)
 	function Cleanup()
     {
 		Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 1300)
+		Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 0)
+		Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 3000)
 
 		for (local htelehint; htelehint = FindByClassname(htelehint, "bot_hint_teleporter_exit");)
 		{
