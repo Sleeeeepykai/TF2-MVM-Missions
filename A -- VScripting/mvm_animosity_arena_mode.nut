@@ -123,9 +123,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
+			local player = PlayerInstanceFromIndex(i)
 			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
 			{
-				EntFire(player, "RunScriptCode", MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex()), 0.0, player)
+				EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPReadyUp(activator.GetEntityIndex())", 0.0, player, null);
 				return
 			}
 		}
