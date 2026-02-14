@@ -219,7 +219,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		local weapon = target.GetActiveWeapon()
 
 		weapon.AddAttribute("fire rate bonus", 0.75, -1)
-		weapon.AddAttribute("faster reload rate", 0.6, -1)
+		weapon.AddAttribute("faster reload rate", 0.001, -1)
 	}
 
 	function ArenaVIPInit()
