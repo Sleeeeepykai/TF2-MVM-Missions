@@ -32,16 +32,16 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
     {
-		Convars.SetValue("tf_bot_flag_escort_max_count", 4)
+		SetValue("tf_bot_flag_escort_max_count", 4)
 
 		EntFire("point_commentary_node*", "Kill", null, 0.0, null)
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex(i)
-			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player && Player.IsAlive() && Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
 			{
-				player.ForceChangeTeam(TEAM_SPECTATOR, false)
+				Player.ForceChangeTeam(TEAM_SPECTATOR, false)
 			}
 		}
 
@@ -80,29 +80,29 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Search Functions
 	OnGameEvent_player_spawn = function(params)
 	{
-		local player = GetPlayerFromUserID(params.userid)
+		local Player = GetPlayerFromUserID(params.userid)
 
-		if (player.IsBotOfType(1337))
+		if (Player.IsBotOfType(1337))
 		{
 			// Will only work with 1 RED Robot Present
-			if ( (player.GetTeam()) == 2 )
+			if ( (Player.GetTeam()) == 2 )
 			{
-				EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPObjectiveInit(activator)", 0.0, player, null);
-				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(player.GetEntityIndex())
+				EntFireByHandle(Player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPObjectiveInit(activator)", 0.0, Player, null);
+				MVMAnimosity_ArenaMode.ArenaVIPReadyUp(Player.GetEntityIndex())
 				return
 			}
-			EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.BotTagCheck()", 0.0, player, null);
+			EntFireByHandle(Player, "RunScriptCode", "MVMAnimosity_ArenaMode.BotTagCheck()", 0.0, Player, null);
 			return
 		}
 	}
 	OnGameEvent_player_death = function(params)
 	{
-		local player = GetPlayerFromUserID(params.userid)
+		local Player = GetPlayerFromUserID(params.userid)
 
-		if(player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+		if(Player && Player.IsAlive() && Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
 		{
 			MVMAnimosity_ArenaMode.ArenaVIPLoss()
-			player.ForceChangeTeam(TEAM_SPECTATOR, false)
+			Player.ForceChangeTeam(TEAM_SPECTATOR, false)
 			return
 		}
 	}
@@ -112,7 +112,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		if(FindByName(null, "arena_mode_commentary_node"))
 			return
 
-		local objectivecommnode = SpawnEntityFromTable("point_commentary_node",
+		local ObjectiveCommNode = SpawnEntityFromTable("point_commentary_node",
 		{
 			targetname = "arena_mode_commentary_node"
 		})
@@ -123,10 +123,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex(i)
-			if (player && player.IsAlive() && player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player && Player.IsAlive() && Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
 			{
-				EntFireByHandle(player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPReadyUp(activator.GetEntityIndex())", 0.0, player, null);
+				EntFireByHandle(Player, "RunScriptCode", "MVMAnimosity_ArenaMode.ArenaVIPReadyUp(activator.GetEntityIndex())", 0.0, Player, null);
 				return
 			}
 		}
@@ -134,19 +134,19 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnScriptHook_OnTakeDamage = function(params)
 	{
-		local attacker = params.attacker
-		local victim = params.const_entity
+		local Attacker = params.attacker
+		local Victim = params.const_entity
 
-		if ( !attacker.IsPlayer() || !attacker.IsBotOfType(1337) )
+		if ( !Attacker.IsPlayer() || !Attacker.IsBotOfType(1337) )
 			return
 
-		if ( !victim.IsPlayer() || !victim.IsBotOfType(1337) )
+		if ( !Victim.IsPlayer() || !Victim.IsBotOfType(1337) )
 			return
 
-		if ( attacker == victim )
+		if ( Attacker == Victim )
 			return
 
-		if ( attacker.HasBotTag("LethalBot") && victim.HasBotTag("FriendlyBot") )
+		if ( Attacker.HasBotTag("LethalBot") && Victim.HasBotTag("FriendlyBot") )
 			params.damage = 500
 	}
 
@@ -163,84 +163,84 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			MVMAnimosity_ArenaMode.NoBotGlow(activator)
 		}
 	}
-	function BotGlow(target)
+	function BotGlow(Target)
 	{
-		SetPropBool(target, "m_bGlowEnabled", true)
+		SetPropBool(Target, "m_bGlowEnabled", true)
 	}
-	function NoBotGlow(target)
+	function NoBotGlow(Target)
 	{
-		SetPropBool(target, "m_bGlowEnabled", false)
+		SetPropBool(Target, "m_bGlowEnabled", false)
 
-		local bomb = FindByClassname(null, "item_teamflag")
+		local Bomb = FindByClassname(null, "item_teamflag")
 
-		SetPropBool(bomb, "m_bGlowEnabled", false)
+		SetPropBool(Bomb, "m_bGlowEnabled", false)
 	}
 
 	// VIP Objective Functions //
 
-	function ArenaVIPStatsInit(target)
+	function ArenaVIPStatsInit(Target)
 	{
-		target.RemoveWeaponRestriction(7)
-		target.ClearAllBotAttributes()
-		target.ClearAllBotTags()
-		target.SetCustomModelWithClassAnimations(null)
-		target.SetDifficulty(3)
-		target.SetMaxVisionRangeOverride(9999)
+		Target.RemoveWeaponRestriction(7)
+		Target.ClearAllBotAttributes()
+		Target.ClearAllBotTags()
+		Target.SetCustomModelWithClassAnimations(null)
+		Target.SetDifficulty(3)
+		Target.SetMaxVisionRangeOverride(9999)
 
-		SetFakeClientConVarValue(target, "name", "Guard-I.A.N.")
-		target.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
-		target.SetModelScale(2, -1)
-		SetPropBool(target, "m_bGlowEnabled", true)
+		SetFakeClientConVarValue(Target, "name", "Guard-I.A.N.")
+		Target.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
+		Target.SetModelScale(2, -1)
+		SetPropBool(Target, "m_bGlowEnabled", true)
 
-		target.AddBotAttribute(1)
-		target.AddBotAttribute(2048)
-		target.SetIsMiniBoss(true)
-		target.SetUseBossHealthBar(true)
+		Target.AddBotAttribute(1)
+		Target.AddBotAttribute(2048)
+		Target.SetIsMiniBoss(true)
+		Target.SetUseBossHealthBar(true)
 
-		target.AddWeaponRestriction(2)
+		Target.AddWeaponRestriction(2)
 
-		target.AddBotTag("bot_giant")
-		target.AddBotTag("FriendlyBot")
+		Target.AddBotTag("bot_giant")
+		Target.AddBotTag("FriendlyBot")
 
-		SetPropString(target, "m_PlayerClass.m_iszClassIcon", "red_lite")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "red_lite")
 
-		target.AddCustomAttribute("max health additive bonus", 3825, -1)
-		target.SetHealth(4000)
+		Target.AddCustomAttribute("max health additive bonus", 3825, -1)
+		Target.SetHealth(4000)
 
-		target.AddCustomAttribute("move speed penalty", 0.5, -1)
-		target.AddCustomAttribute("damage force reduction", 0.1, -1)
-		target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
-		target.AddCustomAttribute("health regen", 40, -1)
-		target.AddCustomAttribute("ammo regen", 1, -1)
+		Target.AddCustomAttribute("move speed penalty", 0.5, -1)
+		Target.AddCustomAttribute("damage force reduction", 0.1, -1)
+		Target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
+		Target.AddCustomAttribute("health regen", 40, -1)
+		Target.AddCustomAttribute("ammo regen", 1, -1)
 
-		target.AddCustomAttribute("override footstep sound set", 4, -1)
-		target.AddCustomAttribute("voice pitch scale", 0, -1)
+		Target.AddCustomAttribute("override footstep sound set", 4, -1)
+		Target.AddCustomAttribute("voice pitch scale", 0, -1)
 
-		local weapon = target.GetActiveWeapon()
+		local Weapon = Target.GetActiveWeapon()
 
-		weapon.AddAttribute("fire rate bonus", 0.75, -1)
-		weapon.AddAttribute("faster reload rate", 0.001, -1)
+		Weapon.AddAttribute("fire rate bonus", 0.75, -1)
+		Weapon.AddAttribute("faster reload rate", 0.001, -1)
 	}
 
 	function ArenaVIPInit()
 	{
-		Convars.SetValue("tf_mvm_defenders_team_size", 7)
-		Convars.SetValue("tf_bot_flag_escort_max_count", 0)
+		SetValue("tf_mvm_defenders_team_size", 7)
+		SetValue("tf_bot_flag_escort_max_count", 0)
 
 		if(FindByName(null, "arena_mode_objective_nobuild"))
 			return
 
-		local objectivenobuild = SpawnEntityFromTable("func_nobuild",
+		local ObjectiveNobuild = SpawnEntityFromTable("func_nobuild",
 		{
 			targetname = "arena_mode_objective_nobuild"
 			origin = "578 2726 140"
 		})
-		objectivenobuild.SetSize(Vector(-64, -64, -32), Vector(64, 64, 32))
+		ObjectiveNobuild.SetSize(Vector(-64, -64, -32), Vector(64, 64, 32))
 
 		if(FindByName(null, "arena_mode_objective_spawner"))
 			return
 
-		local objectivespawner = SpawnEntityFromTable("bot_generator",
+		local ObjectiveSpawner = SpawnEntityFromTable("bot_generator",
 		{
 			targetname = "arena_mode_objective_spawner"
 			origin = "578 2726 160"
@@ -253,13 +253,13 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 			"OnSpawned" : "!activator,RunScriptCode,MVMAnimosity_ArenaMode.ArenaVIPStatsInit(self),0,-1"
 		})
-		SetPropString(objectivespawner, "m_className", "demoman")
+		SetPropString(ObjectiveSpawner, "m_className", "demoman")
 		EntFire("arena_mode_objective_spawner", "SpawnBot", null, 0.0, null)
 
 		if(FindByName(null, "arena_mode_objective_point"))
 			return
 
-		local objectivepoint = SpawnEntityFromTable("bot_action_point",
+		local ObjectivePoint = SpawnEntityFromTable("bot_action_point",
 		{
 			targetname = "arena_mode_objective_point"
 			origin = "578 2726 160"
@@ -275,7 +275,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		if(FindByName(null, "arena_mode_objective_bomb"))
 			return
 
-		local objectivebombprop = SpawnEntityFromTable("prop_dynamic",
+		local ObjectiveBombProp = SpawnEntityFromTable("prop_dynamic",
 		{
 			targetname = "arena_mode_objective_bomb"
 			model = "models/props_td/atom_bomb.mdl"
@@ -290,7 +290,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		if(FindByName(null, "arena_mode_objective_bomblight"))
 			return
 
-		local objectivebomblight = SpawnEntityFromTable("info_particle_system",
+		local ObjectiveBombLight = SpawnEntityFromTable("info_particle_system",
 		{
 			targetname = "arena_mode_objective_bomblight"
 			effect_name = "cart_flashinglight"
@@ -303,7 +303,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		if(FindByName(null, "arena_mode_objective_bombexplosion"))
 			return
 
-		local objectivebombexplosion = SpawnEntityFromTable("info_particle_system",
+		local ObjectiveBombExplosion = SpawnEntityFromTable("info_particle_system",
 		{
 			targetname = "arena_mode_objective_bombexplosion"
 			origin = "578 2726 140"
@@ -314,17 +314,18 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function ArenaVIPReadyUp(playerIndex)
 	{
-		local gamerules = FindByClassname(null, "tf_gamerules")
-		SetPropBoolArray(gamerules, "m_bPlayerReady", true, playerIndex)
+		local Gamerules = FindByClassname(null, "tf_gamerules")
+		SetPropBoolArray(Gamerules, "m_bPlayerReady", true, playerIndex)
 	}
 
 	function ArenaVIPKill()
 	{
-		for (local i = 1, player; i <= MaxPlayers; i++)
+		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			if (player.IsBotOfType(1337) && (player.GetTeam()) == 2)
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
 			{
-				player.TakeDamage(99999, 0, null)
+				Player.TakeDamage(99999, 0, null)
 			}
 		}
 	}
@@ -349,17 +350,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			channel = 6
 			filter_type = 5
 		})
-	}
-
-	// Debug Functions //
-
-	function ArenaVIPEngineerDebug()
-	{
-		for (local arenanest; arenanest = FindByClassname(arenanest, "bot_hint_engineer_nest");)
-		{
-			local arenaneststatus = GetPropBool(arenanest, "m_bDisabled")
-			printl(arenaneststatus)
-		}
 	}
 }
 

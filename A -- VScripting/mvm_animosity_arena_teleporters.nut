@@ -25,9 +25,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
-Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 0)
-Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 99999)
-Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
+SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 0)
+SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 99999)
+SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 
 ::MaxPlayers <- MaxClients().tointeger()
 
@@ -35,13 +35,13 @@ Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 {
 	function Cleanup()
     {
-		Convars.SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 1300)
-		Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 0)
-		Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 3000)
+		SetValue("tf_bot_engineer_mvm_hint_min_distance_from_bomb", 1300)
+		SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 0)
+		SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 3000)
 
-		for (local htelehint; htelehint = FindByClassname(htelehint, "bot_hint_teleporter_exit");)
+		for (local TeleHint; TeleHint = FindByClassname(htelehint, "bot_hint_teleporter_exit");)
 		{
-			SetPropString(htelehint, "m_iszScriptThinkFunction", "")
+			SetPropString(TeleHint, "m_iszScriptThinkFunction", "")
 		}
 
         delete ::MVMAnimosity_ArenaTeleporters
@@ -79,21 +79,21 @@ Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 
 	OnGameEvent_player_builtobject = function(params)
 	{
-		local player = GetPlayerFromUserID(params.userid)
+		local Player = GetPlayerFromUserID(params.userid)
 
-		local building = EntIndexToHScript(params.index)
+		local Building = EntIndexToHScript(params.index)
 
-		if ( player.GetTeam() != 3 || !player.IsBotOfType(1337))
+		if ( Player.GetTeam() != 3 || !player.IsBotOfType(1337))
 			return
 
 		if ( params.object != 1 )
 			return
 
-		building.ValidateScriptScope()
-		local buildingscope = building.GetScriptScope()
+		Building.ValidateScriptScope()
+		local BuildingScope = building.GetScriptScope()
 
-		buildingscope.Think <- function() {
-			if (NetProps.GetPropInt(self, "m_iState") != 0)
+		BuildingScope.Think <- function() {
+			if (GetPropInt(self, "m_iState") != 0)
 			{
 				EntFire("spawnbot_arena_left_teleporter", "Enable", null, 0.0, null)
 				EntFire("spawnbot_arena_right_teleporter", "Enable", null, 0.0, null)
@@ -102,11 +102,11 @@ Convars.SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 					EntFire("spawnbot_arena_left_teleporter", "Disable", null, 0.0, null)
 					EntFire("spawnbot_arena_right_teleporter", "Disable", null, 0.0, null)
 				})
-				NetProps.SetPropString(self, "m_iszScriptThinkFunction", "")
+				SetPropString(self, "m_iszScriptThinkFunction", "")
 			}
 			return 0.1
 		}
-		AddThinkToEnt(building, "Think")
+		AddThinkToEnt(Building, "Think")
 	}
 }
 

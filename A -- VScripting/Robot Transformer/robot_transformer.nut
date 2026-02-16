@@ -1,8 +1,15 @@
-printl("Robot Transformer Initialised.")
+printl("Robot Transformer Initialised")
 
-// Constants Folding
 ::CONST <- getconsttable()
 ::ROOT <- getroottable()
+
+// Classes Folding
+foreach( _class in [ "NetProps", "Entities", "EntityOutputs", "NavMesh", "Convars" ] )
+	foreach( k, v in ROOT[_class].getclass() )
+		if ( !( k in ROOT ) && k != "IsValid" )
+			ROOT[k] <- ROOT[_class][k].bindenv( ROOT[_class] )
+
+// Constants Folding
 if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done once
 {
 	foreach (enum_table in Constants)
@@ -37,177 +44,173 @@ const MAX_WEAPONS = 8
 
 ::RobotTransformer <-
 {
-	mvm_stats = Entities.FindByClassname(null, "tf_mann_vs_machine_stats")
-
 	//// CLEANUP FUNCTIONS ////
 
     function Cleanup()
     {
-        for ( local i = MaxClients().tointeger(); i > 0; i-- )
+        for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex( i );
-			if ( !player )
-				continue;
+			local Player = PlayerInstanceFromIndex( i )
 
-			player.ValidateScriptScope()
-			local player_scope = player.GetScriptScope()
+			if(Player && (Player.GetTeam()) == 2)
+			{
+				SetPropString(Player, "m_iszScriptThinkFunction", "")
 
-			if( ("wearables" in player_scope) )
-				foreach(wearable in player_scope.wearables)
+				local PlayerClass = Player.GetPlayerClass()
+				Player.SetCustomModelWithClassAnimations(PlayerModels[PlayerClass])
+
+				Player.ValidateScriptScope()
+				local PlayerScope = Player.GetScriptScope()
+
+				if( ("Wearables" in PlayerScope) )
 				{
-					wearable.Kill()
+					foreach(Wearable in PlayerScope.Wearables)
+					{
+						Wearable.Kill()
+					}
 				}
-
-			if( ("tp_wearables" in player_scope) )
-				foreach(tp_wearable in player_scope.tp_wearables)
+				if( ("TPWearables" in PlayerScope) )
 				{
-					tp_wearable.Kill()
+					foreach(TPWearable in PlayerScope.TPWearables)
+					{
+						TPWearable.Kill()
+					}
 				}
-
-			for ( local player; player = Entities.FindByClassname( player, "player" ); ) {
-				NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
 			}
-
-			local playerclass = player.GetPlayerClass()
-			player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
 		}
 
         delete ::RobotTransformer
     }
-    function OnGameEvent_stats_resetround(_)
-    {
-        if (GetRoundState() != GR_STATE_PREROUND)
-            return
-        if (NetProps.GetPropInt(mvm_stats, "m_iCurrentWaveIdx") != 0)
-            return
-        Cleanup()
-    }
+	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 
 	function OnGameEvent_player_spawn(params)
 	{
-		local player = GetPlayerFromUserID(params.userid)
+		local Player = GetPlayerFromUserID(params.userid)
 
-		player.ValidateScriptScope()
-		local player_scope = player.GetScriptScope()
+		if(Player && (Player.GetTeam()) == 2)
+		{
+			SetPropString(Player, "m_iszScriptThinkFunction", "")
 
-		if (!player || !player.IsValid() || player.IsBotOfType(1337))
-			return
+			EntFireByHandle(Player, "RunScriptCode", "RobotTransformer.ClearPlayerModel(self)", 1, null, null)
 
-		EntFireByHandle(player, "RunScriptCode", "RobotTransformer.ClearPlayerModel(self)", 1, null, null)
+			Player.ValidateScriptScope()
+			local PlayerScope = Player.GetScriptScope()
 
-		if( ("wearables" in player_scope) )
-			foreach(wearable in player_scope.wearables)
+			if( ("Wearables" in PlayerScope) )
 			{
-				wearable.Kill()
+				foreach(Wearable in PlayerScope.Wearables)
+				{
+					Wearable.Kill()
+				}
 			}
-
-		if( ("tp_wearables" in player_scope) )
-			foreach(tp_wearable in player_scope.tp_wearables)
+			if( ("TPWearables" in PlayerScope) )
 			{
-				tp_wearable.Kill()
+				foreach(TPWearable in PlayerScope.TPWearables)
+				{
+					TPWearable.Kill()
+				}
 			}
-
-		NetProps.SetPropString(player, "m_iszScriptThinkFunction", "")
+		}
 	}
-	function ClearPlayerModel(player)
+	function ClearPlayerModel(Player)
 	{
-		local playerclass = player.GetPlayerClass()
-		player.SetCustomModelWithClassAnimations(PlayerModels[playerclass])
+		local PlayerClass = Player.GetPlayerClass()
+		Player.SetCustomModelWithClassAnimations(PlayerModels[PlayerClass])
 	}
 
 	//// TRANSFORMER GLOBAL SETUP FUNCTIONS ////
 
-	function GetPlayerName(player)
+	function GetPlayerName(Player)
 	{
-		return NetProps.GetPropString(player, "m_szNetname")
+		return GetPropString(Player, "m_szNetname")
 	}
-	function GivePlayerWeapon(player, classname, item_id)
+	function GivePlayerWeapon(Player, ClassName, ItemID)
 	{
-		local weapon = Entities.CreateByClassname(classname)
-		NetProps.SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
-		NetProps.SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-		NetProps.SetPropBool(weapon, "m_bValidatedAttachedEntity", true)
-		weapon.SetTeam(player.GetTeam())
-		weapon.DispatchSpawn()
+		local Weapon = CreateByClassname(classname)
+		SetPropInt(Weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", ItemID)
+		SetPropBool(Weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
+		SetPropBool(Weapon, "m_bValidatedAttachedEntity", true)
+		Weapon.SetTeam(Player.GetTeam())
+		Weapon.DispatchSpawn()
 
 		for (local i = 0; i < MAX_WEAPONS; i++)
 		{
-			local held_weapon = NetProps.GetPropEntityArray(player, "m_hMyWeapons", i)
-			if (held_weapon == null)
+			local HeldWeapon = GetPropEntityArray(Player, "m_hMyWeapons", i)
+			if (HeldWeapon == null)
 				continue
-			if (held_weapon.GetSlot() != weapon.GetSlot())
+			if (HeldWeapon.GetSlot() != Weapon.GetSlot())
 				continue
-			held_weapon.Destroy()
-			NetProps.SetPropEntityArray(player, "m_hMyWeapons", null, i)
+			HeldWeapon.Destroy()
+			SetPropEntityArray(Player, "m_hMyWeapons", null, i)
 			break
 		}
 
-		player.Weapon_Equip(weapon)
-		player.Weapon_Switch(weapon)
+		Player.Weapon_Equip(Weapon)
+		Player.Weapon_Switch(Weapon)
 
-		return weapon
+		return Weapon
 	}
-	function GivePlayerCosmetic(player, item_id, model_path = null)
+	function GivePlayerCosmetic(Player, ItemID, ModelPath = null)
 	{
-		local weapon = Entities.CreateByClassname("tf_weapon_parachute")
-		NetProps.SetPropInt(weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
-		NetProps.SetPropBool(weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-		weapon.SetTeam(player.GetTeam())
-		weapon.DispatchSpawn()
-		player.Weapon_Equip(weapon)
-		local wearable = NetProps.GetPropEntity(weapon, "m_hExtraWearable")
-		weapon.Kill()
+		local Weapon = CreateByClassname("tf_weapon_parachute")
+		SetPropInt(Weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
+		SetPropBool(Weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
+		Weapon.SetTeam(Player.GetTeam())
+		Weapon.DispatchSpawn()
+		Player.Weapon_Equip(Weapon)
+		local Wearable = GetPropEntity(Weapon, "m_hExtraWearable")
+		Weapon.Kill()
 
-		NetProps.SetPropInt(wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", item_id)
-		NetProps.SetPropBool(wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
-		NetProps.SetPropBool(wearable, "m_bValidatedAttachedEntity", true)
-		wearable.DispatchSpawn()
+		SetPropInt(Wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", ItemID)
+		SetPropBool(Wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
+		SetPropBool(Wearable, "m_bValidatedAttachedEntity", true)
+		Wearable.DispatchSpawn()
 
 		// (optional) Set the model to something new. (Obeys econ's ragdoll physics when ragdolling as well)
-		if (model_path)
-			wearable.SetModelSimple(model_path)
+		if (ModelPath)
+			Wearable.SetModelSimple(ModelPath)
 
 		// (optional) if one wants to delete the item entity, collect them within the player's scope, then send Kill() to the entities within the scope.
-		player.ValidateScriptScope()
-		local player_scope = player.GetScriptScope()
-		if (!("wearables" in player_scope))
-			player_scope.wearables <- []
-		player_scope.wearables.append(wearable)
+		Player.ValidateScriptScope()
+		local PlayerScope = Player.GetScriptScope()
+		if (!("Wearables" in PlayerScope))
+			PlayerScope.Wearables <- []
+		PlayerScope.Wearables.append(Wearable)
 
-		return wearable
+		return Wearable
 	}
-	function GetItemInSlot(player, slot)
+	function GetItemInSlot(Player, Slot)
 	{
-		for ( local child = player.FirstMoveChild(); child; child = child.NextMovePeer() )
-			if ( child instanceof CBaseCombatWeapon && child.GetSlot() == slot )
-				return child
+		for ( local Child = Player.FirstMoveChild(); Child; Child = Child.NextMovePeer() )
+			if ( Child instanceof CBaseCombatWeapon && Child.GetSlot() == Slot )
+				return Child
 	}
-	function SetWeaponModel(player, args)
+	function SetWeaponModel(Player, Args)
 	{
-		local wep = "slot" in args ? GetItemInSlot( player, args.slot ) : player.GetActiveWeapon()
+		local Weapon = "slot" in Args ? GetItemInSlot( Player, Args.Slot ) : Player.GetActiveWeapon()
 
-		local player_scope = player.GetScriptScope()
-		local modelindex = PrecacheModel( "model" in args ? args.model : args.type )
-		local tp_wearable = Entities.CreateByClassname( "tf_wearable" )
+		local PlayerScope = Player.GetScriptScope()
+		local ModelIndex = PrecacheModel( "model" in Args ? Args.Model : Args.Type )
+		local TPWearable = CreateByClassname( "tf_wearable" )
 
-		NetProps.SetPropInt( wep, "m_nRenderMode", kRenderTransColor )
-		NetProps.SetPropInt( wep, "m_clrRender", 0 )
+		SetPropInt( Weapon, "m_nRenderMode", kRenderTransColor )
+		SetPropInt( Weapon, "m_clrRender", 0 )
 
-		NetProps.SetPropInt( tp_wearable, "m_nModelIndex", modelindex )
-		NetProps.SetPropBool( tp_wearable, "m_AttributeManager.m_Item.m_bInitialized", true )
-		NetProps.SetPropBool( tp_wearable, "m_bValidatedAttachedEntity", true )
-		tp_wearable.SetOwner(player)
-		NetProps.SetPropEntity( tp_wearable, "m_hOwner", player)
-		tp_wearable.DispatchSpawn()
-		NetProps.SetPropBool( tp_wearable, "m_bForcePurgeFixedupStrings", true )
-		tp_wearable.AcceptInput( "SetParent", "!activator", player, player )
-		NetProps.SetPropInt( tp_wearable, "m_fEffects", 1|128 )
+		SetPropInt( TPWearable, "m_nModelIndex", modelindex )
+		SetPropBool( TPWearable, "m_AttributeManager.m_Item.m_bInitialized", true )
+		SetPropBool( TPWearable, "m_bValidatedAttachedEntity", true )
+		TPWearable.SetOwner(player)
+		SetPropEntity( TPWearable, "m_hOwner", Player)
+		TPWearable.DispatchSpawn()
+		SetPropBool( TPWearable, "m_bForcePurgeFixedupStrings", true )
+		TPWearable.AcceptInput( "SetParent", "!activator", Player, Player )
+		SetPropInt( TPWearable, "m_fEffects", 1|128 )
 
-		if (!("tp_wearables" in player_scope))
-			player_scope.tp_wearables <- []
-		player_scope.tp_wearables.append(tp_wearable)
+		if (!("TPWearables" in PlayerScope))
+			PlayerScope.TPWearables <- []
+		PlayerScope.TPWearables.append(TPWearable)
 
-		return tp_wearable
+		return TPWearable
 	}
 
 	//// TRANSFORMER MAIN FUNCTIONS ////
@@ -215,25 +218,25 @@ const MAX_WEAPONS = 8
 	// SCOUT TRANSFORMS //
 
 	// SOLDIER TRANSFORMS //
-	function BigrockBurst(target)
+	function BigrockBurst(Target)
 	{
 		// Finding the Player to Transform
 		local TransformerTarget
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex(i)
-			if (player == null)
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
 				continue
-			if (GetPlayerName(player) == target)
+			if (GetPlayerName(Player) == Target)
 			{
-				TransformerTarget = player;
+				TransformerTarget = Player;
 				break;
 			}
 		}
 
 		// Executing Transformation
 		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_SOLDIER)
-		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SOLDIER)
+		SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SOLDIER)
 
 		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/soldier_boss/bot_soldier_boss.mdl")
 
@@ -244,16 +247,16 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
+		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
 
 		// Stripping Cosmetics and Weapons
-		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
+		for (local Next, Current = TransformerTarget.FirstMoveChild(); Ccurrent != null; Current = Next)
 		{
-			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			SetPropBool(Current, "m_bForcePurgeFixedupStrings", true)
 
-			next = current.NextMovePeer()
-			if (current instanceof CEconEntity)
-				current.Destroy()
+			Next = Current.NextMovePeer()
+			if (Current instanceof CEconEntity)
+				Current.Destroy()
 		}
 
 		// Giving New Cosmetics and Weapons
@@ -271,36 +274,36 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
 
 		// Setting Item Attributes
-		local primary = GetItemInSlot(TransformerTarget, 0 )
+		local Primary = GetItemInSlot(TransformerTarget, 0 )
 
-		primary.SetTeam(4)
-		primary.AddAttribute("damage bonus", 2, 0)
-		primary.AddAttribute("fire rate bonus", 0.2, 0)
-		primary.AddAttribute("faster reload rate", 0.4, 0)
-		primary.AddAttribute("clip size upgrade atomic", 5.0, 0)
+		Primary.SetTeam(4)
+		Primary.AddAttribute("damage bonus", 2, 0)
+		Primary.AddAttribute("fire rate bonus", 0.2, 0)
+		Primary.AddAttribute("faster reload rate", 0.4, 0)
+		Primary.AddAttribute("clip size upgrade atomic", 5.0, 0)
 	}
 
 	// PYRO TRANSFORMS //
 
 	// DEMOMAN TRANSFORMS //
-	function HammerKnight(target)
+	function HammerKnight(Target)
 	{
 		local TransformerTarget
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex(i)
-			if (player == null)
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
 				continue
-			if (GetPlayerName(player) == target)
+			if (GetPlayerName(Player) == Target)
 			{
-				TransformerTarget = player;
+				TransformerTarget = Player;
 				break;
 			}
 		}
 
 		// Executing Transformation
 		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_DEMOMAN)
-		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_DEMOMAN)
+		SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_DEMOMAN)
 
 		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss.mdl")
 
@@ -311,16 +314,16 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "demoknight_giant")
+		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "demoknight_giant")
 
 		// Stripping Cosmetics and Weapons
-		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
+		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
 		{
-			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
 
-			next = current.NextMovePeer()
-			if (current instanceof CEconEntity)
-				current.Destroy()
+			Next = Current.NextMovePeer()
+			if (Current instanceof CEconEntity)
+				Current.Destroy()
 		}
 
 		GivePlayerWeapon(TransformerTarget, "tf_weapon_sword", 172)
@@ -338,48 +341,48 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCustomAttribute("mult charge turn control", 6, 0)
 
 		// Setting Item Attributes
-		local melee = GetItemInSlot(TransformerTarget, 2 )
+		local Melee = GetItemInSlot(TransformerTarget, 2 )
 
-		melee.AddAttribute("damage penalty", 0, 0)
-		melee.AddAttribute("fire rate penalty", 1.5, 0)
-		melee.AddAttribute("melee range multiplier", 0.001, 0)
+		Melee.AddAttribute("damage penalty", 0, 0)
+		Melee.AddAttribute("fire rate penalty", 1.5, 0)
+		Melee.AddAttribute("melee range multiplier", 0.001, 0)
 
-		local meleemodelinfo = {slot = 2, model = "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"}
-		SetWeaponModel(TransformerTarget, meleemodelinfo)
+		local MeleeModelInfo = {Slot = 2, Model = "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"}
+		SetWeaponModel(TransformerTarget, MeleeModelInfo)
 
 		// Setting Hammer Functionality
-		melee.ValidateScriptScope()
-		local meleescope = melee.GetScriptScope()
+		Melee.ValidateScriptScope()
+		local MeleeScope = Melee.GetScriptScope()
 
-		function HammerStrike(wielder)
+		function HammerStrike(Wielder)
 		{
 			// used in a fire input on attack
-			EntFireByHandle(wielder, "runscriptcode", @"
+			EntFireByHandle(Wielder, "runscriptcode", @"
 
-				local forward = self.EyeAngles().Forward(); forward.z = 0; forward.Norm();
-				local vHitPos = self.GetOrigin() + (forward * (128 * self.GetModelScale()));
+				local Forward = self.EyeAngles().Forward(); Forward.z = 0; Forward.Norm();
+				local HitPos = self.GetOrigin() + (Forward * (128 * self.GetModelScale()));
 				local Trace = {
-					start = vHitPos,
-					end = vHitPos - Vector(0, 0, 1000),
+					start = HitPos,
+					end = HitPos - Vector(0, 0, 1000),
 					mask = 33579137
 				}
 				TraceLineEx(Trace)
 				if (!Trace.hit) return
 
-				vHitPos = Trace.pos
-				ScreenShake(vHitPos, 15, 15, 1, 9999, 0, true)
-				DispatchParticleEffect(`hammer_impact_button`, vHitPos + Vector(0,0,25), Vector(0, 0, 0))
-				local hBomb = Entities.CreateByClassname(`tf_generic_bomb`)
+				HitPos = Trace.pos
+				ScreenShake(HitPos, 15, 15, 1, 9999, 0, true)
+				DispatchParticleEffect(`hammer_impact_button`, HitPos + Vector(0,0,25), Vector(0, 0, 0))
+				local Bomb = Entities.CreateByClassname(`tf_generic_bomb`)
 
-				hBomb.KeyValueFromInt(`damage`, 200)
-				hBomb.KeyValueFromInt(`radius`, 300)
-				hBomb.KeyValueFromInt(`friendlyfire`, 0)
-				hBomb.KeyValueFromString(`classname`, `necro_smasher`)
-				hBomb.DispatchSpawn()
-				hBomb.SetAbsOrigin(vHitPos)
-				hBomb.SetTeam(self.GetTeam())
-				hBomb.SetOwner(self)
-				hBomb.AcceptInput(`Detonate`, null, self, self)
+				Bomb.KeyValueFromInt(`damage`, 200)
+				Bomb.KeyValueFromInt(`radius`, 300)
+				Bomb.KeyValueFromInt(`friendlyfire`, 0)
+				Bomb.KeyValueFromString(`classname`, `necro_smasher`)
+				Bomb.DispatchSpawn()
+				Bomb.SetAbsOrigin(HitPos)
+				Bomb.SetTeam(self.GetTeam())
+				Bomb.SetOwner(self)
+				Bomb.AcceptInput(`Detonate`, null, self, self)
 
 				PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
 				EmitSoundEx({
@@ -390,57 +393,60 @@ const MAX_WEAPONS = 8
 					filter_type = 5
 				})
 
-				for (local hEnt = null; hEnt = Entities.FindByClassnameWithin(hEnt, `player`, vHitPos, 300);)
+				for (local Ent = null; Ent = FindByClassnameWithin(Ent, `player`, HitPos, 300);)
 				{
-					if (!hEnt || !hEnt.IsValid()) continue
-					if (0 != NetProps.GetPropInt(hEnt, `m_lifeState`) || hEnt.GetTeam() == TEAM_SPECTATOR || hEnt.GetTeam() == self.GetTeam()) continue
+					if (!Ent || !Ent.IsValid()) continue
+					if (0 != GetPropInt(hEnt, `m_lifeState`) || Ent.GetTeam() == TEAM_SPECTATOR || Ent.GetTeam() == self.GetTeam()) continue
 
-					hEnt.SetAbsVelocity(Vector(0, 0, 500))
+					Ent.SetAbsVelocity(Vector(0, 0, 500))
 				}
-			", 0, wielder, wielder)
+			", 0, Wielder, Wielder)
 		}
 
-		meleescope.last_fire <- 1e30
+		MeleeScope.LastFire <- 1e30
 
-		meleescope.Think <- function() {
+		MeleeScope.Think <- function()
+		{
+			local ParentButtons = GetPropInt(TransformerTarget, "m_nButtons")
+			local NextFire = GetPropFloat(Melee, "m_flNextPrimaryAttack")
+			local GlobalTime = Time()
 
-			local parent_buttons = NetProps.GetPropInt(TransformerTarget, "m_nButtons")
-			local next_swing = NetProps.GetPropFloat(melee, "m_flNextPrimaryAttack")
-			local time = Time()
-			if (parent_buttons & IN_ATTACK && next_swing <= time) {
-				last_fire = time
+			if (ParentButtons & IN_ATTACK && NextFire <= GlobalTime)
+			{
+				LastFire = GlobalTime
 			}
-			else if (last_fire + 0.4 <= time) {
+			else if (LastFire + 0.4 <= GlobalTime)
+			{
 				RobotTransformer.HammerStrike(self)
-				last_fire = 1e30
+				LastFire = 1e30
 			}
 
 			return -1;
 		}
 
-		AddThinkToEnt(melee, "Think")
+		AddThinkToEnt(Melee, "Think")
 	}
 
 	// HEAVY TRANSFORMS //
-	function DeflectorHeavy(target)
+	function DeflectorHeavy(Target)
 	{
 		// Finding the Player to Transform
 		local TransformerTarget
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local player = PlayerInstanceFromIndex(i)
-			if (player == null)
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
 				continue
-			if (GetPlayerName(player) == target)
+			if (GetPlayerName(Player) == Target)
 			{
-				TransformerTarget = player;
+				TransformerTarget = Player;
 				break;
 			}
 		}
 
 		// Executing Transformation
 		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_HEAVYWEAPONS)
-		NetProps.SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_HEAVYWEAPONS)
+		SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_HEAVYWEAPONS)
 
 		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/heavy_boss/bot_heavy_boss.mdl")
 
@@ -450,16 +456,16 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		NetProps.SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "heavy_deflector")
+		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "heavy_deflector")
 
 		// Stripping Cosmetics and Weapons
-		for (local next, current = TransformerTarget.FirstMoveChild(); current != null; current = next)
+		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
 		{
-			NetProps.SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
 
-			next = current.NextMovePeer()
-			if (current instanceof CEconEntity)
-				current.Destroy()
+			Next = Current.NextMovePeer()
+			if (Current instanceof CEconEntity)
+				Current.Destroy()
 		}
 
 		GivePlayerWeapon(TransformerTarget, "tf_weapon_minigun", 850)
@@ -476,11 +482,11 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
 
 		// Setting Item Attributes
-		local primary = GetItemInSlot(TransformerTarget, 0 )
+		local Primary = GetItemInSlot(TransformerTarget, 0 )
 
-		primary.SetTeam(4)
-		primary.AddAttribute("damage bonus", 1.5, 0)
-		primary.AddAttribute("attack projectiles", 1, 0)
+		Primary.SetTeam(4)
+		Primary.AddAttribute("damage bonus", 1.5, 0)
+		Primary.AddAttribute("attack projectiles", 1, 0)
 	}
 
 	// ENGINEER TRANSFORMS //
