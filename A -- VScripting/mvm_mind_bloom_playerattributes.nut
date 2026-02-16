@@ -106,8 +106,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 				Player.ValidateScriptScope()
 				local PlayerScope = Player.GetScriptScope()
 
-				PlayerScope.MaxHealthMult = 2
-				PlayerScope.CurrentHealthMult = 3
+				PlayerScope.MaxHealthMult <- 2
+				PlayerScope.CurrentHealthMult <- 3
 
 				BossRush_PlayerAttributes.PlayerHealthInit(Player)
 			}
