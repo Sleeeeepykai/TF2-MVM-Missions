@@ -23,11 +23,24 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
+::MaxPlayers <- MaxClients().tointeger()
+
 ::BossRush_PlayerAttributes <-
 {
 	// Cleanup Functions
 	function Cleanup()
 	{
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
+				continue
+
+			if ((Player.GetTeam()) == 2)
+			{
+				Player.TerminateScriptScope()
+			}
+		}
 		delete ::BossRush_PlayerAttributes
 	}
 
@@ -37,23 +50,25 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	{
 		local Player = GetPlayerFromUserID(params.userid)
 
-		if (!Player.IsBotOfType(1337) && (Player.GetTeam()) == 0)
+		if ((Player.GetTeam()) == 2)
 		{
 			Player.ValidateScriptScope()
 			local PlayerScope = Player.GetScriptScope()
 
-			PlayerScope.MaxHealthMult <- 2
-		}
-		if (!Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
-		{
-			EntFireByHandle(Player, "RunScriptCode", "BossRush_PlayerAttributes.PlayerHealthInit(activator)", 0.0, Player, null);
+			if (!("MaxHealthMult" in PlayerScope))
+			{
+				PlayerScope.MaxHealthMult <- 2
+				PlayerScope.CurrentHealthMult <- 3
+			}
+
+			EntFireByHandle(Player, "RunScriptCode", "BossRush_PlayerAttributes.PlayerHealthInit(activator)", 0.0, Player, null)
 		}
 	}
 	OnGameEvent_player_death = function (params)
 	{
 		local Player = GetPlayerFromUserID(params.userid)
 
-		if (!Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
+		if ((Player.GetTeam()) == 2)
 		{
 			Player.ValidateScriptScope()
 			local PlayerScope = Player.GetScriptScope()
@@ -64,10 +79,15 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			if("MaxHealthMult" in PlayerScope)
 			{
 				PlayerScope.MaxHealthMult -= 0.4
+				PlayerScope.CurrentHealthMult -= 0.4
 
 				if(PlayerScope.MaxHealthMult < 0)
 				{
 					PlayerScope.MaxHealthMult = 0
+				}
+				if(PlayerScope.CurrentHealthMult < 1)
+				{
+					PlayerScope.CurrentHealthMult = 1
 				}
 			}
 		}
@@ -77,9 +97,18 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
 			local Player = PlayerInstanceFromIndex(i)
-			if (!Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
+
+			if (Player == null)
+				continue
+
+			if ((Player.GetTeam()) == 2)
 			{
+				Player.ValidateScriptScope()
+				local PlayerScope = Player.GetScriptScope()
+
 				PlayerScope.MaxHealthMult = 2
+				PlayerScope.CurrentHealthMult = 3
+
 				BossRush_PlayerAttributes.PlayerHealthInit(Player)
 			}
 		}
@@ -93,45 +122,67 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		switch(PlayerClass)
 		{
 			case TF_CLASS_SCOUT:
-				Target.AddCustomAttribute("max health additive bonus", (125 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(125 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 125 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(125 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_SOLDIER:
-				Target.AddCustomAttribute("max health additive bonus", (200 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(200 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 200 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(200 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_PYRO:
-				Target.AddCustomAttribute("max health additive bonus", (175 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(175 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 175 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(175 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_DEMOMAN:
-				Target.AddCustomAttribute("max health additive bonus", (175 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(175 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 175 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(175 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_HEAVYWEAPONS:
-				Target.AddCustomAttribute("max health additive bonus", (300 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(300 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 300 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(300 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_ENGINEER:
-				Target.AddCustomAttribute("max health additive bonus", (125 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(125 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 125 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(125 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_MEDIC:
-				Target.AddCustomAttribute("max health additive bonus", (150 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(150 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 150 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(150 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_SNIPER:
-				Target.AddCustomAttribute("max health additive bonus", (125 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(125 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 125 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(125 * PlayerScope.CurrentHealthMult)
 				break
 			case TF_CLASS_SPY:
-				Target.AddCustomAttribute("max health additive bonus", (125 * PlayerScope.MaxHealthMult), -1)
-				Target.SetHealth(125 * PlayerScope.MaxHealthMult)
+				Player.AddCustomAttribute("max health additive bonus", 125 * PlayerScope.MaxHealthMult, -1)
+				Player.SetHealth(125 * PlayerScope.CurrentHealthMult)
 				break
 			default:
 				printl("Invalid Class")
 				break
 		}
+	}
+}
+
+for (local i = 1; i <= MaxPlayers; i++)
+{
+	local Player = PlayerInstanceFromIndex(i)
+
+	if (Player == null)
+		continue
+
+	if ((Player.GetTeam()) == 2)
+	{
+		Player.ValidateScriptScope()
+		local PlayerScope = Player.GetScriptScope()
+
+		if (!("MaxHealthMult" in PlayerScope))
+		{
+			PlayerScope.MaxHealthMult <- 2
+			PlayerScope.CurrentHealthMult <- 3
+		}
+
+		EntFireByHandle(Player, "RunScriptCode", "BossRush_PlayerAttributes.PlayerHealthInit(activator)", 0.0, Player, null)
 	}
 }
 
