@@ -39,7 +39,7 @@ SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 		SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_forward_range", 0)
 		SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 3000)
 
-		for (local TeleHint; TeleHint = FindByClassname(htelehint, "bot_hint_teleporter_exit");)
+		for (local TeleHint; TeleHint = FindByClassname(TeleHint, "bot_hint_teleporter_exit");)
 		{
 			SetPropString(TeleHint, "m_iszScriptThinkFunction", "")
 		}
@@ -49,15 +49,15 @@ SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
     OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 	OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
 
-	function SetDestroyCallback(entity, callback)
+	function SetDestroyCallback(Entity, Callback)
     {
-        entity.ValidateScriptScope();
-        local scope = entity.GetScriptScope();
-        scope.setdelegate({}.setdelegate({
-                parent   = scope.getdelegate()
-                id       = entity.GetScriptId()
-                index    = entity.entindex()
-                callback = callback
+        Entity.ValidateScriptScope();
+        local EntityScope = Entity.GetScriptScope();
+        EntityScope.setdelegate({}.setdelegate({
+                parent   = EntityScope.getdelegate()
+                id       = Entity.GetScriptId()
+                index    = Entity.entindex()
+                Callback = Callback
                 _get = function(k)
                 {
                     return parent[k];
@@ -66,10 +66,10 @@ SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
                 {
                     if (k == id)
                     {
-                        entity = EntIndexToHScript(index);
-                        local scope = entity.GetScriptScope();
-                        scope.self <- entity;
-                        callback.pcall(scope);
+                        Entity = EntIndexToHScript(index);
+                        local EntityScope = Entity.GetScriptScope();
+                        EntityScope.self <- Entity;
+                        Callback.pcall(Scope);
                     }
                     delete parent[k];
                 }
@@ -83,7 +83,7 @@ SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 
 		local Building = EntIndexToHScript(params.index)
 
-		if ( Player.GetTeam() != 3 || !player.IsBotOfType(1337))
+		if ( Player.GetTeam() != 3 || !Player.IsBotOfType(1337))
 			return
 
 		if ( params.object != 1 )
