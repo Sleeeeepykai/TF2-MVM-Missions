@@ -23,11 +23,22 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
+::MaxPlayers <- MaxClients().tointeger()
+
 ::RobotScripts_Kai <-
 {
 	// Cleanup Functions
 	function Cleanup()
 	{
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
+				continue
+
+			SetPropString(Player, "m_iszScriptThinkFunction", "")
+		}
+
 		delete ::RobotScripts_Kai
 	}
 
@@ -65,43 +76,64 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	function GiantBlitzSoldierLogic(Target)
 	{
 		Target.ValidateScriptScope()
-		TargetScope = Target.GetScriptScope()
+		local TargetScope = Target.GetScriptScope()
 
 		TargetScope.FiringStartTime <- -1
 		TargetScope.FirerateStartInterval <- 0.8
 		TargetScope.FirerateIncInterval <- 2
-		TargetScope.FirerateIncMult <- 0.1
-		TargetScope.MaxFirerateMult <- 0.1
+		TargetScope.FirerateIncMult <- 0.7
+		TargetScope.MaxFirerateMult <- 0.05
+
+		TargetScope.PrevNextFire <- -1
+		TargetScope.LastShotTime <- -1
 
 		TargetScope.Think <- function()
 		{
 			local Weapon = Target.GetActiveWeapon()
-			local NextFire = GetPropFloat(Weapon, "m_flNextPrimaryAttack")
+			if (!Weapon) return -1
 
+			local NextFire = GetPropFloat(Weapon, "m_flNextPrimaryAttack")
 			local GlobalTime = Time()
 
-			if (NextFire <= GlobalTime)
+			if (PrevNextFire < 0)
+				PrevNextFire = NextFire
+
+			local ShotFired = (PrevNextFire <= GlobalTime) && (NextFire > GlobalTime)
+
+			if (ShotFired)
 			{
 				if (FiringStartTime < 0)
 					FiringStartTime = GlobalTime
 
-				local FirerateIncCount = floor((GlobalTime - FiringStartTime) / FirerateIncInterval)
+				LastShotTime = GlobalTime
 
+				local FirerateIncCount = floor((GlobalTime - FiringStartTime) / FirerateIncInterval)
 				local CurrentFirerate = FirerateStartInterval * pow(FirerateIncMult, FirerateIncCount)
 
 				if (CurrentFirerate < MaxFirerateMult)
-					CurrentFireRate = MaxFirerateMult
+					CurrentFirerate = MaxFirerateMult
 
-				SetPropFloat(Weapon, "m_flNextPrimaryAttack", GlobalTime + CurrentFireRate)
+				local DesiredNext = GlobalTime + CurrentFirerate
+
+				if (NextFire > DesiredNext)
+					SetPropFloat(Weapon, "m_flNextPrimaryAttack", DesiredNext)
 			}
 			else
 			{
-				if (FiringStartTime >= 0 && NextFire - GlobalTime > 1)
+				local ParentButtons = GetPropInt(Target, "m_nButtons")
+
+				if (FiringStartTime >= 0 && LastShotTime >= 0 && GlobalTime - LastShotTime > 1)
+					FiringStartTime = -1
+
+				if(ParentButtons && IN_RELOAD)
 					FiringStartTime = -1
 			}
 
-			return 0.05
+			printl("Parent Buttons = " + ParentButtons)
+			PrevNextFire = GetPropFloat(Weapon, "m_flNextPrimaryAttack")
+			return -1
 		}
+
 		AddThinkToEnt(Target, "Think")
 	}
 }
