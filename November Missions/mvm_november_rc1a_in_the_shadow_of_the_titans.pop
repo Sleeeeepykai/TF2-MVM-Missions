@@ -29,9 +29,6 @@ WaveSchedule
             WeaponRestrictions PrimaryOnly
 
             Tag ChampionGiant
-
-            Item "Prince Tavish's Crown"
-            Item "Forgotten King's Pauldrons"
             
             CharacterAttributes
             {
@@ -74,23 +71,6 @@ WaveSchedule
 		}
 	}
 
-    Mission // Razorback Sniper (Wave 2)
-    {
-        Objective Sniper
-        Where spawnbot_sniper_b
-        Where spawnbot_sniper_c
-        BeginAtWave 2
-        RunForThisManyWaves 1
-        InitialCooldown 5
-        CooldownTime 30
-        DesiredCount 2
-
-        TFBot
-        {
-            Template T_TFBot_Sniper_Razorback
-        }
-    }
-
     //// WAVES ////
 
     Wave
@@ -113,7 +93,7 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`wave_start_tutorial_relay`, `Trigger`)
+                    EntFire(`wave_start_relay`, `Trigger`)
                   "
         }
         DoneOutput
@@ -125,18 +105,322 @@ WaveSchedule
                   "
         }
 
+        WaveSpawn // Tutorial
+        {
+            Name "Wave1_Tutorial"
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+                            WorldPosX = -160
+                            WorldPosY = -448.5
+                            WorldPosZ = 212
+                            id = `MasterTutorial`
+                            text = `The Control Point has been sabotaged! Capture Time shortened!`
+                            lifetime = 5
+                            play_sound = `ui/hint.wav`
+                        })
+                      "
+            }
+        }
+
         // Subwave 1
+        WaveSpawn // 16 Demoknights
+        {
+            Name "Wave1_Subwave1_Demoknights"
+            WaitForAllSpawned "Wave1_Tutorial"
+            Where spawnbot_e
+            TotalCount 16
+            MaxActive 12
+            SpawnCount 8
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 10
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Knight
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 10 Soldiers
+        {
+            Name "Wave1_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave1_Tutorial"
+            Where spawnbot_e
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 5
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+                Tag flankbot
+            }
+        }
+
+        WaveSpawn // 1 GBurst Soldier and 1 Quick-Uber
+        {
+            Name "Wave1_Subwave2_GBurstSoldier"
+            WaitForAllSpawned "Wave1_Subwave1_Soldiers"
+            Where spawnbot_e
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+
+        WaveSpawn // 14 Sandmen
+        {
+            Name "Wave1_Subwave2_Sandmen"
+            WaitForAllSpawned "Wave1_Subwave2_GBurstSoldier"
+            Where spawnbot_e
+            TotalCount 14
+            MaxActive 10
+            SpawnCount 7
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Sandman_Spammer
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 3 Soldiers and 9 Sandmen
+        {
+            Name "Wave1_Subwave2_SoldierSquads"
+            WaitForAllDead "Wave1_Subwave2_GBurstSoldier"
+            Where spawnbot_e
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 8
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Soldier
+                    Skill Expert
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 3 Soldiers and 9 Sandmen
+        {
+            Name "Wave1_Subwave2_SoldierSquads"
+            WaitForAllDead "Wave1_Subwave2_GBurstSoldier"
+            Where spawnbot_e
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Soldier
+                    Skill Expert
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        WaveSpawn // 8 Demoknights
+        {
+            Name "Wave1_Subwave2_Demoknights"
+            WaitForAllSpawned "Wave1_Subwave2_SoldierSquads"
+            Where spawnbot_e
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Knight
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        
+        // Subwave 3
+        WaveSpawn // 1 GBurst Soldier & 1 Quick-Uber
+        {
+            Name "Wave1_Subwave3_GBurstSoldier"
+            WaitForAllSpawned "Wave1_Subwave2_Demoknights"
+            Where spawnbot_e
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+
+        WaveSpawn // 4 Soldiers
+        {
+            Name "Wave1_Subwave3_Soldiers"
+            WaitForAllSpawned "Wave1_Subwave3_GBurstSoldier"
+            Where spawnbot_e
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 6 Sandmen
+        {
+            Name "Wave1_Subwave3_Sandmen"
+            WaitForAllSpawned "Wave1_Subwave3_GBurstSoldier"
+            Where spawnbot_e
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Sandman_Spammer
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+                Tag flankbot
+            }
+        }
+
         WaveSpawn // 1 Champion Soldier
         {
-            Name "Wave1_Subwave1_ChampionSoldier"
+            Name "Wave1_Subwave3_ChampionSoldier"
+            WaitForAllDead "Wave1_Subwave3_GBurstSoldier"
             Where spawnbot_e
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 5
+            WaitBeforeStarting 15
             WaitBetweenSpawns 0
             TotalCurrency 100
-
 
             TFBot
             {
@@ -162,116 +446,41 @@ WaveSchedule
                       "
             }
         }
+
+        WaveSpawn // Champion Giant Tutorial
+        {
+            Name "Wave1_Subwave3_ChampionTutorial"
+            WaitForAllSpawned "Wave1_Subwave3_ChampionSoldier"
+            WaitBeforeStarting 5
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+                            WorldPosX = -160
+                            WorldPosY = -448.5
+                            WorldPosZ = 212
+                            id = `MasterTutorial`
+                            text = `Champion Giants will instantly capture the point! Don't let them reach it!`
+                            lifetime = 5
+                            play_sound = `ui/hint.wav`
+                        })
+                      "
+            }
+        }
+
         WaveSpawn // 8 Demoknights
         {
-            Name "Wave1_Subwave1_Demoknights"
-            WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
+            Name "Wave1_Subwave3_Demoknights"
+            WaitForAllSpawned "Wave1_Subwave3_ChampionSoldier"
             Where spawnbot_e
             TotalCount 8
             MaxActive 8
             SpawnCount 8
-            WaitBeforeStarting 5
-            WaitBetweenSpawns 0
-            TotalCurrency 20
-
-            TFBot
-            {
-                Template T_TFBot_Demoman_Knight
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
-            }
-        }
-
-        WaveSpawn // 6 Soldiers
-        {
-            Name "Wave1_Subwave1_Soldiers"
-            WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
-            Where spawnbot_e
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 6
             WaitBeforeStarting 10
             WaitBetweenSpawns 0
-            TotalCurrency 60
-
-            TFBot
-            {
-                Class Soldier
-                Skill Expert
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
-                Tag flankbot
-            }
-        }
-
-
-        WaveSpawn // 1 GBurst Soldier, 1 Quick-Uber Medic and 4 Sandmen
-        {
-            Name "Wave1_Subwave1_GBurstSoldier2"
-            WaitForAllDead "Wave1_Subwave1_ChampionSoldier"
-            Where spawnbot_e
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 6
-            WaitBeforeStarting 25
-            WaitBetweenSpawns 0
-            TotalCurrency 100
-
-            Squad
-            {
-                TFBot
-                {
-                    Template T_TFBot_Giant_Soldier_Burst
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Medic_QuickUber
-                }
-                TFBot
-                {
-                    Template T_TFBot_Scout_Sandman_Spammer
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Scout_Sandman_Spammer
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Scout_Sandman_Spammer
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Scout_Sandman_Spammer
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-            }
-        }
-        WaveSpawn // 8 Demoknights
-        {
-            Name "Wave1_Subwave1_Demoknights2"
-            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
-            Where spawnbot_e
-            TotalCount 8
-            MaxActive 8
-            SpawnCount 8
-            WaitBeforeStarting 5
-            WaitBetweenSpawns 0
             TotalCurrency 20
 
             TFBot
@@ -280,120 +489,7 @@ WaveSchedule
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
-            }
-        }
-
-        WaveSpawn // 6 Soldiers
-        {
-            Name "Wave1_Subwave1_Soldiers2"
-            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
-            Where spawnbot_e
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 6
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 0
-            TotalCurrency 20
-
-            TFBot
-            {
-                Class Soldier
-                Skill Expert
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
                 Tag flankbot
-            }
-        }
-
-        WaveSpawn // 18 Sandmen
-        {
-            Name "Wave1_Subwave1_Sandmen"
-            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
-            Where spawnbot_e
-            TotalCount 18
-            MaxActive 18
-            SpawnCount 1
-            WaitBeforeStarting 25
-            WaitBetweenSpawns 0.1
-            TotalCurrency 80
-
-            RandomChoice
-            {
-                TFBot
-                {
-                    Template T_TFBot_Scout_Sandman_Spammer
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Scout_Sandman_Spammer
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-            }
-        }
-        WaveSpawn // 1 GBurst Soldier, 1 Quick-Uber Medic and 4 Soldiers
-        {
-            Name "Wave1_Subwave1_GBurstSoldier3"
-            WaitForAllSpawned "Wave1_Subwave1_Sandmen"
-            Where spawnbot_e
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 6
-            WaitBeforeStarting 5
-            WaitBetweenSpawns 0
-            TotalCurrency 100
-
-            Squad
-            {
-                TFBot
-                {
-                    Template T_TFBot_Giant_Soldier_Burst
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Medic_QuickUber
-                }
-                TFBot
-                {
-                    Class Soldier
-                    Skill Expert
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Soldier
-                    Skill Expert
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Soldier
-                    Skill Expert
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Soldier
-                    Skill Expert
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
             }
         }
     }

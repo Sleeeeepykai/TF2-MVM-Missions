@@ -128,7 +128,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		SendGlobalGameEvent("show_annotation", {
 			id = "ChampionGiantWarning"
 			text = "Champion Giant Active!"
-			lifetime = 5
+			lifetime = 4
 			follow_entindex = Target.entindex()
 			play_sound = "mvm/mvm_warning.wav"
 		})
