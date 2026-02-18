@@ -10,13 +10,14 @@ WaveSchedule
     AddSentryBusterWhenKillCountExceeds 15
 
     //// ROBOT TEMPLATES ////
+    
     Templates
     {
         T_TFBot_Giant_Heavyweapons_Rocket
         {
             Name "Giant Rocket Shotgun Heavy"
             Class Heavy
-            ClassIcon heavy_shotgun
+            ClassIcon soldier_shotgun_yoovy
             Skill Expert
             Health 5000
             Attributes MiniBoss
@@ -36,6 +37,7 @@ WaveSchedule
             ItemAttributes
             {
                 ItemName "TF_WEAPON_SHOTGUN_HWG"
+                "damage bonus" 5
                 "fire rate bonus" 2.5
                 "faster reload rate" 0.1
                 "override projectile type" 2
@@ -45,8 +47,180 @@ WaveSchedule
                 "projectile spread angle penalty" 5
             }
         }
+        
+        T_TFBot_Giant_Soldier_Overclock
+        {
+            Name "Giant Overclock Soldier"
+            Class Soldier
+            ClassIcon soldier_rocketrain_enhanced
+            Skill Expert
+            Health 4000
+            Attributes MiniBoss
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+            
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 3
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                "faster reload rate" -1
+                "reload full clip at once" 1
+                "clip size upgrade atomic" 196
+				"projectile speed decreased" 0.65
+            }
+
+            ChangeAttributes
+            {
+                Name "OverclockStage1"
+                Delay 1
+                Repeats 1
+                Cooldown -1
+            }
+
+            EventChangeAttributes
+            {
+                OverclockCooldown
+                {
+                    CharacterAttributes
+                    {
+                        "no_attack" 1
+                    }
+                    ChangeAttributes
+                    {
+                        Name "OverclockStage1"
+                        Delay 5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                OverclockStage1
+                {
+                    CharacterAttributes
+                    {
+                        "no_attack" 0
+                    }
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                        "fire rate bonus" 0
+                        "projectile spread angle penalty" 0
+                    }
+                    ChangeAttributes
+                    {
+                        Name "OverclockStage2"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                OverclockStage2
+                {
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                        "fire rate bonus" 0.5
+                        "projectile spread angle penalty" 1
+                    }
+                    ChangeAttributes
+                    {
+                        Name "OverclockStage3"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                OverclockStage3
+                {
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                        "fire rate bonus" 0.4
+                        "projectile spread angle penalty" 3
+                    }
+                    ChangeAttributes
+                    {
+                        Name "OverclockStage4"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                OverclockStage4
+                {
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                        "fire rate bonus" 0.25
+                        "projectile spread angle penalty" 4
+                    }
+                    ChangeAttributes
+                    {
+                        Name "OverclockStage5"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                OverclockStage5
+                {
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                        "fire rate bonus" 0.1
+                        "projectile spread angle penalty" 5
+                    }
+                    ChangeAttributes
+                    {
+                        Name "OverclockCooldown"
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }   
     }
+
     //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+    {
+        Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+    }
+
+    Mission // Spy (Wave 3)
+    {
+        Objective Spy
+        Where spawnbot_mission_spy
+        BeginAtWave 3
+        RunForThisManyWaves 1
+        InitialCooldown 30
+        CooldownTime 30
+        DesiredCount 3
+
+        TFBot
+        {
+            Template T_TFBot_Spy
+        }
+    }
 
     //// WAVES ////
 
@@ -58,6 +232,10 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Five Nights Frenzy (Adv)`)
+                    EntFire(`bombpath_clearall_relay`, `Trigger`, null, 1)
+                    EntFire(`bombpath_holograms_clear_relay`, `Trigger`, null, 2)
+
+                    EntFire(`bombpath_high_left_relay`, `Trigger`, null, 5)
                   "
         }
         StartWaveOutput
@@ -76,24 +254,164 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+        
+        // Subwave 1
+        WaveSpawn // 3 GDemos
+		{
+			Name W1_01
+			Where spawnbot
+			TotalCurrency 100
+			TotalCount 3
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 20		
+            TFBot
+			{
+				Template T_TFBot_Giant_Demo_Rapidfire
+                Health 3300
+			}
+		}
+        WaveSpawn // 30 Soldiers
+		{
+			Name W1_01
+			Where spawnbot_giant
+			TotalCurrency 100
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 10		
+            TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+        WaveSpawn // 30 Bat Scouts
+		{
+			Name W1_01
+			Where spawnbot
+			TotalCurrency 100
+			TotalCount 24
+			MaxActive 10
+			SpawnCount 8
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15		
+            TFBot
+			{
+				Template T_TFBot_Scout_Melee
+                ClassIcon scout_bat_nys
+			}
+		}
 
-        WaveSpawn
+        // Subwave 2
+        WaveSpawn // 10 Conch Soldiers
         {
+            Name "Wave1_Subwave2_ConchSoldiers"
+            WaitForAllSpawned "W1_01"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 7
+            SpawnCount 5
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 15
+            TotalCurrency 80
+            
+            TFBot
+            {
+                Template T_TFBot_Soldier_Extended_Concheror
+            }
+        }
+        WaveSpawn // 15 GRU Heavies
+        {
+            Name "Wave1_Subwave2_GRUHeavies"
+            WaitForAllSpawned "W1_01"
+            Where spawnbot_scattered
+            TotalCount 24
+            MaxActive 14
+            SpawnCount 12
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 15
+            TotalCurrency 120
+
+            TFBot
+            {
+                Name "Lightweight Champ"
+                Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 GPyro
+        {
+            Name "Wave1_Subwave3_GPyro"
+            WaitForAllSpawned "Wave1_Subwave2_GRUHeavies"
             Where spawnbot
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 0
+            WaitBeforeStarting 15
             WaitBetweenSpawns 0
+            TotalCurrency 60
 
             TFBot
             {
-                Template T_TFBot_Giant_Heavyweapons_Rocket
+                Template T_TFBot_Giant_Pyro
+                Attributes AlwaysFireWeapon
+            }
+        }
+        WaveSpawn // 10 BigHeal Medics
+        {
+            Name "Wave1_Subwave3_BigHeals"
+            WaitForAllSpawned "Wave1_Subwave3_GPyro"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            TFBot
+            {
+                Name "Big-Heal Medic"
+                Template T_TFBot_Medic_BigHeal
+            }
+        }
+
+        WaveSpawn // 8 Soldiers
+        {
+            Name "Wave1_Subwave3_Soldiers"
+            WaitForAllSpawned "Wave1_Subwave3_GPyro"
+            Where spawnbot
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
             }
         }
     }
     Wave
     {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_clearall_relay`, `Trigger`, null, 1)
+                    EntFire(`bombpath_holograms_clear_relay`, `Trigger`, null, 2)
+
+                    EntFire(`bombpath_left_relay`, `Trigger`, null, 5)
+                  "
+        }
         StartWaveOutput
         {
             Target BigNet
@@ -110,9 +428,348 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+        // Subwave 1
+        WaveSpawn // 1 Rocket Shotgun Heavy & 4 Big-Heal Medics
+        {
+            Name "Wave2_Subwave1_RocketHeavy"
+            Where spawnbot
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavyweapons_Rocket
+                }
+                TFBot
+                {
+                    Name "Big-Heal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Big-Heal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Big-Heal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Name "Big-Heal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 10 Bonk Scouts
+        {
+            Name "Wave2_Subwave1_BonkScouts"
+            WaitForAllSpawned "Wave2_Subwave1_RocketHeavy"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk
+            }
+        }
+
+        WaveSpawn // 5 Pyros
+        {
+            Name "Wave2_Subwave1_Pyros"
+            WaitForAllSpawned "Wave2_Subwave1_RocketHeavy"
+            Where spawnbot
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+                Attributes AlwaysFireWeapon
+            }
+        }
+        WaveSpawn // 10 Bonk Scouts
+        {
+            Name "Wave2_Subwave1_BonkScouts"
+            WaitForAllSpawned "Wave2_Subwave1_RocketHeavy"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk
+            }
+        }
+
+        WaveSpawn // 1 Rocket Shotgun Heavy & 4 Pyros
+        {
+            Name "Wave2_Subwave1_RocketHeavy2"
+            WaitForAllSpawned "Wave2_Subwave1_Pyros"
+            Where spawnbot
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavyweapons_Rocket
+                }
+                TFBot
+                {
+                    Class Pyro
+                    Skill Easy
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Class Pyro
+                    Skill Easy
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Class Pyro
+                    Skill Easy
+                    Attributes AlwaysFireWeapon
+                }
+                TFBot
+                {
+                    Class Pyro
+                    Skill Easy
+                    Attributes AlwaysFireWeapon
+                }
+            }
+        }
+        WaveSpawn // 10 Bonk Scouts
+        {
+            Name "Wave2_Subwave1_BonkScouts"
+            WaitForAllSpawned "Wave2_Subwave1_RocketHeavy2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 8 GRU Heavies and 8 Big-Heal Medics
+        {
+            Name "Wave2_Subwave2_GRUHeavies"
+            WaitForAllSpawned "Wave2_Subwave1_RocketHeavy2"
+            Where spawnbot_giant
+            TotalCount 16
+            MaxActive 12
+            SpawnCount 8
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 4
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Name "Lightweight Champ"
+                    Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
+                }
+                TFBot
+                {
+                    Name "Big-Heal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 1 GBurst Soldier
+        {
+            Name "Wave2_Subwave2_GBurstSoldier"
+            WaitForAllSpawned "Wave2_Subwave1_RocketHeavy2"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+
+        WaveSpawn // 8 GRU Heavies and 8 Big-Heal Medics
+        {
+            Name "Wave2_Subwave2_GRUHeavies2"
+            WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier"
+            Where spawnbot_giant
+            TotalCount 16
+            MaxActive 12
+            SpawnCount 8
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 4
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Name "Lightweight Champ"
+                    Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
+                }
+                TFBot
+                {
+                    Name "Big-Heal Medic"
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 2 GBurst Soldiers
+        {
+            Name "Wave2_Subwave2_GBurstSoldier2"
+            WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 2
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Reload
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Tank
+        {
+            Name "Wave2_Subwave3_Tank"
+            WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier2"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Tank
+            {
+                Name "tankboss"
+                Health 22000
+                Speed 75
+                StartingPathTrackNode "boss_path_1"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+        WaveSpawn // Small Heavies
+        {
+            Name "Wave2_Subwave3_Commons"
+            WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier2"
+            Where spawnbot_giant
+            TotalCount 24
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 6
+            TotalCurrency 60
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+            }
+        }
+        WaveSpawn // Bowmen
+        {
+            Name "Wave2_Subwave3_Commons"
+            WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier2"
+            Where spawnbot_invasion
+            TotalCount 30
+            MaxActive 12
+            SpawnCount 3
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 4
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Sniper_Huntsman
+                Skill Expert
+            }
+        }
+        WaveSpawn // Freddy Fazbear!!!!
+        {
+            Name "Wave2_Subwave3_Commons"
+            WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier2"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 30
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Heavyweapons
+                Skill Expert
+            }
+        }
+
     }
     Wave
     {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_clearall_relay`, `Trigger`, null, 1)
+                    EntFire(`bombpath_holograms_clear_relay`, `Trigger`, null, 2)
+
+                    EntFire(`bombpath_high_right_relay`, `Trigger`, null, 5)
+                  "
+        }
         StartWaveOutput
         {
             Target BigNet
@@ -128,6 +785,358 @@ WaveSchedule
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 GConch and 20 Demomen
+        {
+            Name "Wave3_Subwave1_GConchSquad"
+            Where spawnbot
+            TotalCount 21
+            MaxActive 21
+            SpawnCount 21
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Squad
+            {
+                NoWaitForFormation 1
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Extended_Concheror
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+            }
+        }
+
+        WaveSpawn // 1 GKnight
+        {
+            Name "Wave3_Subwave1_TripleBaka"
+            WaitForAllSpawned "Wave3_Subwave1_GConchSquad"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 25
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_DemoMan_PrinceTavish
+            }
+        }
+        WaveSpawn // 2 GKnights
+        {
+            Name "Wave3_Subwave1_TripleBaka2"
+            WaitForAllSpawned "Wave3_Subwave1_TripleBaka"
+            Where spawnbot_giant
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0.5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_DemoMan_PrinceTavish
+            }
+        }
+        WaveSpawn // 48 Scouts
+        {
+            Name "Wave3_Scouts"
+            WaitForAllSpawned "Wave3_Subwave1_TripleBaka"
+            Where spawnbot_giant
+            TotalCount 48
+            MaxActive 12
+            SpawnCount 4
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 1
+            TotalCurrency 160
+
+            TFBot
+            {
+                Class Scout
+                Skill Easy
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 2 Rocket Shotgun Heavies and 8 Demomen
+        {
+            Name "Wave3_Subwave2_RocketHeavy"
+            WaitForAllSpawned "Wave3_Subwave1_TripleBaka2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 5
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 20
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavyweapons_Rocket
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+                TFBot
+                {
+                    Class Demoman
+                    Skill Normal
+                }
+            }
+        }
+        WaveSpawn // 30 Flare Gun Pyros
+        {
+            Name "Wave3_Subwave2_Pyros"
+            WaitForAllSpawned "Wave3_Subwave2_RocketHeavy"
+            Where spawnbot_giant
+            TotalCount 30
+            MaxActive 12
+            SpawnCount 3
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 4
+            TotalCurrency 60
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun
+                }
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 3 Rocket Shotgun Heavies and 6 Uber Medics
+        {
+            Name "Wave3_Subwave3_Giants"
+            WaitForAllSpawned "Wave3_Subwave2_RocketHeavy"
+            Where spawnbot_giant
+            TotalCount 9
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 20
+            TotalCurrency 99
+            
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavyweapons_Rocket
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic
+                }
+            }
+        }
+        
+        WaveSpawn // im gonna fist you buddy
+        {
+            Name "Wave3_Subwave3_SteelGauntlets"
+            WaitForAllSpawned "Wave3_Subwave2_RocketHeavy"
+            Where spawnbot_giant
+            TotalCount 12
+            MaxActive 6
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 4
+            TotalCurrency 100
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Name "Mister Fister"
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+                TFBot
+                {
+                    Name "I'm gonna fist you buddy"
+                    Template T_TFBot_Heavyweapons_Fist
+                }
+            }
+        }
+
+        WaveSpawn // demomight (:
+        {
+            Name "Wave3_Subwave3_Giants"
+            WaitForAllSpawned "Wave3_Subwave2_RocketHeavy"
+            Where spawnbot_giant
+            TotalCount 50
+            MaxActive 7
+            SpawnCount 3
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 6
+            TotalCurrency 100
+            Support 1
+            TFBot
+            {
+                Template T_TFBot_Demoman_Knight
+            }
         }
     }
     Wave

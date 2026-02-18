@@ -1,3 +1,5 @@
+printl("November Master Script Enabled")
+
 ::CONST <- getconsttable()
 ::ROOT <- getroottable()
 
@@ -44,39 +46,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 
-	// Master Init Functions
-	function NovemberMasterInit()
-	{
-		EntFire("control_point_area", "AddOutput", "area_time_to_cap 10")
-
-		if(FindByName(null, "november_master_champion_flagzone"))
-		{
-			return
-		}
-
-		local NovemberMasterChampionFlagZone = SpawnEntityFromTable("trigger_multiple",
-		{
-			targetname = "november_master_champion_flagzone"
-			origin = "-160 -448.5 336"
-			filtername = "filter_champion_giant"
-			wait = 0.5
-			spawnflags = 1
-
-			"OnStartTouch" : "control_point_area,CaptureCurrentCP,null,0,-1"
-		})
-		NovemberMasterChampionFlagZone.SetSize(Vector(-120, -120, -176), Vector(120, 120, 176))
-
-		if(FindByName(null, "filter_champion_giant"))
-		{
-			return
-		}
-
-		local NovemberMasterChampionFilter = SpawnEntityFromTable("filter_tf_bot_has_tag", {
-			targetname = "filter_champion_giant"
-			tags = "ChampionGiant"
-		})
-	}
-
 	// Bot Tag Application Functions
 	OnGameEvent_player_spawn = function(params)
 	{
@@ -95,6 +64,17 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		if (Player.IsBotOfType(1337))
 		{
 			SetPropString(Player, "m_iszScriptThinkFunction", "")
+
+			Player.ValidateScriptScope()
+			local PlayerScope = Player.GetScriptScope()
+
+			if( ("Wearables" in PlayerScope) )
+			{
+				foreach(Wearable in PlayerScope.Wearables)
+				{
+					Wearable.Kill()
+				}
+			}
 		}
 	}
 
@@ -106,16 +86,89 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 
+	// Cosmetic Application Functions
+	function GivePlayerCosmetic(Player, ItemID, ModelPath = null)
+	{
+		local Weapon = CreateByClassname("tf_weapon_parachute")
+		SetPropInt(Weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
+		SetPropBool(Weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
+		Weapon.SetTeam(Player.GetTeam())
+		Weapon.DispatchSpawn()
+		Player.Weapon_Equip(Weapon)
+		local Wearable = GetPropEntity(Weapon, "m_hExtraWearable")
+		Weapon.Kill()
+
+		SetPropInt(Wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", ItemID)
+		SetPropBool(Wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
+		SetPropBool(Wearable, "m_bValidatedAttachedEntity", true)
+		Wearable.DispatchSpawn()
+
+		// (optional) Set the model to something new. (Obeys econ's ragdoll physics when ragdolling as well)
+		if (ModelPath)
+			Wearable.SetModelSimple(ModelPath)
+
+		// (optional) if one wants to delete the item entity, collect them within the player's scope, then send Kill() to the entities within the scope.
+		Player.ValidateScriptScope()
+		local PlayerScope = Player.GetScriptScope()
+		if (!("Wearables" in PlayerScope))
+			PlayerScope.Wearables <- []
+		PlayerScope.Wearables.append(Wearable)
+
+		return Wearable
+	}
+
+	// Champion Giant Functions
 	function ChampionGiantLogic(Target)
 	{
+		GivePlayerCosmetic(Target, 342, "models/player/items/demo/crown.mdl")
+		GivePlayerCosmetic(Target, 30517, "models/workshop/player/items/demo/sf14_deadking_pauldrons/sf14_deadking_pauldrons.mdl")
+
 		SetPropBool(Target, "m_bGlowEnabled", true)
 
 		SendGlobalGameEvent("show_annotation", {
 			id = "ChampionGiantWarning"
 			text = "Champion Giant Active!"
 			lifetime = 5
-			follow_entindex = Target
+			follow_entindex = Target.entindex()
 			play_sound = "mvm/mvm_warning.wav"
 		})
 	}
+
+	// Master Mode Functions
+	function NovemberMasterInit()
+	{
+		EntFire("control_point_area", "AddOutput", "area_time_to_cap 10")
+
+		if(FindByName(null, "november_master_champion_flagzone"))
+		{
+			return
+		}
+
+		local NovemberMasterChampionFlagZone = SpawnEntityFromTable("trigger_multiple",
+		{
+			targetname = "november_master_champion_flagzone"
+			origin = "-160 -448.5 212"
+			wait = 0.5
+			spawnflags = 1
+
+			"OnStartTouch" : "filter_champion_giant,TestActivator,,0,-1"
+		})
+		NovemberMasterChampionFlagZone.SetSize(Vector(-120, -120, -176), Vector(120, 120, 176))
+		NovemberMasterChampionFlagZone.EnableDraw()
+		NovemberMasterChampionFlagZone.SetSolid(SOLID_BBOX)
+
+		if(FindByName(null, "filter_champion_giant"))
+		{
+			return
+		}
+
+		local NovemberMasterChampionFilter = SpawnEntityFromTable("filter_tf_bot_has_tag", {
+			targetname = "filter_champion_giant"
+			tags = "ChampionGiant"
+
+			"OnPass" : "control_point,SetOwner,3,0,-1"
+		})
+	}
 }
+
+__CollectGameEventCallbacks(MVMNovember_MasterScripting)

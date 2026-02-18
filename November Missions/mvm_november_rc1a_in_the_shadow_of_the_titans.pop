@@ -15,9 +15,40 @@ WaveSchedule
     
     Templates
     {
-        T_TFBot_Giant_Soldier_Burst_Champion
+        T_TFBot_Giant_Soldier_Champion
         {
+            Name "Giant Champion Soldier"
+            Class Soldier
+            ClassIcon soldier_champion
+            Skill Expert
+            Health 7600
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
 
+            Tag ChampionGiant
+
+            Item "Prince Tavish's Crown"
+            Item "Forgotten King's Pauldrons"
+            
+            CharacterAttributes
+            {
+                "move speed penalty" 0.4
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "override footstep sound set" 3
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.25
+                "faster reload rate" 0.2
+                "clip size upgrade atomic" 4
+                "projectile speed decreased" 0.9
+            }
         }
     }
 
@@ -95,41 +126,51 @@ WaveSchedule
         }
 
         // Subwave 1
-        WaveSpawn // 1 GBurst Soldier and 1 Quick-Uber Medic
+        WaveSpawn // 1 Champion Soldier
         {
-            Name "Wave1_Subwave1_GBurstSoldier"
+            Name "Wave1_Subwave1_ChampionSoldier"
             Where spawnbot_e
-            TotalCount 2
-            MaxActive 2
-            SpawnCount 2
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
             WaitBeforeStarting 5
             WaitBetweenSpawns 0
             TotalCurrency 100
 
-            Squad
+
+            TFBot
             {
-                TFBot
-                {
-                    Template T_TFBot_Giant_Soldier_Burst
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Medic_QuickUber
-                }
+                Template T_TFBot_Giant_Soldier_Champion
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/soldier_mvm_m_dominationengineer03.mp3`
+                            channel = 7
+                            volume = 1
+                            pitch = 80
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                      "
             }
         }
         WaveSpawn // 8 Demoknights
         {
             Name "Wave1_Subwave1_Demoknights"
-            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier"
+            WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
             Where spawnbot_e
             TotalCount 8
             MaxActive 8
             SpawnCount 8
-            WaitBeforeStarting 0
+            WaitBeforeStarting 5
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -145,7 +186,7 @@ WaveSchedule
         WaveSpawn // 6 Soldiers
         {
             Name "Wave1_Subwave1_Soldiers"
-            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier"
+            WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
             Where spawnbot_e
             TotalCount 6
             MaxActive 6
@@ -169,7 +210,7 @@ WaveSchedule
         WaveSpawn // 1 GBurst Soldier, 1 Quick-Uber Medic and 4 Sandmen
         {
             Name "Wave1_Subwave1_GBurstSoldier2"
-            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier"
+            WaitForAllDead "Wave1_Subwave1_ChampionSoldier"
             Where spawnbot_e
             TotalCount 6
             MaxActive 6
@@ -1249,7 +1290,10 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`advexp_spawn_bc_relay` `Trigger`)
+                    IncludeScript(`mvm_november_master_script`, getroottable())
+                    MVMNovember_MasterScripting.NovemberMasterInit()
+
+                    EntFire(`advexp_spawn_e_relay` `Trigger`)
                   "
         }
         StartWaveOutput
@@ -1267,7 +1311,7 @@ WaveSchedule
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
-        }        
+        }
     }
     Wave
     {
