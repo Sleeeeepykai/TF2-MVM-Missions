@@ -77,6 +77,40 @@ WaveSchedule
                 "reload rate bonus" 0.2
             }
         }
+        T_TFBot_Giant_Pyro_Champion
+        {
+            Name "Champion Pyro"
+            Class Pyro
+            ClassIcon pyro_dragon_fury_giant_swordstone
+            Skill Expert
+            Health 6000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+
+            MaxVisionRange 1200
+
+            Tag ChampionGiant
+
+            Item "The Dragon's Fury"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.4
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "override footstep sound set" 6
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Dragon's Fury"
+                "afterburn duration bonus" 3
+                "mult_item_meter_charge_rate" 1.25
+            }
+        }
     }
 
     //// MISSION BOTS ////
@@ -771,7 +805,7 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 1 GRapid Demo and 4 Steel Gauntlets
+        WaveSpawn // 1 Champion Demo and 4 Steel Gauntlets
         {
             Name "Wave2_Subwave1_ChampionDemo"
             WaitForAllSpawned "Wave2_Subwave1_SteelGauntlets2"
@@ -964,9 +998,9 @@ WaveSchedule
             Where spawnbot_d
             TotalCount 10
             MaxActive 5
-            SpawnCount 1
+            SpawnCount 2
             WaitBeforeStarting 0
-            WaitBetweenSpawns 2
+            WaitBetweenSpawns 4
             TotalCurrency 20
 
             TFBot
@@ -979,41 +1013,170 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 3 Direct Hit Soldiers
+        WaveSpawn // 2 Direct Hit Soldiers and 4 Heavies
         {
             Name "Wave3_Subwave1_DirectHits2"
             WaitForAllSpawned "Wave3_Subwave1_DirectHits"
             Where spawnbot_d
-            TotalCount 3
-            MaxActive 2
-            SpawnCount 1
-            WaitBeforeStarting 10
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 15
             WaitBetweenSpawns 8
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_DirectHit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 2 Direct Hit Soldiers and 4 Demoknights
+        {
+            Name "Wave3_Subwave1_DirectHits2"
+            WaitForAllSpawned "Wave3_Subwave1_DirectHits"
+            Where spawnbot_d
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_DirectHit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_Knight
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_Knight
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GPyro and 3 Sandmen
+        {
+            Name "Wave3_Subwave2_GPyro"
+            WaitForAllSpawned "Wave3_Subwave1_DirectHits2"
+            Where spawnbot_d
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes AlwaysFireWeapon
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 5 Demoknights
+        {
+            Name "Wave3_Subwave2_Demoknights"
+            WaitForAllSpawned "Wave3_Subwave2_GPyro"
+            Where spawnbot_d
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 3
             TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Soldier_DirectHit
+                Template T_TFBot_Demoman_Knight
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
             }
         }
-        WaveSpawn // 3 Direct Hit Soldiers
+        WaveSpawn // 5 Demoknights
         {
-            Name "Wave3_Subwave1_DirectHits2"
-            WaitForAllSpawned "Wave3_Subwave1_DirectHits"
+            Name "Wave3_Subwave2_Demoknights"
+            WaitForAllSpawned "Wave3_Subwave2_GPyro"
             Where spawnbot_d
-            TotalCount 3
-            MaxActive 2
+            TotalCount 5
+            MaxActive 5
             SpawnCount 1
-            WaitBeforeStarting 10
-            WaitBetweenSpawns 8
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 3
             TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Soldier_DirectHit
+                Template T_TFBot_Demoman_Knight
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
@@ -1021,16 +1184,68 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 9 Heavies
+        WaveSpawn // 1 GPyro and 3 Sandmen
         {
-            Name "Wave3_Subwave1_Heavies2"
-            WaitForAllSpawned "Wave3_Subwave1_DirectHits"
+            Name "Wave3_Subwave2_GPyro2"
+            WaitForAllSpawned "Wave3_Subwave2_GPyro"
             Where spawnbot_d
-            TotalCount 9
-            MaxActive 6
-            SpawnCount 3
-            WaitBeforeStarting 10
-            WaitBetweenSpawns 8
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes AlwaysFireWeapon
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+        WaveSpawn // 4 Heavies
+        {
+            Name "Wave3_Subwave2_Heavies"
+            WaitForAllSpawned "Wave3_Subwave2_GPyro2"
+            Where spawnbot_d
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 10
             TotalCurrency 20
 
             TFBot
@@ -1042,161 +1257,21 @@ WaveSchedule
                 Tag capbot
             }
         }
-        WaveSpawn // 9 Demoknights
+        WaveSpawn // 4 Heavies
         {
-            Name "Wave3_Subwave1_Demoknights2"
-            WaitForAllSpawned "Wave3_Subwave1_DirectHits"
-            Where spawnbot_d
-            TotalCount 9
-            MaxActive 6
-            SpawnCount 3
-            WaitBeforeStarting 10
-            WaitBetweenSpawns 8
-            TotalCurrency 20
-
-            TFBot
-            {
-                Template T_TFBot_Demoman_Knight
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
-                Tag flankbot
-            }
-        }
-
-        // Subwave 2
-        WaveSpawn // 1 GDemo and 3 Heavies
-        {
-            Name "Wave3_Subwave2_GDemo"
-            WaitForAllSpawned "Wave3_Subwave1_DirectHits2"
+            Name "Wave3_Subwave2_Heavies"
+            WaitForAllSpawned "Wave3_Subwave2_GPyro2"
             Where spawnbot_d
             TotalCount 4
             MaxActive 4
-            SpawnCount 4
-            WaitBeforeStarting 20
-            WaitBetweenSpawns 0
-            TotalCurrency 60
-
-            Squad
-            {
-                TFBot
-                {
-                    Template T_TFBot_Giant_Demoman
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-            }
-        }
-        WaveSpawn // 1 GSoldier and 3 Demoknights
-        {
-            Name "Wave3_Subwave2_GSoldier"
-            WaitForAllSpawned "Wave3_Subwave1_DirectHits2"
-            Where spawnbot_d
-            TotalCount 4
-            MaxActive 4
-            SpawnCount 4
-            WaitBeforeStarting 20
-            WaitBetweenSpawns 0
-            TotalCurrency 60
-
-            Squad
-            {
-                TFBot
-                {
-                    Template T_TFBot_Giant_Soldier
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-            }
-        }
-
-        WaveSpawn // 6 Pyros
-        {
-            Name "Wave3_Subwave2_Pyros"
-            WaitForAllSpawned "Wave3_Subwave2_GDemo"
-            Where spawnbot_d
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 3
+            SpawnCount 2
             WaitBeforeStarting 5
             WaitBetweenSpawns 10
             TotalCurrency 20
 
             TFBot
             {
-                Class Pyro
-                Skill Easy
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
-            }
-        }
-        WaveSpawn // 6 Pyros
-        {
-            Name "Wave3_Subwave2_Pyros"
-            WaitForAllSpawned "Wave3_Subwave2_GDemo"
-            Where spawnbot_d
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 3
-            WaitBeforeStarting 5
-            WaitBetweenSpawns 10
-            TotalCurrency 20
-
-            TFBot
-            {
-                Class Pyro
+                Class Heavy
                 Skill Easy
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
@@ -1205,20 +1280,27 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 2 Direct Hits and 4 Heavies
+        WaveSpawn // 1 Champion Pyro, 2 Direct Hit Soldiers & 2 Big-Heal Medics
         {
-            Name "Wave3_Subwave2_DirectHits"
-            WaitForAllSpawned "Wave3_Subwave2_GDemo"
+            Name "Wave3_Subwave2_ChampionPyro"
+            WaitForAllDead "Wave3_Subwave2_GPyro2"
             Where spawnbot_d
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 3
-            WaitBeforeStarting 25
-            WaitBetweenSpawns 10
-            TotalCurrency 30
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
 
             Squad
             {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Champion
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
                 TFBot
                 {
                     Template T_TFBot_Soldier_DirectHit
@@ -1228,46 +1310,6 @@ WaveSchedule
                 }
                 TFBot
                 {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-            }
-        }
-        WaveSpawn // 2 Direct Hits and 4 Demoknights
-        {
-            Name "Wave3_Subwave2_DirectHits"
-            WaitForAllSpawned "Wave3_Subwave2_GSoldier"
-            Where spawnbot_d
-            TotalCount 6
-            MaxActive 6
-            SpawnCount 3
-            WaitBeforeStarting 25
-            WaitBetweenSpawns 10
-            TotalCurrency 30
-
-            Squad
-            {
-                TFBot
-                {
                     Template T_TFBot_Soldier_DirectHit
                     Attributes IgnoreFlag
                     BehaviorModifiers Push
@@ -1275,135 +1317,42 @@ WaveSchedule
                 }
                 TFBot
                 {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
+                    Template T_TFBot_Medic_BigHeal
                 }
                 TFBot
                 {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
+                    Template T_TFBot_Medic_BigHeal
                 }
             }
         }
-
-        WaveSpawn // 1 GDemo and 4 Heavies
+        WaveSpawn // 12 Sandmen
         {
-            Name "Wave3_Subwave2_GDemo2"
-            WaitForAllSpawned "Wave3_Subwave2_DirectHits"
+            Name "Wave3_Subwave2_Sandmen"
+            WaitForAllSpawned "Wave3_Subwave2_ChampionPyro"
             Where spawnbot_d
-            TotalCount 5
-            MaxActive 5
-            SpawnCount 5
-            WaitBeforeStarting 20
-            WaitBetweenSpawns 0
-            TotalCurrency 60
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 3
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 4
+            TotalCurrency 20
 
-            Squad
+            RandomChoice
             {
                 TFBot
                 {
-                    Template T_TFBot_Giant_Demoman
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
                     Attributes IgnoreFlag
                     BehaviorModifiers Push
                     Tag capbot
                 }
                 TFBot
                 {
-                    Class Heavy
-                    Skill Easy
+                    Template T_TFBot_Scout_Sandman_Spammer
+                    Attributes AlwaysCrit
                     Attributes IgnoreFlag
                     BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-                TFBot
-                {
-                    Class Heavy
-                    Skill Easy
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                }
-            }
-        }
-        WaveSpawn // 1 GSoldier and 4 Demoknights
-        {
-            Name "Wave3_Subwave2_GSoldier2"
-            WaitForAllSpawned "Wave3_Subwave2_DirectHits"
-            Where spawnbot_d
-            TotalCount 5
-            MaxActive 5
-            SpawnCount 5
-            WaitBeforeStarting 20
-            WaitBetweenSpawns 0
-            TotalCurrency 60
-
-            Squad
-            {
-                TFBot
-                {
-                    Template T_TFBot_Giant_Soldier
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-                    Tag flankbot
-                }
-                TFBot
-                {
-                    Template T_TFBot_Demoman_Knight
-                    Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
                     Tag flankbot
                 }
             }
