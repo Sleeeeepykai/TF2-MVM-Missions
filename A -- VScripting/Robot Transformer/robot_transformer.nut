@@ -126,7 +126,7 @@ const MAX_WEAPONS = 8
 	}
 	function GivePlayerWeapon(Player, ClassName, ItemID)
 	{
-		local Weapon = CreateByClassname(classname)
+		local Weapon = CreateByClassname(ClassName)
 		SetPropInt(Weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", ItemID)
 		SetPropBool(Weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
 		SetPropBool(Weapon, "m_bValidatedAttachedEntity", true)
@@ -187,19 +187,19 @@ const MAX_WEAPONS = 8
 	}
 	function SetWeaponModel(Player, Args)
 	{
-		local Weapon = "slot" in Args ? GetItemInSlot( Player, Args.Slot ) : Player.GetActiveWeapon()
+		local Weapon = "Slot" in Args ? GetItemInSlot( Player, Args.Slot ) : Player.GetActiveWeapon()
 
 		local PlayerScope = Player.GetScriptScope()
-		local ModelIndex = PrecacheModel( "model" in Args ? Args.Model : Args.Type )
+		local ModelIndex = PrecacheModel( "Model" in Args ? Args.Model : Args.Type )
 		local TPWearable = CreateByClassname( "tf_wearable" )
 
 		SetPropInt( Weapon, "m_nRenderMode", kRenderTransColor )
 		SetPropInt( Weapon, "m_clrRender", 0 )
 
-		SetPropInt( TPWearable, "m_nModelIndex", modelindex )
+		SetPropInt( TPWearable, "m_nModelIndex", ModelIndex )
 		SetPropBool( TPWearable, "m_AttributeManager.m_Item.m_bInitialized", true )
 		SetPropBool( TPWearable, "m_bValidatedAttachedEntity", true )
-		TPWearable.SetOwner(player)
+		TPWearable.SetOwner(Player)
 		SetPropEntity( TPWearable, "m_hOwner", Player)
 		TPWearable.DispatchSpawn()
 		SetPropBool( TPWearable, "m_bForcePurgeFixedupStrings", true )
@@ -250,7 +250,7 @@ const MAX_WEAPONS = 8
 		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
 
 		// Stripping Cosmetics and Weapons
-		for (local Next, Current = TransformerTarget.FirstMoveChild(); Ccurrent != null; Current = Next)
+		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
 		{
 			SetPropBool(Current, "m_bForcePurgeFixedupStrings", true)
 
@@ -319,7 +319,7 @@ const MAX_WEAPONS = 8
 		// Stripping Cosmetics and Weapons
 		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
 		{
-			SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			SetPropBool(Current, "m_bForcePurgeFixedupStrings", true)
 
 			Next = Current.NextMovePeer()
 			if (Current instanceof CEconEntity)
@@ -387,7 +387,7 @@ const MAX_WEAPONS = 8
 				PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
 				EmitSoundEx({
 					sound_name = `misc/halloween/strongman_fast_impact_01.wav`
-					origin = vHitPos
+					origin = HitPos
 					volume      = 1
 					sound_level = (40 + (20 * log10(9999 / 36))).tointeger()
 					filter_type = 5
@@ -396,29 +396,28 @@ const MAX_WEAPONS = 8
 				for (local Ent = null; Ent = FindByClassnameWithin(Ent, `player`, HitPos, 300);)
 				{
 					if (!Ent || !Ent.IsValid()) continue
-					if (0 != GetPropInt(hEnt, `m_lifeState`) || Ent.GetTeam() == TEAM_SPECTATOR || Ent.GetTeam() == self.GetTeam()) continue
+					if (0 != GetPropInt(Ent, `m_lifeState`) || Ent.GetTeam() == TEAM_SPECTATOR || Ent.GetTeam() == self.GetTeam()) continue
 
 					Ent.SetAbsVelocity(Vector(0, 0, 500))
 				}
-			", 0, Wielder, Wielder)
+			", 0.2, Wielder, Wielder)
 		}
 
 		MeleeScope.LastFire <- 1e30
 
+		SetPropInt(TransformerTarget, "m_Shared.m_iNextMeleeCrit", -2)
 		MeleeScope.Think <- function()
 		{
-			local ParentButtons = GetPropInt(TransformerTarget, "m_nButtons")
-			local NextFire = GetPropFloat(Melee, "m_flNextPrimaryAttack")
-			local GlobalTime = Time()
+			local Owner = self.GetOwner()
 
-			if (ParentButtons & IN_ATTACK && NextFire <= GlobalTime)
+			if (GetPropInt(Owner, "m_Shared.m_iNextMeleeCrit") == 0)
 			{
-				LastFire = GlobalTime
-			}
-			else if (LastFire + 0.4 <= GlobalTime)
-			{
-				RobotTransformer.HammerStrike(self)
-				LastFire = 1e30
+				if (Owner.GetActiveWeapon() == self)
+				{
+					RobotTransformer.HammerStrike(self)
+
+					SetPropInt(TransformerTarget, "m_Shared.m_iNextMeleeCrit", -2)
+				}
 			}
 
 			return -1;
@@ -461,7 +460,7 @@ const MAX_WEAPONS = 8
 		// Stripping Cosmetics and Weapons
 		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
 		{
-			SetPropBool(current, "m_bForcePurgeFixedupStrings", true)
+			SetPropBool(Current, "m_bForcePurgeFixedupStrings", true)
 
 			Next = Current.NextMovePeer()
 			if (Current instanceof CEconEntity)

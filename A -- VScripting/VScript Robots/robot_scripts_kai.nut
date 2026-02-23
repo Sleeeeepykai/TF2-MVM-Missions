@@ -120,17 +120,15 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			}
 			else
 			{
-				local ParentButtons = GetPropInt(Target, "m_nButtons")
+				local WeaponClip = GetPropInt(Weapon, "m_iClip1")
 
 				if (FiringStartTime >= 0 && LastShotTime >= 0 && GlobalTime - LastShotTime > 1)
 					FiringStartTime = -1
 
-				if(ParentButtons && IN_RELOAD)
+				if(WeaponClip == 0 || GetPropBool(weapon, "m_bInReload"))
 					FiringStartTime = -1
 			}
 
-			printl("Parent Buttons = " + ParentButtons)
-			PrevNextFire = GetPropFloat(Weapon, "m_flNextPrimaryAttack")
 			return -1
 		}
 

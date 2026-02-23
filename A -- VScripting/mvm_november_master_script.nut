@@ -47,7 +47,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 
 	// Bot Tag Application Functions
-	OnGameEvent_player_spawn = function(params)
+	function OnGameEvent_player_spawn(params)
 	{
 		local Player = GetPlayerFromUserID(params.userid)
 
@@ -57,7 +57,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			return
 		}
 	}
-	OnGameEvent_player_death = function(params)
+	function OnGameEvent_player_death(params)
 	{
 		local Player = GetPlayerFromUserID(params.userid)
 
@@ -135,10 +135,22 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 
 	// Master Mode Functions
+	function OnGameEvent_teamplay_round_start(params)
+	{
+		if(params.full_reset)
+		{
+			for (local Ent = null; Ent = FindByClassname(Ent, "trigger_timer_door");)
+			{
+				local CapturePointName = GetPropString(Ent, "m_iszCapPointName")
+
+				SetPropFloat(Ent, "m_flCapTime", 10)
+
+				Ent.AcceptInput("SetControlPoint", CapturePointName, null, null)
+			}
+		}
+	}
 	function NovemberMasterInit()
 	{
-		EntFire("control_point_area", "AddOutput", "area_time_to_cap 10")
-
 		if(FindByName(null, "november_master_champion_flagzone"))
 		{
 			return
@@ -167,6 +179,32 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			tags = "ChampionGiant"
 
 			"OnPass" : "control_point,SetOwner,3,0,-1"
+		})
+
+		if(FindByName(null, "master_transition_shake"))
+		{
+			return
+		}
+
+		local NovemberMasterTransitionShake = SpawnEntityFromTable("env_shake", {
+			targetname = "master_transition_shake"
+			amplitude = 12
+			duration = 1
+			frequency = 40
+			spawnflags = 5
+		})
+
+		if (FindByName(null, "master_transition_fade"))
+		{
+			return
+		}
+
+		local NovemberMasterTransitionFade = SpawnEntityFromTable("env_fade", {
+			targetname = "master_transition_fade"
+			duration = 3
+			renderamt = 255
+			rendercolor = "122 0 105"
+			spawnflags = 1
 		})
 	}
 }
