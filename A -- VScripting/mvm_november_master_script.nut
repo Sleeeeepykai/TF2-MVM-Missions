@@ -328,7 +328,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		printl("November Void Success")
 	}
-
 }
 
 __CollectGameEventCallbacks(MVMNovember_MasterScripting)
