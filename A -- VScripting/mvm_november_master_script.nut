@@ -32,6 +32,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	// Cleanup Functions
 	function Cleanup()
 	{
+		printl("November Master Cleanup")
+
+		EntFire("env_sun", "AddOutput", "rendercolor 251 226 200 400")
+		EntFire("env_soundscape_proxy*", "Enable")
+		SetSkyboxTexture("sky_november_01")
+
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
 			local Player = PlayerInstanceFromIndex(i)
@@ -39,12 +45,15 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 				continue
 
 			SetPropString(Player, "m_iszScriptThinkFunction", "")
+			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", 11891299)
+			SetPropInt(Player, "m_Local.m_fog.colorPrimary", 11891299)
 		}
 
 		delete ::MVMNovember_MasterScripting
 	}
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
+    OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
 
 	// Bot Tag Application Functions
 	function OnGameEvent_player_spawn(params)
@@ -75,6 +84,89 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 					Wearable.Kill()
 				}
 			}
+		}
+
+		for (local Entity; Entity = FindByClassnameWithin(Entity, "item_currencypack_*", Player.GetOrigin(), 100 );)
+		{
+			Entity.ValidateScriptScope()
+			local EntityScope = Entity.GetScriptScope()
+			EntityScope.RealOrigin <- Entity.GetOrigin()
+
+			function CollectPack()
+			{
+				local MoneyPack = self
+
+				if (!MoneyPack.IsValid())
+				{
+					return
+				}
+				if (GetPropBool(MoneyPack, "m_bDistributed"))
+				{
+					return
+				}
+
+				local MoneyOrigin = EntityScope.RealOrigin
+				local MoneyOwner = GetPropEntity(MoneyPack, "m_hOwnerEntity")
+				local MoneyModel = MoneyPack.GetModelName()
+
+				local ObjectiveResource = FindByClassname(null, "tf_objective_resource")
+
+				local OldCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
+				MoneyPack.Kill()
+				local NewCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
+
+				local MoneyPackCurrencyCount = OldCashCount - NewCashCount
+
+				local MVMStats = FindByClassname(null, "tf_mann_vs_machine_stats")
+				SetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired", GetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired") + MoneyPackCurrencyCount)
+
+				for (local i = 1; i <= MaxPlayers; i++)
+				{
+					local Player = PlayerInstanceFromIndex(i)
+					if (Player && !Player.IsBotOfType(1337))
+					{
+						Player.AddCurrency(MoneyPackCurrencyCount)
+					}
+				}
+
+				local RedMoneyPack = CreateByClassname("item_currencypack_custom")
+				SetPropBool(RedMoneyPack, "m_bDistributed", true )
+				SetPropEntity(RedMoneyPack, "m_hOwnerEntity", MoneyPack)
+				DispatchSpawn(RedMoneyPack)
+				RedMoneyPack.SetModel(MoneyModel)
+
+				TraceWorld <-
+				{
+					start = MoneyOrigin,
+					end = MoneyOrigin - Vector( 0, 0, 50000 )
+					mask = MASK_SOLID_BRUSHONLY
+				}
+				TraceLineEx(TraceWorld)
+				if (TraceWorld.hit)
+				{
+					RedMoneyPack.SetAbsOrigin(TraceWorld.pos + Vector( 0, 0, 5 ))
+				}
+				else
+				{
+					RedMoneyPack.SetAbsOrigin(MoneyOrigin)
+				}
+
+				EntityScope.DespawnTime <- Time() + 30
+				function DespawnThink()
+				{
+					if ( Time() < DespawnTime )
+					{
+						return
+					}
+
+					RedMoneyPack.Kill()
+				}
+				AddThinkToEnt(RedMoneyPack, "DespawnThink")
+			}
+			EntityScope.CollectPack <- CollectPack
+
+			Entity.SetAbsOrigin(Vector( -1000000, -1000000, -1000000 ))
+			EntFireByHandle(Entity, "CallScriptFunction", "CollectPack", 0, null, null)
 		}
 	}
 
@@ -149,6 +241,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			}
 		}
 	}
+
 	function NovemberMasterInit()
 	{
 		if(FindByName(null, "november_master_champion_flagzone"))
@@ -203,10 +296,39 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			targetname = "master_transition_fade"
 			duration = 3
 			renderamt = 255
-			rendercolor = "122 0 105"
+			rendercolor = "143 99 181"
 			spawnflags = 1
 		})
 	}
+	function NovemberMasterVoidInit()
+	{
+		printl("November Void Enabled")
+
+		SetSkyboxTexture("sky_void_01")
+		EntFire("env_sun", "AddOutput", "rendercolor 234 200 251 400")
+		EntFire("env_soundscape_proxy*", "Disable")
+
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
+				continue
+
+			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", 9397173)
+			SetPropInt(Player, "m_Local.m_fog.colorPrimary", 9397173)
+			SetPropInt(Player, "m_Local.m_audio.soundscapeIndex", 153)
+		}
+
+		for (local Soundscape; Soundscape = FindByClassname(Soundscape, "env_soundscape");)
+		{
+			printl(Soundscape)
+			Soundscape.KeyValueFromString("soundscape", "November.Void")
+			Soundscape.DispatchSpawn()
+		}
+
+		printl("November Void Success")
+	}
+
 }
 
 __CollectGameEventCallbacks(MVMNovember_MasterScripting)
