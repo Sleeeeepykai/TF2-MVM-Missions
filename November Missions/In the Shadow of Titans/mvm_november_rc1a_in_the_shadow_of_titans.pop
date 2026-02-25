@@ -2117,6 +2117,7 @@ WaveSchedule
 
                     EntFire(`advexp_spawn_e_relay` `Trigger`)
                     EntFire(`spawn_e_tank_setred`, `Disable`)
+                    EntFire(`tank_tutorial_message_2`, `Disable`)
                   "
         }
         StartWaveOutput
@@ -2144,7 +2145,8 @@ WaveSchedule
                 TFBot { ClassIcon tank_combat_railgun_dual_kai }
             }
         }
-        // Subwave 1
+
+        // Tank Intro
         WaveSpawn // 1 Dual Railgun Tank
         {
             Name "Wave4_Subwave1_RailgunTank"
@@ -2175,7 +2177,6 @@ WaveSchedule
                       "
             }
         }
-
         WaveSpawn // Set up TankSpawner Name
         {
             Name "Wave4_Subwave1_Init"
@@ -2195,7 +2196,7 @@ WaveSchedule
         {
             Name "Wave4_Subwave1_TankSlowdown"
             WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
-            WaitBeforeStarting 5
+            WaitBeforeStarting 10
 
             FirstSpawnOutput
             {
@@ -2205,6 +2206,104 @@ WaveSchedule
                         EntFire(`TankSpawner`, `SetSpeed`, 75)
                       "
             }
+        }
+
+        // Subwave 1
+        WaveSpawn // 9 Soldiers
+        {
+            Name "Wave4_Subwave1_SoldierHorde"
+            WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
+            Where spawnbot_e
+            Support Limited
+            TotalCount 9
+            MaxActive 9
+            SpawnCount 9
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 10
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 9 Soldiers
+        {
+            Name "Wave4_Subwave1_SoldierHorde2"
+            WaitForAllSpawned "Wave4_Subwave1_SoldierHorde"
+            Where spawnbot_e
+            Support Limited
+            TotalCount 9
+            MaxActive 9
+            SpawnCount 9
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 10
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+                Tag flankbot
+            }
+        }
+        WaveSpawn // Support Soldiers
+        {
+            Name "Wave4_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
+            Where spawnbot_a
+            Where spawnbot_b
+            Where spawnbot_c
+            Where spawnbot_d
+            Where spawnbot_e
+            Support 1
+            TotalCount 20
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 4
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 1 GRapid
+        {
+            Name "Wave4_Subwave1_GRapid"
+            WaitForAllSpawned "Wave4_Subwave1_SoldierHorde2"
+            Where spawnbot_e
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn
+        {
+            Name "Wave4_Subwave1_"
         }
     }
     Wave

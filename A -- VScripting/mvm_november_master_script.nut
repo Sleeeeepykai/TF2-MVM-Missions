@@ -45,8 +45,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 				continue
 
 			SetPropString(Player, "m_iszScriptThinkFunction", "")
-			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", 11891299)
-			SetPropInt(Player, "m_Local.m_fog.colorPrimary", 11891299)
+			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", MVMNovember_MasterScripting.RGBAToColor32(181, 114, 99, 255))
+			SetPropInt(Player, "m_Local.m_fog.colorPrimary", MVMNovember_MasterScripting.RGBAToColor32(181, 114, 99, 255))
 		}
 
 		delete ::MVMNovember_MasterScripting
@@ -54,6 +54,13 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
     OnGameEvent_mvm_wave_complete = function(_) { Cleanup() }
+
+	// Helper Function :)
+
+	function RGBAToColor32(r, g, b, a)
+	{
+		return ((r) | (g << 8) | (b << 16) | (a << 24))
+	}
 
 	// Bot Tag Application Functions
 	function OnGameEvent_player_spawn(params)
@@ -314,8 +321,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			if (Player == null)
 				continue
 
-			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", 9397173)
-			SetPropInt(Player, "m_Local.m_fog.colorPrimary", 9397173)
+			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", MVMNovember_MasterScripting.RGBAToColor32(143, 99, 181, 255))
+			SetPropInt(Player, "m_Local.m_fog.colorPrimary", MVMNovember_MasterScripting.RGBAToColor32(143, 99, 181, 255))
 			SetPropInt(Player, "m_Local.m_audio.soundscapeIndex", 153)
 		}
 
