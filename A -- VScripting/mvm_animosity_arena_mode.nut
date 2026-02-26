@@ -210,7 +210,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		Target.AddCustomAttribute("damage force reduction", 0.1, -1)
 		Target.AddCustomAttribute("airblast vulnerability multiplier", 0.1, -1)
-		Target.AddCustomAttribute("health regen", 40, -1)
+		Target.AddCustomAttribute("health regen", 50, -1)
 		Target.AddCustomAttribute("ammo regen", 1, -1)
 
 		Target.AddCustomAttribute("override footstep sound set", 4, -1)
