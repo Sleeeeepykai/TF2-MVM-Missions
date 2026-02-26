@@ -90,7 +90,7 @@ SetValue("tf_bot_engineer_mvm_sentry_hint_bomb_backward_range", 99999)
 			return
 
 		Building.ValidateScriptScope()
-		local BuildingScope = building.GetScriptScope()
+		local BuildingScope = Building.GetScriptScope()
 
 		BuildingScope.Think <- function() {
 			if (GetPropInt(self, "m_iState") != 0)

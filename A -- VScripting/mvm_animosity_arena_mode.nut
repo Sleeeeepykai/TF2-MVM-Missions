@@ -34,7 +34,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
     {
 		SetValue("tf_bot_flag_escort_max_count", 4)
 
-		EntFire("point_commentary_node*", "Kill", null, 0.0, null)
+		//EntFire("point_commentary_node*", "Kill", null, 0.0, null)
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
@@ -109,17 +109,17 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnGameEvent_mvm_begin_wave = function (params)
 	{
-		if(FindByName(null, "arena_mode_commentary_node"))
-			return
+		//if(FindByName(null, "arena_mode_commentary_node"))
+		//	return
 
-		local ObjectiveCommNode = SpawnEntityFromTable("point_commentary_node",
-		{
-			targetname = "arena_mode_commentary_node"
-		})
+		//local ObjectiveCommNode = SpawnEntityFromTable("point_commentary_node",
+		//{
+		//	targetname = "arena_mode_commentary_node"
+		//})
 	}
 	OnGameEvent_mvm_wave_complete = function(params)
 	{
-		EntFire("point_commentary_node*", "Kill", null, 0.0, null)
+		//EntFire("point_commentary_node*", "Kill", null, 0.0, null)
 
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
@@ -204,8 +204,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "red_lite")
 
-		Target.AddCustomAttribute("max health additive bonus", 3825, -1)
-		Target.SetHealth(4000)
+		Target.AddCustomAttribute("max health additive bonus", 4825, -1)
+		Target.SetHealth(5000)
 
 		Target.AddCustomAttribute("move speed penalty", 0.5, -1)
 		Target.AddCustomAttribute("damage force reduction", 0.1, -1)
@@ -323,6 +323,11 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
 			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
+			{
+				continue
+			}
+
 			if (Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
 			{
 				Player.TakeDamage(99999, 0, null)
