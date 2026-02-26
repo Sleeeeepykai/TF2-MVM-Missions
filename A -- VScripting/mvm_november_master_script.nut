@@ -79,8 +79,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		if (Player.IsBotOfType(1337))
 		{
-			SetPropString(Player, "m_iszScriptThinkFunction", "")
-
 			Player.ValidateScriptScope()
 			local PlayerScope = Player.GetScriptScope()
 
@@ -91,89 +89,96 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 					Wearable.Kill()
 				}
 			}
-		}
-
-		for (local Entity; Entity = FindByClassnameWithin(Entity, "item_currencypack_*", Player.GetOrigin(), 100 );)
-		{
-			Entity.ValidateScriptScope()
-			local EntityScope = Entity.GetScriptScope()
-			EntityScope.RealOrigin <- Entity.GetOrigin()
-
-			function CollectPack()
+			if( ("TPWearables" in PlayerScope) )
 			{
-				local MoneyPack = self
-
-				if (!MoneyPack.IsValid())
+				foreach(TPWearable in PlayerScope.TPWearables)
 				{
-					return
+					TPWearable.Kill()
 				}
-				if (GetPropBool(MoneyPack, "m_bDistributed"))
+			}
+
+			for (local Entity; Entity = FindByClassnameWithin(Entity, "item_currencypack_*", Player.GetOrigin(), 100 );)
+			{
+				Entity.ValidateScriptScope()
+				local EntityScope = Entity.GetScriptScope()
+				EntityScope.RealOrigin <- Entity.GetOrigin()
+
+				function CollectPack()
 				{
-					return
-				}
+					local MoneyPack = self
 
-				local MoneyOrigin = EntityScope.RealOrigin
-				local MoneyOwner = GetPropEntity(MoneyPack, "m_hOwnerEntity")
-				local MoneyModel = MoneyPack.GetModelName()
-
-				local ObjectiveResource = FindByClassname(null, "tf_objective_resource")
-
-				local OldCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
-				MoneyPack.Kill()
-				local NewCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
-
-				local MoneyPackCurrencyCount = OldCashCount - NewCashCount
-
-				local MVMStats = FindByClassname(null, "tf_mann_vs_machine_stats")
-				SetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired", GetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired") + MoneyPackCurrencyCount)
-
-				for (local i = 1; i <= MaxPlayers; i++)
-				{
-					local Player = PlayerInstanceFromIndex(i)
-					if (Player && !Player.IsBotOfType(1337))
+					if (!MoneyPack.IsValid())
 					{
-						Player.AddCurrency(MoneyPackCurrencyCount)
+						return
 					}
-				}
-
-				local RedMoneyPack = CreateByClassname("item_currencypack_custom")
-				SetPropBool(RedMoneyPack, "m_bDistributed", true )
-				SetPropEntity(RedMoneyPack, "m_hOwnerEntity", MoneyPack)
-				DispatchSpawn(RedMoneyPack)
-				RedMoneyPack.SetModel(MoneyModel)
-
-				TraceWorld <-
-				{
-					start = MoneyOrigin,
-					end = MoneyOrigin - Vector( 0, 0, 50000 )
-					mask = MASK_SOLID_BRUSHONLY
-				}
-				TraceLineEx(TraceWorld)
-				if (TraceWorld.hit)
-				{
-					RedMoneyPack.SetAbsOrigin(TraceWorld.pos + Vector( 0, 0, 5 ))
-				}
-				else
-				{
-					RedMoneyPack.SetAbsOrigin(MoneyOrigin)
-				}
-
-				EntityScope.DespawnTime <- Time() + 30
-				function DespawnThink()
-				{
-					if ( Time() < DespawnTime )
+					if (GetPropBool(MoneyPack, "m_bDistributed"))
 					{
 						return
 					}
 
-					RedMoneyPack.Kill()
-				}
-				AddThinkToEnt(RedMoneyPack, "DespawnThink")
-			}
-			EntityScope.CollectPack <- CollectPack
+					local MoneyOrigin = EntityScope.RealOrigin
+					local MoneyOwner = GetPropEntity(MoneyPack, "m_hOwnerEntity")
+					local MoneyModel = MoneyPack.GetModelName()
 
-			Entity.SetAbsOrigin(Vector( -1000000, -1000000, -1000000 ))
-			EntFireByHandle(Entity, "CallScriptFunction", "CollectPack", 0, null, null)
+					local ObjectiveResource = FindByClassname(null, "tf_objective_resource")
+
+					local OldCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
+					MoneyPack.Kill()
+					local NewCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
+
+					local MoneyPackCurrencyCount = OldCashCount - NewCashCount
+
+					local MVMStats = FindByClassname(null, "tf_mann_vs_machine_stats")
+					SetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired", GetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired") + MoneyPackCurrencyCount)
+
+					for (local i = 1; i <= MaxPlayers; i++)
+					{
+						local Player = PlayerInstanceFromIndex(i)
+						if (Player && !Player.IsBotOfType(1337))
+						{
+							Player.AddCurrency(MoneyPackCurrencyCount)
+						}
+					}
+
+					local RedMoneyPack = CreateByClassname("item_currencypack_custom")
+					SetPropBool(RedMoneyPack, "m_bDistributed", true )
+					SetPropEntity(RedMoneyPack, "m_hOwnerEntity", MoneyPack)
+					DispatchSpawn(RedMoneyPack)
+					RedMoneyPack.SetModel(MoneyModel)
+
+					TraceWorld <-
+					{
+						start = MoneyOrigin,
+						end = MoneyOrigin - Vector( 0, 0, 50000 )
+						mask = MASK_SOLID_BRUSHONLY
+					}
+					TraceLineEx(TraceWorld)
+					if (TraceWorld.hit)
+					{
+						RedMoneyPack.SetAbsOrigin(TraceWorld.pos + Vector( 0, 0, 5 ))
+					}
+					else
+					{
+						RedMoneyPack.SetAbsOrigin(MoneyOrigin)
+					}
+
+					EntityScope.DespawnTime <- Time() + 30
+					function DespawnThink()
+					{
+						if ( Time() < DespawnTime )
+						{
+							return
+						}
+
+						RedMoneyPack.Kill()
+					}
+					AddThinkToEnt(RedMoneyPack, "DespawnThink")
+				}
+				EntityScope.CollectPack <- CollectPack
+
+				Entity.SetAbsOrigin(Vector( -1000000, -1000000, -1000000 ))
+				EntFireByHandle(Entity, "CallScriptFunction", "CollectPack", 0, null, null)
+			}
 		}
 	}
 
@@ -227,7 +232,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		SendGlobalGameEvent("show_annotation", {
 			id = "ChampionGiantWarning"
 			text = "Champion Giant Active!"
-			lifetime = 4
+			lifetime = 5
 			follow_entindex = Target.entindex()
 			play_sound = "mvm/mvm_warning.wav"
 		})

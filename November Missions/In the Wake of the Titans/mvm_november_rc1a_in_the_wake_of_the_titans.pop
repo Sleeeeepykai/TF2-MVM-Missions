@@ -186,7 +186,7 @@ WaveSchedule
             Template T_TFBot_Spy
         }
     }
-    Mission // Sniper (Wave 4)
+    Mission // Sniper (Wave 5)
     {
         Objective Sniper
         Where spawnbot_sniper_e
@@ -194,7 +194,7 @@ WaveSchedule
         Where spawnbot_sniper_c
         Where spawnbot_sniper_b
         Where spawnbot_sniper_a
-        BeginAtWave 4
+        BeginAtWave 5
         RunForThisManyWaves 1
         InitialCooldown 10
         CooldownTime 30
@@ -215,7 +215,7 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `In the Shadow of Titans (Master)`)
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `In the Wake of the Titans`)
 
                     IncludeScript(`mvm_november_master_script`, getroottable())
                     MVMNovember_MasterScripting.NovemberMasterInit()
@@ -1092,7 +1092,7 @@ WaveSchedule
         }
 
         // Subwave 3
-        WaveSpawn // 1 Champion Demo and 4 Steel Gauntlets
+        WaveSpawn // 1 Champion Demo
         {
             Name "Wave2_Subwave3_ChampionDemo"
             WaitForAllDead "Wave2_Subwave2_GKnight"
@@ -1137,14 +1137,14 @@ WaveSchedule
                       "
             }
         }
-        WaveSpawn // 4 Steel Gauntlets
+        WaveSpawn // 2 Steel Gauntlets
         {
             Name "Wave2_Subwave3_SteelGauntlets"
             WaitForAllSpawned "Wave2_Subwave3_ChampionDemo"
             Where spawnbot_c
-            TotalCount 4
-            MaxActive 4
-            SpawnCount 4
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
             WaitBeforeStarting 0
             WaitBetweenSpawns 0
             TotalCurrency 10
@@ -1181,14 +1181,14 @@ WaveSchedule
                 Item "Traffic Cone"
             }
         }
-        WaveSpawn // 12 Shotgun Heavies
+        WaveSpawn // 10 Shotgun Heavies
         {
             Name "Wave2_Subwave3_ShotgunHeavies"
             WaitForAllSpawned "Wave2_Subwave3_ChampionDemo"
             Where spawnbot_flank_c
-            TotalCount 12
+            TotalCount 10
             MaxActive 8
-            SpawnCount 3
+            SpawnCount 2
             WaitBeforeStarting 5
             WaitBetweenSpawns 3
             TotalCurrency 20
@@ -2021,7 +2021,7 @@ WaveSchedule
                             sound_name = `weapons/bottle_hit3.wav`
                             channel = 6
                             volume = 1
-                            pitch = 100
+                            pitch = 90
                             special_dsp = 7
                             filter_type = 5
                         })
@@ -2046,7 +2046,7 @@ WaveSchedule
                             sound_name = `weapons/bottle_hit2.wav`
                             channel = 6
                             volume = 1
-                            pitch = 100
+                            pitch = 80
                             special_dsp = 7
                             filter_type = 5
                         })
@@ -2096,7 +2096,7 @@ WaveSchedule
         {
             Name "Wave3_TransitionComplete"
             WaitForAllSpawned "Wave3_CompleteCheck"
-            WaitBeforeStarting 10
+            WaitBeforeStarting 16
         }
     }
     Wave
@@ -2112,8 +2112,8 @@ WaveSchedule
 
                     IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
-                    IncludeScript(`tankextensions/combattank_weapons/railgun`, getroottable())
-                    TankExt.AddTankIcon(1, `tank_combat_railgun_dual_kai`, `combattank|railgun|railgun`)
+                    IncludeScript(`tankextensions/combattank_weapons/fireball`, getroottable())
+                    TankExt.AddTankIcon(1, `tank_combat_dragon_fury_dual_kai`, `combattank|fireball|fireball$pingsound|npc/combine_gunship/ping_search.wav`)
 
                     EntFire(`advexp_spawn_e_relay` `Trigger`)
                     EntFire(`spawn_e_tank_setred`, `Disable`)
@@ -2137,19 +2137,10 @@ WaveSchedule
                   "
         }
 
-        WaveSpawn // Icon Precache
-        {
-            Support 1
-            Squad
-            {
-                TFBot { ClassIcon tank_combat_railgun_dual_kai }
-            }
-        }
-
         // Tank Intro
-        WaveSpawn // 1 Dual Railgun Tank
+        WaveSpawn // 1 Dual Dragon Fury Tank
         {
-            Name "Wave4_Subwave1_RailgunTank"
+            Name "Wave4_Subwave1_Dragon_FuryTank"
             TotalCount 1
             MaxActive 1
             SpawnCount 1
@@ -2162,7 +2153,7 @@ WaveSchedule
 
             Tank
             {
-                Name "combattank|railgun|railgun$pingsound|npc/combine_gunship/ping_search.wav"
+                Name "combattank|fireball|fireball$pingsound|npc/combine_gunship/ping_search.wav"
                 Health 30000
                 Speed 120
                 StartingPathTrackNode "tankpath_counterclockwise"
@@ -2180,7 +2171,7 @@ WaveSchedule
         WaveSpawn // Set up TankSpawner Name
         {
             Name "Wave4_Subwave1_Init"
-            WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
+            WaitForAllSpawned "Wave4_Subwave1_Dragon_FuryTank"
             WaitBeforeStarting 1
 
             FirstSpawnOutput
@@ -2188,14 +2179,14 @@ WaveSchedule
                 Target BigNet
                 Action RunScriptCode
                 Param "
-                        EntFire(`combattank|railgun|railgun$pingsound|npc/combine_gunship/ping_search.wav`, `AddOutput`, `targetname TankSpawner`)
+                        EntFire(`combattank|fireball|fireball$pingsound|npc/combine_gunship/ping_search.wav`, `AddOutput`, `targetname TankSpawner`)
                       "
             }
         }
         WaveSpawn // Slow Tank Down
         {
             Name "Wave4_Subwave1_TankSlowdown"
-            WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
+            WaitForAllSpawned "Wave4_Subwave1_Dragon_FuryTank"
             WaitBeforeStarting 10
 
             FirstSpawnOutput
@@ -2209,15 +2200,15 @@ WaveSchedule
         }
 
         // Subwave 1
-        WaveSpawn // 9 Soldiers
+        WaveSpawn // 6 Soldiers
         {
             Name "Wave4_Subwave1_SoldierHorde"
-            WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
+            WaitForAllSpawned "Wave4_Subwave1_Dragon_FuryTank"
             Where spawnbot_e
             Support Limited
-            TotalCount 9
-            MaxActive 9
-            SpawnCount 9
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
             WaitBeforeStarting 10
             WaitBetweenSpawns 0
             TotalCurrency 10
@@ -2231,15 +2222,15 @@ WaveSchedule
                 Tag capbot
             }
         }
-        WaveSpawn // 9 Soldiers
+        WaveSpawn // 6 Soldiers
         {
             Name "Wave4_Subwave1_SoldierHorde2"
             WaitForAllSpawned "Wave4_Subwave1_SoldierHorde"
             Where spawnbot_e
             Support Limited
-            TotalCount 9
-            MaxActive 9
-            SpawnCount 9
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
             WaitBeforeStarting 10
             WaitBetweenSpawns 0
             TotalCurrency 10
@@ -2257,7 +2248,7 @@ WaveSchedule
         WaveSpawn // Support Soldiers
         {
             Name "Wave4_Subwave1_Soldiers"
-            WaitForAllSpawned "Wave4_Subwave1_RailgunTank"
+            WaitForAllSpawned "Wave4_Subwave1_Dragon_FuryTank"
             Where spawnbot_a
             Where spawnbot_b
             Where spawnbot_c
@@ -2301,36 +2292,15 @@ WaveSchedule
                 Tag capbot
             }
         }
-        WaveSpawn // 1 GRapid
-        {
-            Name "Wave4_Subwave1_GRapidSoldier"
-            WaitForAllSpawned "Wave4_Subwave1_SoldierHorde2"
-            Where spawnbot_e
-            TotalCount 1
-            MaxActive 1
-            SpawnCount 1
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 0
-            TotalCurrency 10
-
-            TFBot
-            {
-                Template T_TFBot_Giant_Soldier_Spammer
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
-                Tag flankbot
-            }
-        }
-        WaveSpawn // 4 Claymore Knights
+        WaveSpawn // 2 Claymore Knights
         {
             Name "Wave4_Subwave1_ClaymoreKnightGroup"
             WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
             Where spawnbot_e
             Support Limited
-            TotalCount 4
-            MaxActive 4
-            SpawnCount 4
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
             WaitBeforeStarting 5
             WaitBetweenSpawns 0
             TotalCurrency 10
@@ -2357,7 +2327,7 @@ WaveSchedule
             MaxActive 2
             SpawnCount 1
             WaitBeforeStarting 5
-            WaitBetweenSpawns 8
+            WaitBetweenSpawns 10
             TotalCurrency 20
 
             TFBot
@@ -2391,15 +2361,15 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 9 Soldiers
+        WaveSpawn // 6 Soldiers
         {
             Name "Wave4_Subwave1_SoldierHorde3"
             WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
             Where spawnbot_e
             Support Limited
-            TotalCount 9
-            MaxActive 9
-            SpawnCount 9
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
             WaitBeforeStarting 15
             WaitBetweenSpawns 0
             TotalCurrency 10
@@ -2413,15 +2383,15 @@ WaveSchedule
                 Tag capbot
             }
         }
-        WaveSpawn // 9 Soldiers
+        WaveSpawn // 6 Soldiers
         {
             Name "Wave4_Subwave1_SoldierHorde4"
             WaitForAllSpawned "Wave4_Subwave1_SoldierHorde3"
             Where spawnbot_e
             Support Limited
-            TotalCount 9
-            MaxActive 9
-            SpawnCount 9
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
             WaitBeforeStarting 10
             WaitBetweenSpawns 0
             TotalCurrency 10
@@ -2503,44 +2473,15 @@ WaveSchedule
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
-            }
-
-            FirstSpawnOutput
-            {
-                Target BigNet
-                Action RunScriptCode
-                Param "
-                        EntFire(`spawnchange_warning_relay`, `Trigger`)
-                      "
-            }
-        }
-        WaveSpawn // 1 GRapid
-        {
-            Name "Wave4_Subwave1_GRapidSoldier2"
-            WaitForAllSpawned "Wave4_Subwave1_SoldierHorde4"
-            Where spawnbot_e
-            TotalCount 1
-            MaxActive 1
-            SpawnCount 1
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 0
-            TotalCurrency 20
-
-            TFBot
-            {
-                Template T_TFBot_Giant_Soldier_Spammer
-                Attributes IgnoreFlag
-                BehaviorModifiers Push
-                Tag capbot
                 Tag flankbot
             }
         }
 
         // Subwave Complete Check
-        WaveSpawn // Railgun Tank Check
+        WaveSpawn // Dragon Fury Tank Check
         {
             Name "Wave4_Subwave1_Check"
-            WaitForAllDead "Wave4_Subwave1_RailgunTank"
+            WaitForAllDead "Wave4_Subwave1_Dragon_FuryTank"
         }
         WaveSpawn // Soldier Horde Check
         {
@@ -2586,7 +2527,7 @@ WaveSchedule
             SpawnCount 2
             WaitBeforeStarting 5
             WaitBetweenSpawns 0
-            TotalCurrency 20
+            TotalCurrency 30
 
             Squad
             {
@@ -2611,7 +2552,7 @@ WaveSchedule
             SpawnCount 2
             WaitBeforeStarting 15
             WaitBetweenSpawns 0
-            TotalCurrency 20
+            TotalCurrency 30
 
             Squad
             {
@@ -2636,7 +2577,7 @@ WaveSchedule
             SpawnCount 2
             WaitBeforeStarting 15
             WaitBetweenSpawns 0
-            TotalCurrency 20
+            TotalCurrency 30
 
             Squad
             {
@@ -3241,6 +3182,30 @@ WaveSchedule
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
+            }
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/soldier_mvm_m_specialcompleted05.mp3`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/soldier_mvm_m_specialcompleted05.mp3`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                      "
             }
         }
         WaveSpawn // 1 GBuff Soldier
