@@ -1,0 +1,365 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+
+WaveSchedule
+{
+    StartingCurrency 3000
+    RespawnWaveTime 2
+    FixedRespawnWaveTime Yes
+    CanBotsAttackWhileInSpawnRoom No
+
+    //// ROBOT TEMPLATES ////
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `War Without Reason (Nightmare)`)
+					EntFire(`bombpath_left_relay`, `Trigger`)
+					EntFire(`bombpath_lowerhatch_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        //// PHASE 1 ////
+
+        // Subwave 1
+        WaveSpawn // 2 GSoldiers
+        {
+            Name "Nightmare_Subwave1_GSoldier"
+            Where spawnbot_left
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 0.1
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 2 GSoldiers
+        {
+            Name "Nightmare_Subwave1_GSoldier"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 0.1
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+
+        WaveSpawn // 7 Bonk Scouts
+        {
+            Name "Nightmare_Subwave1_Bonks"
+            Where spawnbot
+            TotalCount 7
+            MaxActive 7
+            SpawnCount 7
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Scout_Bonk
+                    Attributes AlwaysCrit
+                    Tag spawnbot_prefer_left
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Bonk
+                    Attributes AlwaysCrit
+                    Tag spawnbot_prefer_right
+                }
+            }
+        }
+        WaveSpawn // 6 Heavies
+        {
+            Name "Nightmare_Subwave1_Heavies"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier"
+            Where spawnbot_invasion
+            RandomSpawn 1
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 2 GSoldiers
+        {
+            Name "Nightmare_Subwave1_GSoldier2"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier"
+            Where spawnbot_left
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 2 GSoldiers
+        {
+            Name "Nightmare_Subwave1_GSoldier2"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+
+        WaveSpawn // 10 Bonk Scouts
+        {
+            Name "Nightmare_Subwave1_Bonks2"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Scout_Bonk
+                    Attributes AlwaysCrit
+                    Tag spawnbot_prefer_left
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Bonk
+                    Attributes AlwaysCrit
+                    Tag spawnbot_prefer_right
+                }
+            }
+        }
+        WaveSpawn // 8 Heavies
+        {
+            Name "Nightmare_Subwave1_Heavies2"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier2"
+            Where spawnbot_invasion
+            RandomSpawn 1
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+            }
+        }
+
+        WaveSpawn // 2 GSoldiers
+        {
+            Name "Nightmare_Subwave1_GSoldier3"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier2"
+            Where spawnbot_left
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+        WaveSpawn // 2 GSoldiers
+        {
+            Name "Nightmare_Subwave1_GSoldier3"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier2"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier
+                Tag bot_giant
+            }
+        }
+
+        WaveSpawn // 13 Bonk Scouts
+        {
+            Name "Nightmare_Subwave1_Bonks3"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier3"
+            Where spawnbot
+            TotalCount 13
+            MaxActive 13
+            SpawnCount 13
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Scout_Bonk
+                    Attributes AlwaysCrit
+                    Tag spawnbot_prefer_left
+                }
+                TFBot
+                {
+                    Template T_TFBot_Scout_Bonk
+                    Attributes AlwaysCrit
+                    Tag spawnbot_prefer_right
+                }
+            }
+        }
+        WaveSpawn // 10 Heavies
+        {
+            Name "Nightmare_Subwave1_Heavies2"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier2"
+            Where spawnbot_invasion
+            RandomSpawn 1
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 5
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Heavy
+                Skill Normal
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 12 Pyros
+        {
+            Name "Nightmare_Subwave2_Pyros"
+            WaitForAllSpawned "Nightmare_Subwave1_GSoldier3"
+            Where spawnbot_invasion
+            TotalCount 12
+            MaxActive 12
+            SpawnCount 1
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0.1
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Pyro
+                Skill Easy
+                Attributes AlwaysFireWeapon
+            }
+        }
+
+        WaveSpawn // 1 GSteel Gauntlet and 1 Quick-Uber Medic
+        {
+            Name "Nightmare_Subwave2_GSteelGauntlet"
+            WaitForAllSpawned "Nightmare_Subwave2_Pyros"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_SteelFist
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+    }
+}

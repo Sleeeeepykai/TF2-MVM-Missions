@@ -50,7 +50,7 @@ const MAX_WEAPONS = 8
     {
         for (local i = 1; i <= MaxPlayers; i++)
 		{
-			local Player = PlayerInstanceFromIndex( i )
+			local Player = PlayerInstanceFromIndex(i)
 
 			if(Player && (Player.GetTeam()) == 2)
 			{
@@ -385,9 +385,19 @@ const MAX_WEAPONS = 8
 				Bomb.AcceptInput(`Detonate`, null, self, self)
 
 				PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
+				PrecacheSound(`ambient/explosions/explode_1.wav`)
 				EmitSoundEx({
 					sound_name = `misc/halloween/strongman_fast_impact_01.wav`
 					origin = HitPos
+					channel = 6
+					volume      = 1
+					sound_level = (40 + (20 * log10(9999 / 36))).tointeger()
+					filter_type = 5
+				})
+				EmitSoundEx({
+					sound_name = `ambient/explosions/explode_1.wav`
+					origin = HitPos
+					channel = 6
 					volume      = 1
 					sound_level = (40 + (20 * log10(9999 / 36))).tointeger()
 					filter_type = 5
@@ -414,7 +424,7 @@ const MAX_WEAPONS = 8
 			{
 				if (Owner.GetActiveWeapon() == self)
 				{
-					RobotTransformer.HammerStrike(self)
+					RobotTransformer.HammerStrike(Owner)
 
 					SetPropInt(TransformerTarget, "m_Shared.m_iNextMeleeCrit", -2)
 				}
