@@ -330,7 +330,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 			if (Player.IsBotOfType(1337) && (Player.GetTeam()) == 2)
 			{
-				Player.TakeDamage(99999, 0, null)
+				Player.TakeDamage(99999, 64, null)
 			}
 		}
 	}
