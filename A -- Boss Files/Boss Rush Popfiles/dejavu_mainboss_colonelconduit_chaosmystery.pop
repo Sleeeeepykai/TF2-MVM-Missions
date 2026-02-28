@@ -1,0 +1,1223 @@
+ColonelConduit
+{
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_pomson_v2.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_pomson_v2.vtf"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_widowmaker_inf_nys.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_widowmaker_inf_nys.vtf"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_frontier_justice_nys.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_frontier_justice_nys.vtf"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_ranger_nys_penetrate_giant.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_ranger_nys_penetrate_giant.vtf"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_rocketrain_homing_nys.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_rocketrain_homing_nys.vtf"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_mangler_v2.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_mangler_v2.vtf"
+    PrecacheGeneric "materials/hud/leaderboard_class_heavy_shotgun_accurate_lite.vmt"
+    PrecacheGeneric "materials/hud/leaderboard_class_heavy_shotgun_accurate_lite.vtf"
+    CustomWeapon
+    {
+        conduit_indicator_launcher
+        {
+            OriginalItemName "Rocket Jumper"
+			"projectile spread angle penalty" 40
+			"damage bonus" 0
+            "mult projectile count" 8
+			"no explosion particles" 1
+			"projectile speed decreased" 0.55
+			"custom projectile model" "models/empty.mdl"
+			"projectile gravity" 700
+			"ignores other projectiles" 1
+			"self dmg push force decreased" 0
+			"projectile no deflect" 1
+        }
+        conduit_energy_launcher
+        {
+            OriginalItemName "The Cow Mangler 5000"
+            "projectile speed decreased" 0.55
+            "projectile gravity" 700
+            "projectile spread angle penalty" 30
+            "mult projectile count" 15
+            "mult projectile scale" 2
+            "ignores other projectiles" 1
+            "damage bonus" 1.8
+        }
+    }
+    PointTemplates
+    {
+        //Boss Death Template
+        chief_conduit_dead
+        {
+            KeepAlive 1
+            OnSpawnOutput
+            {
+                Target conduit_cosmetic
+                Action TurnOff
+            }
+            OnSpawnOutput
+            {
+                Target conduit_dead
+                Action SetPlayBackRate
+                Param 0
+            }
+            OnParentKilledOutput
+            {
+               Target conduit_cosmetic
+               Action TurnOn
+            }
+            OnParentKilledOutput
+            {
+                Target conduit_dead
+                Action Enable
+            }
+            OnParentKilledOutput
+            {
+                Target conduit_dies
+                Action Trigger
+                Delay 0.1
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "conduit_cosmetic"
+                "initialowner" "conduit_dead"
+                "model" "models/player/items/engineer/engy_earphones.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+				"skin" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "conduit_cosmetic"
+                "initialowner" "conduit_dead"
+                "model" "models/workshop/player/items/engineer/dec16_packable_provisions/dec16_packable_provisions.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+				"skin" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "conduit_cosmetic"
+                "initialowner" "conduit_dead"
+                "model" "models/workshop/player/items/engineer/dec23_sleuth_suit/dec23_sleuth_suit.mdl"
+                "solid" "0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+				"skin" "1"
+            }
+            KeepAlive 1
+            prop_dynamic
+            {
+                "targetname" "conduit_dead"
+                "model" "models/bots/engineer/bot_engineer.mdl"
+                "modelscale" "1.4"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+                "defaultanim" "Primary_death_backstab"
+                "skin" "1"
+                "startdisabled" "1"
+            }
+            logic_relay
+            {
+                "targetname" "conduit_dies"
+                "OnTrigger" "conduit_dead,SetPlayBackRate,0.5,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_paincriticaldeath05.mp3,0.3,-1"
+                "OnTrigger" "conduit_dead,kill,,3,-1"
+                "OnTrigger" "conduit_shake,StartShake,,3,-1"
+                "OnTrigger" "conduit_is_dead1,start,,3,-1"
+                "OnTrigger" "conduit_is_dead2,start,,3,-1"
+                "OnTrigger" "conduit_is_dead1,stop,,6,-1"
+                "OnTrigger" "conduit_is_dead2,stop,,6,-1"
+                "OnTrigger" "player,$PlaySoundToSelf,npc/turret_floor/die.wav,3,-1"
+				"OnTrigger" "player,$PlaySoundToSelf,mvm\mvm_tank_end.wav,3,-1"
+				"OnTrigger" "player,$PlaySoundToSelf,mvm\mvm_tank_explode.wav,3,-1"
+            }
+			info_particle_system
+			{
+				"targetname" "conduit_is_dead1"
+				"origin" "0 0 0"
+				"angles" "-90 0 0"
+				"effect_name" "mvm_tank_destroy"
+			}
+			info_particle_system
+			{
+				"targetname" "conduit_is_dead2"
+				"origin" "0 0 0"
+				"angles" "-90 0 0"
+				"effect_name" "rd_robot_explosion"
+			}
+            env_shake
+			{
+				"targetname" "conduit_shake"
+				"spawnflag" "1"
+				"amplitude" "16"
+				"frequency" "9"
+				"duration" "3"
+			}
+        }
+        //Rotator Info Targets for Two Attacks
+        RotatorSpawners
+        {
+            NoFixUp 1
+            RemoveIfKilled spawner_origin
+            info_target
+            {
+                "targetname" "spawner_origin"
+            }
+            info_target
+            {
+                "targetname" "rotator_spawner1"
+                "origin" "0 0 0.3"
+                "angles" "0 -90 0"
+                "parentname" "boss_rotator"
+            }
+            info_target
+            {
+                "targetname" "rotator_spawner2"
+                "origin" "0 0 0.3"
+                "angles" "0 90 0"
+                "parentname" "boss_rotator"
+            }
+            info_target
+            {
+                "targetname" "rotator_spawner3"
+                "origin" "0 0 0.03"
+                "angles" "0 180 0"
+                "parentname" "boss_rotator"
+            }
+            info_target
+            {
+                "targetname" "rotator_spawner4"
+                "origin" "0 0 0.3"
+                "parentname" "boss_rotator"
+            }
+            func_rotating
+            {
+                "targetname" "boss_rotator"
+                "maxspeed" "200"
+                "fanfriction" "1"
+                "spawnflags" "65"
+                "dmg" "0"
+                "fanfriction" "100"
+                "volume" "7"
+            }
+        }
+        //Env_Beam Based Attacks
+        BeamSpamSetup
+        {
+            RemoveIfKilled spam_spawn
+            KeepAlive 1
+            info_target
+            {
+                "targetname" "spam_spawn"
+            }
+            OnParentKilledOutput
+            {
+                Target BeamSpam
+                Action ForceSpawnAtEntityOrigin
+                Param spam_spawn
+            }
+            OnSpawnOutput
+            {
+                Target spam_spawn
+                Action "$setKey$angles"
+                Param "180 0 0"
+                Delay 0
+            }
+            OnParentKilledOutput
+            {
+                Target spam_spawn
+                Action Kill
+                Delay 0.6
+            }
+        }
+        BeamSpam
+        {
+            RemoveIfKilled spam_origin
+            KeepAlive 1
+            info_target
+            {
+                "targetname" "spam_origin"
+                "origin" "0 0 0.3"
+            }
+            prop_dynamic
+            {
+                "targetname" "spam_indicator"
+                "parentname" "spam_origin"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "defaultanim" "start"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+				"solid" "0"
+				"skin" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "spam_holder"
+                "parentname" "spam_indicator"
+                "model" "models/empty.mdl"
+                "origin" "0 0 700"
+                "angkes" "0 0 0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            env_beam
+            {
+                "targetname" "spam_beam"
+                "life" "1"
+                "LightningStart" "spam_indicator"
+                "LightningEnd" "spam_holder"
+                "TouchType" "0"
+                "damage" "0"
+                "renderamt" "200"
+                "rendercolor" "0 139 255"
+                "NOiseAmplitude" "5"
+                "texture" "sprites/laserbeam.spr"
+                "BoltWidth" "5"
+                "origin" "0 0 0"
+            }
+            OnSpawnOutput
+            {
+                Target spam_origin
+                Action "$setKey$angles"
+                Param "180 0 0"
+                Delay 0
+            }
+            trigger_hurt
+            {
+                "targetname" "spam_damage"
+                "parentname" "spam_indicator"
+                "mins" "-50 -50 -80"
+                "maxs" "50 50 80"
+                "damage" "350"
+                "damagetype" "2"
+                "filtername" "filter_is_red_not_ubered"
+                "StartDisabled" "1"
+				"spawnflags" "64"
+            }
+            info_particle_system
+            {
+                "targetname" "spam_effect"
+                "origin" "0 0 10"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            ambient_generic
+            {
+                "targetname" "spam_sound"
+                "message" "weapons/cow_mangler_explosion_normal_03.wav"
+                "health" "4"
+				"pitch" "100"
+				"radius" "5000"
+				"spawnflags" "32"
+				"origin" "0 0 100"
+            }
+            OnSpawnOutput
+            {
+                Target spam_relay
+                Action Trigger
+                Delay 2.5
+            }
+            OnSpawnOutput
+            {
+                Target spam_damage
+                Action SetOwner
+                Param @p@boss_thing
+            }
+            logic_relay
+            {
+                "targetname" "spam_relay"
+                "OnTrigger" "spam_beam,StrikeOnce,,0,-1"
+                "OnTrigger" "spam_effect,start,,0,-1"
+                "OnTrigger" "spam_sound,playsound,,0,-1"
+                "OnTrigger" "spam_damage,enable,,0.01,-1"
+                "OnTrigger" "spam_damage,disable,,0.02,-1"
+                "OnTrigger" "spam_effect,stop,,1,-1"
+                "OnTrigger" "spam_origin,kill,,1,-1"
+            }
+        }
+        MegaBeamSetup
+        {
+            RemoveIfKilled laser_origin
+            KeepAlive 1
+            info_target
+            {
+                "targetname" "laser_origin"
+            }
+            prop_dynamic
+            {
+                "targetname" "laser_spawn"
+                "parentname" "laser_origin"
+                "model" "models/empty.mdl"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            OnSpawnOutput
+            {
+                Target spawnlaser_relay
+                Action Trigger
+            }
+            logic_case
+            {
+                "targetname" "spawnlaser_where"
+                "OnCase01" "laser_spawn,$MoveRelative,100 0 0,0,-1"
+                "OnCase02" "laser_spawn,$MoveRelative,200 0 0,0,-1"
+                "OnCase03" "laser_spawn,$MoveRelative,300 0 0,0,-1"
+                "OnCase04" "laser_spawn,$MoveRelative,400 0 0,0,-1"
+                "OnCase05" "laser_spawn,$MoveRelative,500 0 0,0,-1"
+                "OnCase06" "laser_spawn,$MoveRelative,600 0 0,0,-1"
+            }
+            logic_relay
+            {
+                "targetname" "spawnlaser_relay"
+                "OnTrigger" "spawnlaser_where,PickRandom,,0,-1"
+                "OnTrigger" "GigaBeam,ForceSpawnAtEntityOrigin,laser_spawn,1,-1"
+                "OnTrigger" "laser_origin,kill,,1.1,-1"
+            }
+        }
+        GigaBeam
+        {
+            RemoveIfKilled lasernuke
+            KeepAlive 1
+            info_target
+            {
+                "targetname" "lasernuke"
+            }
+            trigger_hurt
+            {
+                "targetname" "laser_damage"
+                "parentname" "lasernuke"
+                "mins" "-100 -100 -200"
+                "maxs" "100 100 200"
+                "damagetype" "2"
+				"damage" "300"
+				"startdisabled" "1"
+				"spawnflags" "64"
+                "filtername" "filter_is_red_not_ubered"
+            }
+            env_beam
+            {
+                "targetname" "megabeam"
+                "life" "8"
+                "LightningStart" "bigbeam_end"
+                "LightningEnd" "bigbeam_start"
+                "TouchType" "0"
+                "damage" "0"
+                "renderamt" "255"
+                "rendercolor" "0 139 255"
+                "noiseamplitude" "4"
+                "texture" "sprites/laserbeam.spr"
+                "BoltWidth" "25"
+                "origin" "0 0 0"
+            }
+            prop_dynamic
+            {
+                "targetname" "bigbeam_start"
+                "parentname" "lasernuke"
+                "model" "models/empty.mdl"
+                "origin" "0 0 1000"
+                "angles" "0 0 0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic
+			{
+				"targetname" "bigbeam_end"
+				"parentname" "lasernuke"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+				"origin" "0 0 0.3"
+				"angles" "0 0 0"
+				"solid" "0"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+            info_particle_system
+            {
+                "targetname" "lasereffect"
+                "origin" "0 0 10"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            ambient_generic
+            {
+                "targetname" "lasersound"
+                "message" "weapons/cow_mangler_explosion_normal_03.wav"
+                "health" "5"
+				"pitch" "100"
+				"radius" "5000"
+				"spawnflags" "32"
+				"origin" "0 0 100"
+            }
+            OnSpawnOutput
+            {
+                Target bigbeam_end
+                Action SetPlayBackRate
+                Param 0.5
+            }
+            OnSpawnOutput
+            {
+                Target bigbeam_end
+                Action $SetLocalAngles
+                Param "0 180 0"
+            }
+            OnSpawnOutput
+            {
+                Target laser_relay
+                Action Trigger
+                Delay 2.5
+            }
+            OnSpawnOutput
+            {
+                Target laser_damage
+                Action SetOwner
+                Param @p@boss_thing
+            }
+            logic_relay
+            {
+                "targetname" "laser_relay"
+                "OnTrigger" "megabeam,StrikeOnce,,0.9,-1"
+                "OnTrigger" "laser_damage_timer,enable,,0,-1"
+                "OnTrigger" "lasernuke,kill,,8,-1"
+            }
+            logic_timer
+            {
+                "targetname" "laser_damage_timer"
+                "startdisabled" "1"
+                "refiretime" "1"
+                "OnTimer" "lasereffect,start,,0,-1"
+                "OnTimer" "laser_damage,Enable,,0.01,-1"
+                "OnTimer" "laser_damage,Disable,,0.02,-1"
+                "OnTimer" "lasersound,playsound,,0,-1"
+                "OnTimer" "lasereffect,stop,,0.9,-1"
+            }
+        }
+        StraightBeamSetup
+        {
+            RemoveIfKilled beam_origin
+            KeepAlive 1
+            info_target
+            {
+                "targetname" "attack_setup"
+            }
+            prop_dynamic
+            {
+                "targetname" "attack_spawn"
+                "parentname" "attack_setup"
+                "model" "models/empty.mdl"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            OnSpawnOutput
+            {
+                Target attack_spawning
+                Action Trigger
+            }
+            logic_relay
+            {
+                "targetname" "attack_spawning"
+                "OnTrigger" "attack_timer,Enable,,0,-1"
+                "OnTrigger" "attack_timer,Disable,,4.11,-1"
+                "OnTrigger" "beam_origin,kill,,4.2,-1"
+            }
+            logic_timer
+            {
+                "targetname" "attack_timer"
+                "startdisabled" "1"
+                "Refiretime" "0.2"
+                "OnTimer" "attack_spawn,$MoveRelative,75 0 0,0,-1"
+                "OnTimer" "StraightBeamAttack,ForceSpawnAtEntityOrigin,attack_spawn,0.1,-1"
+            }
+        }
+        StraightBeamAttack
+        {
+            RemoveIfKilled "lightning_origin"
+            KeepAlive 1
+            info_target
+            {
+                "targetname" "lightning_origin"
+            }
+            prop_dynamic
+            {
+                "targetname" "lightning_indicator"
+                "parentname" "lightning_origin"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "defaultanim" "start"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+				"solid" "0"
+				"skin" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "lightning_holder"
+                "parentname" "lightning_origin"
+                "model" "models/empty.mdl"
+                "origin" "0 0 700"
+                "angkes" "0 0 0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            env_beam
+            {
+                "targetname" "lightning_beam"
+                "life" "1"
+                "LightningStart" "lightning_indicator"
+                "LightningEnd" "lightning_holder"
+                "TouchType" "0"
+                "damage" "0"
+                "renderamt" "200"
+                "rendercolor" "0 139 255"
+                "NOiseAmplitude" "5"
+                "texture" "sprites/laserbeam.spr"
+                "BoltWidth" "5"
+                "origin" "0 0 0"
+            }
+            trigger_hurt
+            {
+                "targetname" "lightning_damage"
+                "parentname" "lightning_indicator"
+                "mins" "-50 -50 -80"
+                "maxs" "50 50 80"
+                "damage" "300"
+                "damagetype" "2"
+                "filtername" "filter_is_red_not_ubered"
+                "StartDisabled" "1"
+				"spawnflags" "64"
+            }
+            info_particle_system
+            {
+                "targetname" "lightning_effect"
+                "origin" "0 0 10"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            ambient_generic
+            {
+                "targetname" "lightning_sound"
+                "message" "weapons/cow_mangler_explosion_normal_03.wav"
+                "health" "2"
+				"pitch" "100"
+				"radius" "3000"
+				"spawnflags" "32"
+				"origin" "0 0 100"
+            }
+            OnSpawnOutput
+            {
+                Target lightning_damage
+                Action SetOwner
+                Param @p@boss_thing
+            }
+            OnSpawnOutput
+            {
+                Target lightning_relay
+                Action Trigger
+                Delay 2.1
+            }
+            logic_relay
+            {
+                "targetname" "lightning_relay"
+                "OnTrigger" "lightning_beam,StrikeOnce,,0,-1"
+                "OnTrigger" "lightning_effect,start,,0,-1"
+                "OnTrigger" "lightning_sound,playsound,,0,-1"
+                "OnTrigger" "lightning_damage,enable,,0.01,-1"
+                "OnTrigger" "lightning_damage,disable,,0.02,-1"
+                "OnTrigger" "lightning_effect,stop,,1,-1"
+                "OnTrigger" "lightning_origin,kill,,1,-1"
+            }
+        }
+        //Conduit Logic
+        conduit_logic
+        {
+            game_text
+            {
+                "origin" "1984 1984 99999"
+                "message" "Clockwork of the Iron Menace"
+                "targetname" "upper_text2"
+                "x" "-1"
+                "y" "0.4"
+                "spawnflags" "1"
+                "effect" "2"
+                "channel" "2"
+                "color" "255 150 0"
+                "fxtime" "0.2"
+                "fadeout" "1"
+                "holdtime" "4.8"
+            }
+            game_text
+            {
+                "origin" "1984 1984 99999"
+                "message" "Colonel Conduit"
+                "targetname" "lower_text1"
+                "x" "-1"
+                "y" "0.45"
+                "spawnflags" "1"
+                "channel" "1"
+                "effect" "2"
+                "color" "255 255 0"
+                "fadein" "0.2"
+                "fadeout" "1"
+                "holdtime" "4.8"
+            }
+            OnSpawnOutput
+            {
+                Target boss_spawns
+                Action Trigger
+            }
+            info_target
+            {
+                "targetname" "boss_thing"
+                "origin" "0 0 0.3"
+            }
+            OnSpawnOutput
+            {
+                Target boss_thing
+                Action SetParent
+                Param "!activator"
+                Delay 0.1
+            }
+            OnSpawnOutput
+            {
+                Target beam_launcher
+                Action SetOwner
+                Param !activator
+            }
+            OnSpawnOutput
+            {
+                Target firebomb_launcher
+                Action SetOwner
+                Param !activator
+            }
+            tf_point_weapon_mimic
+            {
+                "targetname" "beam_launcher"
+                "origin" "0 0 60"
+                "angles" "-40 0 0"
+                "teamnum" "3"
+                "$weaponnosound" "1"
+                "$weaponname" "conduit_indicator_launcher"
+            }
+            tf_point_weapon_mimic
+            {
+                "targetname" "firebomb_launcher"
+                "origin" "0 0 60"
+                "angles" "-50 0 0"
+                "teamnum" "3"
+                "$weaponnosound" "1"
+                "$weaponname" "conduit_energy_launcher"
+            }
+            prop_dynamic
+            {
+                "targetname" "aimtime"
+                "model" "models/empty.mdl"
+                "origin" "0 0 50"
+                "angles" "0 0 0"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+                "$module" "aimfollow"
+                "$rotationfollow" "1"
+            }
+            point_tesla
+            {
+                "targetname" "boss_sparky"
+                "parentname" "boss_thing"
+                "beamcount_max" "12"
+                "beamcount_min" "1"
+                "interval_max" "0.2"
+                "interval_min" "0.1"
+                "lifetime_max" "1"
+                "lifetime_min" "0.1"
+                "m_color" "0 139 255"
+                "m_flRadius" "1500"
+                "origin" "0 0 50"
+                "thick_max" "15"
+                "thick_min" "5"
+                "m_SoundName" "DoSpark"
+                "texture" "sprites/physbeam.vmt"
+            }
+            info_particle_system
+            {
+                "targetname" "super_release"
+                "effect_name" "powerup_supernova_explode_blue"
+				"start_active" "0"
+				"origin" "0 0 0.3"
+            }
+            logic_relay
+            {
+                "targetname" "boss_spawns"
+                "OnTrigger" "player,$PlaySoundToSelf,=75/mvm/giant_heavy/giant_heavy_entrance.wav,0,-1"
+                "OnTrigger" "upper_text2,Display,,0.4,-1"
+                "OnTrigger" "lower_text1,Display,,1.8,-1"
+            }
+            logic_relay
+            {
+                "targetname" "firebomb_attack_relay"
+                "OnTrigger" "!activator,$AddPlayerAttribute,increased jump height|0,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_jump|1,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,move speed bonus|0.01,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/Engineer_mvm_specialcompleted01.mp3,0.1,-1"
+                "OnTrigger" "!activator,$PlaySequence,taunt09,0.1,-1"
+                "OnTrigger" "firebomb_launcher,FireOnce,,3.4,-1"
+                "OnTrigger" "!activator,$PlaySequence,run_melee,4.7,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,increased jump height|1,4.7,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_jump|0,4.7,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_attack|0,4.7,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,move speed bonus|0.7,4.7,-1"
+            }
+            logic_relay
+            {
+                "targetname" "lightning_attack_relay"
+                "OnTrigger" "RotatorSpawners,ForceSpawnAtEntityOrigin,boss_thing,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,increased jump height|0,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_jump|1,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,move speed bonus|0.01,0,-1"
+                "OnTrigger" "boss_sparky,TurnOn,,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/Engineer_mvm_meleedare01.mp3,0.4,-1"
+                "OnTrigger" "!activator,$PlaySequence,taunt_drg_melee,0.4,-1"
+                "OnTrigger" "player,$PlaySoundToSelf,weapons\rescue_ranger_teleport_receive_02.wav,0.5,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner1,0.5,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner2,0.5,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner3,0.5,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner4,0.5,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner1,1.6,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner2,1.6,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner3,1.6,-1"
+                "OnTrigger" "StraightBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner4,1.6,-1"
+                "OnTrigger" "!activator,$PlaySequence,melee_run,2.3,-1"
+                "OnTrigger" "boss_sparky,TurnOff,,2.6,-1"
+                "OnTrigger" "super_release,Start,,2.5,-1"
+                "OnTrigger" "super_release,Stop,,2.6,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,increased jump height|1,2.5,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_jump|0,2.5,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,no_attack|0,2.5,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,move speed bonus|0.7,2.5,-1"
+                "OnTrigger" "spawner_origin,kill,,2.5,-1"
+            }
+            logic_relay
+            {
+                "targetname" "spam_attack_relay"
+                "OnTrigger" "!activator,interrupt_action -posent Enemy -lookposent RandomEnemy -duration 0.7,0,-1"
+                "OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|2,0,-1"
+                "OnTrigger" "!activator,$TauntFromItem,Replay Taunt,0.7,-1"
+                "OnTrigger" "beam_launcher,FireOnce,,1,-1"
+                "OnTrigger" "!activator,$AddPLayerAttribute,gesture speed increase|1,2,-1"
+            }
+            logic_relay
+            {
+                "targetname" "laserattack"
+                "OnTrigger" "RotatorSpawners,ForceSpawnAtEntityOrigin,boss_thing,0,-1"
+                "OnTrigger" "!activator,$TauntFromItem,Replay Taunt,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/Engineer_mvm_specialcompleted09.mp3,0,-1"
+                "OnTrigger" "pickone,PickRandom,,0.5,-1"
+                "OnTrigger" "pickone,PickRandom,,1.5,-1"
+                "OnTrigger" "pickone,PickRandom,,2.5,-1"
+                "OnTrigger" "spawner_origin,kill,,3,-1"
+            }
+            logic_case
+            {
+                "targetname" "pickone"
+                "OnCase01" "MegaBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner1,0,-1"
+                "OnCase02" "MegaBeamSetup,ForceSpawnAtEntityOrigin,rotator_spawner2,0,-1"
+                "OnCase03" "MegaBeamSetUp,ForceSpawnAtEntityOrigin,rotator_spawner3,0,-1"
+                "OnCase04" "MegaBeamSetUp,ForceSpawnAtEntityOrigin,rotator_spawner4,0,-1"
+            }
+            logic_case
+            {
+                "targetname" "pickbeam"
+                "OnCase01" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner1,0,-1"
+                "OnCase02" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner2,0,-1"
+                "OnCase03" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner3,0,-1"
+                "OnCase04" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner4,0,-1"
+                "OnCase05" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner5,0,-1"
+                "OnCase06" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner6,0,-1"
+                "OnCase07" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner7,0,-1"
+                "OnCase08" "StraightBeamAttack,ForceSpawnAtEntityOrigin,rotator_spawner,0,-1"
+            }
+            logic_case
+            {
+                "targetname" "conduit_attacks"
+                "OnCase01" "!activator,$ChangeAttributes,BurstFrontier,0,-1"
+                "OnCase02" "!activator,$ChangeAttributes,RapidMaker,0,-1"
+                "OnCase03" "!activator,$ChangeAttributes,HomingSpread,0,-1"
+                "OnCase04" "!activator,$ChangeAttributes,RescueBounce,0,-1"
+                "OnCase05" "!activator,$ChangeAttributes,SlugRound,0,-1"
+                "OnCase06" "!activator,$ChangeAttributes,OrbitalSpawn,0,-1"
+                "OnCase07" "!activator,$ChangeAttributes,LightningTaunt,0,-1"
+                "OnCase08" "!activator,$ChangeAttributes,SpamAttack,0,-1"
+                "OnCase09" "!activator,$ChangeAttributes,FireBombing,0,-1"
+            }
+        }
+    }
+    Templates
+    {
+        T_TFBot_Engineer_Chief_Conduit
+        {
+            Name "Colonel Conduit"
+            Scale 1.4
+            Class Engineer
+            ClassIcon engineer_hyper
+            Skill Expert
+            Health 80000
+            Action Mobber
+            MaxVisionRange 1200
+            Attributes Miniboss
+            Attributes UseBossHealthBar
+            Attributes HoldFireUntilFullReload
+            SpawnTemplate conduit_logic
+            SpawnTemplate chief_conduit_dead
+            Item "Engineer Earmuffs"
+            Item "Packable Provisions"
+            Item "Sleuth Suit"
+            PreferClass Medic
+            Item "Replay Taunt"
+            ChangeAttributes
+            {
+                Name BurstFrontier
+                Repeats 1
+                Delay 0.1
+            }
+            ShootTemplate
+            {
+                Name BeamSpamSetup
+                AttachtoProjectile 1
+                ItemName "conduit_indicator_launcher"
+            }
+            WeaponResist
+            {
+                "tf_weapon_minigun" 0.7
+            }
+            CharacterAttributes
+            {
+                "move speed bonus" 0.7
+                "override footstep sound set" 3
+                "rage giving scale" 0.15
+                "airblast vulnerability multiplier" 0.1
+                "airblast vertical vulnerability multiplier" 0.1
+                "damage force reduction" 0.1
+            }
+            EventChangeAttributes
+            {
+                BurstFrontier
+                {
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param engineer_frontier_justice_nys
+                        Delay 0
+                        Repeats 1
+                    }
+                    AddAttribute
+                    {
+                        Item "player"
+                        Name "always crit"
+                        Value 1
+                        Delay 0.01
+                    }
+                    AddAttribute
+                    {
+                        Item "player"
+                        Name "always crit"
+                        Value 0
+                        Delay 6.97
+                    }
+                    Item "The Frontier Justice"
+                    ItemAttributes
+                    {
+                        ItemName "The Frontier Justice"
+                        "fire rate bonus" 0.2
+                        "faster reload rate" 1.1
+                        "clip size bonus" 1.25
+                        "bullets per shot bonus" 3
+                        "damage penalty" 0.7
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 7
+                        Repeats 1
+                    }
+                }
+                RapidMaker
+                {
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param engineer_widowmaker_inf_nys
+                        Delay 0
+                        Repeats 1
+                    }
+                    Item "The Widowmaker"
+                    WeaponRestrictions PrimaryOnly
+                    ItemAttributes
+                    {
+                        ItemName "The Widowmaker"
+                        "fire rate bonus" 0.6
+                        "bullets per shot bonus" 2.75
+                        "damage penalty" 0.75
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 7
+                        Repeats 1
+                    }
+                }
+                HomingSpread
+                {
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param soldier_rocketrain_homing_nys
+                        Delay 0
+                        Repeats 1
+                    }
+                    Item "upgradeable tf_weapon_rocketlauncher"
+                    WeaponRestrictions PrimaryOnly
+                    ItemAttributes
+                    {
+                        ItemName "upgradeable tf_weapon_rocketlauncher"
+                        "fire rate bonus" 2.5
+                        "faster reload rate" -0.8
+                        "mult projectile count" 5
+                        "ignores other projectiles" 1
+                        "spread angle pattern" "0 40 0|0 20 0|0 0 0|0 -20 0|0 -40 0"
+                        "damage bonus" 1.45
+                        "add cond when active" 36
+                        "projectile trail particle" eyeboss_projectile
+                    }
+                    HomingRockets
+			        {
+				        IgnoreDisguisedSpies 1
+				        IgnoreStealthedSpies 1
+				        RocketSpeed 0.25
+				        AimTime 3
+                        AimStartTime 0.3
+				        TurnPower 50
+				        MaxAimError 150
+			        }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 7
+                        Repeats 1
+                    }
+                }
+                RescueBounce
+                {
+                   FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param engineer_ranger_nys_penetrate_giant
+                        Delay 0
+                        Repeats 1
+                    }
+                    AddCond
+                    {
+                        Index 11
+                        Duration 6.9
+                        Delay 0.01
+                    }
+                    Item "The Rescue Ranger"
+                    WeaponRestrictions PrimaryOnly
+                    ItemAttributes
+                    {
+                        ItemName "The Rescue Ranger"
+                        "projectile lifetime" 11
+                        "projectile speed decreased" 0.35
+                        "projectile penetration" 1
+                        "projectile gravity" 1
+                        "fire rate bonus" 0.25
+                        "clip size bonus" 1.25
+                        "faster reload rate" 1.4
+                        "damage bonus" 2.3
+                        "grenade bounce speed" 1
+                        "reset arrow hits on bounce" 1
+                        "projectile no deflect" 1
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 7
+                        Repeats 1
+                    }
+                }
+                SlugRound
+                {
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param heavy_shotgun_accurate_lite
+                        Delay 0
+                        Repeats 1
+                    }
+                    Item "TF_WEAPON_SHOTGUN_PRIMARY"
+                    WeaponRestrictions PrimaryOnly
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_SHOTGUN_PRIMARY"
+                        "bullets per shot bonus" 10
+                        "damage penalty" 0.5
+                        "weapon spread bonus" 0.01
+                        "sniper fires tracer HIDDEN" 1
+                        "fire rate bonus" 2.5
+                        "faste reload rate" -0.8
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 7
+                        Repeats 1
+                    }
+                }
+                LightningTaunt
+                {
+                    Item "The Eureka Effect"
+                    WeaponRestrictions MeleeOnly
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param engineer_pomson_v2
+                        Delay 0
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target lightning_attack_relay
+                        Action Trigger
+                        Delay 0.1
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Param "NormalState"
+                        Delay 2.8
+                    }
+                }
+                OrbitalSpawn
+                {
+                    WeaponRestrictions PrimaryOnly
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param engineer_pomson_v2
+                        Delay 0
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target laserattack
+                        Action Trigger
+                        Delay 0.1
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Param "NormalState"
+                        Delay 4
+                    }
+                }
+                SpamAttack
+                {
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param engineer_pomson_v2
+                        Delay 0
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target tf_gamerules
+                        Action PlayVO
+                        Param "vo/mvm/norm/Engineer_mvm_revenge01.mp3"
+                        Delay 0.1
+                        Repeats 1
+                    }
+                    Item "The Frontier Justice"
+                    ItemAttributes
+                    {
+                        ItemName "The Frontier Justice"
+                        "fire rate bonus" 0.2
+                        "faster reload rate" 0.9
+                        "clip size bonus" 1.75
+                        "bullets per shot bonus" 3
+                        "damage penalty" 0.8
+                    }
+                    WeaponRestrictions PrimaryOnly
+                    FireInput
+                    {
+                        Target spam_attack_relay
+                        Action Trigger
+                        Delay 0.1
+                        Cooldown 3
+                        Repeats 3
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 11
+                    }
+                }
+                FireBombing
+                {
+                    FireInput
+                    {
+                        Target player
+                        Action $SetProp$m_iszClassIcon
+                        Param soldier_mangler_v2
+                        Delay 0
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target firebomb_attack_relay
+                        Action Trigger
+                        Delay 0.1
+                        Repeats 1
+                    }
+                    Item "TF_WEAPON_WRENCH"
+                    WeaponRestrictions MeleeOnly
+                    ItemAttributes
+                    {
+                        ItemName "tf_weapon_wrench"
+                        "custom item model" "models/empty.mdl"
+                    }
+                    FireInput
+                    {
+                        Target conduit_attacks
+                        Action PickRandomShuffle
+                        Delay 4.81
+                        Repeats 1
+                    }
+                }
+            }
+        }
+    }
+}
