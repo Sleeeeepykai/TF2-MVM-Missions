@@ -1,0 +1,616 @@
+Population
+{
+	PointTemplates	 [$SIGSEGV]  
+	{
+		Distortion_Effect
+		{
+			OnSpawnOutput
+			{
+				Target	"!activator"
+				Action	"addoutput"
+				Param	"renderfx 15"
+			}
+		}
+		bossdeathsmoke
+		{
+			KeepAlive 1
+			OnParentKilledOutput
+			{
+				"target" "boom"
+				"action" "start"
+			}
+
+			info_particle_system
+			{
+				"targetname" "boom"
+				"effect_name" "hightower_explosion" //Particle name the value needs to be the name of a particle. Ask for help to find the one you want.
+				"start_active" "0"
+			}
+		}
+	}
+	Templates
+	{
+		T_TFChief_Mining_Supervisor
+		{
+			Class			Soldier
+			Name			"Mining Supervisor"
+			ClassIcon		soldier_boss_visor
+			SpawnTemplate	"Distortion_Effect" [$SIGSEGV]
+			SpawnTemplate	"bossdeathsmoke" [$SIGSEGV]
+			Health			67500
+			Attributes	"MiniBoss"
+			ChangeAttributes [$SIGSEGV]    
+			{
+				Delay	0
+				Repeats	1
+				IfHealthBelow	55500
+				Name	"Soldier_Boss_Phase_2"
+			}
+			ChangeAttributes [$SIGSEGV]    
+			{
+				Delay	0
+				Repeats	1
+				IfHealthBelow	43000
+				Name	"Soldier_Boss_Phase_3"
+			}
+			ChangeAttributes [$SIGSEGV]    
+			{
+				Delay	0
+				Repeats	1
+				IfHealthBelow	33500
+				Name	"Soldier_Boss_Phase_4"
+			}
+			ChangeAttributes [$SIGSEGV]    
+			{
+				Delay	0
+				Repeats	1
+				IfHealthBelow	23000
+				Name	"Soldier_Boss_Phase_5"
+			}
+			ChangeAttributes [$SIGSEGV]    
+			{
+				Delay	0
+				Repeats	1
+				IfHealthBelow	11500
+				Name	"Soldier_Boss_Phase_6"
+			}
+			ChangeAttributes [$SIGSEGV]    
+			{
+				Delay	0
+				Repeats	1
+				IfHealthBelow	2
+				Name	"Soldier_Boss_Phase_7"
+			}
+			EventChangeAttributes
+			{
+				Default	// Equalizer Soldier
+				{
+					Item	"Scotch Bonnet"
+					Item	"The Equalizer"
+					//Item	"Veterans Attire"
+					//UseCustomModel  "models/player/demo.mdl"
+					Attributes	MiniBoss
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					CustomEyeGlowColor	"255 0 0" [$SIGSEGV]
+					//Attributes AlwaysCrit
+					WeaponRestrictions MeleeOnly
+					//Attributes HoldFireUntilFullReload
+					Tag	boss_death
+					ItemAttributes
+					{
+						ItemName	"The Equalizer"
+						"damage bonus"	3
+						"fire rate bonus"	0.6
+						//IsCrit 1  
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+					}
+				}
+				Soldier_Boss_Phase_2	// Burst Fire Shotgun Soldier
+				{
+					Item	"Scotch Bonnet"
+					//Item	"Veterans Attire"
+					Item	"teufort_shotgun_civicduty"
+					Attributes	MiniBoss
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					WeaponRestrictions SecondaryOnly
+					Attributes HoldFireUntilFullReload
+					Tag	boss_death
+					ItemAttributes
+					{
+						ItemName	"teufort_shotgun_civicduty"
+						"damage bonus"	1.5
+						"clip size bonus"	3
+						"fire rate bonus"	0.125
+						"faster reload rate"	0.5
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+					}
+				}
+				Soldier_Boss_Phase_3	// Nuke Rocket Launcher
+				{
+					Item	"Scotch Bonnet"
+					//Item	"Veterans Attire"
+					Item	"The Original"
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					WeaponRestrictions PrimaryOnly
+					Attributes HoldFireUntilFullReload
+					Tag	boss_death
+					//Attributes	"AlwaysCrit"
+					ItemAttributes
+					{
+						ItemName	"The Original"
+						"faster reload rate"	0.2
+						"fire rate penalty"	2
+						"Projectile speed decreased"	0.5
+						"Blast radius increased"	2.25
+						"damage bonus"	2
+						"use large smoke explosion"	1
+						"damage causes airblast"	1
+						//IsCrit 1  
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+					}
+				}
+				Soldier_Boss_Phase_4	//Rapid Fire Homing Soldier
+				{
+					Item	"Scotch Bonnet"
+					//Item	"Veterans Attire"
+					Item	"Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					WeaponRestrictions PrimaryOnly
+					Attributes HoldFireUntilFullReload
+					//Attributes AlwaysFireWeapon	//may change this one and the attribute above later again
+					Tag	boss_death
+					AddCond "TF_COND_SODAPOPPER_HYPE" [$SIGSEGV]  
+					RocketCustomParticle eyeboss_projectile [$SIGSEGV]  
+					HomingRockets [$SIGSEGV]   
+            		{
+		   				IgnoreDisguisedSpies 1 // Default: 1
+                		IgnoreStealthedSpies 1 // Default: 1
+						RocketSpeed 0.5 // Multiplier of rocket speed. (Default: 1)
+						TurnPower 75 //How fast should the rocket rotate to face the target (Default: 10)
+                		MaxAimError 90 //Max angle between rocket and the target (Default: 105)
+                		AimTime 9999 //How long should the rocket be aiming (Default: 9999)
+                		AimStartTime 0 //How many seconds before the rocket should be aiming (Default: 0)
+                		Acceleration 0 //Acceleration in hu (Default: 0)
+                		AccelerationTime 9999 //How long should the rocket accelerate (Default: 9999)
+                		AccelerationStartTime 0 //Time before rockets start accelerating (Default: 0)
+                		Gravity 0 // Gravity of the rocket (Default: 0)
+                		FollowCrosshair 0 // Follow crosshair instead of enemies (Default: 0)
+               		}
+					ItemAttributes
+					{
+						ItemName	"Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+						"mod max primary clip override"	-1
+						"damage bonus"	1.5
+						//"heal on hit for rapidfire"	250
+						"fire rate bonus"	0.5
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+					}
+				}
+				Soldier_Boss_Phase_5	//Laser Wall (Oil Overflow Wave 6 Obstacle) Soldier (fixed)
+				{
+					Item	"Scotch Bonnet"
+					//Item	"Veterans Attire"
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					WeaponRestrictions PrimaryOnly
+					Attributes HoldFireUntilFullReload
+					Item	"TF_WEAPON_ROCKETLAUNCHER"
+					Tag	boss_death
+					ItemAttributes
+					{
+						ItemName	"tf_weapon_rocketlauncher"
+						"centerfire projectile"	1
+						"override projectile type"	13
+						"energy weapon penetration"	1
+						"dmg bonus vs buildings"	5
+						"set item tint RGB"	8394603
+						"damage bonus"	2
+						"fire rate bonus"	0.1
+						"faster reload rate"	0.125
+						"clip size bonus"	8
+						"attach particle effect" 3045
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+					}
+				}
+				Soldier_Boss_Phase_6	// Barrage Spammer Soldier
+				{
+					Item	"Scotch Bonnet"
+					//Item	"Veterans Attire"
+					Item	"Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					WeaponRestrictions PrimaryOnly
+					Attributes HoldFireUntilFullReload
+					Tag	boss_death
+					AddCond "TF_COND_PREVENT_DEATH" [$SIGSEGV]  
+					ItemAttributes
+					{
+						ItemName	"Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+						"clip size upgrade atomic"	29
+						"faster reload rate"	0.125
+						"fire rate bonus"	0.1.25
+						"projectile spread angle penalty"	10
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+						"Projectile speed decreased"	0.4
+					}
+				}
+				Soldier_Boss_Phase_7	// For the Taunt Death
+				{
+					Item	"Scotch Bonnet"
+					//Item	"Veterans Attire"
+					Item	"Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+					Attributes	UseBossHealthBar
+					Skill	Expert
+					WeaponRestrictions PrimaryOnly
+					Attributes HoldFireUntilFullReload
+					Tag	boss_death
+					UseHumanAnimations 1 [$SIGSEGV]  
+					AddCond "TF_COND_PREVENT_DEATH" [$SIGSEGV]  
+					ItemAttributes
+					{
+						ItemName	"Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+						"clip size upgrade atomic"	29
+						"faster reload rate"	0.125
+						"fire rate bonus"	0.1.25
+						"projectile spread angle penalty"	10
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"			0.4
+						"airblast vulnerability multiplier"	0.2
+						"override footstep sound set"		3
+						"airblast vertical vulnerability multiplier"	0.1
+						"rage giving scale"	0.25
+						"cannot pick up intelligence"	1
+						"cancel falling damage"	1
+						"Projectile speed decreased"	0.4
+					}
+				}
+			}
+			FireInput [$SIGSEGV]
+			{
+    			Target !self
+    			Action $removecond
+   			 	Param "36"
+    			Delay 0
+    			Repeats 1
+    			IfHealthBelow 23000
+    			//IfHealthAbove x
+    			//IfSeeTarget x
+    			//TargetMinRange x
+    			//TargetMaxRange x
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 0 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 56000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 1 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 56000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 2 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 56000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 0 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 43500 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 1 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 43500	//When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 2 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 43500 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 0 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 34000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 1 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 34000	//When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 2 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 34000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 0 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 23500 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 1 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 23500	//When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 2 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 23500 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 0 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 12000	//When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 1 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 12000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+			{
+				Target "tf_gamerules" //Entity name to use
+				Action "playvo" //Input to fire
+				Param "misc\doomsday_lift_warning.wav" //Parameter to use
+				Delay 2 //Delay before firing the input
+				Cooldown 0 //Cooldown between firing the input
+				Repeats 1 //How many times should the input be fired
+				IfHealthBelow 12000 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 0 //When set, the task activates only when the bot health is above specified value
+			}
+			FireInput [$SIGSEGV]   
+            {
+                Target !self //Entity name to use
+                Action "RunScriptCode" //Input to fire
+                Param "self.TakeDamage(999999, 0, self)" //Parameter to use
+                Delay 0.1 //Delay before firing the input
+				Cooldown 0.1 //Cooldown between firing the input
+                Repeats 100000 //How many times should the input be fired
+                IfHealthBelow 2 //When set, the task activates only when the bot health is below specified value
+            }
+			FireInput [$SIGSEGV] //Enable buddha mode.
+			{
+ 				Target !self
+  				Action RunScriptCode
+  				Param "self.EnableBuddha()"
+  				Repeats 1
+  				Delay 0.1
+			}
+			FireInput [$SIGSEGV] //Disable buddhamode.
+			{
+  				Target !self
+  				Action RunScriptCode
+  				Param "self.DisableBuddha()"
+ 				Repeats 1
+  				Delay 4.5
+  				IfHealthBelow 2
+			}
+			FireInput [$SIGSEGV]
+			{
+				Target player
+				Action $SetProp$m_iszClassIcon
+				Param heavy_shotgun_burst_lite
+				Delay 0.1
+				Cooldown 1
+				Repeats 1
+				IfHealthBelow 55500
+			}
+			FireInput [$SIGSEGV]
+			{
+				Target player
+				Action $SetProp$m_iszClassIcon
+				Param soldier_nuke2_giant
+				Delay 0.1
+				Cooldown 1
+				Repeats 1
+				IfHealthBelow 43000
+			}
+			FireInput [$SIGSEGV]
+			{
+				Target player
+				Action $SetProp$m_iszClassIcon
+				Param soldier_homing_spammer_nys_giant
+				Delay 0.1
+				Cooldown 1
+				Repeats 1
+				IfHealthBelow 33500
+			}
+			FireInput [$SIGSEGV]
+			{
+				Target player
+				Action $SetProp$m_iszClassIcon
+				Param soldier_bison_b
+				Delay 0.1
+				Cooldown 1
+				Repeats 1
+				IfHealthBelow 23000
+			}
+			FireInput [$SIGSEGV]
+			{
+				Target player
+				Action $SetProp$m_iszClassIcon
+				Param barrage_infinity
+				Delay 0.1
+				Cooldown 1
+				Repeats 1
+				IfHealthBelow 11500
+			}
+			FireInput [$SIGSEGV]
+			{
+  				Target "bignet"
+  				Action "RunScriptCode"
+  				Param "MiningOp.BossDeath(`boss_death`)"
+  				Repeats 10
+  				Delay 0
+				Cooldown 1
+  				IfHealthBelow 2
+			}
+			Taunt [$SIGSEGV]    //Taunt periodically
+			{
+				Delay 0 //Time before the first taunt starts (Default: 10)
+				Cooldown 1 //Time between each taunt (Default: 10)
+				Repeats 1 //How many times the bot should taunt in total (Default: 0 - Infinite)
+				Duration 6 //Duration of a looping taunt (Default: 0.1)
+				Name "Taunt: Soldier's Requiem" //If set, uses this item taunt instead of default
+				//IfSeeTarget 1 //When set to 1, this task activates only when the bot can see the target player (Default 0 - Always activate)
+				// IfNoTarget 1 //When set to 1, this task activates only when the bot does not have a target (Default 0 - Always activate)
+				IfHealthBelow 2 //When set, the task activates only when the bot health is below specified value
+				//IfHealthAbove 100 //When set, the task activates only when the bot health is above specified value
+				// MaxTargetRange 150 // If set, the task activates only when the target is within specified units away
+				// MinTargetRange 50 // If set, the task activates only when the target is more than specified units away
+			}
+		}
+	}
+}
