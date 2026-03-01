@@ -1,0 +1,572 @@
+WaveSchedule
+{
+	SpawnTemplate "MainRelays"
+	SpawnTemplate "SpawnParticles"
+	SpawnTemplate "IntroTexts"
+
+	PointTemplates [$SIGSEGV]
+	{
+		SpawnParticles
+		{
+			NoFixup 1
+			info_particle_system
+            {
+                "effect_name" "charge_up"
+                "targetname" "fat_boss_spawn"
+                "origin" "1000 0 -52"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+		}
+		IntroTexts
+		{
+			NoFixup 1
+			game_text
+			{
+				"targetname" "fat_miniboss4_introtext1" 
+				"message" "The One Who Strikes Fear in One's Heart"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "1"
+				//"fxtime" "2"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"spawnflags" "1"
+				"channel" "3"
+			}
+		}
+
+		MainRelays
+		{
+			NoFixup 1
+			logic_relay
+			{
+				"targetname" "headless_spawn_relay"
+
+				"OnTrigger" "fat_boss_spawn,Start,,0,-1"
+				"OnTrigger" "point_populator_interface,$ResumeWavespawn,wave_headless,5,-1"
+				"OnTrigger" "@p@headless_targetRunScriptCodeCzUtil.KirbyBoss(self, function(){}, `bossbar1.wav`, 1)5.2-1"
+				"OnTrigger" "fat_miniboss4_introtext1,Display,,6,-1"
+				"OnTrigger" "fat_miniboss4_introtext2,Display,,7,-1"
+				"OnTrigger" "fat_boss_spawn,Stop,,10,-1"
+			}
+		}
+
+		HeadlessPT 
+		{
+			NoFixup 1
+			info_target
+			{
+				"targetname" "headless_target"
+				"origin" "0 0 0"
+			}
+
+			OnSpawnOutput
+            {
+                Target headless_target
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			OnSpawnOutput
+            {
+                Target temporary_solution
+                Action $SetOwner
+                Param "@p@headless_target"
+                Delay 0.1
+            }
+
+			prop_dynamic 
+            {
+                "targetname" "watch_out"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "modelscale" "10"
+                "defaultanim" "start"
+                "solid" "0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+
+			logic_case
+			{
+				"targetname" "special_attack_choice"
+
+				"spawnflags" "2"
+
+				"case01" "spook"
+				"case02" "slash"
+
+				"oncase01" "special_attack_spook,Trigger,,0,-1"
+				"oncase02" "special_attack_slash,Trigger,,0,-1"
+			}
+			
+			filter_activator_tfteam
+			{
+				"targetname" "filter_red"
+				"Negated" "Allow entities that match criteria"
+				"TeamNum" "2"
+			}
+
+			logic_relay
+			{
+				"targetname" "special_attack_spook"
+				"spawnflags" "2"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player\spy_cloak.wav,0,-1"
+				"OnTrigger" "spook_incoming,PickRandomShuffle,,0.5,-1"
+				"OnTrigger" "!activator,$addcond,64,0,-1"
+				"OnTrigger" "!activator,$removecond,64,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\spy_uncloak.wav,3.5,-1"
+				"OnTrigger" "watch_out,Enable,,3.5,-1"
+				"OnTrigger" "!activator,$changeattributes,Scare,3.4,-1"
+				"OnTrigger" "!activator,$taunt,,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\taunt_burp.wav,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,vo\mvm\mght\demoman_mvm_m_gibberish01.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,vo\mvm\mght\demoman_mvm_m_gibberish04.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,vo\mvm\mght\demoman_mvm_m_gibberish05.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,vo\mvm\mght\demoman_mvm_m_gibberish06.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,vo\mvm\mght\demoman_mvm_m_gibberish08.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,vo\mvm\mght\demoman_mvm_m_gibberish09.mp3,6,-1"
+				"OnTrigger" "boss_spook_relay,Trigger,,6,-1"
+				"OnTrigger" "watch_out,Disable,,6,-1"
+				"OnTrigger" "!activator,$changeattributes,Regular,7,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "spook_incoming"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_gibberish01.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_gibberish04.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_gibberish05.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_gibberish06.mp3,0,-1"
+				"oncase05" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_gibberish08.mp3,0,-1"
+				"oncase06" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_gibberish09.mp3,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "special_attack_slash"
+				"spawnflags" "2"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player\spy_cloak.wav,0,-1"
+				"OnTrigger"  "slice_prepare,PickRandomShuffle,,1,-1"
+				"OnTrigger" "!activator,$addcond,64,0,-1"
+				"OnTrigger" "!activator,$removecond,64,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\spy_uncloak.wav,3.5,-1"
+				"OnTrigger" "watch_out,Enable,,3.5,-1"
+				"OnTrigger" "!activator,$changeattributes,Slash,3.4,-1"
+				"OnTrigger" "!activator,$taunt,,3.5,-1"
+				"OnTrigger"  "slice_imminent,PickRandomShuffle,,3.5,-1"
+				"OnTrigger" "boss_slash_relay,Trigger,,6,-1"
+				"OnTrigger" "watch_out,Disable,,6,-1"
+				"OnTrigger" "special_attack_slash_particles,Start,,6,-1"
+				"OnTrigger" "special_attack_slash_particles,Stop,,8,-1"
+				"OnTrigger" "!activator,$changeattributes,Regular,9,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "slice_prepare"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughshort05.mp3,0,-1"
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughshort05.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughevil04.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughevil04.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughevil05.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughevil05.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughevil03.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_laughevil03.mp3,0,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "slice_imminent"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts16.mp3,0,-1"
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts16.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts11.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts11.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_battlecry05.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_battlecry05.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts03.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts03.mp3,0,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "slice_soundeffects"
+
+				"spawnflags" "2"
+
+				"oncase01" "!activator,$PlaySoundToSelf,weapons\samurai\tf_katana_01.wav,0,-1"
+				"oncase02" "!activator,$PlaySoundToSelf,weapons\samurai\tf_katana_02.wav,0,-1"
+				"oncase03" "!activator,$PlaySoundToSelf,weapons\samurai\tf_katana_03.wav,0,-1"
+				"oncase04" "!activator,$PlaySoundToSelf,weapons\samurai\tf_katana_04.wav,0,-1"
+				"oncase05" "!activator,$PlaySoundToSelf,weapons\samurai\tf_katana_05.wav,0,-1"
+				"oncase06" "!activator,$PlaySoundToSelf,weapons\samurai\tf_katana_06.wav,0,-1"
+			}
+			
+			logic_relay
+			{
+				"targetname" "boss_spook_relay"
+
+				"spawnflags" "2"
+				
+				"OnTrigger"  "boss_spook_trigger,Enable,,0,-1"
+				"OnTrigger" "special_attack_spook_particles*,Start,,0,-1"
+				"OnTrigger" "special_attack_spook_particles*,Stop,,1.25,-1"
+				"OnTrigger"  "boss_spook_trigger,Disable,,0.1,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "boss_slash_relay"
+
+				"spawnflags" "2"
+				
+				"OnTrigger"  "boss_hurter_trigger,Enable,,0,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,0.1,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,0.2,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,0.3,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,0.4,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,0.5,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,0.6,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,0.7,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,0.8,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,0.9,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,1,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,1.1,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,1.2,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,1.3,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,1.4,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,1.5,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,1.6,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,1.7,-1"
+				"OnTrigger"  "boss_hurter_trigger,Enable,,1.8,-1"
+				"OnTrigger"  "boss_hurter_trigger,Disable,,1.9,-1"
+			}
+
+			info_particle_system
+            {
+                "effect_name" "set_taunt_saharan_spy_whirlwind3"
+                "targetname" "special_attack_slash_particles"
+                "origin" "0 0 0"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+
+			info_particle_system
+            {
+                "effect_name" "ghost_firepit_firebits"
+                "targetname" "special_attack_spook_particles"
+                "origin" "0 0 0"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+
+			info_particle_system
+            {
+                "effect_name" "ghost_firepit"
+                "targetname" "special_attack_spook_particles"
+                "origin" "0 0 0"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+
+			info_particle_system
+            {
+                "effect_name" "halloween_ghost_smoke"
+                "targetname" "special_attack_spook_particles"
+                "origin" "0 0 0"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+
+			info_particle_system
+            {
+                "effect_name" "ghost_firepit_plate"
+                "targetname" "special_attack_spook_particles"
+                "origin" "0 0 0"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+			
+			trigger_stun
+			{
+				"targetname"    "boss_spook_trigger"
+				"filtername"    "filter_red"
+				"spawnflags"    "1"
+				"StartDisabled" "1"
+				"stun_duration" "3"
+				"stun_effects"  "1"
+				"stun_type"     "2"
+				"trigger_delay" "0"
+				"move_speed_reduction" "0.85"
+				"mins" "-250 -250 -250"
+				"maxs" "250 250 250"
+			}
+
+			trigger_multiple
+            {
+                "targetname"    "boss_hurter_trigger"
+                "origin"        "0 0 0"
+                "mins"          "-250 -250 -250"
+                "maxs"          "250 250 250"
+                "StartDisabled" "1"
+                "spawnflags"    "1"
+				"filtername" "filter_red"
+				"OnStartTouch" "!activator,$takedamage,15,0,-1"
+                "OnStartTouch" "!activator,bleedplayer,1,0,-1"
+				"OnStartTouch" "slice_soundeffects,PickRandomShuffle,,0,-1"
+            }
+		}
+	}	
+
+    Templates
+	{
+		T_TFBot_Fat_Demo_Headless_Mann
+		{
+			Class Demoman
+			Health 18000
+			Name "Headless Mann"
+			Attributes UseBossHealthBar
+			Attributes MiniBoss
+			ClassIcon demoknight_headtaker_nys
+			
+			Tag "horseman"
+			
+			UseHumanModel 1 
+			UseHumanAnimations 1
+
+			Action Mobber
+			
+			Skin 5 
+			
+			SpawnTemplate "HeadlessPT" 
+
+			ChangeAttributes   
+			{
+				Delay  0.1
+				Cooldown  9999
+				Name  "Immune" 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  4
+				Cooldown  18
+				Name  "Regular" 
+			}
+
+			ChangeAttributes   //5 seconds of invis reposition, 3 seconds of prespecial attack (2 seconds of visibility), 2 seconds of idle
+			{
+				Delay  10
+				Cooldown  18
+				Name  "SpecialAttackPrep" 
+			}
+
+			FireInput
+			{
+				Target special_attack_choice
+				Action PickRandom
+				Delay 10
+				Cooldown 18
+				Repeats 0
+			}
+
+			Taunt 
+			{
+				Delay  1
+				Name "Taunt: Mourning Mercs"
+				Cooldown  9999
+				Repeats 1
+			}
+
+			EventChangeAttributes
+			{
+				Immune
+				{
+					Item "The Scotsman's Skullcutter"
+					Item "The Horsemann's Hand-Me-Down"
+					Item "Zombie Demo"
+					Item "Ali Baba's Wee Booties"
+					WeaponRestrictions MeleeOnly
+					Attributes SuppressFire
+					Skill Expert
+					CharacterAttributes
+					{
+						"move speed bonus" 0.6
+						"dmg taken increased" 0
+						"head scale" 0.0
+						"mult stun resistance" 0
+						"rage giving scale" 0.4
+						"zombiezombiezombiezombie" 1
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"voice pitch scale" 0.5
+						"increased jump height" 0.01
+						"gesture speed increase" 2
+					}
+				}
+
+				Regular
+				{
+					Item "The Scotsman's Skullcutter"
+					Item "The Horsemann's Hand-Me-Down"
+					Item "Zombie Demo"
+					Item "Ali Baba's Wee Booties"
+					WeaponRestrictions MeleeOnly
+
+					//StripItem "The Horseless Headless Horseman's Headtaker"
+
+					Attributes AlwaysFireWeapon
+					
+					Skill Expert
+
+					ItemAttributes
+					{
+						ItemName "The Scotsman's Skullcutter"
+						"move speed penalty" 1
+						"damage bonus" 1.4
+						"melee range multiplier" 1.35
+						"custom kill icon" "headtaker"
+					}
+					
+					ItemModel [$SIGSEGV]
+					{
+						ItemName "The Scotsman's Skullcutter"
+						Model "models/weapons/c_models/c_headtaker/c_headtaker.mdl"
+					}
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	0.6
+						"head scale" 0.0
+						"mult stun resistance" 0
+						"rage giving scale" 0.4
+						"zombiezombiezombiezombie" 1
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"voice pitch scale" 0.5
+						"increased jump height" 0.01
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+					}
+				}
+
+				SpecialAttackPrep
+				{
+					Item "The Scotsman's Skullcutter"
+					Item "The Horsemann's Hand-Me-Down"
+					Item "Zombie Demo"
+					Item "Ali Baba's Wee Booties"
+					WeaponRestrictions MeleeOnly
+
+					ItemModel [$SIGSEGV]
+					{
+						ItemName "The Scotsman's Skullcutter"
+						Model "models/weapons/c_models/c_headtaker/c_headtaker.mdl"
+					}
+
+					Attributes SuppressFire
+					
+					Skill Expert
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	4
+						"head scale" 0.0
+						"mult stun resistance" 0
+						"rage giving scale" 0.4
+						"zombiezombiezombiezombie" 1
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"voice pitch scale" 0.5
+						"increased jump height" 0.01
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+					}
+				}
+
+				Slash
+				{
+					Item "The Horseless Headless Horseman's Headtaker"
+					Item "The Horsemann's Hand-Me-Down"
+					Item "Zombie Demo"
+					Item "Ali Baba's Wee Booties"
+					WeaponRestrictions MeleeOnly
+
+					Attributes SuppressFire
+					
+					Skill Expert
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	0.01
+						"head scale" 0.0
+						"mult stun resistance" 0
+						"rage giving scale" 0.4
+						"zombiezombiezombiezombie" 1
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"voice pitch scale" 0.5
+						"increased jump height" 0.01
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+					}
+				}
+
+				Scare
+				{
+					Item "The Horsemann's Hand-Me-Down"
+					Item "Zombie Demo"
+					Item "Ali Baba's Wee Booties"
+					WeaponRestrictions MeleeOnly
+
+					Item "The Scotsman's Skullcutter"
+
+					ItemModel [$SIGSEGV]
+					{
+						ItemName "The Scotsman's Skullcutter"
+						Model "models/weapons/c_models/c_headtaker/c_headtaker.mdl"
+					}
+
+					Attributes SuppressFire
+					
+					Skill Expert
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	0.3
+						"head scale" 0.0
+						"mult stun resistance" 0
+						"rage giving scale" 0.4
+						"zombiezombiezombiezombie" 1
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"voice pitch scale" 0.5
+						"increased jump height" 0.01
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+					}
+				}
+			}						
+		}
+    }
+}

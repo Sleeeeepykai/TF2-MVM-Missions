@@ -1,0 +1,376 @@
+WaveSchedule
+{
+	SpawnTemplate "MainRelays"
+	SpawnTemplate "SpawnParticles"
+	SpawnTemplate "IntroTexts"
+
+	CustomWeapon
+	{
+		"ExplosiveSupriseVolcano1"
+		{
+			OriginalItemName "tf_weapon_grenadelauncher"
+			"custom projectile model" "models/weapons/w_models/w_baseball.mdl"
+			"mod stun waist high airborne" 1
+			"projectile spread angle penalty" 30
+			"fuse bonus" 3.5
+			"projectile sound" "weapons\bat_baseball_hit1.wav"
+		}
+
+		"ExplosiveSupriseVolcano2"
+		{
+			OriginalItemName "tf_weapon_grenadelauncher"
+			"custom projectile model" "models/weapons/w_models/w_baseball.mdl"
+			"mod stun waist high airborne" 1
+			"damage bonus" 0.6
+			"projectile spread angle penalty" 60
+			"fuse bonus" 3.5
+			"projectile sound" "weapons\bat_baseball_hit1.wav"
+		}
+	}
+
+	PointTemplates [$SIGSEGV]
+	{
+		SpawnParticles
+		{
+			NoFixup 1
+			info_particle_system
+            {
+                "effect_name" "charge_up"
+                "targetname" "fat_boss_spawn"
+                "origin" "1000 0 -52"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+		}
+		IntroTexts
+		{
+			NoFixup 1
+			game_text
+			{
+				"targetname" "fat_miniboss1_introtext1" 
+				"message" "Scottish League Division Underdog"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "1"
+				//"fxtime" "2"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"spawnflags" "1"
+				"channel" "3"
+			}
+
+			game_text
+			{
+				"targetname" "fat_miniboss1_introtext2" 
+				"message" "Explosive Suprise"
+				"x" "-1"
+				"y" "0.3"
+				"effect" "0"
+				"fxtime" "1"
+				"color" "255 255 255"
+				"fadeout" "0.5"
+				"fadein" "0.5"
+				"holdtime" "5"
+				"spawnflags" "1"
+				"channel" "4"
+			}
+		}
+
+		MainRelays
+		{
+			NoFixup 1
+			logic_relay
+			{
+				"targetname" "explosive_spawn_relay" //music starts 1.9s in to sync up with the particle effect 
+
+				"OnTrigger" "fat_boss_spawn,Start,,0,-1" 
+				"OnTrigger" "point_populator_interface,$ResumeWavespawn,wave_explosive,5,-1"
+				"OnTrigger" "@p@explosive_targetRunScriptCodeCzUtil.KirbyBoss(self, function(){}, `bossbar1.wav`, 1)5.2-1"
+				"OnTrigger" "fat_miniboss1_introtext1,Display,,6,-1"
+				"OnTrigger" "fat_miniboss1_introtext2,Display,,7,-1"
+				"OnTrigger" "fat_boss_spawn,Stop,,10,-1"
+            }
+		}
+
+		ExplosiveSuprisePT
+		{
+			NoFixup 1
+			tf_point_weapon_mimic
+            {
+                "targetname" "explosive_suprise_attack1"
+				"origin" "-30 0 190"
+                "angles" "-90 0 0"
+              
+				"$killicon" "merasmus_grenade"
+				"$firetime" "0.1"
+				"$weaponname" "ExplosiveSupriseVolcano1"
+            }
+
+			tf_point_weapon_mimic
+            {
+                "targetname" "explosive_suprise_attack2"
+				"origin" "-30 0 190"
+                "angles" "-90 0 0"
+              
+				"$killicon" "merasmus_grenade"
+				"$firetime" "0.1"
+				"$weaponname" "ExplosiveSupriseVolcano2"
+            }
+
+			prop_dynamic
+			{
+				"targetname" "volcano_cannon"
+				"DisableBoneFollowers" "1"
+				"origin" "-30 -10 110"
+				"angles" "-90 0 0"
+				"model" "models/workshop/weapons/c_models/c_demo_cannon/c_demo_cannon.mdl"
+				"StartDisabled" "1"
+				"modelscale" "2"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "volcano_cannon_ball"
+				"DisableBoneFollowers" "1"
+				"origin" "-30 -10 110"
+				"angles" "0 0 0"
+				"model" "models/weapons/w_models/w_baseball.mdl"
+				"StartDisabled" "1"
+				"modelscale" "3"
+			}
+
+			info_target
+			{
+				"targetname" "explosive_target"
+				"origin" "0 0 0"
+			}
+
+			OnSpawnOutput
+            {
+                Target explosive_target
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			OnSpawnOutput
+            { 
+                Target temporary_solution
+                Action $SetOwner
+                Param "@p@explosive_target"
+                Delay 0.1
+            }
+
+			logic_relay
+			{
+				"targetname" "volcano_attack_relay"
+
+				"spawnflags" "2"
+
+				"OnTrigger" "explosive_voiceline_randomizer_start,PickRandomShuffle,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons\loose_cannon_shoot.wav,2.5,-1"
+				"OnTrigger" "volcano_cannon,Enable,,2.5,-1"
+				"OnTrigger" "volcano_cannon_ball,Enable,,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\pl_impact_stun_range.wav,3,-1"
+				"OnTrigger" "explosive_suprise_attack1,$StartFiring,50,3,-1"
+				"OnTrigger" "explosive_suprise_attack1,$StopFiring,,8,-1"
+				"OnTrigger" "explosive_suprise_attack2,$StartFiring,50,8,-1"
+				"OnTrigger" "explosive_suprise_attack2,$StopFiring,,12,-1"
+				"OnTrigger" "volcano_cannon,Disable,,12,-1"
+				"OnTrigger" "volcano_cannon_ball,Disable,,12,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons\loose_cannon_shoot.wav,12,-1"
+				"OnTrigger" "explosive_voiceline_randomizer_end,PickRandomShuffle,,12,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "explosive_voiceline_randomizer_start"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts09.mp3,0,-1"
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\demoman_mvm_m_taunts09.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_autocappedintelligence02.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_autocappedintelligence02.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_autocappedcontrolpoint02.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_autocappedcontrolpoint02.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_positivevocalization01.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_positivevocalization01.mp3,0,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "explosive_voiceline_randomizer_end"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted01.mp3,0,-1"
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted01.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted03.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted03.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted10.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted10.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted11.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\demoman_mvm_m_specialcompleted11.mp3,0,-1"
+			}
+		}
+	}	
+
+    Templates
+	{
+        T_TFBot_Fat_Demoman_Sandman_Chief
+		{
+			Class Demoman
+			Name "Explosive Surprise"
+			ClassIcon demoman_sandman_chief 
+			Skill Expert
+			Health 15000
+			WeaponRestrictions PrimaryOnly
+			Attributes HoldFireUntilFullReload
+			Attributes MiniBoss
+
+			SpawnTemplate "ExplosiveSuprisePT"
+
+			Action Mobber
+			
+			Item "Batter's Helmet"
+
+			ChangeAttributes   
+			{
+				Delay  0.1
+				Cooldown  9999
+				Name  "Immune" 
+			}
+
+			FireInput
+			{
+				Target "!activator"
+				Action "$SetProp$m_bUseBossHealthBar"	//grabs prop for UseBossHealthBar
+				Delay 0.3
+				Param "1"	//sets UseBossHealthBar
+			}
+
+			Taunt 
+			{
+				Delay  1
+				Cooldown  9999
+				Repeats 1
+			}
+
+			ChangeAttributes   
+			{
+				Delay  4
+				Cooldown  26
+				Name  "Regular" 
+			}
+
+			FireInput
+			{
+				Target volcano_attack_relay
+				Action Trigger
+				Delay 14
+				Cooldown 26
+				Repeats 0
+			}
+
+			ChangeAttributes   
+			{
+				Delay  14
+				Cooldown  26
+				Name  "Skyhigh1" 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  26
+				Cooldown  26
+				Name  "Rest" 
+			}
+			
+			ItemAttributes
+			{
+				ItemName "Batter's Helmet"
+				"set item tint RGB" 8626083
+			}
+			
+			EventChangeAttributes
+			{
+				Immune
+				{
+					Item "TF_WEAPON_GRENADELAUNCHER"
+					Attributes SuppressFire
+					CharacterAttributes
+					{
+						"move speed bonus" 0.01
+						"dmg taken increased" 0
+					}
+				}
+				Regular
+				{
+					ItemAttributes
+					{
+						ItemName "tf_weapon_grenadelauncher"
+						"custom projectile model" "models/weapons/w_models/w_baseball.mdl"
+						"mod stun waist high airborne" 1
+						"clip size upgrade atomic" 11
+						"blast radius increased" 0.5
+						"fire rate bonus" 0.1
+						"faster reload rate" 0.35
+						"fuse bonus" 1
+						"projectile sound" "weapons\bat_baseball_hit2.wav"
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 2
+						"dmg taken increased" 1
+					}
+				}
+
+				Skyhigh1
+				{
+					Attributes SuppressFire
+
+					ItemAttributes
+					{
+						ItemName "tf_weapon_grenadelauncher"
+						"custom projectile model" "models/weapons/w_models/w_baseball.mdl"
+						"mod stun waist high airborne" 1
+						"clip size upgrade atomic" 11
+						"blast radius increased" 0.5
+						"fire rate bonus" 0.1
+						"faster reload rate" 0.35
+						"fuse bonus" 3.5
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.01
+						"increased jump height" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 2
+					}
+				}
+
+				Rest
+				{
+					Attributes SuppressFire
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.3
+						"increased jump height" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 2
+					}
+				}
+			}
+		}
+    }
+}

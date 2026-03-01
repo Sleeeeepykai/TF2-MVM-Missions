@@ -1,0 +1,411 @@
+WaveSchedule
+{
+	SpawnTemplate "MainRelays"
+	SpawnTemplate "SpawnParticles"
+	SpawnTemplate "IntroTexts"
+
+	CustomWeapon
+	{
+		"BlackHoleFireballs"
+		{
+			OriginalItemName "tf_weapon_rocketlauncher"
+			"projectile trail particle" spell_fireball_small_red
+			"custom projectile model" models/weapons/w_models/w_drg_ball.mdl
+			"custom kill icon" "spellbook_fireball"
+			"mod projectile heat seek power" 35
+			"mod projectile heat aim error" 999
+			"mod projectile heat aim time" 3.5 
+			"Projectile speed increased" 0.3
+			"projectile spread angle penalty" 30
+			"damage bonus" 0.65
+			"ignores other projectiles" 1
+		}
+
+	}
+
+	PointTemplates [$SIGSEGV]
+	{
+		SpawnParticles
+		{
+			NoFixup 1
+			info_particle_system
+            {
+                "effect_name" "charge_up"
+                "targetname" "fat_boss_spawn"
+                "origin" "1000 0 -52"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+		}
+		IntroTexts
+		{
+			NoFixup 1
+			game_text
+			{
+				"targetname" "fat_miniboss3_introtext1" 
+				"message" "Deadly Attractor"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "1"
+				//"fxtime" "2"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"spawnflags" "1"
+				"channel" "3"
+			}
+
+			game_text
+			{
+				"targetname" "fat_miniboss3_introtext2" 
+				"message" "TON 618 Black Hole Pyro"
+				"x" "-1"
+				"y" "0.3"
+				"effect" "0"
+				"fxtime" "1"
+				"color" "255 255 255"
+				"fadeout" "0.5"
+				"fadein" "0.5"
+				"holdtime" "5"
+				"spawnflags" "1"
+				"channel" "4"
+			}
+		}
+
+		MainRelays
+		{
+			NoFixup 1
+
+			logic_relay
+			{
+				"targetname" "blackhole_spawn_relay"
+
+				"OnTrigger" "fat_boss_spawn,Start,,0,-1"
+				"OnTrigger" "point_populator_interface,$ResumeWavespawn,wave_blackhole,5,-1"
+				"OnTrigger" "@p@blackhole_targetRunScriptCodeCzUtil.KirbyBoss(self, function(){}, `bossbar1.wav`, 1)5.2-1"
+				"OnTrigger" "fat_miniboss3_introtext1,Display,,6,-1"
+				"OnTrigger" "fat_miniboss3_introtext2,Display,,7,-1"
+				"OnTrigger" "fat_boss_spawn,Stop,,10,-1"
+			}
+
+			
+		}
+
+		BlackHolePT 
+		{
+			Nofixup 1
+			info_target
+			{
+				"targetname" "blackhole_target"
+				"origin" "0 0 0"
+			}
+
+			OnSpawnOutput
+            {
+                Target blackhole_target
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			OnSpawnOutput
+            {
+                Target temporary_solution
+                Action $SetOwner
+                Param "@p@blackhole_target"
+                Delay 0.1
+            }
+
+			tf_point_weapon_mimic
+            {
+                "targetname" "blackhole_fireballs"
+				"origin" "-100 0 100"
+                "angles" "-45 0 0"
+              
+				"$dmgtype" "64"
+				"$weaponname" "BlackHoleFireballs"
+            }
+
+			logic_relay
+			{
+				"targetname" "blackhole_fireballs_start"
+
+				"spawnflags" "2" 
+				"OnTrigger" "blackhole_fireballs,FireMultiple,5,0,-1"
+				"OnTrigger" "blackhole_fireballs,FireMultiple,7,2,-1"
+				"OnTrigger" "blackhole_fireballs,FireMultiple,10,5,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "succ_relay"
+
+				"spawnflags" "2"
+
+				"OnTrigger" "!activator,$addcond,64,1,-1"
+				"OnTrigger" "blackhole_succ_warning,Start,,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_battlecry02.mp3,2.5,-1"
+				"OnTrigger" "blackhole_succ_succ,Start,,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_autocappedintelligence01.mp3,10,-1"
+				"OnTrigger" "blackhole_succ_succ,Stop,,10,-1"
+				"OnTrigger" "blackhole_succ_warning,Stop,,10,-1"
+				"OnTrigger" "!activator,$removecond,64,10,-1"
+			}
+
+			info_particle_system
+            {
+                "effect_name" "unusual_eyeboss_vortex"
+                "targetname" "blackhole_succ_warning"
+                "origin" "0 0 100"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+
+			info_particle_system
+            {
+                "effect_name" "eyeboss_death_vortex"
+                "targetname" "blackhole_succ_succ"
+                "origin" "0 0 100"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+		}
+	}	
+
+    Templates
+	{
+		T_TFBot_Fat_Boss_Pyro_BlackHole
+		{
+			Class Pyro
+			Health 30000
+			Name "TON 618 Black Hole Pyro"
+			ClassIcon pyro_snare
+			Skill Expert
+
+			Action Mobber
+			
+			Attributes MiniBoss
+			Attributes AlwaysFireWeapon
+
+			UseHumanAnimations 1
+
+			SpawnTemplate "BlackHolePT"
+
+			ChangeAttributes   
+			{
+				Delay  0.1
+				Cooldown  9999
+				Name  "Immune" 
+			}
+
+			FireInput
+			{
+				Target "!activator"
+				Action "$SetProp$m_bUseBossHealthBar"	//grabs prop for UseBossHealthBar
+				Delay 0.3
+				Param "1"	//sets UseBossHealthBar
+			}
+
+			Taunt 
+			{
+				Delay  1
+				Cooldown  9999
+				Repeats 1
+			}
+
+			ChangeAttributes   
+			{
+				Delay  4
+				Cooldown  9999
+				Name  "Regular" 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  6
+				Cooldown  27
+				Name  "BlackHolePrep" 
+			}
+
+			FireInput
+			{
+				Delay 6
+				Cooldown 27
+				Target succ_relay
+				Action Trigger 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  10
+				Cooldown  27
+				Name  "BlackHoleSucc" 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  16
+				Cooldown  27
+				Name  "FireballWalk" 
+			}
+
+			FireInput
+			{
+				Delay 16.5
+				Cooldown 27
+				Target blackhole_fireballs_start
+				Action Trigger 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  24
+				Cooldown  27
+				Name  "Regular" 
+			}
+
+			Sequence
+			{
+				Delay  6
+				Cooldown  27
+				Repeats 0
+				Name "taunt_bubbles"
+			}
+
+			EventChangeAttributes
+			{
+				Immune
+				{
+					Attributes SuppressFire
+					Skill Expert
+					WeaponRestrictions PrimaryOnly
+					Item "TF_WEAPON_FLAMETHROWER"
+					Item "The MK 50"
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"is invisible" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.01
+						"dmg taken increased" 0
+						"increased jump height" 0.01
+					}
+				}
+
+				Regular
+				{
+					Item "TF_WEAPON_FLAMETHROWER"
+					Skill Expert
+					Item "The MK 50"
+					WeaponRestrictions PrimaryOnly
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"airblast_destroy_projectile" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.6
+						"increased jump height" 0.01
+						"damage force reduction" 0.2
+						"airblast vulnerability multiplier" 0.2
+						"override footstep sound set" 3
+						"rage giving scale" 0.75
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+					}	
+				}
+
+				BlackHolePrep
+				{
+					Item "The Rainblower"
+					Skill Expert
+					Item "The MK 50"
+					Attributes SuppressFire
+					WeaponRestrictions PrimaryOnly
+					ItemAttributes
+					{
+						ItemName "The Rainblower"
+						"is invisible" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.01
+						"increased jump height" 0.01
+						"damage force reduction" 0.2
+						"airblast vulnerability multiplier" 0.2
+						"override footstep sound set" 3
+						"rage giving scale" 0.75
+						"gesture speed increase" 0.85
+						"dmg taken increased" 1
+					}	
+				}	
+
+				BlackHoleSucc
+				{
+					//Item "TF_WEAPON_FLAMETHROWER"
+					Item "tf_weapon_grenadelauncher"
+					Skill Expert
+					Item "The MK 50"
+					Attributes AlwaysFireWeapon
+					WeaponRestrictions PrimaryOnly
+
+					ItemAttributes
+					{
+						ItemName "tf_weapon_grenadelauncher"
+						"is invisible" 1
+						"apply look velocity on damage" -400
+						"Blast radius increased" 9999
+						"damage bonus" 0.001
+						"fuse bonus" 0.01
+						"fire rate bonus" 0.1
+						"faster reload rate" -0.4
+						"explosion particle" "null"
+						"projectile sound" "-null.wav"
+						"custom projectile model" models/weapons/w_models/w_drg_ball.mdl
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.1
+						"increased jump height" 0.01
+						"damage force reduction" 0.2
+						"airblast vulnerability multiplier" 0.2
+						"override footstep sound set" 3
+						"rage giving scale" 0.75
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+						"stomp player damage" 2 
+						"blast dmg to self increased" 0
+					}	
+				}
+
+				FireballWalk
+				{
+					Item "TF_WEAPON_FLAMETHROWER"
+					Skill Expert
+					Item "The MK 50"
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.3
+						"increased jump height" 0.01
+						"damage force reduction" 0.2
+						"airblast vulnerability multiplier" 0.2
+						"override footstep sound set" 3
+						"rage giving scale" 0.75
+						"gesture speed increase" 1
+						"dmg taken increased" 1
+					}	
+				}
+			}
+		}	
+    }
+}

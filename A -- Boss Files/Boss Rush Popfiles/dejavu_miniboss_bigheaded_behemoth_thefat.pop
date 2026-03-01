@@ -1,0 +1,329 @@
+WaveSchedule
+{
+	SpawnTemplate "MainRelays"
+	SpawnTemplate "SpawnParticles"
+	SpawnTemplate "IntroTexts"
+
+
+	PointTemplates [$SIGSEGV]
+	{
+		SpawnParticles
+		{
+			NoFixup 1
+			info_particle_system
+            {
+                "effect_name" "charge_up"
+                "targetname" "fat_boss_spawn"
+                "origin" "1000 0 -52"
+				"flag_as_weather" "0"
+                "start_active" "0"
+            }
+		}
+		IntroTexts
+		{
+			NoFixup 1
+			game_text
+			{
+				"targetname" "fat_miniboss2_introtext1" 
+				"message" "All Brawn and No Brains"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "1"
+				//"fxtime" "2"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"spawnflags" "1"
+				"channel" "3"
+			}
+
+			game_text
+			{
+				"targetname" "fat_miniboss2_introtext2" 
+				"message" "Bigheaded Behemoth"
+				"x" "-1"
+				"y" "0.3"
+				"effect" "0"
+				"fxtime" "1"
+				"color" "255 255 255"
+				"fadeout" "0.5"
+				"fadein" "0.5"
+				"holdtime" "5"
+				"spawnflags" "1"
+				"channel" "4"
+			}
+		}
+
+		MainRelays
+		{
+			NoFixup 1
+	
+			logic_relay
+			{
+				"targetname" "behemoth_spawn_relay"
+
+				"OnTrigger" "fat_boss_spawn,Start,,0,-1"
+				"OnTrigger" "point_populator_interface,$ResumeWavespawn,wave_behemoth,5,-1"
+				"OnTrigger" "@p@behemoth_targetRunScriptCodeCzUtil.KirbyBoss(self, function(){}, `bossbar1.wav`, 1)5.2-1"
+				"OnTrigger" "fat_miniboss2_introtext1,Display,,6,-1"
+				"OnTrigger" "fat_miniboss2_introtext2,Display,,7,-1"
+				"OnTrigger" "fat_boss_spawn,Stop,,10,-1"
+			}
+		}
+
+		BehemothPT
+		{
+			NoFixup 1
+			info_target
+			{
+				"targetname" "behemoth_target"
+				"origin" "0 0 0"
+			}
+
+			OnSpawnOutput
+            {
+                Target behemoth_target
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			OnSpawnOutput
+            {
+                Target temporary_solution
+                Action $SetOwner
+                Param "@p@behemoth_target"
+                Delay 0.1
+            }
+
+			logic_case
+			{
+				"targetname" "behemoth_voiceline_randomizer_windup"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\heavy_mvm_m_taunts10.mp3,0,-1"
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\heavy_mvm_m_taunts10.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_domination14.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_domination14.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_specialcompleted05.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_specialcompleted05.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleedare05.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleedare05.mp3,0,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "behemoth_voiceline_randomizer_punch"
+
+				"spawnflags" "2"
+
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing01.mp3,0,-1"
+				"oncase01" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing01.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing03.mp3,0,-1"
+				"oncase02" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing03.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing04.mp3,0,-1"
+				"oncase03" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing04.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing05.mp3,0,-1"
+				"oncase04" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleeing05.mp3,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "behemoth_punching_relay"
+
+				"spawnflags" "2"
+
+				"OnTrigger" "behemoth_voiceline_randomizer_windup,PickRandomShuffle,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player\taunt_bell.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\taunt_heavy_upper_cut.wav,4,-1"
+				"OnTrigger" "behemoth_voiceline_randomizer_punch,PickRandomShuffle,,4,-1"
+			}
+		}
+	}	
+
+    Templates
+	{
+		T_TFBot_Fat_Boss_Heavy_Champ
+		{
+			Class Heavyweapons
+			Health 25000
+			Skill Expert
+			Name "Bigheaded Behemoth"
+			ClassIcon heavy_champ
+			Item "The Killing Gloves of Boxing"
+			Item "Pugilist's Protector"
+			WeaponRestrictions MeleeOnly
+			
+			Attributes MiniBoss
+
+			Action Mobber
+
+			SpawnTemplate "BehemothPT"
+
+			ChangeAttributes   
+			{
+				Delay  0.1
+				Cooldown  9999
+				Name  "Immune" 
+			}
+
+			Taunt 
+			{
+				Delay  1
+				Cooldown  9999
+				Repeats 1
+			}
+
+			ChangeAttributes   
+			{
+				Delay  4
+				Cooldown  18
+				Name  "Regular" 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  10
+				Cooldown  18
+				Name  "Reposition" 
+			}
+
+			ChangeAttributes   
+			{
+				Delay  13
+				Cooldown  18
+				Name  "Chargeup" 
+			}
+
+			FireWeapon [$SIGSEGV]  //Periodically fires weapon
+            {
+                Delay 17
+                Cooldown 18
+                Repeats 0 		
+				Type "Primary"
+			}	
+
+			FireInput 
+			{
+				Target behemoth_punching_relay
+				Action Trigger
+				Delay 13
+                Cooldown 18
+				Repeats 0
+			}
+
+			FireInput
+			{
+				Target "!activator"
+				Action "$SetProp$m_bUseBossHealthBar"	//grabs prop for UseBossHealthBar
+				Delay 0.3
+				Param "1"	//sets UseBossHealthBar
+			}
+
+			EventChangeAttributes
+			{
+				Immune
+				{
+					Item "The Killing Gloves of Boxing"
+					BodyPartScaleSpeed 10
+					Attributes SuppressFire
+					CharacterAttributes
+					{
+						"move speed bonus" 0.01
+						"dmg taken increased" 0
+						"head scale" 8
+						"hand scale" 2
+					}
+				}
+				Regular
+				{
+					Item "The Killing Gloves of Boxing"
+					ItemAttributes
+					{
+						ItemName "The Killing Gloves of Boxing"
+						"fire rate bonus" 0.5
+						"gesture speed increase" 2
+						"kill forces attacker to laugh" 1
+						"melee bounds multiplier" 1.5
+						"melee range multiplier" 1.5
+					}
+
+					BodyPartScaleSpeed 100
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"increased jump height" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"airblast vertical vulnerability multiplier" 0.4
+						"rage giving scale" 0.5
+						"override footstep sound set" 2
+						"head scale" 8
+						"hand scale" 2
+					}
+				}	
+
+				Reposition
+				{
+					Attributes SuppressFire
+					ItemAttributes
+					{
+						ItemName "The Killing Gloves of Boxing"
+						"fire rate bonus" 0.5
+						"gesture speed increase" 2
+						"kill forces attacker to laugh" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 5
+						"increased jump height" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"airblast vertical vulnerability multiplier" 0.4
+						"rage giving scale" 0.5
+						"override footstep sound set" 2
+						"head scale" 8
+						"hand scale" 2
+					}
+				}
+
+				Chargeup
+				{
+					Attributes SuppressFire
+					BodyPartScaleSpeed 5
+					ItemAttributes
+					{
+						ItemName "The Killing Gloves of Boxing"
+						"fire rate bonus" 3
+						"gesture speed increase" 0.5
+						"kill forces attacker to laugh" 1
+						"melee bounds multiplier" 3
+						"melee range multiplier" 3
+						"damage causes airblast" 1
+						"apply z velocity on damage" 900
+						"apply look velocity on damage" 900
+						"always crit" 1
+						"custom hit sound" "Weapon_BoxingGloves.CritHit"
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.1
+						"increased jump height" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"airblast vertical vulnerability multiplier" 0.4
+						"rage giving scale" 0.5
+						"override footstep sound set" 2
+						"head scale" 8
+						"hand scale" 4
+					}
+				}
+			}				
+		}	
+    }
+}
