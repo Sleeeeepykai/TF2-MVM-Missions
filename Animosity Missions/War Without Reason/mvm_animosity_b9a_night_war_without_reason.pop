@@ -1928,13 +1928,13 @@ WaveSchedule
                 }
             }
         }
-        WaveSpawn // 16 Scouts
+        WaveSpawn // 14 Scouts
         {
             Name "Nightmare_Subwave8_ScoutHorde3"
             WaitForAllSpawned "Nightmare_Subwave8_GBurstSoldier3"
             Where spawnbot_invasion
-            TotalCount 16
-            MaxActive 16
+            TotalCount 14
+            MaxActive 14
             SpawnCount 1
             WaitBeforeStarting 5
             WaitBetweenSpawns 0.1
@@ -1946,15 +1946,15 @@ WaveSchedule
                 Skill Normal
             }
         }
-        WaveSpawn // 4 Sydney Snipers
+        WaveSpawn // 3 Sydney Snipers
         {
-            Name "Nightmare_Subwave8_Snipers3"
+            Name "Nightmare_Subwave8_Snipers2"
             WaitForAllSpawned "Nightmare_Subwave8_GBurstSoldier3"
             Where spawnbot_mission_sniper
             Support Limited
-            TotalCount 2
-            MaxActive 2
-            SpawnCount 2
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
             WaitBeforeStarting 0
             WaitBetweenSpawns 0
             TotalCurrency 0
@@ -1983,6 +1983,192 @@ WaveSchedule
             Name "Nightmare_Phase4_Check"
             WaitForAllSpawned "Nightmare_Subwave8_ScoutHorde3"
         }
+        WaveSpawn // Snipers Check
+        {
+            Name "Nightmare_Phase4_Check"
+            WaitForAllSpawned "Nightmare_Subwave8_Snipers2"
+        }
+
+        // Phase Dead Check
+        WaveSpawn // GBurst Soldier Check
+        {
+            Name "Nightmare_Phase4_DeadCheck"
+            WaitForAllDead "Nightmare_Subwave8_GBurstSoldier3"
+        }
+        WaveSpawn // GBurst Demo Check
+        {
+            Name "Nightmare_Phase4_DeadCheck"
+            WaitForAllDead "Nightmare_Subwave8_GBurstDemo3"
+        }
+        WaveSpawn // Scout Horde Check
+        {
+            Name "Nightmare_Phase4_DeadCheck"
+            WaitForAllDead "Nightmare_Subwave8_ScoutHorde3"
+        }
+        WaveSpawn // Snipers Check
+        {
+            Name "Nightmare_Phase4_DeadCheck"
+            WaitForAllSpawned "Nightmare_Subwave8_Snipers2"
+        }
+
+        //// FIRST BREAK & FIRST PATH CHANGE ////
+        WaveSpawn // Pausing Spawns
+        {
+            Name "Nightmare_Break_Setup"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 0
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`pop_interface`, `PauseBotSpawning`)
+                      "
+            }
+        }
+        WaveSpawn // Beginning Break
+        {
+            Name "Nightmare_Break_Begin"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 0
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_break_1`
+							text = `You've earned respite from the chaos.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+
+                        EntFire(`robot_bomb`, `ForceReset`)
+                        EntFire(`wave_finished_relay`, `Trigger`)
+                        EntFire(`bombpath_right_relay`, `Trigger`)
+                        EntFire(`bombpath_upperhatch_relay`, `Trigger`)
+                      "
+            }
+        }
+        WaveSpawn // Path Change
+        {
+            Name "Nightmare_Break_PathChange"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 5
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 1312
+							worldPosY = 2816
+							worldPosZ = 158
+							id = `nightmare_pathchange_1`
+							text = `The Bomb Path has changed. Follow the holograms.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+
+        WaveSpawn // Countdown
+        {
+            Name "Nightmare_Break_Countdown"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 20
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_countdown_1`
+							text = `Ten Seconds.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+        WaveSpawn // Countdown
+        {
+            Name "Nightmare_Break_Countdown2"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 25
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_countdown_2`
+							text = `Five Seconds.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+
+        WaveSpawn // End Preparation
+        {
+            Name "Nightmare_Break_EndPrep"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 30
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_countdown_2`
+							text = `Get Ready.`
+							lifetime = 3
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+        WaveSpawn // End Begin
+        {
+            Name "Nightmare_Break_End"
+            WaitForAllSpawned "Nightmare_Phase4_DeadCheck"
+            WaitBeforeStarting 33
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`pop_interface`, `PauseBotSpawning`)
+                      "
+            }
+        }
 
         //// PHASE 5 ////
 
@@ -1998,6 +2184,8 @@ WaveSchedule
             WaitBeforeStarting 10
             WaitBetweenSpawns 0
             TotalCurrency 200
+
+            FirstSpawnWarningSound "mvm/mvm_warning.wav"
 
             TFBot
             {
@@ -3374,6 +3562,58 @@ WaveSchedule
                       "
             }
         }
+        WaveSpawn // Dragon's Fury Tank Park
+        {
+            Name "Nightmare_Subwave14_TankPark"
+            WaitForAllSpawned "Nightmare_Subwave14_Dragons_Fury_Tank"
+            WaitBeforeStarting 77
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankboss_f`, `SetSpeed`, 0)
+
+                        PrecacheSound(`doors/heavy_metal_stop1.wav`)
+                        PrecacheSound(`hl1/ambience/steamburst1.wav`)
+
+                        EmitSoundEx({
+                            sound_name = `doors/heavy_metal_stop1.wav`
+                            channel = 6
+                            volume = 0.75
+                            pitch = 90
+                            special_dsp = 7
+                            filter_type = 5
+                        })
+                        EmitSoundEx({
+                            sound_name = `hl1/ambience/steamburst1.wav`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 7
+                            filter_type = 5
+                        })
+                      "
+            }
+        }
+        WaveSpawn // Dragon's Fury Tank Continue
+        {
+            Name "Nightmare_Subwave14_TankContinue"
+            WaitForAllSpawned "Nightmare_Subwave14_TankPark"
+            WaitBeforeStarting 30
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankboss_f`, `SetSpeed`, 25, null, 0)
+                        EntFire(`tankboss_f`, `SetSpeed`, 50, null, 2)
+                        EntFire(`tankboss_f`, `SetSpeed`, 75, null, 4)
+                      "
+            }
+        }
 
         WaveSpawn // 1 GPyro
         {
@@ -3506,6 +3746,181 @@ WaveSchedule
             WaitForAllSpawned "Nightmare_Subwave14_Scatterbonks2"
         }
 
+        WaveSpawn // Dragon's Fury Tank Check
+        {
+            Name "Nightmare_Phase7_DeadCheck"
+            WaitForAllDead "Nightmare_Subwave14_Dragons_Fury_Tank"
+        }
+        WaveSpawn // GPyro Check
+        {
+            Name "Nightmare_Phase7_DeadCheck"
+            WaitForAllDead "Nightmare_Subwave14_GPyro2"
+        }
+        WaveSpawn // Scatter-Bonks Check
+        {
+            Name "Nightmare_Phase7_DeadCheck"
+            WaitForAllDead "Nightmare_Subwave14_Scatterbonks2"
+        }
+
+        //// SECOND BREAK & SECOND PATH CHANGE ////
+        WaveSpawn // Pausing Spawns
+        {
+            Name "Nightmare_Break2_Setup"
+            WaitForAllSpawned "Nightmare_Phase7_Check"
+            WaitBeforeStarting 0
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`pop_interface`, `PauseBotSpawning`)
+                      "
+            }
+        }
+        WaveSpawn // Beginning Break
+        {
+            Name "Nightmare_Break2_Begin"
+            WaitForAllSpawned "Nightmare_Phase7_DeadCheck"
+            WaitBeforeStarting 0
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_break_2`
+							text = `You've earned another break from the fight.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+
+                        EntFire(`robot_bomb`, `ForceReset`)
+                        EntFire(`wave_finished_relay`, `Trigger`)
+                        EntFire(`bombpath_left_relay`, `Trigger`)
+                        EntFire(`bombpath_upperhatch_relay`, `Trigger`)
+                      "
+            }
+        }
+        WaveSpawn // Path Change
+        {
+            Name "Nightmare_Break_PathChange2"
+            WaitForAllSpawned "Nightmare_Phase7_DeadCheck"
+            WaitBeforeStarting 5
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = -424
+							worldPosY = 2950
+							worldPosZ = 110
+							id = `nightmare_pathchange_1`
+							text = `The Bomb Path has changed once more. Follow the holograms.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+
+        WaveSpawn // Countdown
+        {
+            Name "Nightmare_Break2_Countdown"
+            WaitForAllSpawned "Nightmare_Phase7_DeadCheck"
+            WaitBeforeStarting 20
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_countdown2_1`
+							text = `Ten Seconds.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+        WaveSpawn // Countdown
+        {
+            Name "Nightmare_Break2_Countdown2"
+            WaitForAllSpawned "Nightmare_Phase7_DeadCheck"
+            WaitBeforeStarting 25
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_countdown2_2`
+							text = `Five Seconds.`
+							lifetime = 5
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+
+        WaveSpawn // End Preparation
+        {
+            Name "Nightmare_Break2_EndPrep"
+            WaitForAllSpawned "Nightmare_Phase7_DeadCheck"
+            WaitBeforeStarting 30
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SendGlobalGameEvent(`show_annotation`, {
+							worldPosX = 578
+							worldPosY = 2726
+							worldPosZ = 300
+							id = `nightmare_countdown2_3`
+							text = `Get Ready.`
+							lifetime = 3
+							play_sound = `ui/hint.wav`
+							show_effect = 1
+						})
+                      "
+            }
+        }
+        WaveSpawn // End Begin
+        {
+            Name "Nightmare_Break_End"
+            WaitForAllSpawned "Nightmare_Phase7_DeadCheck"
+            WaitBeforeStarting 33
+            
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`pop_interface`, `PauseBotSpawning`)
+                      "
+            }
+        }
+
         //// PHASE 8 ////
 
         // Subwave 15
@@ -3520,6 +3935,8 @@ WaveSchedule
             WaitBeforeStarting 10
             WaitBetweenSpawns 0
             TotalCurrency 80
+
+            FirstSpawnWarningSound "mvm/mvm_warning.wav"
 
             Squad
             {
