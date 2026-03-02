@@ -71,6 +71,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		{
 			RobotScripts_Kai.GiantBlitzSoldierLogic(activator)
 		}
+		if(activator.HasBotTag("RifleSniper"))
+		{
+			activator.SetMission(3, true)
+		}
 	}
 
 	function GiantBlitzSoldierLogic(Target)
@@ -81,7 +85,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		TargetScope.FiringStartTime <- -1
 		TargetScope.FirerateStartInterval <- 0.8
 		TargetScope.FirerateIncInterval <- 2
-		TargetScope.FirerateIncMult <- 0.7
+		TargetScope.FirerateIncMult <- 0.6
 		TargetScope.MaxFirerateMult <- 0.05
 
 		TargetScope.PrevNextFire <- -1
