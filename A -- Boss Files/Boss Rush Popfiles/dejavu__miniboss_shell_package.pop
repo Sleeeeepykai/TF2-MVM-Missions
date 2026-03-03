@@ -1,0 +1,188 @@
+#base robot_giant.pop
+#base robot_standard.pop
+
+//TheIncomplete
+
+WaveSchedule
+{
+	StartingCurrency	7000
+	RespawnWaveTime	4
+	CanBotsAttackWhileInSpawnRoom	no
+	FixedRespawnWaveTime	No
+	AddSentryBusterWhenDamageDealtExceeds	3000
+	AddSentryBusterWhenKillCountExceeds	20
+	Advanced	1
+	
+	Wave
+	{
+		Checkpoint	Yes
+		StartWaveOutput
+		{
+			Target	wave_start_relay
+			Action	Trigger
+		}
+		InitWaveOutput
+		{
+			Target gamerules
+            Action RunScriptCode
+            Param "
+				EntFire(`bombpath_select_left1`, `Trigger`)
+                SpawnEntityFromTable(`filter_tf_bot_has_tag` , {
+                    targetname = `filter_nemesis`
+                    tags = `bot_nemesis`
+                    origin = Vector(0,0,10)
+                    require_all_tags = `1`
+                }
+            )
+                
+            local nemesis_teleport = SpawnEntityFromTable(`trigger_teleport` , {
+                    targetname = `nemesis_teleport`
+                    origin = Vector(1248,9008,752)
+                    spawnflags = 1
+                    target = `intel`
+                    filtername = `filter_nemesis`
+                }
+            )
+            
+            local nemesis_two = SpawnEntityFromTable(`trigger_teleport` , {
+                    targetname = `nemesis_teleport`
+                    origin = Vector(1316,7090,546)
+                    spawnflags = 1
+                    target = `boss_path_3`
+                    filtername = `filter_nemesis`
+                }
+            )
+            
+            nemesis_teleport.KeyValueFromInt(`solid`, 2)
+            nemesis_teleport.KeyValueFromString(`mins`, `-64 -64 -64`)
+            nemesis_teleport.KeyValueFromString(`maxs`, `64 64 64`)
+            
+            nemesis_two.KeyValueFromInt(`solid`, 2)
+            nemesis_two.KeyValueFromString(`mins`, `-120 -85 -64`)
+            nemesis_two.KeyValueFromString(`maxs`, `120 60 226`)
+            "
+        }
+		DoneOutput
+		{
+			Target	wave_finished_relay
+			Action	Trigger
+		}
+		WaveSpawn
+		{
+			Name 5boss1
+			WaitBeforeStarting 0
+			DoneOutput
+            {
+                Target gamerules
+                Action RunScriptCode
+                Param "
+                    ScreenFade(null,255,63,63,30,0.5,0.5,1)
+                    EntFire(`gamerules`,`PlayVO`,`npc/combine_gunship/ping_search.wav`)
+                "
+            }
+		}
+		WaveSpawn
+		{
+			Name 5boss1
+			Where spawnbot_flank_left
+			Where spawnbot_flank_right
+			TotalCurrency 0
+			TotalCount 1
+			SpawnCount 1
+			MaxActive 1
+			Support Limited
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			DoneOutput
+            {
+                Target gamerules
+                Action RunScriptCode
+                Param "
+                    ScreenFade(null,255,63,63,30,0.5,0.5,1)
+                    EntFire(`gamerules`,`PlayVO`,`npc/combine_gunship/ping_search.wav`)
+                "
+            }
+			RandomChoice
+			{
+				Squad
+				{
+					TFBot
+					{
+						Class Heavy
+						Name "Nemesis Program MK1 Shell"
+						ClassIcon heavy_chief
+						Health 5000
+						Skill Expert
+						Item "War Head"
+						WeaponRestrictions MeleeOnly
+						Attributes MiniBoss
+						Item "Fists of Steel"
+						Scale 1.8
+						CharacterAttributes
+						{
+							"Damage Bonus" 4
+							"move speed bonus"	0.5
+							"damage force reduction" 0.001
+							"airblast vulnerability multiplier" 0.001
+							"override footstep sound set" 5
+						}
+						Attributes UseBossHealthBar
+					}
+				}
+			}
+		}
+		WaveSpawn //Even now, it could be strolling about wearing the shell of someone we know.
+		{
+			Name 5boss
+			WaitForAllDead 5boss1
+			Where spawnbot_giant
+			DoneWarningSound "ambient\explosions\explode_2.wav"
+			TotalCurrency 100
+			TotalCount 1
+			SpawnCount 1
+			MaxActive 1
+			WaitBeforeStarting 0
+			TFBot
+			{
+				Class Soldier
+				Name "Nemesis Program MK1 Shell"
+				ClassIcon soldier_bison
+				Health 17000
+				Skill Expert
+				Tag bot_nemesis
+				Item "Armored Authority"
+				WeaponRestrictions PrimaryOnly
+				Attributes MiniBoss
+				Attributes HoldFireUntilFullReload
+				Scale 1.8
+				ItemAttributes
+				{
+					ItemName	"tf_weapon_rocketlauncher"
+					"set item tint RGB"	16514816
+					"dmg penalty vs buildings" 5
+					"dmg penalty vs players" 2.2
+					"attach particle effect" 3097
+					"clip size upgrade atomic"	26.0
+					"fire rate bonus"	0.001
+					"faster reload rate"	0.18
+					"energy weapon penetration" 1
+					"override projectile type" 13
+					"projectile spread angle penalty"	6
+				}
+				ItemAttributes
+				{
+					ItemName	"tyrantium helmet"
+					"set item tint RGB"	16514816
+				}
+				CharacterAttributes
+				{
+					"move speed bonus"	0.5
+					"damage force reduction"	0.001
+					"airblast vulnerability multiplier"	0.001
+					"override footstep sound set"	3
+				}
+				Attributes UseBossHealthBar
+			}
+		}
+	}
+}
