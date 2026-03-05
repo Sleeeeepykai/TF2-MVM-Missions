@@ -1,0 +1,862 @@
+WaveSchedule
+{
+	PrecacheModel "models/props_mvm/indicator/indicator_circle_long.mdl"
+
+	SpawnTemplate "MainRelays"
+	SpawnTemplate "SpawnParticles"
+	SpawnTemplate "IntroTexts"
+
+	CustomWeapon
+	{
+		"Gael_Phase3_Explosion"
+		{
+			OriginalItemName "tf_weapon_rocketlauncher"
+			"projectile trail particle" eyeboss_projectile
+			"custom projectile model" models/props_mvm/mvm_human_skull.mdl
+			"Projectile speed increased" 0.3
+			"projectile spread angle penalty" 90
+			"mod projectile heat seek power" 30
+			"mod projectile heat aim error" 90
+			"mod projectile heat aim time" 8
+			"ragdolls become ash" 1
+			"ignores other projectiles" 1
+			"projectile gravity" 50
+			"always crit" 1
+		}
+	}
+
+	PointTemplates [$SIGSEGV]
+	{
+		SpawnParticles
+		{
+			NoFixup 1
+			env_fade 
+			{
+				"targetname" "fade_intro_gael1"
+				"duration" "0.5"
+				"holdtime" "1.5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+				"spawnflags" "0"
+			}
+
+			env_fade 
+			{
+				"targetname" "fade_intro_gael2"
+				"duration" "0.5"
+				"holdtime" "1"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+				"spawnflags" "1"
+			}
+		}
+		IntroTexts
+		{
+			NoFixup 1
+
+			game_text
+			{
+				"targetname" "fat_boss1_introtext1" 
+				"message" "Forgotten by Fate"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "1"
+				//"fxtime" "2"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"fadeout" "0.5"
+				"holdtime" "6"
+				"spawnflags" "1"
+				"channel" "3"
+			}
+
+			game_text
+			{
+				"targetname" "fat_boss1_introtext2" 
+				"message" "Slave Knight Dael"
+				"x" "-1"
+				"y" "0.3"
+				"effect" "0"
+				"fxtime" "1"
+				"color" "255 255 255"
+				"fadeout" "0.5"
+				"fadein" "0.5"
+				"holdtime" "5"
+				"spawnflags" "1"
+				"channel" "4"
+			}
+		}
+
+		MainRelays
+		{
+			NoFixup 1
+			logic_relay
+			{
+				"targetname" "gael_spawn_relay"
+
+
+				"OnTrigger" "fade_intro_gael1,Fade,,0,-1"
+				"OnTrigger" "fade_intro_gael2,Fade,,1.25,-1"
+				"OnTrigger" "point_populator_interface,$ResumeWavespawn,wave_gael,1.75,-1"
+				"OnTrigger" "fat_boss1_introtext1,Display,,2.75,-1"
+				"OnTrigger" "fat_boss1_introtext2,Display,,3.75,-1"
+			}
+		}
+
+		SlaveKnightTemplate
+		{
+			NoFixup 1
+
+			info_target
+			{
+				"targetname" "gael_target"
+				"origin" "0 0 0"
+			}
+
+			OnSpawnOutput
+            {
+                Target gael_target
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			OnSpawnOutput
+            {
+                Target temporary_solution
+                Action $SetOwner
+                Param "@p@gael_target"
+                Delay 0.1
+            }
+
+			OnSpawnOutput
+            {
+                Target slave_knight_explosion
+				Action SetParent
+				Param "@p@gael_target"
+				Delay 0.35
+            }
+
+			OnSpawnOutput
+			{
+				Target slave_knight_explosion
+				Action $SetOwner
+				Param "@p@gael_target"
+				Delay 0.4
+			}
+
+			tf_point_weapon_mimic
+            {
+                "targetname" "slave_knight_explosion"
+				"origin" "0 0 190"
+                "angles" "-90 0 0"
+              
+				"$killicon" "purgatory"
+				"$weaponname" "Gael_Phase3_Explosion"
+            }
+
+			prop_dynamic 
+            {
+                "targetname" "watch_out_gael"
+                "origin" "0 0 0"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "modelscale" "10"
+                "defaultanim" "start"
+                "solid" "0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+
+			tf_generic_bomb
+			{
+				"targetname" "fuck_you_explode"
+				"origin" "0 0 0"
+				"damage" "500" 
+				"radius" "250"
+				"health" "100000"
+				"explode_particle" "hightower_explosion"
+				"sound" "items\cart_explode.wav"
+				"friendlyfire" "0"
+			}
+		}
+	}	
+
+    Templates
+	{
+		T_TFBot_Fat_Boss_Slave_Knight
+		{
+			Class Soldier
+			Name "Slave Knight Dael"
+			Health 45000
+			Skill Expert
+			ClassIcon dead_lite_dummy
+			
+			Attributes MiniBoss
+
+			UseHumanAnimations 1
+		
+			RocketCustomModel "models/props_mvm/mvm_human_skull.mdl" [$SIGSEGV]
+
+			SpawnTemplate "SlaveKnightTemplate"
+
+			FireInput
+			{
+				Target "!activator"
+				Action "$SetProp$m_bUseBossHealthBar"	//grabs prop for UseBossHealthBar
+				Delay 0.3
+				Param "1"	//sets UseBossHealthBar
+			}
+
+			Action Mobber
+
+			Taunt
+			{
+				Delay 1
+				Cooldown 9999
+				Repeats 1
+			}
+
+			FireInput
+			{
+				Target tf_gamerules
+				Action PlayVO
+				Param "vo/mvm/norm/soldier_mvm_jeers02.mp3"
+				Delay 0.1
+				Repeats 1
+			}
+
+			FireInput
+			{
+				Target tf_gamerules
+				Action PlayVO
+				Param "vo/mvm/norm/soldier_mvm_painsevere02.mp3"
+				Delay 0.1
+				Repeats 1
+				IfHealthBelow 30000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  0
+				Cooldown  99999
+				Name  "Immune" 
+				IfHealthAbove 30000
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $SetProp$m_iszClassIcon
+				Param     dead_glow_lite
+				Delay 0
+				Repeats 1
+				IfHealthBelow 30000
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $SetProp$m_iszClassIcon
+				Param     dead_glow2_lite
+				Delay 5.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+			
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  4
+				Cooldown  10
+				Name  "RocketPhase1" 
+				IfHealthAbove 30000
+			}
+			
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  10
+				Cooldown  10
+				Name  "KatanaPhase1" 
+				IfHealthAbove 30000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  0
+				Cooldown  8
+				Name  "KatanaPhase2" 
+				IfHealthBelow 30000
+				IfHealthAbove 15000
+			}
+			
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  4
+				Cooldown  8
+				Name  "RocketPhase2" 
+				IfHealthBelow 30000
+				IfHealthAbove 15000
+			}
+
+			FireInput
+			{
+				Target tf_gamerules
+				Action PlayVO
+				Param "vo/mvm/norm/soldier_mvm_painsevere04.mp3"
+				Delay 0.1
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target tf_gamerules
+				Action PlayVO
+				Param "vo/mvm/norm/soldier_mvm_dominationengineer03.mp3"
+				Delay 2.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target tf_gamerules
+				Action PlayVO
+				Param "vo/mvm/norm/soldier_mvm_paincrticialdeath01.mp3"
+				Delay 5.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  0
+				Cooldown  99999
+				Name  "Phase3Start1" 
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $Stun
+				Param 5
+				Delay 0.1
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target watch_out_gael
+				Action Enable
+				Delay 2.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target watch_out_gael
+				Action Disable
+				Delay 5.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target fuck_you_explode
+				Action Detonate
+				Delay 5.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			FireInput
+			{
+				Target slave_knight_explosion
+				Action FireMultiple
+				Param 100
+				Delay 5.5
+				Repeats 1
+				IfHealthBelow 15000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  8
+				Cooldown  99999
+				Name  "Idle" 
+				IfHealthBelow 15000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  9
+				Cooldown  16
+				Name  "RocketPhase3-1" 
+				IfHealthBelow 15000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  18
+				Cooldown  16
+				Name  "RocketPhase3-2" 
+				IfHealthBelow 15000
+			}
+
+			ChangeAttributes [$SIGSEGV] 
+			{
+				Delay  23
+				Cooldown  16
+				Name  "Idle" 
+				IfHealthBelow 15000
+			}
+			
+			EventChangeAttributes
+			{
+				Immune
+				{
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+
+				//	RocketCustomParticle ghost_appearation 
+					
+					Attributes SuppressFire
+
+					WeaponRestrictions MeleeOnly
+					Skill Expert
+					Attributes AlwaysFireWeapon
+					Item "The Half-Zatoichi"
+					
+					ItemAttributes
+					{
+						ItemName "The Half-Zatoichi"
+						"restore health on kill" 0
+						"honorbound" 0
+						"fire rate bonus" 0.75
+						"dmg bonus vs buildings" 5
+						"critboost on kill" 5
+						"melee range multiplier" 1.5
+						"damage all connected" 1
+						"ragdolls become ash" 1
+					}	
+					
+					CharacterAttributes
+					{
+						"move speed bonus"	0.1
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"increased jump height" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+
+				KatanaPhase1
+				{
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+
+				//	RocketCustomParticle ghost_appearation 
+					
+					WeaponRestrictions MeleeOnly
+					Skill Expert
+					Attributes AlwaysFireWeapon
+					Item "The Half-Zatoichi"
+					
+					ItemAttributes
+					{
+						ItemName "The Half-Zatoichi"
+						"restore health on kill" 0
+						"honorbound" 0
+						"fire rate bonus" 0.75
+						"dmg bonus vs buildings" 5
+						"critboost on kill" 5
+						"melee range multiplier" 1.5
+						"damage all connected" 1
+						"ragdolls become ash" 1
+					}	
+					
+					CharacterAttributes
+					{
+						"move speed bonus"	1
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"increased jump height" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+				
+				RocketPhase2
+				{
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+
+				//	RocketCustomParticle ghost_appearation 
+					
+					WeaponRestrictions PrimaryOnly
+					Skill Expert
+					
+					Attributes HoldFireUntilFullReload
+					
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+						"faster reload rate" 0.15
+						"fire rate bonus" 0.1
+						"dmg bonus vs buildings" 3
+						"projectile spread angle penalty" 4
+						"clip size upgrade atomic" 16
+						"Projectile speed increased" 0.8
+					//	"ragdolls become ash" 1
+					}
+					
+					CharacterAttributes
+					{
+						"move speed bonus"	0.4
+						"rage giving scale" 0.5
+						"mult stun resistance" 0
+						"increased jump height" 0.01
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+
+				KatanaPhase2
+				{
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+					
+					Skill Expert
+
+				//	RocketCustomParticle ghost_appearation 
+					
+					
+					WeaponRestrictions MeleeOnly
+					Attributes AlwaysFireWeapon
+					Item "The Half-Zatoichi"
+					
+					ItemAttributes
+					{
+						ItemName "The Half-Zatoichi"
+						"restore health on kill" 0
+						"honorbound" 0
+						"dmg bonus vs buildings" 5
+						"fire rate bonus" 0.6
+						"critboost on kill" 5
+						"heal on hit for rapidfire" 750
+						"melee range multiplier" 1.5
+						"damage all connected" 1
+						"ragdolls become ash" 1
+						"attach particle effect" 13
+						"custom kill icon" "skull"
+					}	
+					
+					CharacterAttributes
+					{
+						"move speed bonus"	0.8
+						"mult stun resistance" 0
+						"increased jump height" 0.01
+						"rage giving scale" 0.5
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01	
+					}
+				}
+				
+				RocketPhase1
+				{
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+					
+
+				//	RocketCustomParticle ghost_appearation 
+
+
+					Skill Expert
+				
+					
+					WeaponRestrictions PrimaryOnly
+					
+					Attributes HoldFireUntilFullReload
+					
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+						"faster reload rate" 0.05
+						"dmg bonus vs buildings" 3
+						"attach particle effect" 701
+						"fire rate bonus" 0.075
+						"Projectile speed increased" 0.3
+						"projectile acceleration" 400
+						//"ragdolls become ash" 1
+						"attach particle effect" 13
+						"custom kill icon" "skull"
+					}
+					
+					CharacterAttributes
+					{
+						"move speed bonus"	0.4
+						"rage giving scale" 0.25
+						"increased jump height" 0.01
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01		
+					}
+				}
+
+				Phase3Start1
+				{
+					Skill Expert
+					
+					Attributes MiniBoss
+					Attributes HoldFireUntilFullReload
+
+					Attributes SuppressFire
+						
+					RocketCustomParticle eyeboss_projectile [$SIGSEGV]
+
+										
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+							
+					WeaponRestrictions PrimaryOnly
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	0.01
+						"increased jump height" 0.01
+						"rage giving scale" 0.5
+						"dmg taken increased" 0.1
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"airblast vulnerability multiplier" 0.01
+						"blast dmg to self increased" 0
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+
+				Phase3Start2
+				{
+					Skill Expert
+					
+					Attributes MiniBoss
+					Attributes HoldFireUntilFullReload
+
+					Attributes SuppressFire
+						
+					RocketCustomParticle eyeboss_projectile [$SIGSEGV]
+
+					ItemAttributes
+					{
+						ItemName "The War on Smissmas Battle Hood"
+						"attach particle effect" 121
+					}
+
+					AddCond [$SIGSEGV]
+					{
+						Index 36
+						Delay 0.1
+					}
+
+										
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+							
+					WeaponRestrictions PrimaryOnly
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	0.01
+						"increased jump height" 0.01
+						"rage giving scale" 0.5
+						"dmg taken increased" 1
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"airblast vulnerability multiplier" 0.01
+						"blast dmg to self increased" 0
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+
+				RocketPhase3-1
+				{
+					Skill Expert
+					
+					Attributes MiniBoss
+					Attributes HoldFireUntilFullReload
+						
+					RocketCustomParticle eyeboss_projectile [$SIGSEGV]
+
+										
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+							
+					ItemAttributes
+					{
+						ItemName "The War on Smissmas Battle Hood"
+						"attach particle effect" 121
+					}
+							
+					WeaponRestrictions PrimaryOnly
+							
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+						"faster reload rate" 0.165
+						"fire rate bonus" 0.1
+						"attach particle effect" 702
+						"dmg bonus vs buildings" 3
+						"clip size upgrade atomic" 16
+						"projectile spread angle penalty" 45
+						"ragdolls become ash" 1
+						"projectile speed increased" 0.3
+						"custom kill icon" "purgatory"
+						"mod projectile heat seek power" 75
+						"mod projectile heat aim error" 90
+						"mod projectile heat aim time" 2
+						"mod projectile heat aim start time" 0
+						"projectile acceleration" 0
+						"projectile acceleration start time" 0
+						"projectile acceleration time" 0
+					}
+
+				//	HomingRockets [$SIGSEGV] 
+				//	{
+				//		IgnoreDisguisedSpies 1 // Default: 1
+				//		IgnoreStealthedSpies 1 // Default: 1
+				//		RocketSpeed 0.3 // Multiplier of rocket speed. (Default: 1)
+				////		TurnPower 75 //How fast should the rocket rotate to face the target (Default: 10)
+				//		MaxAimError 105 //Max angle between rocket and the target (Default: 105)
+				//		AimTime 2 //How long should the rocket be aiming (Default: 9999)
+				//	}
+					
+					AddCond [$SIGSEGV]
+					{
+						Index 36
+						Delay 0.1
+					}
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"increased jump height" 0.01
+						"rage giving scale" 0.5
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"airblast vulnerability multiplier" 0.01
+						"blast dmg to self increased" 0
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+
+				RocketPhase3-2
+				{
+					Skill Expert
+					
+					Attributes MiniBoss
+					Attributes HoldFireUntilFullReload
+						
+					RocketCustomParticle eyeboss_projectile [$SIGSEGV]
+
+										
+					Item "The War on Smissmas Battle Hood"
+					Item "The King of Scotland Cape"
+					Item "Veterans Attire"
+					Item "The All-Father"
+							
+					ItemAttributes
+					{
+						ItemName "The War on Smissmas Battle Hood"
+						"attach particle effect" 121
+					}
+							
+					WeaponRestrictions PrimaryOnly
+							
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+						"faster reload rate" -0.4
+						"fire rate bonus" 0.35
+						"attach particle effect" 702
+						"dmg bonus vs buildings" 3
+						"projectile spread angle penalty" 10
+						"clip size upgrade atomic" 0
+						"ragdolls become ash" 1
+						"Projectile speed increased" 0.1
+						"custom kill icon" "purgatory"
+						"mod projectile heat seek power" 120
+						"mod projectile heat aim error" 105
+						"mod projectile heat aim time" 2
+						"mod projectile heat aim start time" 2
+						"projectile acceleration" 800
+						"projectile acceleration start time" 2
+						"projectile acceleration time" 10
+					}
+
+					HomingRockets [$SIGSEGV] 
+					{
+						IgnoreDisguisedSpies 1 // Default: 1
+						IgnoreStealthedSpies 1 // Default: 1
+						RocketSpeed 0.1 // Multiplier of rocket speed. (Default: 1)
+						TurnPower 120 //How fast should the rocket rotate to face the target (Default: 10)
+						MaxAimError 105 //Max angle between rocket and the target (Default: 105)
+						AimTime 3 //How long should the rocket be aiming (Default: 9999)
+						AimStartTime 2 //How many seconds before the rocket should be aiming (Default: 0)
+						Acceleration 800 //Acceleration in hu (Default: 0)
+						AccelerationTime 10 //How long should the rocket accelerate (Default: 9999)
+						AccelerationStartTime 2 //Time before rockets start accelerating (Default: 0)
+					}
+					
+					AddCond [$SIGSEGV]
+					{
+						Index 36
+						Delay 0.1
+					}
+							
+					CharacterAttributes
+					{
+						"move speed bonus"	1.2
+						"increased jump height" 0.01
+						"rage giving scale" 0.5
+						"damage force reduction" 0.01
+						"mult stun resistance" 0
+						"airblast vulnerability multiplier" 0.01
+						"blast dmg to self increased" 0
+						"override footstep sound set" 3
+						"airblast vertical vulnerability multiplier" 0.01			
+					}
+				}
+			}
+		}
+    }
+}	
