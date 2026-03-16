@@ -46,14 +46,16 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == GR_STATE_PREROUND) Cleanup() }
 
-	OnGameEvent_player_spawn = function (params)
+	OnGameEvent_post_inventory_application = function (params)
 	{
 		local Player = GetPlayerFromUserID(params.userid)
+		printl("its real")
 
 		if ((Player.GetTeam()) == 2)
 		{
 			Player.ValidateScriptScope()
 			local PlayerScope = Player.GetScriptScope()
+			printl("the scope is real")
 
 			if (!("MaxHealthMult" in PlayerScope))
 			{
@@ -62,6 +64,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			}
 
 			EntFireByHandle(Player, "RunScriptCode", "BossRush_PlayerAttributes.PlayerHealthInit(activator)", 0.0, Player, null)
+			printl("the thing is real")
 		}
 	}
 	OnGameEvent_player_death = function (params)
