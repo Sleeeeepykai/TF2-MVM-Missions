@@ -187,13 +187,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			SetPropInt(Player, "m_Local.m_audio.soundscapeIndex", 153)
 		}
 
-		for (local Soundscape; Soundscape = FindByClassname(Soundscape, "env_soundscape");)
-		{
-			printl(Soundscape)
-			Soundscape.KeyValueFromString("soundscape", "November.Void")
-			Soundscape.DispatchSpawn()
-		}
-
 		printl("November Void Success")
 	}
 }
