@@ -73,114 +73,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			return
 		}
 	}
-	function OnGameEvent_player_death(params)
-	{
-		local Player = GetPlayerFromUserID(params.userid)
-
-		if (Player.IsBotOfType(1337))
-		{
-			Player.ValidateScriptScope()
-			local PlayerScope = Player.GetScriptScope()
-
-			if( ("Wearables" in PlayerScope) )
-			{
-				foreach(Wearable in PlayerScope.Wearables)
-				{
-					Wearable.Kill()
-				}
-			}
-			if( ("TPWearables" in PlayerScope) )
-			{
-				foreach(TPWearable in PlayerScope.TPWearables)
-				{
-					TPWearable.Kill()
-				}
-			}
-
-			for (local Entity; Entity = FindByClassnameWithin(Entity, "item_currencypack_*", Player.GetOrigin(), 100 );)
-			{
-				Entity.ValidateScriptScope()
-				local EntityScope = Entity.GetScriptScope()
-				EntityScope.RealOrigin <- Entity.GetOrigin()
-
-				function CollectPack()
-				{
-					local MoneyPack = self
-
-					if (!MoneyPack.IsValid())
-					{
-						return
-					}
-					if (GetPropBool(MoneyPack, "m_bDistributed"))
-					{
-						return
-					}
-
-					local MoneyOrigin = EntityScope.RealOrigin
-					local MoneyOwner = GetPropEntity(MoneyPack, "m_hOwnerEntity")
-					local MoneyModel = MoneyPack.GetModelName()
-
-					local ObjectiveResource = FindByClassname(null, "tf_objective_resource")
-
-					local OldCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
-					MoneyPack.Kill()
-					local NewCashCount = GetPropInt(ObjectiveResource, "m_nMvMWorldMoney")
-
-					local MoneyPackCurrencyCount = OldCashCount - NewCashCount
-
-					local MVMStats = FindByClassname(null, "tf_mann_vs_machine_stats")
-					SetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired", GetPropInt(MVMStats, "m_currentWaveStats.nCreditsAcquired") + MoneyPackCurrencyCount)
-
-					for (local i = 1; i <= MaxPlayers; i++)
-					{
-						local Player = PlayerInstanceFromIndex(i)
-						if (Player && !Player.IsBotOfType(1337))
-						{
-							Player.AddCurrency(MoneyPackCurrencyCount)
-						}
-					}
-
-					local RedMoneyPack = CreateByClassname("item_currencypack_custom")
-					SetPropBool(RedMoneyPack, "m_bDistributed", true )
-					SetPropEntity(RedMoneyPack, "m_hOwnerEntity", MoneyPack)
-					DispatchSpawn(RedMoneyPack)
-					RedMoneyPack.SetModel(MoneyModel)
-
-					TraceWorld <-
-					{
-						start = MoneyOrigin,
-						end = MoneyOrigin - Vector( 0, 0, 50000 )
-						mask = MASK_SOLID_BRUSHONLY
-					}
-					TraceLineEx(TraceWorld)
-					if (TraceWorld.hit)
-					{
-						RedMoneyPack.SetAbsOrigin(TraceWorld.pos + Vector( 0, 0, 5 ))
-					}
-					else
-					{
-						RedMoneyPack.SetAbsOrigin(MoneyOrigin)
-					}
-
-					EntityScope.DespawnTime <- Time() + 30
-					function DespawnThink()
-					{
-						if ( Time() < DespawnTime )
-						{
-							return
-						}
-
-						RedMoneyPack.Kill()
-					}
-					AddThinkToEnt(RedMoneyPack, "DespawnThink")
-				}
-				EntityScope.CollectPack <- CollectPack
-
-				Entity.SetAbsOrigin(Vector( -1000000, -1000000, -1000000 ))
-				EntFireByHandle(Entity, "CallScriptFunction", "CollectPack", 0, null, null)
-			}
-		}
-	}
 
 	function BotTagCheck()
 	{
@@ -190,45 +82,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 
-	// Cosmetic Application Functions
-	function GivePlayerCosmetic(Player, ItemID, ModelPath = null)
-	{
-		local Weapon = CreateByClassname("tf_weapon_parachute")
-		SetPropInt(Weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", 1101)
-		SetPropBool(Weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
-		Weapon.SetTeam(Player.GetTeam())
-		Weapon.DispatchSpawn()
-		Player.Weapon_Equip(Weapon)
-		local Wearable = GetPropEntity(Weapon, "m_hExtraWearable")
-		Weapon.Kill()
-
-		SetPropInt(Wearable, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", ItemID)
-		SetPropBool(Wearable, "m_AttributeManager.m_Item.m_bInitialized", true)
-		SetPropBool(Wearable, "m_bValidatedAttachedEntity", true)
-		Wearable.DispatchSpawn()
-
-		// (optional) Set the model to something new. (Obeys econ's ragdoll physics when ragdolling as well)
-		if (ModelPath)
-			Wearable.SetModelSimple(ModelPath)
-
-		// (optional) if one wants to delete the item entity, collect them within the player's scope, then send Kill() to the entities within the scope.
-		Player.ValidateScriptScope()
-		local PlayerScope = Player.GetScriptScope()
-		if (!("Wearables" in PlayerScope))
-			PlayerScope.Wearables <- []
-		PlayerScope.Wearables.append(Wearable)
-
-		return Wearable
-	}
-
 	// Champion Giant Functions
 	function ChampionGiantLogic(Target)
 	{
-		GivePlayerCosmetic(Target, 342, "models/player/items/demo/crown.mdl")
-		GivePlayerCosmetic(Target, 30517, "models/workshop/player/items/demo/sf14_deadking_pauldrons/sf14_deadking_pauldrons.mdl")
-
-		SetPropBool(Target, "m_bGlowEnabled", true)
-
 		SendGlobalGameEvent("show_annotation", {
 			id = "ChampionGiantWarning"
 			text = "Champion Giant Active!"
