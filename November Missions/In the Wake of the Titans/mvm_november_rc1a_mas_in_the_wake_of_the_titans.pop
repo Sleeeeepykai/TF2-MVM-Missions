@@ -103,8 +103,9 @@ WaveSchedule
             ItemAttributes
             {
                 ItemName "TF_WEAPON_GRENADELAUNCHER"
-                "fire rate bonus" 0.001
-                "faster reload rate" 0.2
+                "mult projectile count" 4
+                "projectile spread angle penalty" 3
+                "faster reload rate" 0.5
             }
         }
         T_TFBot_Giant_Pyro_Champion
@@ -180,6 +181,26 @@ WaveSchedule
                 "weapon spread bonus" 0.75
             }
         }
+
+        T_TFBot_Heavy_Rocketeer
+        {
+            Name "Rocketeer Heavy"
+            Class Heavy
+            ClassIcon heavy_rocket
+            Skill Expert
+            AimAt Body
+            AimOffset "0 0 20"
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_MINIGUN"
+                "damage bonus" 5
+                "fire rate penalty" 3
+                "override projectile type" 2
+                "mini rockets" 1
+                "spread offset pattern" "22 0 -27"
+            }
+        }
     }
 
     //// MISSION BOTS ////
@@ -203,6 +224,22 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
+	Mission // Spy (Wave 2)
+    {
+        Objective Spy
+        Where spawnbot_spy_b
+        Where spawnbot_spy_c
+        BeginAtWave 2
+        RunForThisManyWaves 1
+        InitialCooldown 20
+        CooldownTime 30
+        DesiredCount 2
+
+        TFBot
+        {
+            Template T_TFBot_Spy
+        }
+    }
 
     //// WAVES ////
 
@@ -976,42 +1013,693 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
-    }
-    Wave
-    {
-        InitWaveOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    IncludeScript(`mvm_november_master_script`, getroottable())
-                    MVMNovember_MasterScripting.NovemberMasterInit()
 
-                    EntFire(`advexp_spawn_d_relay` `Trigger`)
-                  "
-        }
-        StartWaveOutput
+		// Subwave 1
+		WaveSpawn // 1 GRapid Demo
+		{
+			Name "Wave2_Subwave1_GRapidDemo"
+			Where spawnbot_c
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Spammer
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 3 Shotgun Pyros
+		{
+			Name "Wave2_Subwave1_ShotgunPyros"
+			WaitForAllSpawned "Wave2_Subwave1_GRapidDemo"
+			Where spawnbot_c
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+			
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 3 Shotgun Pyros
+		{
+			Name "Wave2_Subwave1_ShotgunPyros"
+			WaitForAllSpawned "Wave2_Subwave1_GRapidDemo"
+			Where spawnbot_flank_c
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+			
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 2 Banner Soldiers and 6 Soldiers
+		{
+			Name "Wave2_Subwave1_SoldierSquads"
+			WaitForAllSpawned "Wave2_Subwave1_GRapidDemo"
+			Where spawnbot_b
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+			
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+			}
+		}
+
+		WaveSpawn // 6 Rocketeer Heavies
+		{
+			Name "Wave2_Subwave1_RocketeerHeavies"
+            WaitForAllSpawned "Wave2_Subwave1_GRapidDemo"
+            Where spawnbot_b
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Rocketeer
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+		}
+        WaveSpawn // 3 Shotgun Pyros
+		{
+			Name "Wave2_Subwave1_ShotgunPyros2"
+			WaitForAllSpawned "Wave2_Subwave1_GRapidDemo"
+			Where spawnbot_c
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+			
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 3 Shotgun Pyros
+		{
+			Name "Wave2_Subwave1_ShotgunPyros2"
+			WaitForAllSpawned "Wave2_Subwave1_GRapidDemo"
+			Where spawnbot_flank_c
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+			
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+        WaveSpawn // 1 GRapid Demo
         {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_start_relay`, `Trigger`)
-                  "
+            Name "Wave2_Subwave1_GRapidDemo2"
+            WaitForAllSpawned "Wave2_Subwave1_RocketeerHeavies"
+            Where spawnbot_b
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman_Spammer
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
         }
-        DoneOutput
+        WaveSpawn // 3 Rocketeer Heavies
         {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_finished_relay`, `Trigger`)
-                  "
+            Name "Wave2_Subwave1_RocketeerHeavies2"
+            WaitForAllSpawned "Wave2_Subwave1_GRapidDemo2"
+            Where spawnbot_b
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Rocketeer
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+
+        WaveSpawn // 4 Soldiers
+        {
+            Name "Wave2_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave2_Subwave1_GRapidDemo2"
+            Where spawnbot_c
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+        WaveSpawn // 4 Soldiers
+        {
+            Name "Wave2_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave2_Subwave1_GRapidDemo2"
+            Where spawnbot_flank_c
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 2 Banner Soldiers and 4 Rocketeer Heavies
+        {
+            Name "Wave2_Subwave2_RocketeerHeavies"
+            WaitForAllDead "Wave2_Subwave1_GRapidDemo2"
+            Where spawnbot_c
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 4
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Rocketeer
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Rocketeer
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 6 Soldiers
+        {
+            Name "Wave2_Subwave2_Soldiers"
+            WaitForAllDead "Wave2_Subwave1_GRapidDemo2"
+            Where spawnbot_b
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 4
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+
+        WaveSpawn // 1 GRapid Demo and 2 Banner Soldiers
+        {
+            Name "Wave2_Subwave2_GRapidDemo"
+            WaitForAllSpawned "Wave2_Subwave2_RocketeerHeavies"
+            Where spawnbot_b
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Spammer
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 6 Shotgun Pyros
+        {
+            Name "Wave2_Subwave2_GunandGun"
+            WaitForAllSpawned "Wave2_Subwave2_RocketeerHeavies"
+            Where spawnbot_c
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 3
+            TotalCurrency 10
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Shotgun
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+        WaveSpawn // 3 Soldiers
+        {
+            Name "Wave2_Subwave2_GunandGun"
+            WaitForAllSpawned "Wave2_Subwave2_RocketeerHeavies"
+            Where spawnbot_c
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 3
+            TotalCurrency 10
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+
+        WaveSpawn // 2 Banner Soldiers and 6 Shotgun Pyros
+        {
+            Name "Wave2_Subwave2_GunandGun2"
+            WaitForAllSpawned "Wave2_Subwave2_GRapidDemo"
+            Where spawnbot_b
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Shotgun
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Shotgun
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Shotgun
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 8 Soldiers
+        {
+            Name "Wave2_Subwave2_Soldiers2"
+            WaitForAllSpawned "Wave2_Subwave2_GRapidDemo"
+            Where spawnbot_c
+            TotalCount 8
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+            }
+        }
+
+        WaveSpawn // 1 GRapid Demo
+        {
+            Name "Wave2_Subwave2_GRapidDemo2"
+            WaitForAllSpawned "Wave2_Subwave2_GunandGun2"
+            Where spawnbot_c
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman_Spammer
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 6 Soldiers
+        {
+            Name "Wave2_Subwave2_Soldiers3"
+            WaitForAllSpawned "Wave2_Subwave2_GRapidDemo2"
+            Where spawnbot_flank_c
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 2 Banner Soldiers and 4 Shotgun Pyros
+        {
+            Name "Wave2_Subwave2_GunandGun3"
+            WaitForAllSpawned "Wave2_Subwave2_GRapidDemo2"
+            Where spawnbot_b
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Buff_Banner
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Shotgun
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Shotgun
+                    Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+                }
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Champion Demoman
+        {
+            Name "Wave2_Subwave3_ChampionDemoman"
+            WaitForAllDead "Wave2_Subwave2_GRapidDemo2"
+            Where spawnbot_c
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 80
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Demoman_Champion
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 2 Rocketeer Heavies
+        {
+            Name "Wave2_Subwave3_RocketeerHeavies"
+            WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+            Where spawnbot_c
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Rocketeer
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 2 Rocketeer Heavies
+        {
+            Name "Wave2_Subwave3_RocketeerHeavies"
+            WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+            Where spawnbot_flank_c
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Rocketeer
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 6 Shotgun Pyros
+        {
+            Name "Wave2_Subwave3_ShotgunPyros"
+            WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+            Where spawnbot_b
+            TotalCount 6
+            MaxActive 5
+            SpawnCount 3
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 5
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Shotgun
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 2 Banner Soldiers
+        {
+            Name "Wave2_Subwave3_BuffSoldiers"
+            WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+            Where spawnbot_c
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Extended_Buff_Banner
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 2 Banner Soldiers
+        {
+            Name "Wave2_Subwave3_BuffSoldiers"
+            WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+            Where spawnbot_flank_c
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Extended_Buff_Banner
+                Skill Expert
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        // Wave Complete Check
+        WaveSpawn
+        {
+            Name "Wave2_CompleteCheck"
+            WaitForAllDead "Wave2_Subwave3_ChampionDemoman"
+        }
+        WaveSpawn
+        {
+            Name "Wave2_CompleteCheck"
+            WaitForAllDead "Wave2_Subwave3_RocketeerHeavies"
+        }
+        WaveSpawn
+        {
+            Name "Wave2_CompleteCheck"
+            WaitForAllDead "Wave2_Subwave3_ShotgunPyros"
+        }
+        WaveSpawn
+        {
+            Name "Wave2_CompleteCheck"
+            WaitForAllDead "Wave2_Subwave3_BuffSoldiers"
         }
 
         // Wave End Sequence
         WaveSpawn // Transition Annotation
         {
-            Name "Wave3_Transition"
-            WaitForAllSpawned "Wave3_CompleteCheck"
+            Name "Wave2_Transition"
+            WaitForAllSpawned "Wave2_CompleteCheck"
             WaitBeforeStarting 0
 
             FirstSpawnOutput
@@ -1035,8 +1723,8 @@ WaveSchedule
         }
         WaveSpawn // Transition Sound
         {
-            Name "Wave3_Transition"
-            WaitForAllSpawned "Wave3_CompleteCheck"
+            Name "Wave2_Transition"
+            WaitForAllSpawned "Wave2_CompleteCheck"
             WaitBeforeStarting 5
 
             FirstSpawnOutput
@@ -1060,8 +1748,8 @@ WaveSchedule
         }
         WaveSpawn // Transition Sound
         {
-            Name "Wave3_Transition2"
-            WaitForAllSpawned "Wave3_CompleteCheck"
+            Name "Wave2_Transition2"
+            WaitForAllSpawned "Wave2_CompleteCheck"
             WaitBeforeStarting 7
 
             FirstSpawnOutput
@@ -1085,8 +1773,8 @@ WaveSchedule
         }
         WaveSpawn // Transition Sound
         {
-            Name "Wave3_Transition3"
-            WaitForAllSpawned "Wave3_CompleteCheck"
+            Name "Wave2_Transition3"
+            WaitForAllSpawned "Wave2_CompleteCheck"
             WaitBeforeStarting 9
 
             FirstSpawnOutput
@@ -1111,8 +1799,8 @@ WaveSchedule
 
         WaveSpawn // Transition Sequence
         {
-            Name "Wave3_FullTransition"
-            WaitForAllSpawned "Wave3_CompleteCheck"
+            Name "Wave2_FullTransition"
+            WaitForAllSpawned "Wave2_CompleteCheck"
             WaitBeforeStarting 11
 
             FirstSpawnOutput
@@ -1149,9 +1837,39 @@ WaveSchedule
 
         WaveSpawn
         {
-            Name "Wave3_TransitionComplete"
-            WaitForAllSpawned "Wave3_CompleteCheck"
+            Name "Wave2_TransitionComplete"
+            WaitForAllSpawned "Wave2_CompleteCheck"
             WaitBeforeStarting 16
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    IncludeScript(`mvm_november_master_script`, getroottable())
+                    MVMNovember_MasterScripting.NovemberMasterInit()
+
+                    EntFire(`advexp_spawn_d_relay` `Trigger`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
         }
     }
     Wave
