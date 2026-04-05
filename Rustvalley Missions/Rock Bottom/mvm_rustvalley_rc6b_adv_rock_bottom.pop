@@ -1,0 +1,659 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 2000
+	RespawnWaveTime 0
+	FixedRespawnWaveTime Yes
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 4000
+    AddSentryBusterWhenKillCountExceeds 15
+
+	//// PRECACHES ////
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mid0
+		BeginAtWave 1
+		RunForThisManyWaves 10
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 20 Charging Demos
+		{
+			Name "Wave1_Subwave1_ChargingDemo"
+			Where spawnbot_mid0
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+
+		WaveSpawn // 1 Giant Shotgun Pyro
+		{
+			Name "Wave1_Subwave1_GShotgun"
+			WaitForAllSpawned "Wave1_Subwave1_ChargingDemo"
+			Where spawnbot_mid0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "Giant Shotgun Pyro"
+				Template T_TFBot_Giant_Pyro
+				ClassIcon heavy_shotgun_giant
+				Attributes HoldFireUntilFullReload
+				WeaponRestrictions SecondaryOnly
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave1_Subwave1_Heavies"
+			WaitForAllSpawned "Wave1_Subwave1_ChargingDemo"
+			Where spawnbot_mid0
+			TotalCount 10
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 1 Giant Shotgun Pyro
+		{
+			Name "Wave1_Subwave1_GShotgun2"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot_mid0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "Giant Shotgun Pyro"
+				Template T_TFBot_Giant_Pyro
+				ClassIcon heavy_shotgun_giant
+				Attributes HoldFireUntilFullReload
+				WeaponRestrictions SecondaryOnly
+			}
+		}
+
+		WaveSpawn // 10 Charging Demos
+		{
+			Name "Wave1_Subwave1_ChargingDemos"
+			WaitForAllSpawned "Wave1_Subwave1_GShotgun2"
+			Where spawnbot_left0
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 8 GRU Heavies and 8 Kritzkrieg Medics
+		{
+			Name "Wave1_Subwave2_GRUHeavies"
+			WaitForAllDead "Wave1_Subwave1_GShotgun2"
+			Where spawnbot_mid0
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ_Fast
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave1_Subwave2_Heavies"
+			WaitForAllDead "Wave1_Subwave1_GShotgun2"
+			Where spawnbot_left0
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 GFlare Pyros
+		{
+			Name "Wave1_Subwave2_GRapidSoldierSquad"
+			WaitForAllSpawned "Wave1_Subwave2_GRUHeavies"
+			Where spawnbot_mid0
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 15
+			TotalCurrency 120
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Flare_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Flare_Spammer
+				}
+			}
+		}
+
+		WaveSpawn // 3 GRU Heavies and 3 Kritzkrieg Medics
+		{
+			Name "Wave1_Subwave2_GRUHeavies2"
+			WaitForAllSpawned "Wave1_Subwave2_GRapidSoldierSquad"
+			Where spawnbot_left0
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ_Fast
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave1_Subwave3_Heavies"
+			WaitForAllDead "Wave1_Subwave2_GRapidSoldierSquad"
+			Where spawnbot_mid0
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`cliff_fence`, `Disable`)
+						EntFire(`fence_crack`, `PlaySound`)
+					  "
+			}
+		}
+		WaveSpawn // 12 Charging Demos
+		{
+			Name "Wave1_Subwave3_ChargingDemos"
+			WaitForAllDead "Wave1_Subwave2_GRapidSoldierSquad"
+			Where spawnbot_right0
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 12
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+
+		WaveSpawn // 1 GShotgun
+		{
+			Name "Wave1_Subwave3_GShotgun"
+			WaitForAllSpawned "Wave1_Subwave3_ChargingDemos"
+			Where spawnbot_mid0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "Giant Shotgun Pyro"
+				Template T_TFBot_Giant_Pyro
+				ClassIcon heavy_shotgun_giant
+				Attributes HoldFireUntilFullReload
+				WeaponRestrictions SecondaryOnly
+			}
+		}
+
+		WaveSpawn // 5 GRU Heavies and 5 Kritzkrieg Medics
+		{
+			Name "Wave1_Subwave3_GRUHeavies"
+			WaitForAllSpawned "Wave1_Subwave3_GShotgun"
+			Where spawnbot_mid0
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ_Fast
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+
+		WaveSpawn // 1 GRapid Soldier and 6 Heavies
+		{
+			Name "Wave1_Subwave3_GRapidSoldier"
+			WaitForAllSpawned "Wave1_Subwave3_GRUHeavies"
+			Where spawnbot_mid0
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_MINIGUN_BULLET_DAMAGE  = 10   // default: 22
+					})
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 GHeater Heavy and 2 GPyros
+		{
+			Name "Wave2_Subwave1_GHeavySquad"
+			Where spawnbot_mid_slow0
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Heater
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+			}
+		}
+		WaveSpawn // 10 Scouts
+		{
+			Name "Wave2_Subwave1_Scouts"
+			WaitForAllSpawned "Wave2_Subwave1_GHeavySquad"
+			Where spawnbot_mid0
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // 50 Scouts
+		{
+			Name "Wave2_Subwave1_ScoutHorde"
+			WaitForAllSpawned "Wave2_Subwave1_GHeavySquad"
+			Where spawnbot_scattered0
+			TotalCount 50
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 1
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 2 Stickybomb Demos
+		{
+			Name "Wave2_Subwave1_StickybombDemos"
+			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			Where spawnbot_left0
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+		WaveSpawn // 2 Stickybomb Demos
+		{
+			Name "Wave2_Subwave1_StickybombDemos"
+			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			Where spawnbot_right0
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+
+		WaveSpawn // 1 GCharged
+		{
+			Name "Wave2_Subwave1_GCharged"
+			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			Where spawnbot_left0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Crit
+			}
+		}
+		WaveSpawn // 1 GCharged
+		{
+			Name "Wave2_Subwave1_GCharged"
+			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			Where spawnbot_right0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Crit
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 4 Stickybomb Demos
+		{
+			Name "Wave2_Subwave1_GPyroSquad"
+			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			Where spawnbot_right0
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tiny Minigun Tank
+		{
+			Name "Wave2_Subwave2_MinigunTank"
+			WaitForAllDead "Wave2_Subwave1_GPyroSquad"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Name "combattank|minigun|minigun$pingsound|npc/combine_gunship/ping_search.wav"
+				Health 25000
+				ClassIcon tank_combat_minigun_dual_kai
+				Scale 0.5
+				Speed 75
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_cliff_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+	}
+}
