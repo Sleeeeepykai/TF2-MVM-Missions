@@ -108,6 +108,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 				Ent.AcceptInput("SetControlPoint", CapturePointName, null, null)
 			}
 		}
+
 	}
 
 	function NovemberMasterInit()
