@@ -17,6 +17,22 @@ WaveSchedule
 
 	//// ROBOT TEMPLATES ////
 
+	Templates
+	{
+		T_TFBot_Giant_Demoman_GigaDestroyer
+		{
+			Name "Giant Giga Destroyer Demoman"
+			Class Demoman
+			ClassIcon boss_skeleton_lite
+			Skill Expert
+			Health 12000
+			Scale 2
+
+			Item "Forgotten King's Restless Head"
+			Item "The Shrapnel Shell"
+		}
+	}
+
 	//// MISSION BOTS ////
 
 	Mission // Sentry Buster
@@ -39,6 +55,14 @@ WaveSchedule
 
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+				  "
+		}
 		StartWaveOutput
         {
             Target BigNet
@@ -420,6 +444,8 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
                     IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
@@ -558,7 +584,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 60
 
 			TFBot
 			{
@@ -575,7 +601,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 60
 
 			TFBot
 			{
@@ -726,16 +752,15 @@ WaveSchedule
 			}
 		}
 
-		// Subwave 3
-		WaveSpawn // 1 GHeater Heavy
+		WaveSpawn
 		{
-			Name "Wave2_Subwave3_GHeater"
-			WaitForAllDead "Wave2_Subwave2_MinigunTank"
-			Where spawnbot_right0
+			Name "Wave2_Subwave2_GHeater"
+			WaitForAllSpawned "Wave2_Subwave2_StickyDemos"
+			Where spawnbot_mid0
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 10
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
@@ -744,49 +769,83 @@ WaveSchedule
 				Template T_TFBot_Giant_Heavy_Heater
 			}
 		}
-		WaveSpawn // 4 Stickybomb Demos and 8 Loch Demos
+	}
+	Wave
+	{
+		InitWaveOutput
 		{
-			Name "Wave2_Subwave3_StickyDemos"
-			WaitForAllDead "Wave2_Subwave2_MinigunTank"
-			Where spawnbot_mid0
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 3
-			TotalCurrency 20
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_LochnLoad
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_LochnLoad
-				}
-			}
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_MINIGUN_BULLET_DAMAGE = 5   // default: 22
+					})
+				  "
 		}
-		WaveSpawn // 18 Loch Demos
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
 		{
-			Name "Wave2_Subwave3_LochDemos"
-			WaitForAllSpawned "Wave2_Subwave3_GHeater"
-			Where spawnbot_scattered0
-			TotalCount 18
-			MaxActive 18
+			Name "Wave3_Subwave1_GDemoBarrage"
+			Where spawnbot_mid0
+			TotalCount 11
+			MaxActive 11
+			SpawnCount 11
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+		}
+		WaveSpawn // 1 Tiny Minigun Tank
+		{
+			Name "Wave2_Subwave2_MinigunTank"
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.1
-			TotalCurrency 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
 
-			TFBot
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
 			{
-				Template T_TFBot_Demoman_LochnLoad
+				Name "combattank_bomb|minigun|minigun$pingsound|npc/combine_gunship/ping_search.wav"
+				Health 18000
+				ClassIcon tank_combat_minigun_dual_kai
+				Scale 0.5
+				Speed 75
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_cliff_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
 			}
 		}
 	}
