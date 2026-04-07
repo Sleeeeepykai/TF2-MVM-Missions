@@ -96,13 +96,15 @@ WaveSchedule
 			Health 275
 			Attributes AlwaysCrit
 
+			Item "The Gunslinger"
+
 			AlwaysGlow 1
 
             CharacterAttributes
             {
                 "move speed bonus" 6
                 "displace touched enemies" 1
-                "engy sentry fire rate increased" 3
+                "engy sentry fire rate increased" 5
                 "sentry bullet weapon" "TF_WEAPON_ROCKETLAUNCHER"
                 "destroy buildings on death" 1
 				"building max level" 1
@@ -128,7 +130,7 @@ WaveSchedule
 		}
 	}
 
-	Mission
+	Mission // Engineer (Wave 5)
 	{
 		Objective Engineer
 		Where spawnbot_mid0
@@ -147,6 +149,21 @@ WaveSchedule
 			TeleportWhere spawnbot_scattered0
 		}
 	}
+	Mission // Spy (Wave 6)
+	{
+		Objective Spy
+		Where spawnbot_boss0
+		BeginAtWave 6
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 40
+		DesiredCount 4
+
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
 
 	//// WAVES ////
 
@@ -158,6 +175,8 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`cliff_fence`, `Disable`)
+					EntFire(`bot_hint*`, `Enable`)
 				  "
 		}
 		StartWaveOutput
@@ -391,6 +410,7 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
+					EntFire(`bot_hint*`, `Enable`)
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
@@ -524,30 +544,13 @@ WaveSchedule
 		{
 			Name "Wave2_Subwave1_GCharged"
 			WaitForAllSpawned "Wave2_Subwave1_Scouts"
-			Where spawnbot_left0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 50
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Crit
-			}
-		}
-		WaveSpawn // 1 GCharged
-		{
-			Name "Wave2_Subwave1_GCharged"
-			WaitForAllSpawned "Wave2_Subwave1_Scouts"
 			Where spawnbot_right0
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 50
+			TotalCurrency 60
 
 			TFBot
 			{
@@ -563,9 +566,9 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 30
+			WaitBeforeStarting 35
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 60
 
 			Squad
 			{
@@ -603,7 +606,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 2
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -689,7 +692,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0.5
-			TotalCurrency 20
+			TotalCurrency 40
 
 			TFBot
 			{
@@ -725,6 +728,7 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
+					EntFire(`bot_hint*`, `Enable`)
 				  "
 		}
 		StartWaveOutput
@@ -807,14 +811,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 10 Snipers
+		WaveSpawn // 6 Snipers
 		{
 			Name "Wave3_Subwave1_SniperArmy"
 			WaitForAllSpawned "Wave3_Subwave1_GDemoBarrage"
 			Where spawnbot_scattered0
 			Support Limited
-			TotalCount 10
-			MaxActive 10
+			TotalCount 6
+			MaxActive 6
 			SpawnCount 1
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0.1
@@ -834,14 +838,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 4 Claymore Knights
+		WaveSpawn // 2 Claymore Knights
 		{
 			Name "Wave3_Subwave1_ClaymoreKnights"
 			WaitForAllSpawned "Wave3_Subwave1_GDemoBarrage"
 			Where spawnbot_right0
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -851,16 +855,16 @@ WaveSchedule
 				Template T_TFBot_Demoman_Knight_Claymore
 			}
 		}
-		WaveSpawn // 15 Soldiers
+		WaveSpawn // 8 Soldiers
 		{
 			Name "Wave3_Subwave1_Soldiers"
 			WaitForAllSpawned "Wave3_Subwave1_GDemoBarrage"
 			Where spawnbot_mid0
-			TotalCount 15
-			MaxActive 10
-			SpawnCount 5
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 7
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			TFBot
@@ -871,32 +875,6 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // Support Snipers
-		{
-			Name "Wave2_Subwave2_SniperSupport"
-			WaitForAllDead "Wave3_Subwave1_GDemoBarrage"
-			Where spawnbot_scattered0
-			Support 1
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 30
-			TotalCurrency 0
-
-			TFBot
-			{
-				Template T_TFBot_Sniper
-				Action Sniper
-
-				FireInput
-				{
-					Target !self
-					Action $Suicide
-					Delay  30
-				}
-			}
-		}
 		WaveSpawn // 1 GFury, 1 Full-Uber Medic and 3 Black Boxes
 		{
 			Name "Wave3_Subwave2_GFury"
@@ -1161,6 +1139,7 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
+					EntFire(`bot_hint*`, `Enable`)
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
@@ -1189,13 +1168,13 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 20 Charging Demos
+		WaveSpawn // 16 Charging Demos
 		{
 			Name "Wave4_Subwave1_ChargingDemos2"
 			Where spawnbot_mid0
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 20
+			TotalCount 16
+			MaxActive 16
+			SpawnCount 16
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1216,24 +1195,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave4_Subwave1_GRapidSoldier"
-			WaitForAllSpawned "Wave4_Subwave1_ChargingDemos2"
-			Where spawnbot_right0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 40
 
 			TFBot
 			{
@@ -1241,14 +1203,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 20 Demomen
+		WaveSpawn // 16 Demomen
 		{
 			Name "Wave4_Subwave1_Demomen"
 			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
 			Where spawnbot_mid0
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 20
+			TotalCount 16
+			MaxActive 16
+			SpawnCount 16
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1269,24 +1231,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave4_Subwave1_GRapidSoldier2"
-			WaitForAllSpawned "Wave4_Subwave1_Demomen"
-			Where spawnbot_right0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 40
 
 			TFBot
 			{
@@ -1360,13 +1305,13 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 10 Speedy Gunslingers
+		WaveSpawn // 5 Speedy Gunslingers
 		{
 			Name "Wave4_Subwave1_AutismBrigade"
 			WaitForAllSpawned "Wave4_Subwave1_RocketTank"
 			Where spawnbot_boss0
-			TotalCount 10
-			MaxActive 10
+			TotalCount 5
+			MaxActive 5
 			SpawnCount 1
 			WaitBeforeStarting 8
 			WaitBetweenSpawns 1
@@ -1378,14 +1323,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 15 Demomen
+		WaveSpawn // 12 Demomen
 		{
 			Name "Wave4_Subwave1_Demomen2"
 			WaitForAllSpawned "Wave4_Subwave1_AutismBrigade"
 			Where spawnbot_scattered0
-			TotalCount 15
-			MaxActive 9
-			SpawnCount 3
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 4
 			TotalCurrency 20
@@ -1427,14 +1372,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 5 Steel Gauntlets
+		WaveSpawn // 3 Steel Gauntlets
 		{
 			Name "Wave4_Subwave2_SteelGauntlets"
 			WaitForAllDead "Wave4_Subwave1_RocketTank"
 			Where spawnbot_mid0
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1467,14 +1412,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 Doctor Barrage and 4 Steel Gauntlets
+		WaveSpawn // 1 Doctor Barrage and 3 Steel Gauntlets
 		{
 			Name "Wave4_Subwave2_DoctorBarrage2"
 			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
 			Where spawnbot_mid0
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1684,7 +1629,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 3
+			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -1734,245 +1679,292 @@ WaveSchedule
                   "
         }
 
-		// Subwave 1?
-		WaveSpawn // Randomchoice Support Giant
+		// Subwave 1
+		WaveSpawn // 10 Shotgun Pyros
 		{
-			Name "Wave5_Support_Giant"
+			Name "Wave5_Subwave1_ShotgunPyros"
 			Where spawnbot_mid0
-			Support Limited
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 10
-			TotalCurrency 20
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
-				}
-			}
-		}
-		WaveSpawn // 25 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers1"
-			Where spawnbot_scattered0
-			TotalCount 25
-			MaxActive 15
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.5
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-		WaveSpawn // 10 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers2"
-			Where spawnbot_right0
 			TotalCount 10
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 5
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-
-		WaveSpawn // Randomchoice Support Giant
-		{
-			Name "Wave5_Support_Giant2"
-			Where spawnbot_left0
-			Support Limited
-			TotalCount 1
-			MaxActive 1
+			MaxActive 10
 			SpawnCount 1
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
-				}
-			}
-		}
-		WaveSpawn // Randomchoice Support Giant
-		{
-			Name "Wave5_Support_Giant2"
-			Where spawnbot_right0
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
-				}
-			}
-		}
-
-		// Subwave 2?
-		WaveSpawn // 20 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers3"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers1"
-			Where spawnbot_left0
-			TotalCount 20
-			MaxActive 12
-			SpawnCount 4
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 4
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-		WaveSpawn // Randomchoice Support Giant
-		{
-			Name "Wave5_Support_Giant3"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers1"
-			Where spawnbot_mid0
-			Support Limited
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
-				}
-			}
-		}
-		WaveSpawn // 15 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers4"
-			WaitForAllSpawned "Wave5_Support_Giant3"
-			Where spawnbot_mid0
-			TotalCount 15
-			MaxActive 8
-			SpawnCount 1
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 1
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-
-		// Subwave 3?
-		WaveSpawn // 20 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers5"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers3"
-			Where spawnbot_right0
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 20
 			WaitBeforeStarting 0
+			WaitBetweenSpawns 1
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 Support Giant
+		{
+			Name "Wave5_Subwave1_SupportGiant"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+
+		WaveSpawn // 10 Shotgun Pyros
+		{
+			Name "Wave5_Subwave1_ShotgunPyros2"
+			WaitForAllSpawned "Wave5_Subwave1_ShotgunPyros"
+			Where spawnbot_mid0
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 1
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 10 Shotgun Pyros
+		{
+			Name "Wave5_Subwave1_ShotgunPyros3"
+			WaitForAllSpawned "Wave5_Subwave1_ShotgunPyros2"
+			Where spawnbot_mid0
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+		WaveSpawn // 1 Support Giant
+		{
+			Name "Wave5_Subwave1_SupportGiant2"
+			WaitForAllSpawned "Wave5_Subwave1_ShotgunPyros2"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 15 Shotgun Pyros
+		{
+			Name "Wave5_Subwave2_ShotgunPyros"
+			WaitForAllDead "Wave5_Subwave1_SupportGiant2"
+			Where spawnbot_right0
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 15
+			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 80
 
 			TFBot
 			{
-				Template T_TFBot_Soldier_Shotgun
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
 			}
 		}
-		WaveSpawn // Randomchoice Support Giant
+		WaveSpawn // 1 Support Giant
 		{
-			Name "Wave5_Support_Giant4"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers5"
-			Where spawnbot_right0
+			Name "Wave5_Subwave2_SupportGiant"
+			WaitForAllDead "Wave5_Subwave1_SupportGiant2"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+
+		WaveSpawn // 10 Shotgun Pyros
+		{
+			Name "Wave5_Subwave2_ShotgunPyros2"
+			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros"
+			Where spawnbot_mid0
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+		WaveSpawn // 1 Support Giant
+		{
+			Name "Wave5_Subwave2_SupportGiant3"
+			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros"
+			Where spawnbot_left0
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+
+		WaveSpawn // 15 Shotgun Pyros
+		{
+			Name "Wave5_Subwave2_ShotgunPyros3"
+			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros2"
+			Where spawnbot_mid0
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 2 Support Giants
+		{
+			Name "Wave5_Subwave2_SupportGiant3"
+			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros2"
+			Where spawnbot_left0
+			Support Limited
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 30 Shotgun Pyros
+		{
+			Name "Wave5_Subwave3_ShotgunPyros"
+			WaitForAllDead "Wave5_Subwave2_SupportGiant3"
+			Where spawnbot_scattered0
+			TotalCount 30
+			MaxActive 16
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0.1
+			TotalCurrency 120
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 Support Giant
+		{
+			Name "Wave5_Subwave3_SupportGiant"
+			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
+			Where spawnbot_left0
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -1989,15 +1981,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
+					Template T_TFBot_Giant_Demoman_Spammer
 				}
 				TFBot
 				{
@@ -2005,34 +1989,17 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 15 Shotgun Soldiers
+		WaveSpawn // 1 Support Giant
 		{
-			Name "Wave5_ShotgunSoldiers6"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers5"
-			Where spawnbot_mid0
-			TotalCount 15
-			MaxActive 8
-			SpawnCount 1
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 1
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-		WaveSpawn // Randomchoice Support Giant
-		{
-			Name "Wave5_Support_Giant5"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers5"
+			Name "Wave5_Subwave3_SupportGiant"
+			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
 			Where spawnbot_left0
 			Support Limited
-			TotalCount 2
-			MaxActive 2
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 10
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			RandomChoice
@@ -2043,15 +2010,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
+					Template T_TFBot_Giant_Demoman_Spammer
 				}
 				TFBot
 				{
@@ -2060,172 +2019,555 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 10 Shotgun Soldiers
+		WaveSpawn // 20 Shotgun Pyros
 		{
-			Name "Wave5_ShotgunSoldiers7"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers6"
-			Where spawnbot_left0
-			TotalCount 10
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-		WaveSpawn // 10 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers7"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers6"
-			Where spawnbot_right0
-			TotalCount 10
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-			}
-		}
-		WaveSpawn // Randomchoice Support Giant
-		{
-			Name "Wave5_Support_Giant6"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers6"
-			Where spawnbot_left0
-			Support Limited
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 10
-			TotalCurrency 20
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
-				}
-			}
-		}
-
-		WaveSpawn // 10 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers8"
-			WaitForAllDead "Wave5_ShotgunSoldiers7"
+			Name "Wave5_Subwave3_ShotgunPyros2"
+			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
 			Where spawnbot_mid0
-			TotalCount 10
+			TotalCount 20
 			MaxActive 10
-			SpawnCount 10
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 3
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+		WaveSpawn // 1 Support Giant
+		{
+			Name "Wave5_Subwave3_SupportGiant2"
+			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
+			Where spawnbot_left0
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+
+		WaveSpawn // 30 Shotgun Pyros
+		{
+			Name "Wave5_Subwave3_ShotgunPyros3"
+			WaitForAllDead "Wave5_Subwave3_ShotgunPyros"
+			Where spawnbot_scattered0
+			TotalCount 30
+			MaxActive 16
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0.1
+			TotalCurrency 120
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Shotgun
+				Skill Easy
+			}
+		}
+		WaveSpawn // 3 Support Giants
+		{
+			Name "Wave5_Subwave3_SupportGiant3"
+			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros3"
+			Where spawnbot_scattered0
+			Support Limited
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Knight_Persian
+				}
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`cliff_fence`, `Disable`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave6_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tankboss"
+				Health 40000
+				Scale 0.5
+				Speed 75
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 GHeavy and 4 GSoldiers
+		{
+			Name "Wave6_Subwave1_TheSquad"
+			WaitForAllSpawned "Wave6_Subwave1_Tank"
+			Where spawnbot_mid0
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+			}
+		}
+		WaveSpawn // 8 Sticky Demos
+		{
+			Name "Wave6_Subwave1_StickyDemos"
+			WaitForAllSpawned "Wave6_Subwave1_TheSquad"
+			Where spawnbot_left0
+			Where spawnbot_right0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+		
+		WaveSpawn // 8 Claymore Knights
+		{
+			Name "Wave6_Subwave1_ClaymoreKnights"
+			WaitForAllDead "Wave6_Subwave1_TheSquad"
+			Where spawnbot_right0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Claymore
+			}
+		}
+		WaveSpawn // 8 Firebrand Pyros
+		{
+			Name "Wave6_Subwave1_FirebrandPyros"
+			WaitForAllSpawned "Wave6_Subwave1_ClaymoreKnights"
+			Where spawnbot_scattered0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Firebrand
+			}
+		}
+
+		WaveSpawn // 1 GHeavy and 4 Stickybomb Demos
+		{
+			Name "Wave6_Subwave1_GHeavy"
+			WaitForAllSpawned "Wave6_Subwave1_FirebrandPyros"
+			Where spawnbot_mid0
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+			}
+		}
+		WaveSpawn // 1 Firebrand Pyro
+		{
+			Name "Wave6_Subwave1_FirebrandPyros2"
+			WaitForAllSpawned "Wave6_Subwave1_GHeavy"
+			Where spawnbot_left0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 10
 
 			TFBot
 			{
-				Template T_TFBot_Soldier_Shotgun
+				Template T_TFBot_Pyro_Firebrand
 			}
 		}
-		WaveSpawn // Randomchoice Support Giant
+		WaveSpawn // 1 Firebrand Pyro
 		{
-			Name "Wave5_Support_Giant7"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers8"
-			Where spawnbot_left0
-			Support Limited
+			Name "Wave6_Subwave1_FirebrandPyros2"
+			WaitForAllSpawned "Wave6_Subwave1_GHeavy"
+			Where spawnbot_right0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Firebrand
+			}
+		}
+
+		// Subwave Check
+		WaveSpawn
+		{
+			Name "Wave6_Subwave1_Check"
+			WaitForAllDead "Wave6_Subwave1_Tank"
+		}
+		WaveSpawn
+		{
+			Name "Wave6_Subwave1_Check"
+			WaitForAllSpawned "Wave6_Subwave1_GHeavy"
+		}
+
+		// Subwave 2
+		WaveSpawn // 2 GBurst Demos and 4 GSoldiers
+		{
+			Name "Wave6_Subwave2_GBurstDemo"
+			WaitForAllSpawned "Wave6_Subwave1_Check"
+			Where spawnbot_mid0
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+			}
+		}
+		WaveSpawn // 3 Claymore Knights
+		{
+			Name "Wave6_Subwave2_ClaymoreKnights"
+			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
+			Where spawnbot_right0
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
-			TotalCurrency 40
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
-				}
-			}
-		}
-
-		WaveSpawn // 25 Shotgun Soldiers
-		{
-			Name "Wave5_ShotgunSoldiers9"
-			WaitForAllDead "Wave5_ShotgunSoldiers8"
-			Where spawnbot_scattered0
-			TotalCount 25
-			MaxActive 15
-			SpawnCount 5
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 5
-			TotalCurrency 120
+			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Soldier_Shotgun
+				Template T_TFBot_Demoman_Knight_Claymore
 			}
 		}
-		WaveSpawn // Randomchoice Support Giant
+
+		WaveSpawn // 4 Stickybomb Demos and 8 Firebrand Pyros
 		{
-			Name "Wave5_Support_Giant8"
-			WaitForAllSpawned "Wave5_ShotgunSoldiers8"
+			Name "Wave6_Subwave2_StickyDemos"
+			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
 			Where spawnbot_scattered0
-			Support Limited
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+			}
+		}
+		WaveSpawn // 2 GBurst Demos
+		{
+			Name "Wave6_Subwave2_GBurstDemos"
+			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
+			Where spawnbot_mid0
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Burst
+			}
+		}
+
+		// Subwave Check
+		WaveSpawn
+		{
+			Name "Wave6_Subwave2_Check"
+			WaitForAllSpawned "Wave6_Subwave2_StickyDemos"
+		}
+		WaveSpawn
+		{
+			Name "Wave6_Subwave2_Check"
+			WaitForAllDead "Wave6_Subwave2_GBurstDemos"
+		}
+
+		// Subwave 3
+		WaveSpawn // 8 Claymore Knights
+		{
+			Name "Wave6_Subwave3_ClaymoreKnights"
+			WaitForAllSpawned "Wave6_Subwave2_Check"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+			
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Claymore
+			}
+		}
+		WaveSpawn // 4 Stickybomb Demos
+		{
+			Name "Wave6_Subwave3_StickyDemos"
+			WaitForAllSpawned "Wave6_Subwave3_ClaymoreKnights"
+			Where spawnbot_left0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+
+		WaveSpawn // 1 GHeavy and 4 GSoldiers
+		{
+			Name "Wave6_Subwave3_TheSquad"
+			WaitForAllSpawned "Wave6_Subwave3_ClaymoreKnights"
+			Where spawnbot_mid0
 			TotalCount 5
 			MaxActive 5
-			SpawnCount 1
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 5
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			RandomChoice
+			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_Burst
+					Template T_TFBot_Giant_Heavy
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_Burst
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+			}
+		}
+		WaveSpawn // 4 Firebrand Pyros
+		{
+			Name "Wave6_Subwave3_FirebrandPyros"
+			WaitForAllSpawned "Wave6_Subwave3_TheSquad"
+			Where spawnbot_mid0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Firebrand
+			}
+		}
+
+		WaveSpawn // 1 GHeavy and 4 GBurst Demos
+		{
+			Name "Wave6_Subwave3_TheRealSquad"
+			WaitForAllSpawned "Wave6_Subwave3_TheSquad"
+			Where spawnbot_mid0
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
 				}
 				TFBot
 				{
@@ -2237,7 +2579,11 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Knight_Persian
+					Template T_TFBot_Giant_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
 				}
 			}
 		}
