@@ -12,7 +12,28 @@ WaveSchedule
     AddSentryBusterWhenDamageDealtExceeds 3000
     AddSentryBusterWhenKillCountExceeds 10
 
+    WaveStartCountdown 9
+
     ForceRedMoney 1
+
+    //// DISABLED SOUNDS ////
+
+    DisableSound "Announcer.MVM_Wave_End"
+    DisableSound "Announcer.MVM_Final_Wave_End"	
+	DisableSound "Announcer.MVM_Bonus"
+    DisableSound "Announcer.MVM_Get_To_Upgrade"
+    DisableSound "Announcer.MVM_All_Dead"
+    DisableSound "Announcer.MVM_Wave_Lose"
+
+    DisableSound "music.mvm_start_wave"
+    DisableSound "music.mvm_start_mid_wave"
+    DisableSound "music.mvm_start_tank_wave"
+    DisableSound "music.mvm_start_last_wave"					   						   
+    DisableSound "music.mvm_end_wave"
+    DisableSound "music.mvm_end_tank_wave"
+    DisableSound "music.mvm_end_mid_wave"
+    DisableSound "music.mvm_end_last_wave"						   
+    DisableSound "music.mvm_lost_wave"					   	   
 
     //// PRECACHES ////
 
@@ -226,22 +247,6 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
-	Mission // Spy (Wave 2)
-    {
-        Objective Spy
-        Where spawnbot_spy_b
-        Where spawnbot_spy_c
-        BeginAtWave 2
-        RunForThisManyWaves 1
-        InitialCooldown 20
-        CooldownTime 30
-        DesiredCount 2
-
-        TFBot
-        {
-            Template T_TFBot_Spy
-        }
-    }
 
     // More minigiants in general, having slower but bulkier robots will help the master difficulty
     // Champions could do 100% damage bonus to live up to their name (Trying out 50% for now)
@@ -251,7 +256,7 @@ WaveSchedule
     //// WAVES ////
 
     // Notes for Wave 1
-    // Add a shortstop scout into the groups of soda poppers if they don't work out well
+    //
     Wave
     {
         InitWaveOutput
@@ -265,6 +270,7 @@ WaveSchedule
                     MVMNovember_MasterScripting.NovemberMasterInit()
 
                     EntFire(`advexp_spawn_ab_relay`, `Trigger`)
+                    EntFire(`spawn_a_arrows_flank_enable`, `Disable`)
                   "
         }
         StartWaveOutput
@@ -336,21 +342,42 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Soda Popper Scouts
+		WaveSpawn // 6 Soda Popper Scouts
 		{
 			Name "Wave1_Subwave1_SodaScouts"
 			WaitForAllSpawned "Wave1_Tutorial"
 			Where spawnbot_b
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 4
-			TotalCurrency 20
+			WaitBetweenSpawns 2
+			TotalCurrency 10
 
 			TFBot
 			{
 				Template T_TFBot_Scout_Popper
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+        WaveSpawn // 2 Shortstop Scouts
+		{
+			Name "Wave1_Subwave1_ShortstopScouts"
+			WaitForAllSpawned "Wave1_Tutorial"
+			Where spawnbot_b
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+                Health 500
                 Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
@@ -365,7 +392,7 @@ WaveSchedule
 			TotalCount 4
 			MaxActive 4
 			SpawnCount 4
-			WaitBeforeStarting 8
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -385,21 +412,42 @@ WaveSchedule
 				}
 			}
 		}
-        WaveSpawn // 8 Soda Popper Scouts
+        WaveSpawn // 6 Soda Popper Scouts
 		{
 			Name "Wave1_Subwave1_SodaScouts2"
 			WaitForAllSpawned "Wave1_Subwave1_DemoSquads"
 			Where spawnbot_b
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 4
-			TotalCurrency 20
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 10
 
 			TFBot
 			{
 				Template T_TFBot_Scout_Popper
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+        WaveSpawn // 2 Shortstop Scouts
+		{
+			Name "Wave1_Subwave1_ShortstopScouts2"
+			WaitForAllSpawned "Wave1_Subwave1_DemoSquads"
+			Where spawnbot_b
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+                Health 500
                 Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
@@ -414,7 +462,7 @@ WaveSchedule
             TotalCount 3
             MaxActive 3
             SpawnCount 3
-            WaitBeforeStarting 10
+            WaitBeforeStarting 7
             WaitBetweenSpawns 0
             TotalCurrency 60
 
@@ -455,9 +503,9 @@ WaveSchedule
             TotalCount 7
             MaxActive 7
             SpawnCount 7
-            WaitBeforeStarting 4
+            WaitBeforeStarting 2
             WaitBetweenSpawns 0
-            TotalCurrency 20
+            TotalCurrency 10
 
             TFBot
             {
@@ -470,7 +518,7 @@ WaveSchedule
         }
 
         // Subwave 2
-        WaveSpawn // 1 Demoman and 1 Full-Uber Medic
+        WaveSpawn // 1 Sticky Demo and 1 Full-Uber Medic
         {
             Name "Wave1_Subwave2_DemoSquads"
             WaitForAllDead "Wave1_Subwave1_GBurstSoldier"
@@ -486,8 +534,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Expert
+					Template T_TFBot_Demoman_Stickybomb
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -498,7 +545,7 @@ WaveSchedule
 				}
 			}
         }
-        WaveSpawn // 1 Demoman and 1 Full-Uber Medic
+        WaveSpawn // 1 Sticky Demo and 1 Full-Uber Medic
         {
             Name "Wave1_Subwave2_DemoSquads"
             WaitForAllDead "Wave1_Subwave1_GBurstSoldier"
@@ -514,8 +561,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Expert
+					Template T_TFBot_Demoman_Stickybomb
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -526,17 +572,17 @@ WaveSchedule
 				}
 			}
         }
-        WaveSpawn // 8 Soda Popper Scouts
+        WaveSpawn // 6 Soda Popper Scouts
 		{
 			Name "Wave1_Subwave2_SodaScouts"
 			WaitForAllDead "Wave1_Subwave1_GBurstSoldier"
 			Where spawnbot_b
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
 			WaitBeforeStarting 3
-			WaitBetweenSpawns 4
-			TotalCurrency 20
+			WaitBetweenSpawns 2
+			TotalCurrency 10
 
 			TFBot
 			{
@@ -546,8 +592,29 @@ WaveSchedule
 				Tag capbot
 			}
 		}
+        WaveSpawn // 2 Shortstop Scouts
+		{
+			Name "Wave1_Subwave2_ShortstopScouts"
+			WaitForAllDead "Wave1_Subwave1_GBurstSoldier"
+			Where spawnbot_b
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 2
+			TotalCurrency 10
 
-        WaveSpawn // 1 Demoman and 1 Full-Uber Medic
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+                Health 500
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+        WaveSpawn // 1 Sticky Demo and 1 Full-Uber Medic
         {
             Name "Wave1_Subwave2_DemoSquads2"
             WaitForAllSpawned "Wave1_Subwave2_DemoSquads"
@@ -555,7 +622,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 2
-            WaitBeforeStarting 3
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -563,8 +630,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Expert
+					Template T_TFBot_Demoman_Stickybomb
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -575,7 +641,7 @@ WaveSchedule
 				}
 			}
         }
-        WaveSpawn // 1 Demoman and 1 Full-Uber Medic
+        WaveSpawn // 1 Sticky Demo and 1 Full-Uber Medic
         {
             Name "Wave1_Subwave2_DemoSquads2"
             WaitForAllSpawned "Wave1_Subwave2_DemoSquads"
@@ -583,7 +649,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 2
-            WaitBeforeStarting 8
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -591,8 +657,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Expert
+					Template T_TFBot_Demoman_Stickybomb
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -611,7 +676,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 3
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
 			TotalCurrency 10
 
@@ -631,7 +696,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 8
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
 			TotalCurrency 10
 
@@ -644,7 +709,7 @@ WaveSchedule
 			}
 		}
 
-        WaveSpawn // 1 GBurst Soldier and 2 Demomen
+        WaveSpawn // 1 GBurst Soldier and 2 Sticky Demos
         {
             Name "Wave1_Subwave2_GBurstSoldier"
             WaitForAllSpawned "Wave1_Subwave2_DemoSquads2"
@@ -652,7 +717,7 @@ WaveSchedule
             TotalCount 3
             MaxActive 3
             SpawnCount 3
-            WaitBeforeStarting 10
+            WaitBeforeStarting 7
             WaitBetweenSpawns 0
             TotalCurrency 60
 
@@ -669,16 +734,14 @@ WaveSchedule
                 }
                 TFBot
                 {
-                    Class Demoman
-                    Skill Expert
+                    Template T_TFBot_Demoman_Stickybomb
                     Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
                 }
                 TFBot
                 {
-                    Class Demoman
-                    Skill Expert
+                    Template T_TFBot_Demoman_Stickybomb
                     Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -693,7 +756,7 @@ WaveSchedule
             TotalCount 7
             MaxActive 7
             SpawnCount 7
-            WaitBeforeStarting 4
+            WaitBeforeStarting 2
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -792,7 +855,7 @@ WaveSchedule
         {
             Name "Wave1_Subwave3_ChampionTutorial"
             WaitForAllSpawned "Wave1_Subwave3_ChampionSoldier"
-            WaitBeforeStarting 5
+            WaitBeforeStarting 2
 
             FirstSpawnOutput
             {
@@ -862,7 +925,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 2
-            WaitBeforeStarting 5
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -890,7 +953,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 2
-            WaitBeforeStarting 5
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -918,7 +981,7 @@ WaveSchedule
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 5
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 10
 
@@ -931,7 +994,7 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 1 Demoman and 1 Full-Uber Medic
+        WaveSpawn // 1 Sticky Demo and 1 Full-Uber Medic
         {
             Name "Wave1_Subwave3_DemoSquads2"
             WaitForAllSpawned "Wave1_Subwave3_DemoSquads"
@@ -939,7 +1002,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 2
-            WaitBeforeStarting 5
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 10
 
@@ -947,8 +1010,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Expert
+					Template T_TFBot_Demoman_Stickybomb
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -959,7 +1021,7 @@ WaveSchedule
 				}
 			}
         }
-        WaveSpawn // 1 Demoman and 1 Full-Uber Medic
+        WaveSpawn // 1 Sticky Demo and 1 Full-Uber Medic
         {
             Name "Wave1_Subwave3_DemoSquads2"
             WaitForAllSpawned "Wave1_Subwave3_DemoSquads"
@@ -967,7 +1029,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 2
-            WaitBeforeStarting 5
+            WaitBeforeStarting 4
             WaitBetweenSpawns 0
             TotalCurrency 10
 
@@ -975,8 +1037,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Expert
+					Template T_TFBot_Demoman_Stickybomb
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
@@ -987,16 +1048,16 @@ WaveSchedule
 				}
 			}
         }
-        WaveSpawn // 3 Soda Popper Scouts
+        WaveSpawn // 6 Soda Popper Scouts
         {
             Name "Wave1_Subwave3_SodaScouts2"
             WaitForAllSpawned "Wave1_Subwave3_DemoSquads"
             Where spawnbot_a
-            TotalCount 3
-            MaxActive 3
+            TotalCount 6
+            MaxActive 6
             SpawnCount 3
-            WaitBeforeStarting 5
-            WaitBetweenSpawns 0
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 2
             TotalCurrency 10
 
             TFBot
@@ -1007,6 +1068,27 @@ WaveSchedule
 				Tag capbot
             }
         }
+        WaveSpawn // 2 Shortstop Scouts
+		{
+			Name "Wave1_Subwave3_ShortstopScouts"
+			WaitForAllSpawned "Wave1_Subwave3_DemoSquads"
+			Where spawnbot_a
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+                Health 500
+                Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
     }
 
     // Notes for Wave 2
@@ -1041,6 +1123,26 @@ WaveSchedule
                   "
         }
 
+        // Support Spies
+        WaveSpawn
+        {
+            Name "Wave2_SupportSpies"
+            Where spawnbot_spy_b
+            Where spawnbot_spy_c
+            Support 1
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 30
+
+            TFBot
+            {
+                Template T_TFBot_Spy
+                Action Spy
+            }
+        }
+
 		// Subwave 1
 		WaveSpawn // 1 GBurst Demo
 		{
@@ -1069,7 +1171,7 @@ WaveSchedule
             TotalCount 3
             MaxActive 3
             SpawnCount 3
-            WaitBeforeStarting 5
+            WaitBeforeStarting 2
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -1089,7 +1191,7 @@ WaveSchedule
             TotalCount 3
             MaxActive 3
             SpawnCount 3
-            WaitBeforeStarting 5
+            WaitBeforeStarting 2
             WaitBetweenSpawns 0
             TotalCurrency 20
 
@@ -1109,12 +1211,13 @@ WaveSchedule
             TotalCount 9
             MaxActive 9
             SpawnCount 3
-            WaitBeforeStarting 5
-            WaitBetweenSpawns 4
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
             TotalCurrency 20
 
             Squad
             {
+                NoWaitForFormation 1 [$SIGSEGV]
                 TFBot
                 {
                     Template T_TFBot_Heavy_Rocketeer
@@ -1149,8 +1252,8 @@ WaveSchedule
             TotalCount 2
             MaxActive 2
             SpawnCount 1
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 4
             TotalCurrency 20
 
             TFBot
@@ -1169,8 +1272,8 @@ WaveSchedule
             TotalCount 4
             MaxActive 4
             SpawnCount 2
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 5
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 4
             TotalCurrency 20
 
             TFBot
@@ -1190,8 +1293,8 @@ WaveSchedule
             TotalCount 8
             MaxActive 8
             SpawnCount 4
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 5
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 4
             TotalCurrency 20
 
             TFBot
@@ -1231,7 +1334,7 @@ WaveSchedule
             TotalCount 2
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 4
+            WaitBeforeStarting 2
             WaitBetweenSpawns 5
             TotalCurrency 20
 
@@ -1251,7 +1354,7 @@ WaveSchedule
             TotalCount 3
             MaxActive 3
             SpawnCount 1
-            WaitBeforeStarting 4
+            WaitBeforeStarting 2
             WaitBetweenSpawns 3
             TotalCurrency 10
 
@@ -1267,11 +1370,11 @@ WaveSchedule
         {
             Name "Wave2_Subwave1_Soldiers"
             WaitForAllSpawned "Wave2_Subwave1_GBurstDemo2"
-            Where spawnbot_c
+            Where spawnbot_flank_c
             TotalCount 3
             MaxActive 3
             SpawnCount 1
-            WaitBeforeStarting 4
+            WaitBeforeStarting 2
             WaitBetweenSpawns 3
             TotalCurrency 10
 
@@ -1295,11 +1398,12 @@ WaveSchedule
             MaxActive 9
             SpawnCount 3
             WaitBeforeStarting 3
-            WaitBetweenSpawns 4
+            WaitBetweenSpawns 3
             TotalCurrency 20
 
             Squad
             {
+                NoWaitForFormation 1 [$SIGSEGV]
                 TFBot
                 {
                     Template T_TFBot_Heavy_Rocketeer
@@ -1334,11 +1438,12 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 3
-			WaitBetweenSpawns 4
+			WaitBetweenSpawns 3
 			TotalCurrency 20
 
 			Squad
 			{
+                NoWaitForFormation 1 [$SIGSEGV]
 				TFBot
 				{
 					Template T_TFBot_Heavy_SteelFist
@@ -1433,7 +1538,7 @@ WaveSchedule
 			MaxActive 4
 			SpawnCount 1
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 2
 			TotalCurrency 10
 			
 			TFBot
@@ -1453,7 +1558,7 @@ WaveSchedule
 			MaxActive 4
 			SpawnCount 1
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 2
 			TotalCurrency 10
 			
 			TFBot
@@ -1474,7 +1579,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 15
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1494,7 +1599,7 @@ WaveSchedule
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 6
-			WaitBeforeStarting 15
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1512,14 +1617,15 @@ WaveSchedule
 			WaitForAllSpawned "Wave2_Subwave2_GBurstDemo"
 			Where spawnbot_b
 			TotalCount 12
-			MaxActive 8
+			MaxActive 9
 			SpawnCount 3
-			WaitBeforeStarting 15
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 3
 			TotalCurrency 20
 
 			Squad
 			{
+                NoWaitForFormation 1 [$SIGSEGV]
 				TFBot
 				{
 					Template T_TFBot_Soldier_Extended_Buff_Banner
@@ -1620,7 +1726,7 @@ WaveSchedule
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 2
-			WaitBeforeStarting 4
+			WaitBeforeStarting 2
 			WaitBetweenSpawns 3
 			TotalCurrency 20
 
@@ -1640,12 +1746,13 @@ WaveSchedule
 			TotalCount 9
 			MaxActive 9
 			SpawnCount 3
-			WaitBeforeStarting 4
+			WaitBeforeStarting 2
 			WaitBetweenSpawns 3
 			TotalCurrency 20
 
 			Squad
 			{
+                NoWaitForFormation 1 [$SIGSEGV]
 				TFBot
 				{
 					Template T_TFBot_Heavy_SteelFist
@@ -1706,7 +1813,7 @@ WaveSchedule
                             filter_type = 5
                         })
                         EmitSoundEx({
-                            sound_name = vo/mvm/mght/taunts/demoman_mvm_m_taunts11.mp3`
+                            sound_name = `vo/mvm/mght/taunts/demoman_mvm_m_taunts11.mp3`
                             channel = 6
                             volume = 1
                             pitch = 90
@@ -1724,12 +1831,13 @@ WaveSchedule
 			TotalCount 12
 			MaxActive 8
 			SpawnCount 4
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
 			TotalCurrency 20
 
 			Squad
 			{
+                NoWaitForFormation 1 [$SIGSEGV]
 				TFBot
 				{
 					Class Soldier
@@ -1769,8 +1877,8 @@ WaveSchedule
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
 			TotalCurrency 20
 
 			TFBot
@@ -1789,7 +1897,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 5
+			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1837,6 +1945,9 @@ WaveSchedule
                 Target BigNet
                 Action RunScriptCode
                 Param "
+                        EntFire(`populator`, `$KillWaveSpawn`, `Wave2_SupportSpies`)
+                        EntFire(`populator`, `$FinishWaveSpawn`, `Wave2_SupportSpies`)
+
                         PrecacheSound(`ambient/levels/citadel/strange_talk9.wav`)
 
                         SendGlobalGameEvent(`show_annotation`, {

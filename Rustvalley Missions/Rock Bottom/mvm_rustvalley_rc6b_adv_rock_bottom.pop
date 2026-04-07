@@ -35,14 +35,21 @@ WaveSchedule
 			Item "Forgotten King's Restless Head"
 			Item "The Shrapnel Shell"
 
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+			}
+
 			ItemAttributes
 			{
 				ItemName "TF_WEAPON_GRENADELAUNCHER"
 
-				"damage bonus" 1.5
 				"fire rate bonus" 0.1
-				"faster reload rate" 0.05
-				"clip size upgrade atomic" 56.0
+				"faster reload rate" 0.1
+				"clip size upgrade atomic" 36.0
 				"projectile speed decreased" 0.5
 				"projectile spread angle penalty" 10
 			}
@@ -118,6 +125,26 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Mission
+	{
+		Objective Engineer
+		Where spawnbot_mid0
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+			TeleportWhere spawnbot_left0
+			TeleportWhere spawnbot_mid0
+			TeleportWhere spawnbot_right0
+			TeleportWhere spawnbot_scattered0
 		}
 	}
 
@@ -268,7 +295,7 @@ WaveSchedule
 			SpawnCount 2
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 3
-			TotalCurrency 40
+			TotalCurrency 160
 
 			Squad
 			{
@@ -311,7 +338,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 8
 			WaitBetweenSpawns 15
-			TotalCurrency 120
+			TotalCurrency 200
 
 			Squad
 			{
@@ -340,169 +367,17 @@ WaveSchedule
 			SpawnCount 6
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Heavy_Heavyweight_Champ_Fast
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-			}
-		}
-
-		// Subwave 3
-		WaveSpawn // 12 Heavies
-		{
-			Name "Wave1_Subwave3_Heavies"
-			WaitForAllDead "Wave1_Subwave2_GRapidSoldierSquad"
-			Where spawnbot_mid0
-			TotalCount 12
-			MaxActive 12
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 1
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Heavy
-				Skill Easy
-			}
-
-			FirstSpawnOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`cliff_fence`, `Disable`)
-						EntFire(`fence_crack`, `PlaySound`)
-					  "
-			}
-		}
-		WaveSpawn // 12 Charging Demos
-		{
-			Name "Wave1_Subwave3_ChargingDemos"
-			WaitForAllDead "Wave1_Subwave2_GRapidSoldierSquad"
-			Where spawnbot_right0
-			TotalCount 12
-			MaxActive 12
-			SpawnCount 12
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Name "Charging Demo"
-				Template T_TFBot_Demoman_Knight
-				ClassIcon demoknight_bottle_lite
-
-				Item "The Splendid Screen"
-				Item "TF_WEAPON_BOTTLE"
-			}
-		}
-
-		WaveSpawn // 1 GShotgun
-		{
-			Name "Wave1_Subwave3_GShotgun"
-			WaitForAllSpawned "Wave1_Subwave3_ChargingDemos"
-			Where spawnbot_mid0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 40
-
-			TFBot
-			{
-				Name "Giant Shotgun Pyro"
-				Template T_TFBot_Giant_Pyro
-				ClassIcon heavy_shotgun_giant
-				Attributes HoldFireUntilFullReload
-				WeaponRestrictions SecondaryOnly
-			}
-		}
-
-		WaveSpawn // 5 GRU Heavies and 5 Kritzkrieg Medics
-		{
-			Name "Wave1_Subwave3_GRUHeavies"
-			WaitForAllSpawned "Wave1_Subwave3_GShotgun"
-			Where spawnbot_mid0
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Heavy_Heavyweight_Champ_Fast
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-			}
-		}
-
-		WaveSpawn // 1 GRapid Soldier and 6 Heavies
-		{
-			Name "Wave1_Subwave3_GRapidSoldier"
-			WaitForAllSpawned "Wave1_Subwave3_GRUHeavies"
-			Where spawnbot_mid0
-			TotalCount 7
-			MaxActive 7
-			SpawnCount 7
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 0
 			TotalCurrency 60
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_Spammer
+					Template T_TFBot_Heavy_Heavyweight_Champ_Fast
 				}
 				TFBot
 				{
-					Class Heavy
-					Skill Easy
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
+					Template T_TFBot_Medic_Kritzkrieg
 				}
 			}
 		}
@@ -823,34 +698,17 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GHeater
-		{
-			Name "Wave2_Subwave2_GHeater"
-			WaitForAllSpawned "Wave2_Subwave2_StickyDemos"
-			Where spawnbot_mid0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Heavy_Heater
-			}
-		}
 		WaveSpawn // 18 Loch Demos
 		{
 			Name "Wave2_Subwave2_LochDemos"
-			WaitForAllSpawned "Wave2_Subwave2_GHeater"
+			WaitForAllSpawned "Wave2_Subwave2_StickyDemos"
 			Where spawnbot_mid0
 			TotalCount 18
 			MaxActive 18
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0.1
-			TotalCurrency 20
+			TotalCurrency 80
 
 			TFBot
 			{
@@ -966,6 +824,13 @@ WaveSchedule
 			{
 				Template T_TFBot_Sniper
 				Action Sniper
+
+				FireInput
+				{
+					Target !self
+					Action $Suicide
+					Delay  30
+				}
 			}
 		}
 
@@ -1023,6 +888,13 @@ WaveSchedule
 			{
 				Template T_TFBot_Sniper
 				Action Sniper
+
+				FireInput
+				{
+					Target !self
+					Action $Suicide
+					Delay  30
+				}
 			}
 		}
 		WaveSpawn // 1 GFury, 1 Full-Uber Medic and 3 Black Boxes
@@ -1113,12 +985,12 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Class Soldier
+					Skill Normal
 				}
 				TFBot
 				{
-					Class Soldier
-					Skill Normal
+					Template T_TFBot_Medic_Shield
 				}
 				TFBot
 				{
@@ -1508,7 +1380,7 @@ WaveSchedule
 
 		WaveSpawn // 15 Demomen
 		{
-			Name "Wave4_Subwave1_Demomen"
+			Name "Wave4_Subwave1_Demomen2"
 			WaitForAllSpawned "Wave4_Subwave1_AutismBrigade"
 			Where spawnbot_scattered0
 			TotalCount 15
@@ -1714,7 +1586,7 @@ WaveSchedule
 		}
 		WaveSpawn // 10 Tomislav Heavies
 		{
-			Name "Wave4_Subwave2_TomislavHeavies"
+			Name "Wave4_Subwave2_TomislavHeavies2"
 			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
 			Where spawnbot_mid0
 			TotalCount 10
@@ -1895,10 +1767,6 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout
-				}
-				TFBot
-				{
 					Template T_TFBot_Giant_Demoman_Knight_Persian
 				}
 			}
@@ -1968,10 +1836,6 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout
-				}
-				TFBot
-				{
 					Template T_TFBot_Giant_Demoman_Knight_Persian
 				}
 			}
@@ -2005,10 +1869,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Scout
 				}
 				TFBot
 				{
@@ -2065,10 +1925,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Scout
 				}
 				TFBot
 				{
@@ -2145,10 +2001,6 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout
-				}
-				TFBot
-				{
 					Template T_TFBot_Giant_Demoman_Knight_Persian
 				}
 			}
@@ -2200,10 +2052,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Scout
 				}
 				TFBot
 				{
@@ -2279,10 +2127,6 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout
-				}
-				TFBot
-				{
 					Template T_TFBot_Giant_Demoman_Knight_Persian
 				}
 			}
@@ -2338,10 +2182,6 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout
-				}
-				TFBot
-				{
 					Template T_TFBot_Giant_Demoman_Knight_Persian
 				}
 			}
@@ -2394,10 +2234,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Scout
 				}
 				TFBot
 				{
