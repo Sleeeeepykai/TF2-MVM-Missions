@@ -103,7 +103,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 			{
 				local CapturePointName = GetPropString(Ent, "m_iszCapPointName")
 
-				SetPropFloat(Ent, "m_flCapTime", 10)
+				SetPropFloat(Ent, "m_flCapTime", 7.5)
 
 				Ent.AcceptInput("SetControlPoint", CapturePointName, null, null)
 			}

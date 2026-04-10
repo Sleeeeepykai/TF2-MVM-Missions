@@ -148,7 +148,7 @@ WaveSchedule
                 TFBot
                 {
                     Class Soldier
-                    Skill Easy
+                    Skill Normal
                 }
                 TFBot
                 {
@@ -176,6 +176,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Heavyweapons_Heavyweight_Champ
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -195,7 +200,7 @@ WaveSchedule
             TFBot
             {
                 Class Soldier
-                Skill Easy
+                Skill Normal
             }
         }
         WaveSpawn // 24 Bowmen
@@ -244,14 +249,6 @@ WaveSchedule
                   "
         }
 
-        //Wave 2 Concept
-        //Payout $800
-        //Subwave 1
-        //GPyros + Demos
-        //Subwave 2
-        //GPyros + Steelies
-        //Flanking SG Heavies
-
         //Subwave 1
         WaveSpawn // 2 GPyros 
         {
@@ -261,7 +258,7 @@ WaveSchedule
             MaxActive 2
             SpawnCount 1
             WaitBeforeStarting 0
-            WaitBetweenSpawns 25
+            WaitBetweenSpawns 20
             TotalCurrency 250
 
             TFBot
@@ -270,20 +267,21 @@ WaveSchedule
                 Attributes AlwaysFireWeapon
             }
         }
-        WaveSpawn // 28 Demos
+        WaveSpawn // 15 Demos
         {
             Name "Wave2_Subwave1_Demos"
             Where spawnbot
-            TotalCount 28
-            MaxActive 6
-            SpawnCount 2
-            WaitBeforeStarting 3
+            TotalCount 18
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 0
             WaitBetweenSpawns 4
             TotalCurrency 150
 
             TFBot
             {
-                Template T_TFBot_Demoman
+                Class Demoman
+                Skill Easy
             }
         }
 
@@ -297,11 +295,12 @@ WaveSchedule
             MaxActive 6
             SpawnCount 3
             WaitBeforeStarting 20
-            WaitBetweenSpawns 25
-            TotalCurrency 300
+            WaitBetweenSpawns 20
+            TotalCurrency 200
 
             Squad
             {
+                NoWaitForFormation 1 [$SIGSEGV]
                 TFBot
                 {
                     Template T_TFBot_Giant_Pyro
@@ -319,17 +318,40 @@ WaveSchedule
                 }
             }   
         }
+        WaveSpawn
+        {
+            Name "Wave2_Subwave2_Demos"
+            WaitForAllSpawned "Wave2_Subwave1_GPyros"
+            Where spawnbot_flank
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 6
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 20
+            TotalCurrency 100
+
+            TFBot
+            {
+                Class Demoman
+                Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
+            }
+        }
 
         WaveSpawn // Support SG Heavy Squads
         {
             Name "Wave2_Subwave2_SGHeavy_Support"
-            WaitForAllSpawned "Wave2_Subwave1_Demos"
+            WaitForAllSpawned "Wave2_Subwave1_GPyros"
             Where spawnbot_flank
             Support 1
             TotalCount 24
             MaxActive 6
             SpawnCount 2
-            WaitBeforeStarting 10
+            WaitBeforeStarting 20
             WaitBetweenSpawns 5
             TotalCurrency 100
 
@@ -337,30 +359,13 @@ WaveSchedule
             {
                 Template T_TFBot_Heavyweapons_Shotgun
                 Skill Normal
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
-
-        //Solo Test Documentation - By Automaton
-        //Wave 1 
-        //Subwave 1
-        //KGBs add too much clutter to the scout + soldier squads, potentially blocking their shots
-        //KGBs bleed slightly into the next subwave (3-4 units)
-        //Subwave 2
-        //Small amount of Bat Scout stragglers
-
-        //Wave 2
-        //Subwave 1
-        //First GPyro early spawn puts it in a vulnerable position without supporting fire
-        //Subwave 2
-        //WBS too long for the GPyro + Steelie Squads
-        //SG Heavy support is probably a bit lacking
-
-        //Potato
-        //Reduce Starting money to $400? Test - 4 Mann
-        //Wave 1
-        //1 ve 2
-        //Increase Demos WBS
-        //Put SG Heavy Skill to Normal
     }
     Wave
     {
@@ -404,6 +409,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Demoman_Knight
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
         WaveSpawn // 1 GSoldier and 4 Heavies
@@ -463,6 +473,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Demoman_Knight
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
         WaveSpawn // 1 GSoldier and 4 Heavies
@@ -620,6 +635,11 @@ WaveSchedule
             {
                 Class Pyro
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -669,6 +689,11 @@ WaveSchedule
             {
                 Class Heavy
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
     }
@@ -707,7 +732,7 @@ WaveSchedule
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 0
+            WaitBeforeStarting 15
             WaitBetweenSpawns 0
             TotalCurrency 400
 
@@ -715,7 +740,7 @@ WaveSchedule
 
             Tank
 			{
-				Health 27500
+				Health 25000
 				Speed 75
 				Name "drilltank_watermine"
                 ClassIcon tank_drill_lite [$SIGSEGV]
@@ -741,9 +766,9 @@ WaveSchedule
             Support Limited
             TotalCount 4
             MaxActive 4
-            SpawnCount 4
-            WaitBeforeStarting 2
-            WaitBetweenSpawns 0
+            SpawnCount 2
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 6
             TotalCurrency 20
 
             TFBot
@@ -793,10 +818,10 @@ WaveSchedule
             Where spawnbot
             Support 1
             TotalCount 30
-            MaxActive 5
-            SpawnCount 1
+            MaxActive 6
+            SpawnCount 2
             WaitBeforeStarting 16
-            WaitBetweenSpawns 2
+            WaitBetweenSpawns 3
             TotalCurrency 100
 
             TFBot
@@ -849,6 +874,11 @@ WaveSchedule
             {
                 Class Pyro
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
         WaveSpawn // 18 Heavies
@@ -882,6 +912,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Heavyweapons_Fist
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
         WaveSpawn // 24 Soldiers
@@ -1015,6 +1050,10 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Heavy_Shotgun_Ambusher
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1032,6 +1071,10 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Pyro_Flaregun
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1080,6 +1123,10 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Heavy_Shotgun_Ambusher
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1099,6 +1146,11 @@ WaveSchedule
             {
                 Class Heavy
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1147,6 +1199,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Heavy_Shotgun_Ambusher
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1166,6 +1223,11 @@ WaveSchedule
             {
                 Class Heavy
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1214,6 +1276,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Heavy_Shotgun_Ambusher
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1232,6 +1299,11 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Pyro_Flaregun
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
     }
@@ -1370,6 +1442,11 @@ WaveSchedule
             {
                 Class Demoman
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1430,6 +1507,11 @@ WaveSchedule
             {
                 Class Heavy
                 Skill Easy
+
+                CharacterAttributes
+                {
+                    "cancel falling damage" 1
+                }
             }
         }
 
@@ -1568,26 +1650,31 @@ WaveSchedule
             Name "Wave7_Subwave3_GHeavy"
             WaitForAllSpawned "Wave7_Subwave3_GRapid2"
             Where spawnbot
-            TotalCount 3
-            MaxActive 3
-            SpawnCount 3
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
             WaitBeforeStarting 16
             WaitBetweenSpawns 0
             TotalCurrency 40
 
-            Squad
+            FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+            TFBot
             {
-                TFBot
+                Name "John Heavyweapons"
+                Template T_TFBot_Giant_Heavyweapons_HealOnKill
+                Attributes UseBossHealthBar
+                Attributes AlwaysCrit
+
+                Item "Deflector"
+                Item "The U-clank-a"
+
+                CharacterAttributes
                 {
-                    Template T_TFBot_Giant_Heavyweapons
-                }
-                TFBot
-                {
-                    Template T_TFBot_Medic_QuickUber
-                }
-                TFBot
-                {
-                    Template T_TFBot_Medic_QuickUber
+                    "move speed bonus"	0.5
+                    "damage force reduction" 0.3
+                    "airblast vulnerability multiplier" 0.3
+                    "override footstep sound set" 2
                 }
             }
         }
