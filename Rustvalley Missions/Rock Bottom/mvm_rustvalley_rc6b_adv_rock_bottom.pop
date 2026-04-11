@@ -94,19 +94,14 @@ WaveSchedule
 			Skill Expert
 			Health 275
 			Attributes AlwaysCrit
+			WeaponRestrictions MeleeOnly
+			Action Mobber
 
 			Item "The Gunslinger"
 
-			AlwaysGlow 1
-
             CharacterAttributes
             {
-                "move speed bonus" 6
-                "displace touched enemies" 1
-                "engy sentry fire rate increased" 5
-                "sentry bullet weapon" "TF_WEAPON_ROCKETLAUNCHER"
-                "destroy buildings on death" 1
-				"building max level" 1
+                "move speed bonus" 5
             }
 		}
 	}
@@ -1145,7 +1140,7 @@ WaveSchedule
                     IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
 
 					TankExt.SetValueOverrides({
-						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 45
+						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
 					})
 				  "
 		}
@@ -1167,16 +1162,17 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 16 Charging Demos
+		WaveSpawn // 20 Charging Demos
 		{
-			Name "Wave4_Subwave1_ChargingDemos2"
-			Where spawnbot_mid0
-			TotalCount 16
-			MaxActive 16
-			SpawnCount 16
+			Name "Wave4_Subwave1_ChargingDemo"
+			Where spawnbot_scattered0
+			RandomSpawn 1
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 100
 
 			TFBot
 			{
@@ -1187,14 +1183,14 @@ WaveSchedule
 		WaveSpawn // 1 GRapid Soldier
 		{
 			Name "Wave4_Subwave1_GRapidSoldier"
-			WaitForAllSpawned "Wave4_Subwave1_ChargingDemos2"
-			Where spawnbot_left0
+			WaitForAllSpawned "Wave4_Subwave1_ChargingDemo"
+			Where spawnbot_mid0
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 3
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 20
 
 			TFBot
 			{
@@ -1202,17 +1198,17 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 16 Demomen
+		WaveSpawn // 20 Demomen
 		{
 			Name "Wave4_Subwave1_Demomen"
 			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
 			Where spawnbot_mid0
-			TotalCount 16
-			MaxActive 16
-			SpawnCount 16
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 5
 			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 20
+			WaitBetweenSpawns 5
+			TotalCurrency 100
 
 			TFBot
 			{
@@ -1223,14 +1219,14 @@ WaveSchedule
 		WaveSpawn // 1 GRapid Soldier
 		{
 			Name "Wave4_Subwave1_GRapidSoldier2"
-			WaitForAllSpawned "Wave4_Subwave1_Demomen"
-			Where spawnbot_left0
+			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
+			Where spawnbot_mid0
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 3
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 20
 
 			TFBot
 			{
@@ -1241,11 +1237,11 @@ WaveSchedule
 		WaveSpawn // 1 Tiny Rocket Tank
 		{
 			Name "Wave4_Subwave1_RocketTank"
-			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier2"
+			WaitForAllDead "Wave4_Subwave1_Demomen"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 12
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -1254,13 +1250,13 @@ WaveSchedule
 
 			Tank
 			{
-				Name "combattank_bomb|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav"
+				Name "combattank_bomb|minigun|minigun$pingsound|npc/combine_gunship/ping_search.wav"
 				Health 22000
 				ClassIcon tank_combat_rocket_dual_kai
 				Scale 0.5
 				Speed 75
 				DisableSmokeStack 1
-				StartingPathTrackNode "path_tank_1"
+				StartingPathTrackNode "path_tank_road_1"
 
 				OnBombDroppedOutput
 				{
@@ -1277,7 +1273,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 3
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1294,7 +1290,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 3
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1306,38 +1302,19 @@ WaveSchedule
 
 		WaveSpawn // 5 Speedy Gunslingers
 		{
-			Name "Wave4_Subwave1_AutismBrigade"
-			WaitForAllSpawned "Wave4_Subwave1_RocketTank"
-			Where spawnbot_boss0
+			Name "Wave4_Subwave1_FETCHMETHEIRSOULS"
+			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier3"
+			Where spawnbot_mid0
 			TotalCount 5
 			MaxActive 5
-			SpawnCount 1
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 1
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
-			}
-		}
-
-		WaveSpawn // 12 Demomen
-		{
-			Name "Wave4_Subwave1_Demomen2"
-			WaitForAllSpawned "Wave4_Subwave1_AutismBrigade"
-			Where spawnbot_scattered0
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 4
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			TFBot
 			{
-				Class Demoman
-				Skill Normal
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
 			}
 		}
 
@@ -1350,19 +1327,18 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			TFBot
 			{
 				Template T_TFBot_Giant_Medic_Crossbow_Barrage
-				Action FetchFlag
 
 				ItemAttributes
 				{
 					ItemName "The Crusader's Crossbow"
-					"fire rate bonus" 0.2
+					"fire rate bonus" 0.5
 					"faster reload rate" 0.2
 					"clip size upgrade atomic" 29.0
 					"projectile speed decreased" 0.5
@@ -1371,33 +1347,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 3 Steel Gauntlets
-		{
-			Name "Wave4_Subwave2_SteelGauntlets"
-			WaitForAllDead "Wave4_Subwave1_RocketTank"
-			Where spawnbot_mid0
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_SteelFist
-			}
-		}
-		WaveSpawn // 10 Tomislav Heavies
+		WaveSpawn // 8 Tomislav Heavies
 		{
 			Name "Wave4_Subwave2_TomislavHeavies"
-			WaitForAllSpawned "Wave4_Subwave2_SteelGauntlets"
-			Where spawnbot_left0
-			TotalCount 10
-			MaxActive 6
-			SpawnCount 2
+			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
+			WaitBetweenSpawns 8
 			TotalCurrency 20
 
 			TFBot
@@ -1410,32 +1369,143 @@ WaveSchedule
 				Item "Tomislav"
 			}
 		}
-
-		WaveSpawn // 1 Doctor Barrage and 3 Steel Gauntlets
+		WaveSpawn // 8 Steel Gauntlets
 		{
-			Name "Wave4_Subwave2_DoctorBarrage2"
+			Name "Wave4_Subwave2_SteelGauntlets"
 			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
 			Where spawnbot_mid0
-			TotalCount 4
-			MaxActive 4
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Name "He's gonna punch you buster"
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Name "I'm gonna punch you buddy"
+					Template T_TFBot_Heavy_SteelFist
+				}
+			}
+		}
+
+		WaveSpawn // 12 Demomen
+		{
+			Name "Wave4_Subwave2_Demomen"
+			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
+			Where spawnbot_mid0
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+		WaveSpawn // 3 Tomislav Heavies and 9 Speedy Gunslingers
+		{
+			Name "Wave4_Subwave2_TomislavSquads"
+			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
+			Where spawnbot_mid0
+			TotalCount 12
+			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 15
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+				}
+			}
+		}
+
+		WaveSpawn // 1 Doctor Barrage and 4 Tomislav Heavies
+		{
+			Name "Wave4_Subwave2_DoctorBarrage2"
+			WaitForAllSpawned "Wave4_Subwave2_TomislavSquads"
+			Where spawnbot_mid0
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Crossbow_Barrage
-					Action FetchFlag
 
 					ItemAttributes
 					{
 						ItemName "The Crusader's Crossbow"
-						"fire rate bonus" 0.2
+						"fire rate bonus" 0.5
 						"faster reload rate" 0.2
 						"clip size upgrade atomic" 29.0
 						"projectile speed decreased" 0.5
@@ -1445,23 +1515,42 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Heavy_SteelFist
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
 				}
 				TFBot
 				{
-					Template T_TFBot_Heavy_SteelFist
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
 				}
 				TFBot
 				{
-					Template T_TFBot_Heavy_SteelFist
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
 				}
 				TFBot
 				{
-					Template T_TFBot_Heavy_SteelFist
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
 				}
 			}
 		}
-
 		WaveSpawn // 5 Charging Demos
 		{
 			Name "Wave4_Subwave2_ChargingDemos"
@@ -1480,11 +1569,11 @@ WaveSchedule
 				Template T_TFBot_Demoknight_Caber_Crazy
 			}
 		}
-		WaveSpawn // 5 Tomislav Heavies
+		WaveSpawn // 5 Charging Demos
 		{
-			Name "Wave4_Subwave2_TomislavHeavies"
+			Name "Wave4_Subwave2_ChargingDemos"
 			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
-			Where spawnbot_left0
+			Where spawnbot_right0
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
@@ -1494,159 +1583,132 @@ WaveSchedule
 
 			TFBot
 			{
-				Name "Tomislav Heavy"
-				Class Heavy
-				ClassIcon heavy_accurate_lite
-				Skill Easy
-
-				Item "Tomislav"
+				Name "CHARGING DEMO"
+				Template T_TFBot_Demoknight_Caber_Crazy
 			}
 		}
 
-		WaveSpawn // 5 Demomen and 5 Speedy Gunslingers
+		// Subwave 3
+		WaveSpawn // 4 Steel Gauntlets and 12 Tomislav Heavies
 		{
-			Name "Wave4_Subwave2_Demomen"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
+			Name "Wave4_Subwave3_SteelGauntlets"
+			WaitForAllDead "Wave4_Subwave2_DoctorBarrage2"
 			Where spawnbot_mid0
-			TotalCount 10
+			TotalCount 16
 			MaxActive 8
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 3
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			Squad
 			{
 				TFBot
 				{
-					Class Demoman
-					Skill Normal
+					Template T_TFBot_Heavy_SteelFist
 				}
 				TFBot
 				{
-					Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
+				}
+				TFBot
+				{
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
+				}
+				TFBot
+				{
+					Name "Tomislav Heavy"
+					Class Heavy
+					ClassIcon heavy_accurate_lite
+					Skill Easy
+
+					Item "Tomislav"
 				}
 			}
 		}
-		WaveSpawn // 10 Tomislav Heavies
+		WaveSpawn // 8 Demomen
 		{
-			Name "Wave4_Subwave2_TomislavHeavies2"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
+			Name "Wave4_Subwave3_Demomen"
+			WaitForAllDead "Wave4_Subwave2_DoctorBarrage2"
 			Where spawnbot_mid0
-			TotalCount 10
+			TotalCount 8
 			MaxActive 8
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 3
-			TotalCurrency 20
-
-			TFBot
-			{
-				Name "Tomislav Heavy"
-				Class Heavy
-				ClassIcon heavy_accurate_lite
-				Skill Easy
-
-				Item "Tomislav"
-			}
-		}
-		WaveSpawn // 1 Doctor Barrage
-		{
-			Name "Wave4_Subwave2_DoctorBarrage3"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
-			Where spawnbot_mid0
-			TotalCount 1
-			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
 			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Medic_Crossbow_Barrage
-				Action FetchFlag
-
-				ItemAttributes
-				{
-					ItemName "The Crusader's Crossbow"
-					"fire rate bonus" 0.2
-					"faster reload rate" 0.2
-					"clip size upgrade atomic" 29.0
-					"projectile speed decreased" 0.5
-					"projectile spread angle penalty" 5
-					"projectile gravity" 0
-				}
+				Class Demoman
+				Skill Normal
 			}
 		}
 
-		WaveSpawn // 2 GRapid Soldiers and 8 Demomen
+		WaveSpawn // 1 Doctor Barrage and 2 GRapid Soldiers
 		{
-			Name "Wave4_Subwave2_GRapidSoldiers"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage3"
+			Name "Wave4_Subwave3_DoctorBarrage"
+			WaitForAllSpawned "Wave4_Subwave3_SteelGauntlets"
 			Where spawnbot_mid0
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 12
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 80
 
 			Squad
 			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Crossbow_Barrage
+
+					ItemAttributes
+					{
+						ItemName "The Crusader's Crossbow"
+						"fire rate bonus" 0.5
+						"faster reload rate" 0.2
+						"clip size upgrade atomic" 29.0
+						"projectile speed decreased" 0.5
+						"projectile spread angle penalty" 5
+						"projectile gravity" 0
+					}
+				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Spammer
 				}
 				TFBot
 				{
-					Class Demoman
-					Skill Normal
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Normal
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Normal
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Normal
+					Template T_TFBot_Giant_Soldier_Spammer
 				}
 			}
 		}
-		WaveSpawn // 2 Doctor Barrages
+		WaveSpawn // 6 Speedy Gunslingers
 		{
-			Name "Wave4_Subwave2_DoctorBarrage4"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidSoldiers"
+			Name "Wave4_Subwave3_FETCHMETHEIRSOULS"
+			WaitForAllSpawned "Wave4_Subwave3_DoctorBarrage"
 			Where spawnbot_mid0
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 8
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Medic_Crossbow_Barrage
-				Action FetchFlag
-
-				ItemAttributes
-				{
-					ItemName "The Crusader's Crossbow"
-					"fire rate bonus" 0.2
-					"faster reload rate" 0.2
-					"clip size upgrade atomic" 29.0
-					"projectile speed decreased" 0.5
-					"projectile spread angle penalty" 5
-					"projectile gravity" 0
-				}
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
 			}
 		}
 	}
@@ -2176,7 +2238,6 @@ WaveSchedule
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
@@ -2219,14 +2280,14 @@ WaveSchedule
 			}
 		}
 		
-		WaveSpawn // 8 Claymore Knights
+		WaveSpawn // 4 Claymore Knights
 		{
 			Name "Wave6_Subwave1_ClaymoreKnights"
 			WaitForAllDead "Wave6_Subwave1_TheSquad"
 			Where spawnbot_mid0
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -2268,7 +2329,6 @@ WaveSchedule
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
@@ -2354,7 +2414,6 @@ WaveSchedule
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Burst
@@ -2374,9 +2433,9 @@ WaveSchedule
 			Name "Wave6_Subwave2_ClaymoreKnights"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
 			Where spawnbot_right0
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -2387,22 +2446,20 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 4 Stickybomb Demos and 8 Firebrand Pyros
+		WaveSpawn // 3 Stickybomb Demos and 6 Firebrand Pyros
 		{
 			Name "Wave6_Subwave2_StickyDemos"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
 			Where spawnbot_scattered0
-			TotalCount 12
-			MaxActive 6
+			TotalCount 9
+			MaxActive 9
 			SpawnCount 3
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 6
 			TotalCurrency 60
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
 				TFBot
 				{
 					Template T_TFBot_Demoman_Stickybomb
@@ -2497,7 +2554,6 @@ WaveSchedule
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
@@ -2528,9 +2584,9 @@ WaveSchedule
 			Where spawnbot_mid0
 			TotalCount 4
 			MaxActive 4
-			SpawnCount 2
+			SpawnCount 4
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			TFBot
@@ -2553,8 +2609,6 @@ WaveSchedule
 
 			Squad
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
 				TFBot
 				{
 					Template T_TFBot_Giant_Heavy

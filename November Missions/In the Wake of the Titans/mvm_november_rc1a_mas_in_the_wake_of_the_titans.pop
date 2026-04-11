@@ -6,7 +6,7 @@
 WaveSchedule
 {
     StartingCurrency 0
-    RespawnWaveTime 2
+    RespawnWaveTime 1
     FixedRespawnWaveTime Yes
     CanBotsAttackWhileInSpawnRoom No
     AddSentryBusterWhenDamageDealtExceeds 3000
@@ -164,7 +164,7 @@ WaveSchedule
             ItemAttributes
             {
                 ItemName "The Dragon's Fury"
-                "damage bonus" 1.25
+                "damage bonus" 1.75
                 "afterburn duration bonus" 3
                 "mult_item_meter_charge_rate" 1.25
             }
@@ -222,6 +222,25 @@ WaveSchedule
                 "override projectile type" 2
                 "mini rockets" 1
                 "spread offset pattern" "22 0 -27"
+            }
+        }
+        T_TFBot_Pyro_Flaregun_Burst
+        {
+            Name "Burst Flare Pyro"
+            Class Pyro
+            ClassIcon pyro_flare_burst_nys
+            Health 500
+            Scale 1.3
+            WeaponRestrictions SecondaryOnly
+            
+            Item "The Flare Gun"
+
+            ItemAttributes
+            {
+                ItemName "The Flare Gun"
+
+                "mult projectile count" 3
+                "projectile spread angle penalty" 1
             }
         }
     }
@@ -1163,41 +1182,47 @@ WaveSchedule
 				Tag capbot
 			}
 		}
-        WaveSpawn // 3 Shotgun Pyros
+        WaveSpawn // 2 Shotgun Heavies
         {
-            Name "Wave2_Subwave1_ShotgunPyros"
+            Name "Wave2_Subwave1_ShotgunHeavies"
             WaitForAllSpawned "Wave2_Subwave1_GBurstDemo"
             Where spawnbot_c
-            TotalCount 3
-            MaxActive 3
-            SpawnCount 3
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
             WaitBeforeStarting 2
             WaitBetweenSpawns 0
             TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Pyro_Shotgun
+                Name "Shotgun Heavy"
+                Class Heavy
+                ClassIcon heavy_shotgun
+                WeaponRestrictions SecondaryOnly
                 Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
             }
         }
-        WaveSpawn // 3 Shotgun Pyros
+        WaveSpawn // 2 Shotgun Heavies
         {
-            Name "Wave2_Subwave1_ShotgunPyros"
+            Name "Wave2_Subwave1_ShotgunHeavies"
             WaitForAllSpawned "Wave2_Subwave1_GBurstDemo"
             Where spawnbot_flank_c
-            TotalCount 3
-            MaxActive 3
-            SpawnCount 3
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
             WaitBeforeStarting 2
             WaitBetweenSpawns 0
             TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Pyro_Shotgun
+                Name "Shotgun Heavy"
+                Class Heavy
+                ClassIcon heavy_shotgun
+                WeaponRestrictions SecondaryOnly
                 Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
@@ -1264,42 +1289,45 @@ WaveSchedule
                 Tag capbot
             }
         }
-        WaveSpawn // 4 Banner Soldiers
+        WaveSpawn // 1 GBanner Soldier
         {
-            Name "Wave2_Subwave1_BannerSoldiers"
+            Name "Wave2_Subwave1_GBannerSoldier"
             WaitForAllSpawned "Wave2_Subwave1_GBurstDemo"
             Where spawnbot_flank_c
-            TotalCount 4
-            MaxActive 4
-            SpawnCount 2
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
             WaitBeforeStarting 10
-            WaitBetweenSpawns 4
+            WaitBetweenSpawns 0
             TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Soldier_Extended_Buff_Banner
+                Template T_TFBot_Giant_Soldier_Extended_Buff_Banner
                 Skill Expert
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
             }
         }
-        WaveSpawn // 8 Shotgun Pyros
+        WaveSpawn // 6 Shotgun Heavies
         {
-            Name "Wave2_Subwave1_ShotgunPyros"
+            Name "Wave2_Subwave1_ShotgunHeavies"
             WaitForAllSpawned "Wave2_Subwave1_GBurstDemo"
             Where spawnbot_b
-            TotalCount 8
-            MaxActive 8
-            SpawnCount 4
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
             WaitBeforeStarting 10
             WaitBetweenSpawns 4
             TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Pyro_Shotgun
+                Name "Shotgun Heavy"
+                Class Heavy
+                ClassIcon heavy_shotgun
+                WeaponRestrictions SecondaryOnly
                 Attributes IgnoreFlag
                 BehaviorModifiers Push
                 Tag capbot
@@ -1389,21 +1417,29 @@ WaveSchedule
         }
 
         // Subwave 2
-        WaveSpawn // 3 Rocketeer Heavies and 6 Banner Soldiers
+        WaveSpawn // 1 GBanner Soldier and 3 Rocketeer Heavies
         {
-            Name "Wave2_Subwave2_RocketeerSquads"
+            Name "Wave2_Subwave2_GBannerSquad"
             WaitForAllDead "Wave2_Subwave1_GBurstDemo2"
             Where spawnbot_c
-            TotalCount 9
-            MaxActive 9
-            SpawnCount 3
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
             WaitBeforeStarting 3
-            WaitBetweenSpawns 3
+            WaitBetweenSpawns 0
             TotalCurrency 20
 
             Squad
             {
                 NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Extended_Buff_Banner
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
                 TFBot
                 {
                     Template T_TFBot_Heavy_Rocketeer
@@ -1413,30 +1449,28 @@ WaveSchedule
                 }
                 TFBot
                 {
-                    Template T_TFBot_Soldier_Extended_Buff_Banner
-                    Skill Expert
+                    Template T_TFBot_Heavy_Rocketeer
                     Attributes IgnoreFlag
                     BehaviorModifiers Push
                     Tag capbot
                 }
                 TFBot
                 {
-                    Template T_TFBot_Soldier_Extended_Buff_Banner
-                    Skill Expert
+                    Template T_TFBot_Heavy_Rocketeer
                     Attributes IgnoreFlag
                     BehaviorModifiers Push
                     Tag capbot
                 }
             }
         }
-		WaveSpawn // 3 Steel Gauntlets and 9 Shotgun Pyros
+		WaveSpawn // 3 Steel Gauntlets and 6 Shotgun Heavies
 		{
 			Name "Wave2_Subwave2_SteelGauntlets"
 			WaitForAllDead "Wave2_Subwave1_GBurstDemo2"
 			Where spawnbot_b
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 4
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 3
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 3
 			TotalCurrency 20
@@ -1453,21 +1487,20 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Pyro_Shotgun
+					Name "Shotgun Heavy"
+                    Class Heavy
+                    ClassIcon heavy_shotgun
+                    WeaponRestrictions SecondaryOnly
 					Attributes IgnoreFlag
                     BehaviorModifiers Push
                     Tag capbot
 				}
 				TFBot
 				{
-					Template T_TFBot_Pyro_Shotgun
-					Attributes IgnoreFlag
-                    BehaviorModifiers Push
-                    Tag capbot
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Shotgun
+					Name "Shotgun Heavy"
+                    Class Heavy
+                    ClassIcon heavy_shotgun
+                    WeaponRestrictions SecondaryOnly
 					Attributes IgnoreFlag
                     BehaviorModifiers Push
                     Tag capbot
@@ -1478,7 +1511,7 @@ WaveSchedule
 		WaveSpawn // 1 GBurst Demo, 2 Soldiers and 2 Rocketeer Heavies
 		{
 			Name "Wave2_Subwave2_GBurstDemo"
-			WaitForAllSpawned "Wave2_Subwave2_RocketeerSquads"
+			WaitForAllSpawned "Wave2_Subwave2_GBannerSquad"
 			Where spawnbot_b
 			TotalCount 5
 			MaxActive 5
@@ -1529,13 +1562,13 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 4 Shotgun Pyros
+		WaveSpawn // 3 Shotgun Heavies
 		{
-			Name "Wave2_Subwave2_ShotgunPyros"
+			Name "Wave2_Subwave2_ShotgunHeavies"
 			WaitForAllSpawned "Wave2_Subwave2_GBurstDemo"
 			Where spawnbot_c
-			TotalCount 4
-			MaxActive 4
+			TotalCount 3
+			MaxActive 3
 			SpawnCount 1
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 2
@@ -1543,7 +1576,10 @@ WaveSchedule
 			
 			TFBot
 			{
-				Template T_TFBot_Pyro_Shotgun
+				Name "Shotgun Heavy"
+                Class Heavy
+                ClassIcon heavy_shotgun
+                WeaponRestrictions SecondaryOnly
 				Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
@@ -1611,16 +1647,16 @@ WaveSchedule
 				Tag capbot
 			}
 		}
-		WaveSpawn // 4 Banner Soldiers and 8 Soldiers
+		WaveSpawn // 1 GBanner Soldier and 3 Soldiers
 		{
-			Name "Wave2_Subwave2_BannerSquads"
+			Name "Wave2_Subwave2_GBannerSquad2"
 			WaitForAllSpawned "Wave2_Subwave2_GBurstDemo"
 			Where spawnbot_b
-			TotalCount 12
-			MaxActive 9
-			SpawnCount 3
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 10
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			Squad
@@ -1628,7 +1664,7 @@ WaveSchedule
                 NoWaitForFormation 1 [$SIGSEGV]
 				TFBot
 				{
-					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Template T_TFBot_Giant_Soldier_Extended_Buff_Banner
 					Skill Expert
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
@@ -1686,7 +1722,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Class Soldier
 					Skill Expert
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
@@ -1694,7 +1730,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Class Soldier
 					Skill Expert
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
@@ -1718,21 +1754,24 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 6 Shotgun Pyros
+		WaveSpawn // 4 Shotgun Heavies
 		{
-			Name "Wave2_Subwave2_ShotgunPyros"
+			Name "Wave2_Subwave2_ShotgunHeavies"
 			WaitForAllSpawned "Wave2_Subwave2_GBurstDemo"
 			Where spawnbot_flank_c
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 2
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 2
 			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Pyro_Shotgun
+				Name "Shotgun Heavy"
+                Class Heavy
+                ClassIcon heavy_shotgun
+                WeaponRestrictions SecondaryOnly
 				Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
@@ -1869,41 +1908,44 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 6 Shotgun Pyros
+		WaveSpawn // 4 Shotgun Heavies
 		{
-			Name "Wave2_Subwave3_ShotgunPyros"
+			Name "Wave2_Subwave3_ShotgunHeavies"
 			WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
 			Where spawnbot_c
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 2
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 1
 			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Pyro_Shotgun
+				Name "Shotgun Heavy"
+                Class Heavy
+                ClassIcon heavy_shotgun
+                WeaponRestrictions SecondaryOnly
 				Attributes IgnoreFlag
 				BehaviorModifiers Push
 				Tag capbot
 			}
 		}
-		WaveSpawn // 5 Banner Soldiers
+		WaveSpawn // 1 GBanner Soldier
 		{
-			Name "Wave2_Subwave3_BannerSoldiers"
-			WaitForAllSpawned "Wave2_Subwave3_ShotgunPyros"
+			Name "Wave2_Subwave3_GBannerSoldier"
+			WaitForAllSpawned "Wave2_Subwave3_ShotgunHeavies"
 			Where spawnbot_flank_c
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Soldier_Extended_Buff_Banner
+				Template T_TFBot_Giant_Soldier_Extended_Buff_Banner
 				Skill Expert
 				Attributes IgnoreFlag
 				BehaviorModifiers Push
@@ -1925,12 +1967,12 @@ WaveSchedule
 		WaveSpawn
         {
             Name "Wave2_CompleteCheck"
-            WaitForAllDead "Wave2_Subwave3_ShotgunPyros"
+            WaitForAllDead "Wave2_Subwave3_ShotgunHeavies"
         }
 		WaveSpawn
         {
             Name "Wave2_CompleteCheck"
-            WaitForAllDead "Wave2_Subwave3_BannerSoldiers"
+            WaitForAllDead "Wave2_Subwave3_GBannerSoldier"
         }
 
         // Wave End Sequence
@@ -2094,7 +2136,7 @@ WaveSchedule
                     MVMNovember_MasterScripting.NovemberMasterInit()
                     MVMNovember_MasterScripting.NovemberMasterVoidInit()
 
-                    EntFire(`advexp_spawn_d_relay` `Trigger`)
+                    EntFire(`advexp_spawn_ad_relay` `Trigger`)
                   "
         }
         StartWaveOutput
@@ -2114,17 +2156,62 @@ WaveSchedule
                   "
         }
 
+        // Main Wave Bot Choices
+
+        // Champion Pyros
+        // Piercing Doctor Barrages (Crossbow Medics with a Colonel Barrage pattern)
+        // Giant Homewreckers or Heavies
+        // Burst Flare Pyros (Minigiant Pyros that shoot 3 flares at once)
+        // Heavies
+        // Scattergun/Soda Scouts
+        // Hard Skill Pyros
+        // Crit Pyros
+
+        // Support Spawn Bot Choices (These would come from Spawn E, and be randomchoiced to take either path on E)
+        
+        // Rapid Fire Bowmen
+        // Giant Pyro?
+        // Super Scout (Potentially Crit)
+
+        // Subwave 1
         WaveSpawn
         {
-            Where spawnbot_d
-            TotalCount 1
-            MaxActive 1
-            SpawnCount 1
-            WaitBeforeStarting 9999
+            Name "Wave3_Subwave1_ChampionPyro"
+            Where spawnbot_a
+            TotalCount 5
+            MaxActive 5
+            SpawnCount 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 20
 
-            TFBot
+            Squad
             {
-                Class Soldier
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Champion
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+
+                }
+                TFBot
+                {
+
+                }
+                TFBot
+                {
+
+                }
+                TFBot
+                {
+
+                }
             }
         }
     }
