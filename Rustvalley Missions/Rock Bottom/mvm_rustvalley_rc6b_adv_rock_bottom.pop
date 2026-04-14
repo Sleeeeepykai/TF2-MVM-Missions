@@ -22,6 +22,15 @@ WaveSchedule
 	{
 		TheHammerLogic
 		{
+			OnSpawnOutput
+			{
+				Target "HammerSlamDamage"
+				Action "$SetOwner"
+				Param "!self"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
 			logic_relay
 			{
 				"targetname" "TheHammerAttack"
@@ -172,11 +181,12 @@ WaveSchedule
 
 			SpawnTemplate "TheHammerLogic"
 
-			Item "Potato of Labor"
+			Item "The Scotsman's Skullcutter"
+
 			Item "The Shaman's Skull"
 			Item "Forgotten King's Pauldrons"
 			Item "The Bonedolier"
-			Item "The Scotsman's Skullcutter"
+			Item "Potato of Labor"
 
 			CharacterAttributes
 			{
@@ -195,7 +205,7 @@ WaveSchedule
 			ItemAttributes
 			{
 				ItemName "Potato of Labor"
-				"custom item model" "models/workshop/player/items/all_class/hw2013_ethereal_hood/hw2013_ethereal_hood_demo.mdl"
+				"custom item model" "models\workshop\player\items\all_class\hw2013_ethereal_hood\hw2013_ethereal_hood_demo.mdl"
 			}
 
 			FireInput
@@ -291,6 +301,32 @@ WaveSchedule
                     }
 				}
 			}
+		}
+		T_TFBot_Giant_Demoman_Stickybomb
+		{
+			Name "Giant Rapid Fire Sticky Demoman"
+            Class Demoman
+            ClassIcon demo_stickybomb_kai
+            Skill Expert
+            Health 3500
+            Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+            WeaponRestrictions SecondaryOnly
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+                "is_passive_weapon" 1
+                "override projectile type" 27.0
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+                "stickybomb charge rate" 0.01
+                "projectile range decreased" 0.35
+                "max pipebombs decreased" -7
+            }
 		}
 	}
 
@@ -803,6 +839,7 @@ WaveSchedule
 				ClassIcon tank_combat_minigun_dual_kai
 				Scale 0.5
 				Speed 75
+				IsMiniBoss 0
 				DisableSmokeStack 1
 				StartingPathTrackNode "path_tank_cliff_1"
 
@@ -1410,6 +1447,7 @@ WaveSchedule
 				ClassIcon tank_combat_rocket_dual_kai
 				Scale 0.5
 				Speed 75
+				IsMiniBoss 0
 				DisableSmokeStack 1
 				StartingPathTrackNode "path_tank_road_1"
 
@@ -2378,6 +2416,7 @@ WaveSchedule
 				Health 32000
 				Scale 0.5
 				Speed 75
+				IsMiniBoss 0
 				DisableSmokeStack 1
 				StartingPathTrackNode "path_tank_1"
 
@@ -2836,7 +2875,7 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn
+		WaveSpawn // ITS THE HAMMER, HE'S REAL
 		{
 			Name "Wave7_Subwave1_THEHAMMER"
 			Where spawnbot_mid0
@@ -2847,9 +2886,657 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 200
 
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+			LastSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry07.mp3"
+
 			TFBot
 			{
 				Template T_TFBot_Giant_Demoman_THEHAMMER
+			}
+		}
+
+		WaveSpawn // 20 Charging Demos
+		{
+			Name "Wave7_Subwave1_ChargingDemo"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+		WaveSpawn // 20 CHARGING DEMOS
+		{
+			Name "Wave7_Subwave1_ChargingDemo2"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_scattered0
+			RandomSpawn 1
+			Support Limited
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Name "CHARGING DEMO"
+				Template T_TFBot_Demoknight_Caber_Crazy
+			}
+		}
+		WaveSpawn // 5 Claymore Knights
+		{
+			Name "Wave7_Subwave1_ClaymoreKnights"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Claymore
+			}
+		}
+		WaveSpawn // 2 GSticky Demos
+		{
+			Name "Wave7_Subwave1_GStickyDemo"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Stickybomb
+			}
+		}
+
+		// Subwave 1 Check
+		WaveSpawn
+		{
+			Name "Wave7_Subwave1_Check"
+			WaitForAllDead "Wave7_Subwave1_THEHAMMER"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_Subwave1_Check"
+			WaitForAllDead "Wave7_Subwave1_GStickyDemo"
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave7_Subwave2_TinyTank"
+			WaitForAllSpawned "Wave7_Subwave1_Check"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tankboss"
+				Health 17500
+				Scale 0.5
+				Speed 75
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_road_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // Support Charging Demos and Claymore Knights
+		{
+			Name "Wave7_Subwave2_HereTheyCome"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank"
+			Where spawnbot_scattered0
+			Support 1
+			TotalCount 100
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 100
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Name "Charging Demo"
+					Template T_TFBot_Demoman_Knight
+					ClassIcon demoknight_bottle_lite
+
+					Item "The Splendid Screen"
+					Item "TF_WEAPON_BOTTLE"
+				}
+				TFBot
+				{
+					Name "Charging Demo"
+					Template T_TFBot_Demoman_Knight
+					ClassIcon demoknight_bottle_lite
+
+					Item "The Splendid Screen"
+					Item "TF_WEAPON_BOTTLE"
+				}
+				TFBot
+				{
+					Name "CHARGING DEMO"
+					Template T_TFBot_Demoknight_Caber_Crazy
+				}
+				TFBot
+				{
+					Name "CHARGING DEMO"
+					Template T_TFBot_Demoknight_Caber_Crazy
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Knight_Claymore
+				}
+			}
+		}
+		WaveSpawn // Support GSticky Demos
+		{
+			Name "Wave7_Subwave2_HereTheyCome"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank"
+			Where spawnbot_scattered0
+			Support 1
+			TotalCount 10
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 15
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Stickybomb
+			}
+		}
+
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave7_Subwave2_TinyTank2"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tankboss"
+				Health 17500
+				Scale 0.5
+				Speed 75
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_road_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 8 Soldiers and 8 Quick-Uber Medics
+		{
+			Name "Wave7_Subwave2_SoldierSquads"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank2"
+			Where spawnbot_mid0
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave7_Subwave2_TinyTank3"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank2"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tankboss"
+				Health 17500
+				Scale 0.5
+				Speed 75
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_road_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 Steel Gauntlets, 2 Shield Medics and 8 Burst Fire Demos
+		{
+			Name "Wave7_Subwave2_SteelSquads"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank3"
+			Where spawnbot_mid0
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+			}
+		}
+
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave7_Subwave2_TinyTank4"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank3"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tankboss"
+				Health 17500
+				Scale 0.5
+				Speed 75
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_road_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier
+		{
+			Name "Wave7_Subwave2_GRapidSoldier"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank4"
+			Where spawnbot_left0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier
+		{
+			Name "Wave7_Subwave2_GRapidSoldier"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank4"
+			Where spawnbot_right0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // 12 Soldiers
+		{
+			Name "Wave7_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank4"
+			Where spawnbot_mid0
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 8 Burst Fire Demos
+		{
+			Name "Wave7_Subwave3_BurstDemos"
+			WaitForAllSpawned "Wave7_Subwave2_Soldiers"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 2 Doctor Barrages and 6 Steel Gauntlets
+		{
+			Name "Wave7_Subwave3_DoctorBarrage"
+			WaitForAllSpawned "Wave7_Subwave3_BurstDemos"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Crossbow_Barrage
+					Action FetchFlag
+
+					ItemAttributes
+					{
+						ItemName "The Crusader's Crossbow"
+						"fire rate bonus" 0.5
+						"faster reload rate" 0.2
+						"clip size upgrade atomic" 29.0
+						"projectile speed decreased" 0.5
+						"projectile spread angle penalty" 5
+						"projectile gravity" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+					Attributes AlwaysCrit
+				}
+			}
+		}
+		WaveSpawn // 8 Burst Fire Demos
+		{
+			Name "Wave7_Subwave3_BurstDemos2"
+			WaitForAllSpawned "Wave7_Subwave3_BurstDemos"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+
+		WaveSpawn // 1 GRapid Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave7_Subwave3_GRapidSoldier"
+			WaitForAllSpawned "Wave7_Subwave3_DoctorBarrage"
+			Where spawnbot_left0
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave7_Subwave3_GRapidSoldier"
+			WaitForAllSpawned "Wave7_Subwave3_DoctorBarrage"
+			Where spawnbot_right0
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave7_Subwave3_Soldiers"
+			WaitForAllSpawned "Wave7_Subwave3_GRapidSoldier"
+			Where spawnbot_scattered0
+			TotalCount 10
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // 1 Tiny Railgun Tank
+		{
+			Name "Wave7_Subwave3_RailgunTank"
+			WaitForAllSpawned "Wave7_Subwave3_GRapidSoldier"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Name "combattank_bomb|railgun|railgun$pingsound|npc/combine_gunship/ping_search.wav"
+				Health 22500
+				ClassIcon tank_combat_railgun_dual_kai
+				Scale 0.5
+				Speed 75
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				StartingPathTrackNode "path_tank_road_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 Doctor Barrage, 3 Giant Heavies and 4 Shield Medics
+		{
+			Name "Wave7_Subwave3_THEGIGADOOMSQUAD"
+			WaitForAllSpawned "Wave7_Subwave3_RailgunTank"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 120
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Crossbow_Barrage
+					Action FetchFlag
+
+					ItemAttributes
+					{
+						ItemName "The Crusader's Crossbow"
+						"fire rate bonus" 0.5
+						"faster reload rate" 0.2
+						"clip size upgrade atomic" 29.0
+						"projectile speed decreased" 0.5
+						"projectile spread angle penalty" 5
+						"projectile gravity" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
 			}
 		}
 	}
