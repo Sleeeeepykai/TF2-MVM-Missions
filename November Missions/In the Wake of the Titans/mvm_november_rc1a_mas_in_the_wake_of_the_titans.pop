@@ -16,6 +16,13 @@ WaveSchedule
 
     ForceRedMoney 1
 
+    //// RESTRICTIONS ////
+
+    ClassLimit
+	{
+		Medic 0
+	}
+
     //// DISABLED SOUNDS ////
 
     DisableSound "Announcer.MVM_Wave_End"
@@ -229,6 +236,7 @@ WaveSchedule
             Name "Burst Flare Pyro"
             Class Pyro
             ClassIcon pyro_flare_burst_nys
+            Skill Hard
             Health 500
             Scale 1.3
             WeaponRestrictions SecondaryOnly
@@ -292,6 +300,8 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
+
+    // General Design Notes
 
     // More minigiants in general, having slower but bulkier robots will help the master difficulty
     // Champions could do 100% damage bonus to live up to their name (Trying out 50% for now)
@@ -2151,6 +2161,8 @@ WaveSchedule
             WaitBeforeStarting 16
         }
     }
+
+    // Notes for Wave 3
     Wave
     {
         InitWaveOutput
@@ -2161,6 +2173,8 @@ WaveSchedule
                     IncludeScript(`mvm_november_master_script`, getroottable())
                     MVMNovember_MasterScripting.NovemberMasterInit()
                     MVMNovember_MasterScripting.NovemberMasterVoidInit()
+
+                    IncludeScript(`seel_ins`, getroottable())
 
                     SendGlobalGameEvent(`show_annotation`, {
                         WorldPosX = -2400
@@ -2181,6 +2195,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
+                    SINS.ChangeIconFlags(`pyro_giant`, 0)
                   "
         }
         DoneOutput
@@ -2192,21 +2207,8 @@ WaveSchedule
                   "
         }
 
-        // Main Wave Bot Choices
-
-        // Champion Pyros
-        // Piercing Doctor Barrages (Crossbow Medics with a Colonel Barrage pattern)
-        // Giant Homewreckers
-        // Burst Flare Pyros (Minigiant Pyros that shoot 3 flares at once)
-        // Heavies
-        // Scattergun/Soda Scouts
-        // Hard Skill Pyros
-        // Crit Pyros
-
         // Support Spawn Bot Choices (These would come from Spawn E, and be randomchoiced to take either path on E)
         
-        // Rapid Fire Bowmen
-        // Giant Pyro?
         // Super Scout (Potentially Crit)
 
         // Subwave 1
@@ -2260,6 +2262,973 @@ WaveSchedule
                     BehaviorModifiers Push
                     Tag capbot
                 }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success01.mp3`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success01.mp3`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                      "
+            }
+        }
+        WaveSpawn // 10 Loch Demos
+        {
+            Name "Wave3_Subwave1_LochDemos"
+            WaitForAllSpawned "Wave3_Subwave1_ChampionPyro"
+            Where spawnbot_flank_a
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        WaveSpawn // 1 GHomewrecker and 2 Firebrand Pyros
+        {
+            Name "Wave3_Subwave1_GHomewrecker"
+            WaitForAllSpawned "Wave3_Subwave1_ChampionPyro"
+            Where spawnbot_d
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Homewrecker
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 6 Loch Demos
+        {
+            Name "Wave3_Subwave1_LochDemos"
+            WaitForAllSpawned "Wave3_Subwave1_GHomewrecker"
+            Where spawnbot_d
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_LochnLoad
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave3_Subwave1_Scouts"
+            WaitForAllSpawned "Wave3_Subwave1_GHomewrecker"
+            Where spawnbot_a
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 8
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 1 GHomewrecker and 2 Firebrand Pyros
+        {
+            Name "Wave3_Subwave1_GHomewrecker2"
+            WaitForAllSpawned "Wave3_Subwave1_GHomewrecker"
+            Where spawnbot_a
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Homewrecker
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+
+        // Subwave 1 Check
+        WaveSpawn
+        {
+            Name "Wave3_Subwave1_Check"
+            WaitForAllDead "Wave3_Subwave1_ChampionPyro"
+        }
+        WaveSpawn
+        {
+            Name "Wave3_Subwave1_Check"
+            WaitForAllDead "Wave3_Subwave1_GHomewrecker"
+        }
+        WaveSpawn
+        {
+            Name "Wave3_Subwave1_Check"
+            WaitForAllDead "Wave3_Subwave1_GHomewrecker2"
+        }
+
+        // Subwave 2
+        WaveSpawn // 3 Firebrand Pyros and 9 Loch Demos
+        {
+            Name "Wave3_Subwave2_FirebrandSquads"
+            WaitForAllSpawned "Wave3_Subwave1_Check"
+            Where spawnbot_d
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+        WaveSpawn // 8 Scouts
+        {
+            Name "Wave3_Subwave2_Scouts"
+            WaitForAllSpawned "Wave3_Subwave1_Check"
+            Where spawnbot_d
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 6
+            WaitBetweenSpawns 1
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Scout
+                Skill Normal
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        
+        WaveSpawn // 1 Doctor Barrage and 3 Flare Burst Pyros
+        {
+            Name "Wave3_Subwave2_DoctorBarrage"
+            WaitForAllSpawned "Wave3_Subwave1_Check"
+            Where spawnbot_a
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Crossbow_Barrage
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+
+                    ItemAttributes
+                    {
+                        ItemName "The Crusader's Crossbow"
+                        "projectile gravity" 0
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 10 Heavies
+        {
+            Name "Wave3_Subwave2_Heavies"
+            WaitForAllSpawned "Wave3_Subwave2_DoctorBarrage"
+            Where spawnbot_flank_a
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 1
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Heavy
+                Skill Easy
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 12 Loch Demos
+        {
+            Name "Wave3_Subwave2_LochDemos"
+            WaitForAllSpawned "Wave3_Subwave2_FirebrandSquads"
+            Where spawnbot_d
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_LochnLoad
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 3 Flare Burst Pyros and 9 Heavies
+        {
+            Name "Wave3_Subwave2_FlareBurstSquads"
+            WaitForAllSpawned "Wave3_Subwave2_FirebrandSquads"
+            Where spawnbot_a
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+
+        WaveSpawn // 1 GPyro
+        {
+            Name "Wave3_Subwave2_GPyro"
+            WaitForAllSpawned "Wave3_Subwave2_FirebrandSquads"
+            Where spawnbot_e
+            Support Limited
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 6
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`spawn_e_setblue_relay`, `Trigger`)
+                        SINS.ChangeIconFlags(`pyro_giant`, 4)
+                      "
+            }
+            DoneOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`spawn_e_setred_relay`, `Trigger`)
+                        SINS.ChangeIconFlags(`pyro_giant`, 0)
+                      "
+            }
+        }
+
+        WaveSpawn // 1 Doctor Barrage and 3 Firebrand Pyros
+        {
+            Name "Wave3_Subwave2_DoctorBarrage2"
+            WaitForAllSpawned "Wave3_Subwave2_FlareBurstSquads"
+            Where spawnbot_d
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Crossbow_Barrage
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+
+                    ItemAttributes
+                    {
+                        ItemName "The Crusader's Crossbow"
+                        "projectile gravity" 0
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 10 Scouts
+        {
+            Name "Wave3_Subwave2_Scouts"
+            WaitForAllSpawned "Wave3_Subwave2_DoctorBarrage2"
+            Where spawnbot_d
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Class Scout
+                    Skill Normal
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Scout
+                    Skill Normal
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        WaveSpawn // 1 GHomewrecker
+        {
+            Name "Wave3_Subwave2_GHomewrecker"
+            WaitForAllSpawned "Wave3_Subwave2_DoctorBarrage2"
+            Where spawnbot_a
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Pyro_Homewrecker
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 10 Heavies
+        {
+            Name "Wave3_Subwave2_Heavies"
+            WaitForAllSpawned "Wave3_Subwave2_GHomewrecker"
+            Where spawnbot_flank_a
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 1
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        WaveSpawn // 1 GPyro
+        {
+            Name "Wave3_Subwave2_GPyro2"
+            WaitForAllSpawned "Wave3_Subwave2_DoctorBarrage2"
+            Where spawnbot_e
+            Support Limited
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 5
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`spawn_e_setblue_relay`, `Trigger`)
+                        SINS.ChangeIconFlags(`pyro_giant`, 4)
+                      "
+            }
+            DoneOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`spawn_e_setred_relay`, `Trigger`)
+                        SINS.ChangeIconFlags(`pyro_giant`, 0)
+                      "
+            }
+        }
+
+        // Subwave 2 Check
+        WaveSpawn
+        {
+            Name "Wave3_Subwave2_Check"
+            WaitForAllDead "Wave3_Subwave2_DoctorBarrage2"
+        }
+        WaveSpawn
+        {
+            Name "Wave3_Subwave2_Check"
+            WaitForAllDead "Wave3_Subwave2_Scouts"
+        }
+        WaveSpawn
+        {
+            Name "Wave3_Subwave2_Check"
+            WaitForAllDead "Wave3_Subwave2_GHomewrecker"
+        }
+        WaveSpawn
+        {
+            Name "Wave3_Subwave2_Check"
+            WaitForAllDead "Wave3_Subwave2_Heavies"
+        }
+        WaveSpawn
+        {
+            Name "Wave3_Subwave2_Check"
+            WaitForAllDead "Wave3_Subwave2_GPyro2"
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Champion Pyro, 3 Flare Burst Pyros and 2 Firebrand Pyros
+        {
+            Name "Wave3_Subwave3_ChampionPyro"
+            WaitForAllSpawned "Wave3_Subwave2_Check"
+            Where spawnbot_d
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Champion
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Flaregun_Burst
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/pyro_mvm_m_battlecry01.mp3`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                        EmitSoundEx({
+                            sound_name = `vo/mvm/mght/pyro_mvm_m_battlecry01.mp3`
+                            channel = 6
+                            volume = 1
+                            pitch = 90
+                            special_dsp = 22
+                            filter_type = 5
+                        })
+                      "
+            }
+        }
+        WaveSpawn // 10 Heavies
+        {
+            Name "Wave3_Subwave3_Heavies"
+            WaitForAllSpawned "Wave3_Subwave3_ChampionPyro"
+            Where spawnbot_d
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 1
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        WaveSpawn // 1 Doctor Barrage and 3 Loch Demos
+        {
+            Name "Wave3_Subwave3_DoctorBarrage"
+            WaitForAllSpawned "Wave3_Subwave3_ChampionPyro"
+            Where spawnbot_a
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Crossbow_Barrage
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+
+                    ItemAttributes
+                    {
+                        ItemName "The Crusader's Crossbow"
+                        "projectile gravity" 0
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }TFBot
+                {
+                    Template T_TFBot_Demoman_LochnLoad
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+            }
+        }
+        WaveSpawn // 10 Scouts
+        {
+            Name "Wave3_Subwave3_Scouts"
+            WaitForAllSpawned "Wave3_Subwave3_DoctorBarrage"
+            Where spawnbot_a
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 5
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 4
+            TotalCurrency 20
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Class Scout
+                    Skill Normal
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Class Scout
+                    Skill Normal
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+        }
+
+        WaveSpawn // 6 Flare Burst Pyros
+        {
+            Name "Wave3_Subwave3_FlareBursts"
+            WaitForAllSpawned "Wave3_Subwave3_ChampionPyro"
+            Where spawnbot_d
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Flaregun_Burst
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+        WaveSpawn // 6 Firebrand Pyros
+        {
+            Name "Wave3_Subwave3_Firebrands"
+            WaitForAllSpawned "Wave3_Subwave3_ChampionPyro"
+            Where spawnbot_a
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Firebrand
+                Attributes AlwaysCrit
+                Attributes IgnoreFlag
+                BehaviorModifiers Push
+                Tag capbot
+            }
+        }
+
+        WaveSpawn // 1 GPyro
+        {
+            Name "Wave3_Subwave3_GPyro"
+            WaitForAllSpawned "Wave3_Subwave3_ChampionPyro"
+            Where spawnbot_e
+            Support Limited
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 15
+            TotalCurrency 40
+
+            RandomChoice
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro
+                    Attributes IgnoreFlag
+                    BehaviorModifiers Push
+                    Tag capbot
+                    Tag flankbot
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`spawn_e_setblue_relay`, `Trigger`)
+                        SINS.ChangeIconFlags(`pyro_giant`, 4)
+                      "
+            }
+            DoneOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`spawn_e_setred_relay`, `Trigger`)
+                        SINS.ChangeIconFlags(`pyro_giant`, 0)
+                      "
             }
         }
     }
