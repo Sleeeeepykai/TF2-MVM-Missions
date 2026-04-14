@@ -12,7 +12,59 @@ WaveSchedule
 	AddSentryBusterWhenDamageDealtExceeds 4000
     AddSentryBusterWhenKillCountExceeds 15
 
+	BodyPartScaleSpeed 10
+
 	//// PRECACHES ////
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		TheHammerLogic
+		{
+			logic_relay
+			{
+				"targetname" "TheHammerAttack"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_deploy_giant.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/demo_sword_swing1.wav,3.2,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,3.4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/strongman_fast_impact_01.wav,3.4,-1"
+
+				"OnTrigger" "HammerSlamShake,StartShake,,3.4,-1"
+                "OnTrigger" "HammerSlamDamage*,FireOnce,,3.4,-1"
+			}
+
+			env_shake
+			{
+                "spawnflags" "4"
+				"amplitude" "3000"
+				"duration" "3"
+				"frequency" "100"
+				"targetname" "HammerSlamShake"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "HammerSlamDamage"
+
+				"spawnflags" "1"
+				"angles" "0 0 0"
+				"origin" "500 0 20"
+				"teamnum" "3"
+				"Crits" "0"
+				"Damage" "300"
+				"ModelScale" "1"
+				"SpeedMax" "0"
+				"SpeedMin" "0"
+				"SplashRadius" "750"
+				"SpreadAngle" "0"
+				"WeaponType" "3"
+
+				"OnUser4" "!self,DetonateStickies,,0.1,-1"
+			}
+		}
+	}
 
 	//// ROBOT TEMPLATES ////
 
@@ -24,7 +76,7 @@ WaveSchedule
 			Class Demoman
 			ClassIcon boss_skeleton_lite
 			Skill Expert
-			Health 12000
+			Health 10000
 			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
@@ -101,8 +153,144 @@ WaveSchedule
 
             CharacterAttributes
             {
-                "move speed bonus" 5
+                "move speed bonus" 2
             }
+		}
+		T_TFBot_Giant_Demoman_THEHAMMER
+		{
+			Name "THE HAMMER"
+			Class Demoman
+			ClassIcon mallet_lite
+			Skill Expert
+			Health 30000
+			Scale 2.5
+			Attributes MiniBoss
+			Attributes AlwaysCrit
+			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions MeleeOnly
+
+			SpawnTemplate "TheHammerLogic"
+
+			Item "Potato of Labor"
+			Item "The Shaman's Skull"
+			Item "Forgotten King's Pauldrons"
+			Item "The Bonedolier"
+			Item "The Scotsman's Skullcutter"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+			}
+			ItemAttributes
+			{
+				ItemName "The Scotsman's Skullcutter"
+				"damage bonus" 1.5
+				"custom item model" "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"
+				"custom kill icon" "necro_smasher"
+			}
+			ItemAttributes
+			{
+				ItemName "Potato of Labor"
+				"custom item model" "models/workshop/player/items/all_class/hw2013_ethereal_hood/hw2013_ethereal_hood_demo.mdl"
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $ChangeAttributes
+				Param HammerDefault
+				Delay 0
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				HammerDefault [$SIGSEGV]
+				{
+					Item "The Scotsman's Skullcutter"
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.5
+						"airblast vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+						"hand scale" 1
+					}
+					ItemAttributes
+					{
+						ItemName "The Scotsman's Skullcutter"
+						"damage bonus" 1.5
+						"custom item model" "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"
+						"custom kill icon" "necro_smasher"
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "HammerSlam"
+						Delay 10
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				HammerSlam [$SIGSEGV]
+				{
+					Item "The Scotsman's Skullcutter"
+					Attributes SuppressFire
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.25
+						"damage force reduction" 0.5
+						"airblast vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+						"hand scale" 4
+					}
+					ItemAttributes
+					{
+						ItemName "The Scotsman's Skullcutter"
+						"damage bonus" 1.5
+						"custom item model" "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"
+						"custom kill icon" "necro_smasher"
+					}
+
+					FireWeapon
+                    {
+                        Type "Primary"
+                        Delay 3
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target "TheHammerAttack"
+                        Action "Trigger"
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target !self
+                        Action $ChangeAttributes
+                        Param HammerDefault
+                        Delay 5
+                        Repeats 1
+                        Cooldown -1
+                    }
+				}
+			}
 		}
 	}
 
@@ -396,7 +584,6 @@ WaveSchedule
 		}
 	}
 	// Wave 2 Notes
-	// Can do something with the last subwave to make the tank more approachable
 	Wave
 	{
 		InitWaveOutput
@@ -604,7 +791,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 120
 
 			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
 			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
@@ -612,7 +799,7 @@ WaveSchedule
 			Tank
 			{
 				Name "combattank_bomb|minigun|minigun$pingsound|npc/combine_gunship/ping_search.wav"
-				Health 18000
+				Health 16000
 				ClassIcon tank_combat_minigun_dual_kai
 				Scale 0.5
 				Speed 75
@@ -634,7 +821,7 @@ WaveSchedule
 			TotalCount 10
 			MaxActive 8
 			SpawnCount 2
-			WaitBeforeStarting 5
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 3
 			TotalCurrency 20
 
@@ -651,9 +838,9 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 80
 
 			TFBot
 			{
@@ -678,24 +865,6 @@ WaveSchedule
 				Template T_TFBot_Demoman_Stickybomb
 			}
 		}
-		WaveSpawn // 15 Scouts
-		{
-			Name "Wave2_Subwave2_Scouts"
-			WaitForAllSpawned "Wave2_Subwave2_StickyDemos"
-			Where spawnbot_scattered0
-			TotalCount 15
-			MaxActive 15
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.5
-			TotalCurrency 40
-
-			TFBot
-			{
-				Class Scout
-				Skill Easy
-			}
-		}
 
 		WaveSpawn // 18 Loch Demos
 		{
@@ -716,7 +885,6 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// Probably want to cut the first claidheamhmor knights from the giga destroyer subwave
 	Wave
 	{
 		InitWaveOutput
@@ -756,7 +924,7 @@ WaveSchedule
 			SpawnCount 11
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 80
 
 			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
 
@@ -809,14 +977,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 6 Snipers
+		WaveSpawn // 10 Snipers
 		{
 			Name "Wave3_Subwave1_SniperArmy"
 			WaitForAllSpawned "Wave3_Subwave1_GDemoBarrage"
 			Where spawnbot_scattered0
 			Support Limited
-			TotalCount 6
-			MaxActive 6
+			TotalCount 10
+			MaxActive 10
 			SpawnCount 1
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0.1
@@ -836,33 +1004,16 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 2 Claymore Knights
-		{
-			Name "Wave3_Subwave1_ClaymoreKnights"
-			WaitForAllSpawned "Wave3_Subwave1_GDemoBarrage"
-			Where spawnbot_right0
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Knight_Claymore
-			}
-		}
-		WaveSpawn // 8 Soldiers
+		WaveSpawn // 10 Soldiers
 		{
 			Name "Wave3_Subwave1_Soldiers"
 			WaitForAllSpawned "Wave3_Subwave1_GDemoBarrage"
 			Where spawnbot_mid0
-			TotalCount 8
-			MaxActive 8
+			TotalCount 10
+			MaxActive 10
 			SpawnCount 2
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 3
 			TotalCurrency 20
 
 			TFBot
@@ -1128,9 +1279,6 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// Want to reduce the demoman spawncount on the first subwave
-	// Need to speed the pacing of the rocket tank
-	// Actually, need to speed pacing of the entire fucking wave
 	Wave
 	{
 		InitWaveOutput
@@ -1205,14 +1353,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 20 Demomen
+		WaveSpawn // 16 Demomen
 		{
 			Name "Wave4_Subwave1_Demomen"
 			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
 			Where spawnbot_mid0
-			TotalCount 20
-			MaxActive 10
-			SpawnCount 5
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 4
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 5
 			TotalCurrency 100
@@ -1258,7 +1406,7 @@ WaveSchedule
 			Tank
 			{
 				Name "combattank_bomb|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav"
-				Health 22000
+				Health 18000
 				ClassIcon tank_combat_rocket_dual_kai
 				Scale 0.5
 				Speed 75
@@ -1280,7 +1428,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1297,7 +1445,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1307,15 +1455,15 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 5 Speedy Gunslingers
+		WaveSpawn // 10 Speedy Gunslingers
 		{
 			Name "Wave4_Subwave1_FETCHMETHEIRSOULS"
 			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier3"
 			Where spawnbot_mid0
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 10
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1444,7 +1592,7 @@ WaveSchedule
 			TotalCount 12
 			MaxActive 8
 			SpawnCount 3
-			WaitBeforeStarting 15
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 4
 			TotalCurrency 20
 
@@ -1462,8 +1610,8 @@ WaveSchedule
 			TotalCount 12
 			MaxActive 8
 			SpawnCount 4
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 6
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			Squad
@@ -1610,7 +1758,7 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 4
 			TotalCurrency 20
 
 			Squad
@@ -1675,7 +1823,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 5
+			WaitBeforeStarting 3
 			WaitBetweenSpawns 0
 			TotalCurrency 80
 
@@ -1707,15 +1855,15 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 6 Speedy Gunslingers
+		WaveSpawn // 10 Speedy Gunslingers
 		{
 			Name "Wave4_Subwave3_FETCHMETHEIRSOULS"
 			WaitForAllSpawned "Wave4_Subwave3_DoctorBarrage"
 			Where spawnbot_mid0
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 10
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1727,8 +1875,6 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
-	// Can cut the 3 giants on the 2nd subwave down to 2
-	// Reduce the total pyro count down to like 125 in order to make the runtime more acceptable
 	Wave
 	{
 		InitWaveOutput
@@ -1982,14 +2128,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 2 Support Giants
+		WaveSpawn // 1 Support Giants
 		{
 			Name "Wave5_Subwave2_SupportGiant3"
 			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros2"
 			Where spawnbot_left0
 			Support Limited
-			TotalCount 2
-			MaxActive 2
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 10
@@ -2013,12 +2159,12 @@ WaveSchedule
 		}
 
 		// Subwave 3
-		WaveSpawn // 30 Shotgun Pyros
+		WaveSpawn // 25 Shotgun Pyros
 		{
 			Name "Wave5_Subwave3_ShotgunPyros"
 			WaitForAllDead "Wave5_Subwave2_SupportGiant3"
 			Where spawnbot_scattered0
-			TotalCount 30
+			TotalCount 25
 			MaxActive 16
 			SpawnCount 1
 			WaitBeforeStarting 2
@@ -2137,14 +2283,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 30 Shotgun Pyros
+		WaveSpawn // 10 Shotgun Pyros
 		{
 			Name "Wave5_Subwave3_ShotgunPyros3"
 			WaitForAllDead "Wave5_Subwave3_ShotgunPyros"
 			Where spawnbot_scattered0
-			TotalCount 30
-			MaxActive 16
-			SpawnCount 1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 0.1
 			TotalCurrency 120
@@ -2185,7 +2331,6 @@ WaveSchedule
 		}
 	}
 	// Wave 6 Notes
-	// 2nd Subwave giant squads could use claidheamhmors earlier, and the sticky squads bot choices should be reversed for more ranged damage
 	Wave
 	{
 		InitWaveOutput
@@ -2230,7 +2375,7 @@ WaveSchedule
 			Tank
 			{
 				Name "tankboss"
-				Health 40000
+				Health 32000
 				Scale 0.5
 				Speed 75
 				DisableSmokeStack 1
@@ -2447,16 +2592,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 3 Claymore Knights
+		WaveSpawn // 4 Claymore Knights
 		{
 			Name "Wave6_Subwave2_ClaymoreKnights"
-			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
+			WaitForAllSpawned "Wave6_Subwave1_Check"
 			Where spawnbot_right0
-			TotalCount 2
-			MaxActive 2
+			TotalCount 4
+			MaxActive 4
 			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 10
 			TotalCurrency 20
 
 			TFBot
@@ -2465,31 +2610,31 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 3 Stickybomb Demos and 6 Firebrand Pyros
+		WaveSpawn // 4 Firebrand Pyros and 8 Sticky Demos
 		{
-			Name "Wave6_Subwave2_StickyDemos"
+			Name "Wave6_Subwave2_FirebrandPyros"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstDemo"
 			Where spawnbot_scattered0
-			TotalCount 9
+			TotalCount 12
 			MaxActive 9
 			SpawnCount 3
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 6
+			WaitBetweenSpawns 5
 			TotalCurrency 60
 
 			Squad
 			{
 				TFBot
 				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+				TFBot
+				{
 					Template T_TFBot_Demoman_Stickybomb
 				}
 				TFBot
 				{
-					Template T_TFBot_Pyro_Firebrand
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Firebrand
+					Template T_TFBot_Demoman_Stickybomb
 				}
 			}
 		}
@@ -2502,7 +2647,7 @@ WaveSchedule
 			MaxActive 2
 			SpawnCount 1
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 15
+			WaitBetweenSpawns 10
 			TotalCurrency 20
 
 			TFBot
@@ -2515,7 +2660,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave6_Subwave2_Check"
-			WaitForAllSpawned "Wave6_Subwave2_StickyDemos"
+			WaitForAllSpawned "Wave6_Subwave2_FirebrandPyros"
 		}
 		WaveSpawn
 		{
@@ -2541,14 +2686,14 @@ WaveSchedule
 				Template T_TFBot_Demoman_Knight_Claymore
 			}
 		}
-		WaveSpawn // 4 Stickybomb Demos
+		WaveSpawn // 8 Stickybomb Demos
 		{
 			Name "Wave6_Subwave3_StickyDemos"
 			WaitForAllSpawned "Wave6_Subwave3_ClaymoreKnights"
 			Where spawnbot_left0
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 1
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 2
 			TotalCurrency 20
@@ -2567,7 +2712,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 15
+			WaitBeforeStarting 12
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -2622,7 +2767,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 25
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -2648,6 +2793,63 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Burst
 				}
+			}
+		}
+	}
+	// Wave 7 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`cliff_fence`, `Disable`)
+					EntFire(`bot_hint*`, `Enable`)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/railgun`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_RAILGUN_COOLDOWN_TIME = 5
+						COMBATTANK_RAILGUN_BULLET_DAMAGE = 75
+					})
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_mid0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_THEHAMMER
 			}
 		}
 	}
