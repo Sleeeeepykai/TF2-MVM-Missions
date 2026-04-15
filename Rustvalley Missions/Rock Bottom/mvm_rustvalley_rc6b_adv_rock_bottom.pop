@@ -6,7 +6,7 @@
 WaveSchedule
 {
 	StartingCurrency 1000
-	RespawnWaveTime 0
+	RespawnWaveTime 1
 	CanBotsAttackWhileInSpawnRoom No
 
 	AddSentryBusterWhenDamageDealtExceeds 4000
@@ -130,7 +130,6 @@ WaveSchedule
             ItemAttributes
             {
                 ItemName "The Ullapool Caber"
-                "damage bonus" 1.5
                 "blast dmg to self increased" 10.0
             }
             
@@ -884,7 +883,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 15
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 80
 
@@ -920,7 +919,7 @@ WaveSchedule
 			TotalCount 18
 			MaxActive 18
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0.1
 			TotalCurrency 80
 
@@ -970,7 +969,7 @@ WaveSchedule
 			SpawnCount 11
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 180
 
 			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
 
@@ -1366,32 +1365,31 @@ WaveSchedule
 		WaveSpawn // 20 Charging Demos
 		{
 			Name "Wave4_Subwave1_ChargingDemo"
-			Where spawnbot_scattered0
-			RandomSpawn 1
+			Where spawnbot_left0
 			TotalCount 20
 			MaxActive 20
-			SpawnCount 20
+			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 1
 			TotalCurrency 100
 
 			TFBot
 			{
 				Name "CHARGING DEMO"
 				Template T_TFBot_Demoknight_Caber_Crazy
+				Action Mobber
 			}
 		}
 		WaveSpawn // 1 GRapid Soldier
 		{
 			Name "Wave4_Subwave1_GRapidSoldier"
-			WaitForAllSpawned "Wave4_Subwave1_ChargingDemo"
 			Where spawnbot_mid0
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 40
 
 			TFBot
 			{
@@ -1407,7 +1405,7 @@ WaveSchedule
 			TotalCount 16
 			MaxActive 12
 			SpawnCount 4
-			WaitBeforeStarting 10
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 5
 			TotalCurrency 100
 
@@ -1438,7 +1436,7 @@ WaveSchedule
 		WaveSpawn // 1 Tiny Rocket Tank
 		{
 			Name "Wave4_Subwave1_RocketTank"
-			WaitForAllDead "Wave4_Subwave1_Demomen"
+			WaitForAllSpawned "Wave4_Subwave1_Demomen"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1484,23 +1482,6 @@ WaveSchedule
 				Template T_TFBot_Giant_Soldier_Spammer
 			}
 		}
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave4_Subwave1_GRapidSoldier3"
-			WaitForAllSpawned "Wave4_Subwave1_RocketTank"
-			Where spawnbot_right0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-			}
-		}
 
 		WaveSpawn // 10 Speedy Gunslingers
 		{
@@ -1519,68 +1500,15 @@ WaveSchedule
 				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
 			}
 		}
-
-		// Subwave 2
-		WaveSpawn // 1 Doctor Barrage
-		{
-			Name "Wave4_Subwave2_DoctorBarrage"
-			WaitForAllSpawned "Wave4_Subwave1_RocketTank"
-			Where spawnbot_mid0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 25
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Medic_Crossbow_Barrage
-				Action FetchFlag
-
-				ItemAttributes
-				{
-					ItemName "The Crusader's Crossbow"
-					"fire rate bonus" 0.5
-					"faster reload rate" 0.2
-					"clip size upgrade atomic" 29.0
-					"projectile speed decreased" 0.5
-					"projectile spread angle penalty" 5
-					"projectile gravity" 0
-				}
-			}
-		}
-		WaveSpawn // 8 Tomislav Heavies
-		{
-			Name "Wave4_Subwave2_TomislavHeavies"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
-			Where spawnbot_mid0
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 8
-			TotalCurrency 20
-
-			TFBot
-			{
-				Name "Tomislav Heavy"
-				Class Heavy
-				ClassIcon heavy_accurate_lite
-				Skill Easy
-
-				Item "Tomislav"
-			}
-		}
 		WaveSpawn // 8 Steel Gauntlets
 		{
-			Name "Wave4_Subwave2_SteelGauntlets"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
+			Name "Wave4_Subwave1_SteelGauntlets"
+			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier3"
 			Where spawnbot_mid0
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
-			WaitBeforeStarting 5
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1628,6 +1556,59 @@ WaveSchedule
 					Name "I'm gonna punch you buddy"
 					Template T_TFBot_Heavy_SteelFist
 				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Doctor Barrage
+		{
+			Name "Wave4_Subwave2_DoctorBarrage"
+			WaitForAllDead "Wave4_Subwave1_RocketTank"
+			Where spawnbot_mid0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Medic_Crossbow_Barrage
+				Action FetchFlag
+
+				ItemAttributes
+				{
+					ItemName "The Crusader's Crossbow"
+					"fire rate bonus" 0.5
+					"faster reload rate" 0.2
+					"clip size upgrade atomic" 29.0
+					"projectile speed decreased" 0.5
+					"projectile spread angle penalty" 5
+					"projectile gravity" 0
+				}
+			}
+		}
+		WaveSpawn // 8 Tomislav Heavies
+		{
+			Name "Wave4_Subwave2_TomislavHeavies"
+			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "Tomislav Heavy"
+				Class Heavy
+				ClassIcon heavy_accurate_lite
+				Skill Easy
+
+				Item "Tomislav"
 			}
 		}
 
@@ -1699,46 +1680,28 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 5 Charging Demos
+		WaveSpawn // 8 Demomen
 		{
-			Name "Wave4_Subwave2_ChargingDemos"
+			Name "Wave4_Subwave2_Demomen"
 			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
-			Where spawnbot_right0
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			Where spawnbot_mid0
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 8
 			TotalCurrency 20
 
 			TFBot
 			{
-				Name "CHARGING DEMO"
-				Template T_TFBot_Demoknight_Caber_Crazy
-			}
-		}
-		WaveSpawn // 5 Charging Demos
-		{
-			Name "Wave4_Subwave2_ChargingDemos"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
-			Where spawnbot_right0
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Name "CHARGING DEMO"
-				Template T_TFBot_Demoknight_Caber_Crazy
+				Class Demoman
+				Skill Normal
 			}
 		}
 		WaveSpawn // 5 Speedy Gunslingers
 		{
 			Name "Wave4_Subwave2_FETCHMETHEIRSOULS"
-			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage"
+			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
 			Where spawnbot_mid0
 			TotalCount 5
 			MaxActive 5
@@ -1757,12 +1720,12 @@ WaveSchedule
 		WaveSpawn // 4 Steel Gauntlets and 12 Tomislav Heavies
 		{
 			Name "Wave4_Subwave3_SteelGauntlets"
-			WaitForAllDead "Wave4_Subwave2_DoctorBarrage2"
+			WaitForAllSpawned "Wave4_Subwave2_DoctorBarrage2"
 			Where spawnbot_mid0
 			TotalCount 16
-			MaxActive 8
+			MaxActive 12
 			SpawnCount 4
-			WaitBeforeStarting 2
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 4
 			TotalCurrency 20
 
@@ -1876,6 +1839,24 @@ WaveSchedule
 			{
 				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
 				Action Mobber
+			}
+		}
+		WaveSpawn // 12 Demomen
+		{
+			Name "Wave4_Subwave2_Demomen"
+			WaitForAllSpawned "Wave4_Subwave3_DoctorBarrage"
+			Where spawnbot_mid0
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
 			}
 		}
 	}
@@ -2089,7 +2070,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave2_SupportGiant3"
 			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros"
-			Where spawnbot_left0
+			Where spawnbot_right0
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -2133,11 +2114,11 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 Support Giants
+		WaveSpawn // 1 Support Giant
 		{
 			Name "Wave5_Subwave2_SupportGiant3"
 			WaitForAllSpawned "Wave5_Subwave2_ShotgunPyros2"
-			Where spawnbot_left0
+			Where spawnbot_mid0
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -2186,7 +2167,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave3_SupportGiant"
 			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
-			Where spawnbot_left0
+			Where spawnbot_mid0
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -2215,7 +2196,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave3_SupportGiant"
 			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
-			Where spawnbot_left0
+			Where spawnbot_mid0
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -2262,7 +2243,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave3_SupportGiant2"
 			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros"
-			Where spawnbot_left0
+			Where spawnbot_right0
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -2291,12 +2272,12 @@ WaveSchedule
 		WaveSpawn // 10 Shotgun Pyros
 		{
 			Name "Wave5_Subwave3_ShotgunPyros3"
-			WaitForAllDead "Wave5_Subwave3_ShotgunPyros"
-			Where spawnbot_scattered0
+			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros2"
+			Where spawnbot_mid0
 			TotalCount 10
 			MaxActive 10
 			SpawnCount 10
-			WaitBeforeStarting 15
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0.1
 			TotalCurrency 120
 
@@ -2309,12 +2290,13 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave3_SupportGiant3"
 			WaitForAllSpawned "Wave5_Subwave3_ShotgunPyros3"
-			Where spawnbot_scattered0
+			Where spawnbot_mid0
+			Where spawnbot_right0
 			Support Limited
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 1
-			WaitBeforeStarting 8
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 5
 			TotalCurrency 40
 
@@ -2453,12 +2435,12 @@ WaveSchedule
 		WaveSpawn // 4 Claymore Knights
 		{
 			Name "Wave6_Subwave1_ClaymoreKnights"
-			WaitForAllDead "Wave6_Subwave1_TheSquad"
+			WaitForAllSpawned "Wave6_Subwave1_TheSquad"
 			Where spawnbot_mid0
 			TotalCount 4
 			MaxActive 4
 			SpawnCount 4
-			WaitBeforeStarting 5
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -2493,7 +2475,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 8
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -2624,7 +2606,7 @@ WaveSchedule
 			TotalCount 12
 			MaxActive 9
 			SpawnCount 3
-			WaitBeforeStarting 15
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 5
 			TotalCurrency 60
 
@@ -2652,7 +2634,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 1
-			WaitBeforeStarting 15
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 10
 			TotalCurrency 20
 
@@ -2773,7 +2755,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 20
+			WaitBeforeStarting 30
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -2992,11 +2974,13 @@ WaveSchedule
 				{
 					Name "CHARGING DEMO"
 					Template T_TFBot_Demoknight_Caber_Crazy
+					Action Mobber
 				}
 				TFBot
 				{
 					Name "CHARGING DEMO"
 					Template T_TFBot_Demoknight_Caber_Crazy
+					Action Mobber
 				}
 				TFBot
 				{
@@ -3189,7 +3173,7 @@ WaveSchedule
 			Tank
 			{
 				Name "combattank_bomb|railgun|railgun$pingsound|npc/combine_gunship/ping_search.wav"
-				Health 22500
+				Health 19000
 				ClassIcon tank_combat_railgun_dual_kai
 				Scale 0.5
 				Speed 75
@@ -3212,7 +3196,7 @@ WaveSchedule
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
-			WaitBeforeStarting 10
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 120
 
