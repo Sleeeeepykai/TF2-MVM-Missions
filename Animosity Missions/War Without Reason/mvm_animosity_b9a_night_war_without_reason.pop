@@ -12,6 +12,158 @@ WaveSchedule
 
     //// ROBOT TEMPLATES ////
 
+    Templates
+    {
+        T_TFBot_Giant_Soldier_PrismaticDiffractor
+        {
+            Name "Prismatic Diffractor"
+            Class Soldier
+            ClassIcon soldier_bison_prismatic
+            Skill Expert
+            Health 4000
+            Scale 2
+            Attributes MiniBoss
+            WeaponRestrictions PrimaryOnly
+
+            Item "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+
+            Item "The Space Bracers"
+            Item "The Jupiter Jumpers"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+                "override footstep sound set" 3
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            ItemAttributes
+            {
+                ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.1
+                "faster reload rate" 0.0001
+                "reload full clip at once" 1
+                "clip size upgrade atomic" 196
+                "override projectile type" 13
+                "energy weapon penetration" 1
+                "particle color rainbow" 1000
+                "projectile lifetime" 1
+
+                "paintkit_proto_def_index" 257
+                "set_item_texture_wear" 0
+            }
+
+            ChangeAttributes
+            {
+                Name "BarrageStage1"
+                Delay 1
+                Repeats 1
+                Cooldown -1
+            }
+
+            EventChangeAttributes
+            {
+                BarrageCooldown [$SIGSEGV]
+                {
+                    CharacterAttributes
+                    {
+                        "no_attack" 1
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage1"
+                        Delay 5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage1 [$SIGSEGV]
+                {
+                    CharacterAttributes
+                    {
+                        "no_attack" 0
+                    }
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 10
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage2"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage2 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 8
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage3"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage3 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 6
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage4"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage4 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 3
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage5"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage5 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 0
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageCooldown"
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }
+    }
+
     //// MISSION BOTS ////
 
     Mission // Sentry Buster
@@ -39,13 +191,12 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `War Without Reason (Nightmare)`)
+                    NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `War Without Reason (Night)`)
 					EntFire(`bombpath_left_relay`, `Trigger`)
 					EntFire(`bombpath_lowerhatch_relay`, `Trigger`)
                     EntFire(`robot_bomb`, `SetReturnTime`, `50`)
                     EntFire(`robot_bomb`, `ShowTimer`, 1)
 
-                    IncludeScript(`robot_scripts_kai`, getroottable())
                     IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
                     IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
@@ -2178,9 +2329,9 @@ WaveSchedule
         //// PHASE 5 ////
 
         // Subwave 9
-        WaveSpawn // 1 Chief Blitz Soldier
+        WaveSpawn // 1 Chief Prismatic Diffractor
         {
-            Name "Nightmare_Subwave9_BlitzSoldierMiniboss"
+            Name "Nightmare_Subwave9_PrismaticDiffractorMiniboss"
             WaitForAllSpawned "Nightmare_Break_End"
             Where spawnbot_boss
             TotalCount 1
@@ -2194,8 +2345,9 @@ WaveSchedule
 
             TFBot
             {
-                Name "Chief Blitz Soldier"
-                Template T_TFBot_Giant_Soldier_Blitz
+                Name "Chief Prismatic Diffractor"
+                Template T_TFBot_Giant_Soldier_PrismaticDiffractor
+                ClassIcon soldier_giant
                 Health 50000
                 Scale 2
                 Attributes UseBossHealthBar
@@ -2207,7 +2359,7 @@ WaveSchedule
         WaveSpawn // 32 Bowmen
         {
             Name "Nightmare_Subwave9_Bowmen"
-            WaitForAllSpawned "Nightmare_Subwave9_BlitzSoldierMiniboss"
+            WaitForAllSpawned "Nightmare_Subwave9_PrismaticDiffractorMiniboss"
             Where spawnbot_invasion
             TotalCount 32
             MaxActive 10
@@ -2224,7 +2376,7 @@ WaveSchedule
         WaveSpawn // 32 Pyros
         {
             Name "Nightmare_Subwave9_Pyros"
-            WaitForAllSpawned "Nightmare_Subwave9_BlitzSoldierMiniboss"
+            WaitForAllSpawned "Nightmare_Subwave9_PrismaticDiffractorMiniboss"
             Where spawnbot_invasion
             TotalCount 32
             MaxActive 10
@@ -2352,10 +2504,10 @@ WaveSchedule
         }
 
         // Subwave Complete Check
-        WaveSpawn // Blitz Soldier Check
+        WaveSpawn // Prismatic Diffractor Check
         {
             Name "Nightmare_Subwave9_Check"
-            WaitForAllDead "Nightmare_Subwave9_BlitzSoldierMiniboss"
+            WaitForAllDead "Nightmare_Subwave9_PrismaticDiffractorMiniboss"
         }
         WaveSpawn // GHeavy Check
         {
@@ -3138,9 +3290,9 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 1 Giant Blitz Soldier and 3 Uber Medics
+        WaveSpawn // 1 Prismatic Diffractor and 3 Uber Medics
         {
-            Name "Nightmare_Subwave12_GBlitz"
+            Name "Nightmare_Subwave12_Prismatic"
             WaitForAllSpawned "Nightmare_Subwave12_GBarrage2"
             Where spawnbot_right
             TotalCount 4
@@ -3154,7 +3306,8 @@ WaveSchedule
             {
                 TFBot
                 {
-                    Template T_TFBot_Giant_Soldier_Blitz
+                    Template T_TFBot_Giant_Soldier_PrismaticDiffractor
+                    ClassIcon soldier_giant
                     Attributes AlwaysCrit
                     Tag bot_giant
                 }
@@ -3175,7 +3328,7 @@ WaveSchedule
         WaveSpawn // 7 Pyros and 7 Kritzkrieg Medics
         {
             Name "Nightmare_Subwave12_Pyros3"
-            WaitForAllSpawned "Nightmare_Subwave12_GBlitz"
+            WaitForAllSpawned "Nightmare_Subwave12_Prismatic"
             Where spawnbot_invasion
             TotalCount 14
             MaxActive 8
@@ -3200,10 +3353,10 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 1 Giant Blitz Soldier and 3 Uber Medics
+        WaveSpawn // 1 Prismatic Diffractor and 3 Uber Medics
         {
-            Name "Nightmare_Subwave12_GBlitz2"
-            WaitForAllSpawned "Nightmare_Subwave12_GBlitz"
+            Name "Nightmare_Subwave12_Prismatic2"
+            WaitForAllSpawned "Nightmare_Subwave12_Prismatic"
             Where spawnbot_left
             TotalCount 4
             MaxActive 4
@@ -3216,7 +3369,8 @@ WaveSchedule
             {
                 TFBot
                 {
-                    Template T_TFBot_Giant_Soldier_Blitz
+                    Template T_TFBot_Giant_Soldier_PrismaticDiffractor
+                    ClassIcon soldier_giant
                     Attributes AlwaysCrit
                     Tag bot_giant
                 }
@@ -3237,7 +3391,7 @@ WaveSchedule
         WaveSpawn // 7 Pyros and 7 Quick-Uber Medics
         {
             Name "Nightmare_Subwave12_Pyros4"
-            WaitForAllSpawned "Nightmare_Subwave12_GBlitz2"
+            WaitForAllSpawned "Nightmare_Subwave12_Prismatic2"
             Where spawnbot_invasion
             TotalCount 14
             MaxActive 8
@@ -3262,15 +3416,15 @@ WaveSchedule
         }
 
         // Phase Complete Check
-        WaveSpawn // GBlitz Check
+        WaveSpawn // Prismatic Check
         {
             Name "Nightmare_Phase6_Check"
-            WaitForAllDead "Nightmare_Subwave12_GBlitz"
+            WaitForAllDead "Nightmare_Subwave12_Prismatic"
         }
-        WaveSpawn // GBlitz Check
+        WaveSpawn // Prismatic Check
         {
             Name "Nightmare_Phase6_Check"
-            WaitForAllDead "Nightmare_Subwave12_GBlitz2"
+            WaitForAllDead "Nightmare_Subwave12_Prismatic2"
         }
         WaveSpawn // Pyros Check
         {
@@ -5108,9 +5262,9 @@ WaveSchedule
         }
 
         // Subwave 18
-        WaveSpawn // 1 GBlitz Soldier and 2 GPyros
+        WaveSpawn // 1 Prismatic Soldier and 2 GPyros
         {
-            Name "Nightmare_Subwave18_GBlitzSquad"
+            Name "Nightmare_Subwave18_PrismaticSquad"
             WaitForAllSpawned "Nightmare_Subwave17_Check"
             Where spawnbot_boss
             TotalCount 3
@@ -5126,7 +5280,8 @@ WaveSchedule
 
                 TFBot
                 {
-                    Template T_TFBot_Giant_Soldier_Blitz
+                    Template T_TFBot_Giant_Soldier_PrismaticDiffractor
+                    ClassIcon soldier_giant
                     Tag bot_giant
                 }
                 TFBot
@@ -5146,7 +5301,7 @@ WaveSchedule
         WaveSpawn // 2 GCharged
         {
             Name "Nightmare_Subwave18_GCharged"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad"
             Where spawnbot_left
             TotalCount 2
             MaxActive 2
@@ -5165,7 +5320,7 @@ WaveSchedule
         WaveSpawn // 2 GCharged
         {
             Name "Nightmare_Subwave18_GCharged"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad"
             Where spawnbot_right
             TotalCount 2
             MaxActive 2
@@ -5182,10 +5337,10 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 1 GBlitz Soldier and 2 GPyros
+        WaveSpawn // 1 Prismatic Soldier and 2 GPyros
         {
-            Name "Nightmare_Subwave18_GBlitzSquad2"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad"
+            Name "Nightmare_Subwave18_PrismaticSquad2"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad"
             Where spawnbot_boss
             TotalCount 3
             MaxActive 3
@@ -5200,7 +5355,8 @@ WaveSchedule
 
                 TFBot
                 {
-                    Template T_TFBot_Giant_Soldier_Blitz
+                    Template T_TFBot_Giant_Soldier_PrismaticDiffractor
+                    ClassIcon soldier_giant
                     Tag bot_giant
                 }
                 TFBot
@@ -5220,7 +5376,7 @@ WaveSchedule
         WaveSpawn // 2 GDemos
         {
             Name "Nightmare_Subwave18_GDemo"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad2"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad2"
             Where spawnbot_left
             TotalCount 2
             MaxActive 2
@@ -5238,7 +5394,7 @@ WaveSchedule
         WaveSpawn // 2 GDemos
         {
             Name "Nightmare_Subwave18_GDemo"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad2"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad2"
             Where spawnbot_right
             TotalCount 2
             MaxActive 2
@@ -5254,10 +5410,10 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 1 GBlitz Soldier and 2 GPyros
+        WaveSpawn // 1 Prismatic Soldier and 2 GPyros
         {
-            Name "Nightmare_Subwave18_GBlitzSquad3"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad2"
+            Name "Nightmare_Subwave18_PrismaticSquad3"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad2"
             Where spawnbot_boss
             TotalCount 3
             MaxActive 3
@@ -5272,7 +5428,8 @@ WaveSchedule
 
                 TFBot
                 {
-                    Template T_TFBot_Giant_Soldier_Blitz
+                    Template T_TFBot_Giant_Soldier_PrismaticDiffractor
+                    ClassIcon soldier_giant
                     Tag bot_giant
                 }
                 TFBot
@@ -5293,7 +5450,7 @@ WaveSchedule
         WaveSpawn // 2 GBurst Soldiers
         {
             Name "Nightmare_Subwave18_GBurstSoldier"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad3"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad3"
             Where spawnbot
             TotalCount 2
             MaxActive 2
@@ -5314,7 +5471,7 @@ WaveSchedule
         WaveSpawn // 2 GBurst Demos
         {
             Name "Nightmare_Subwave18_GBurstDemo"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad3"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad3"
             Where spawnbot
             TotalCount 2
             MaxActive 2
@@ -5334,10 +5491,10 @@ WaveSchedule
         }
 
         // Phase Complete Check
-        WaveSpawn // GBlitz Squad Check
+        WaveSpawn // Prismatic Squad Check
         {
             Name "Nightmare_Phase9_Check"
-            WaitForAllSpawned "Nightmare_Subwave18_GBlitzSquad3"
+            WaitForAllSpawned "Nightmare_Subwave18_PrismaticSquad3"
         }
         WaveSpawn // GBurst Soldier Check
         {
