@@ -247,6 +247,45 @@ WaveSchedule
 				"projectile acceleration start time" 2
 			}
 		}
+
+		T_TFBot_Giant_Demoman_GrenadeShotgun
+		{
+			Name "Giant Grenade Shotgun Demoman"
+			Class Demoman
+			ClassIcon demo
+			Skill Expert
+			Health 3500
+			Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+			}
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+                "damage bonus" 1.5
+                "mult projectile count" 4
+                "projectile spread angle penalty" 3
+                "faster reload rate" 0.5
+            }
+		}
+
+		T_TFBot_Pyro_Airblast
+		{
+			Class Pyro
+			ClassIcon pyro_reflect_daan
+			Skill Expert
+			WeaponRestrictions PrimaryOnly
+
+			Item "Traffic Cone"
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -278,6 +317,34 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_Sniper
+		}
+	}
+	Mission // Sniper (Wave 5)
+	{
+		Objective Sniper
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 5
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_Sniper
+		}
+	}
+	Mission // Spy (Wave 5)
+	{
+		Objective Spy
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 5
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -577,6 +644,7 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 2 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -957,6 +1025,8 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 3 Notes
+	// This wave is generally very weak, keep an eye on it to see what's going wrong
 	Wave
 	{
 		InitWaveOutput
@@ -993,8 +1063,10 @@ WaveSchedule
 			MaxActive 2
 			SpawnCount 1
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 5
 			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
 
 			Tank
 			{
@@ -1408,6 +1480,7 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 4 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -1877,6 +1950,7 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 5 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -1904,7 +1978,180 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 4 Tiny Tanks
+		{
+			Name "Wave5_Subwave1_TinyTankConvoy"
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 5
+			TotalCurrency 200
+
+			Tank
+			{
+				Name "tankboss"
+				Health 12500
+				Speed 75
+				Scale 0.5
+				DisableSmokeStack 1
+				IsMiniBoss 0
+				StartingPathTrackNode "tank_path_left_a1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+
+		WaveSpawn // Support Scouts
+		{
+			Name "Wave5_Support_Scouts"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+			}
+		}
+		WaveSpawn // Support Direct Hit Soldiers
+		{
+			Name "Wave5_Support_DirectHits"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "Direct Hit Soldier"
+				Class Soldier
+				ClassIcon soldier_directhit_lite
+				Skill Expert
+				WeaponRestrictions PrimaryOnly
+
+				Item "The Direct Hit"
+			}
+		}
+		WaveSpawn // Support Flare Pyros
+		{
+			Name "Wave5_Subwave1_FlarePyros"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Flaregun
+				Skill Expert
+			}
+		}
+		WaveSpawn // Support Demomen
+		{
+			Name "Wave5_Support_Demomen"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Demoman
+				Skill Expert
+			}
+		}
+		WaveSpawn // Support Heavies
+		{
+			Name "Wave5_Support-Heavies"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // Support Quick-Uber Medics
+		{
+			Name "Wave5_Support-UberMedics"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Medic_QuickUber
+			}
+		}
+
+		WaveSpawn // 1 GShotgun Demo and 2 Airblast Pyros
+		{
+			Name "Wave5_Subwave1_GShotgunDemo"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+			}
+		}
 	}
+	// Wave 6 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -1933,6 +2180,7 @@ WaveSchedule
                   "
         }
 	}
+	// Wave 7 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -1961,6 +2209,7 @@ WaveSchedule
                   "
         }
 	}
+	// Wave 8 Notes
 	Wave
 	{
 		InitWaveOutput
