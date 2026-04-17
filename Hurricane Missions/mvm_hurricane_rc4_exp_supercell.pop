@@ -46,7 +46,7 @@ WaveSchedule
 
 	PointTemplates
 	{
-		PunchieBossLogic
+		PunchieBoss1Logic
 		{
 			OnSpawnOutput
             {
@@ -57,7 +57,26 @@ WaveSchedule
             }
 			tf_point_weapon_mimic
             {
-                "targetname"       "thepaunch"
+                "targetname"       "thepaunch1"
+                "origin"           "0 20 100"
+                "angles"           "0 0 0"
+                "teamnum"          "3"
+                "$weaponname"    "punchieboss_weapon"
+                "$firetime"      "1.0" //Delay between shots for $StartFiring input
+            }
+		}
+		PunchieBoss2Logic
+		{
+			OnSpawnOutput
+            {
+                Target "thepaunch"
+                Action "$SetOwner"
+                Param  "!activator"
+                Delay  0
+            }
+			tf_point_weapon_mimic
+            {
+                "targetname"       "thepaunch2"
                 "origin"           "0 20 100"
                 "angles"           "0 0 0"
                 "teamnum"          "3"
@@ -84,7 +103,7 @@ WaveSchedule
 
 			UseHumanAnimations 1
 
-			SpawnTemplate "PunchieBossLogic"
+			SpawnTemplate "PunchieBoss1Logic"
 
 			Item "The Killing Gloves of Boxing"
 
@@ -102,7 +121,7 @@ WaveSchedule
 			{
 				ItemName "The Killing Gloves of Boxing"
 				"fire rate bonus" 0.6
-				"fire input on attack" "thepaunch^firemultiple^1"
+				"fire input on attack" "thepaunch1^firemultiple^1"
 				"fire input on kill" "!self^$taunt"
 			}
 		}
@@ -119,7 +138,7 @@ WaveSchedule
 
 			UseHumanAnimations 1
 
-			SpawnTemplate "PunchieBossLogic"
+			SpawnTemplate "PunchieBoss2Logic"
 
 			Item "The Killing Gloves of Boxing"
 
@@ -137,7 +156,7 @@ WaveSchedule
 			{
 				ItemName "The Killing Gloves of Boxing"
 				"fire rate bonus" 0.6
-				"fire input on attack" "thepaunch^firemultiple^1"
+				"fire input on attack" "thepaunch2^firemultiple^1"
 				"fire input on kill" "!self^$taunt"
 			}
 		}
@@ -265,7 +284,6 @@ WaveSchedule
 	//// WAVES ////
 
 	// Wave 1 Notes
-	// This needs fixing pls
 	Wave
 	{
 		InitWaveOutput
@@ -479,8 +497,8 @@ WaveSchedule
 		}
 		WaveSpawn // 6 Pyros
 		{
-			Name "Wave1_Subwave2_Pyros"
-			WaitForAllSpawned "Wave1_Subwave2_GDemo"
+			Name "Wave1_Subwave2_Pyros2"
+			WaitForAllSpawned "Wave1_Subwave2_GDemo2"
 			Where spawnbot_left
 			Where spawnbot_right
 			TotalCount 6
@@ -500,8 +518,8 @@ WaveSchedule
 
 		WaveSpawn // 1 GDemo and 4 Heavies
 		{
-			Name "Wave1_Subwave2_GDemo2"
-			WaitForAllSpawned "Wave1_Subwave2_GDemo"
+			Name "Wave1_Subwave2_GDemo3"
+			WaitForAllSpawned "Wave1_Subwave2_GDemo2"
 			Where spawnbot
 			TotalCount 5
 			MaxActive 5
@@ -543,7 +561,7 @@ WaveSchedule
 		WaveSpawn // 12 Soldiers
 		{
 			Name "Wave1_Subwave2_Soldiers"
-			WaitForAllSpawned "Wave1_Subwave2_GDemo2"
+			WaitForAllSpawned "Wave1_Subwave2_GDemo3"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 12
@@ -986,7 +1004,7 @@ WaveSchedule
 				Scale 0.5
 				DisableSmokeStack 1
 				IsMiniBoss 0
-				StartingPathTrackNode "tank_path_right_a1"
+				StartingPathTrackNode "tank_path_right_b1"
 
 				OnBombDroppedOutput
 				{
@@ -1252,14 +1270,14 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GCharged Burst Soldier and 4 Deflector Heavies
+		WaveSpawn // 1 GCharged Burst Soldier and 3 Deflector Heavies
 		{
 			Name "Wave3_Subwave2_GChargedBurst"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier4"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1271,10 +1289,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst_Crit
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Deflector
 				}
 				TFBot
 				{
@@ -1325,14 +1339,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GCharged Burst Soldier and 4 Deflector Heavies
+		WaveSpawn // 1 GCharged Burst Soldier and 3 Deflector Heavies
 		{
 			Name "Wave3_Subwave2_GChargedBurst2"
 			WaitForAllSpawned "Wave3_Subwave2_GChargedBurst"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 18
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1344,10 +1358,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst_Crit
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Deflector
 				}
 				TFBot
 				{
@@ -1440,6 +1450,8 @@ WaveSchedule
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Extended_Concheror
@@ -1506,6 +1518,8 @@ WaveSchedule
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Extended_Concheror
@@ -1666,10 +1680,10 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 Major League Scouts
+		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 GSoldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo"
-			WaitForAllDead "Wave4_Subwave1_TheGigaEngineer"
+			WaitForAllSpawned "Wave4_Subwave1_TheGigaEngineer"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -1692,11 +1706,11 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout_Baseball
+					Template T_TFBot_Giant_Soldier
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout_Baseball
+					Template T_TFBot_Giant_Soldier
 				}
 			}
 		}
@@ -1738,10 +1752,10 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 Major League Scouts
+		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 GSoldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo2"
-			WaitForAllDead "Wave4_Subwave2_GRapidDemo"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -1764,11 +1778,11 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout_Baseball
+					Template T_TFBot_Giant_Soldier
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Scout_Baseball
+					Template T_TFBot_Giant_Soldier
 				}
 			}
 		}
@@ -1812,7 +1826,7 @@ WaveSchedule
 		WaveSpawn // 1 GRapid Demo, 1 Shield Medic, 1 GConch Soldier and 1 GBattalion Soldier
 		{
 			Name "Wave4_Subwave2_GRapidDemo3"
-			WaitForAllDead "Wave4_Subwave2_GRapidDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
