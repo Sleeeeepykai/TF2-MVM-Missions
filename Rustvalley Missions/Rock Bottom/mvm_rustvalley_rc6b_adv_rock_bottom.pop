@@ -37,12 +37,13 @@ WaveSchedule
 				"targetname" "TheHammerAttack"
 
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_deploy_giant.wav,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,weapons/demo_sword_swing1.wav,3.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/demo_sword_swing1.wav,3.0,-1"
                 "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,3.4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/strongman_fast_impact_01.wav,3.4,-1"
 
 				"OnTrigger" "HammerSlamShake,StartShake,,3.4,-1"
-                "OnTrigger" "HammerSlamDamage*,FireOnce,,3.4,-1"
+                "OnTrigger" "HammerSlamDamage,FireOnce,,3.4,-1"
+				"OnTrigger" "HammerSlamFling,ApplyImpulse,,3.4,-1"
 			}
 
 			env_shake
@@ -54,20 +55,32 @@ WaveSchedule
 				"targetname" "HammerSlamShake"
 			}
 
+			trigger_apply_impulse 
+            {
+                "targetname" "HammerSlamFling"
+                "origin" "600 0 20"
+                "maxs" "300 300 300"
+                "mins" "-300 -300 -300"
+                "spawnflags" "1"
+                "filtername" "filter_redteam"
+                "force" "750"
+                "impulse_dir" "262 10 0"
+            }
+
 			tf_point_weapon_mimic
 			{
 				"targetname" "HammerSlamDamage"
 
 				"spawnflags" "1"
 				"angles" "0 0 0"
-				"origin" "500 0 20"
+				"origin" "600 0 20"
 				"teamnum" "3"
 				"Crits" "0"
-				"Damage" "300"
+				"Damage" "1000"
 				"ModelScale" "1"
 				"SpeedMax" "0"
 				"SpeedMin" "0"
-				"SplashRadius" "750"
+				"SplashRadius" "1000"
 				"SpreadAngle" "0"
 				"WeaponType" "3"
 
@@ -1520,12 +1533,12 @@ WaveSchedule
 		WaveSpawn // 1 Doctor Barrage
 		{
 			Name "Wave4_Subwave2_DoctorBarrage"
-			WaitForAllDead "Wave4_Subwave1_RocketTank"
+			WaitForAllSpawned "Wave4_Subwave1_RocketTank"
 			Where spawnbot_mid0
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 2
+			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1555,7 +1568,7 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 6
 			TotalCurrency 20
 
 			TFBot
@@ -1646,7 +1659,7 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 6
 			TotalCurrency 20
 
 			TFBot
@@ -1731,7 +1744,7 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 2
+			WaitBetweenSpawns 1
 			TotalCurrency 20
 
 			TFBot
@@ -1806,8 +1819,8 @@ WaveSchedule
 			WaitForAllSpawned "Wave4_Subwave3_DoctorBarrage"
 			Where spawnbot_mid0
 			TotalCount 12
-			MaxActive 8
-			SpawnCount 2
+			MaxActive 9
+			SpawnCount 3
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 2
 			TotalCurrency 20
@@ -2024,12 +2037,12 @@ WaveSchedule
 		WaveSpawn // 15 RandomChoice Pyros
 		{
 			Name "Wave5_Subwave2_Pyros"
-			WaitForAllDead "Wave5_Subwave1_SupportGiant2"
+			WaitForAllSpawned "Wave5_Subwave1_SupportGiant2"
 			Where spawnbot_right0
 			TotalCount 15
 			MaxActive 15
 			SpawnCount 15
-			WaitBeforeStarting 2
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 80
 
@@ -2232,7 +2245,7 @@ WaveSchedule
 			TotalCount 25
 			MaxActive 16
 			SpawnCount 1
-			WaitBeforeStarting 2
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0.1
 			TotalCurrency 120
 
@@ -2270,7 +2283,7 @@ WaveSchedule
 			Support Limited
 			TotalCount 2
 			MaxActive 2
-			SpawnCount 2
+			SpawnCount 1
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 10
 			TotalCurrency 20
@@ -2359,10 +2372,40 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn // 4 Support Giants
+		{
+			Name "Wave5_Subwave3_SupportGiant3"
+			WaitForAllSpawned "Wave5_Subwave3_Pyros2"
+			Where spawnbot_mid0
+			Where spawnbot_right0
+			Support Limited
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 60
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Shotgun_Spammer
+				}
+			}
+		}
 		WaveSpawn // 15 RandomChoice Pyros
 		{
 			Name "Wave5_Subwave3_Pyros3"
-			WaitForAllSpawned "Wave5_Subwave3_Pyros2"
+			WaitForAllSpawned "Wave5_Subwave3_SupportGiant3"
 			Where spawnbot_mid0
 			TotalCount 15
 			MaxActive 15
@@ -2393,36 +2436,6 @@ WaveSchedule
 				{
 					Template T_TFBot_Pyro_Shotgun
 					ClassIcon pyro
-				}
-			}
-		}
-		WaveSpawn // 4 Support Giants
-		{
-			Name "Wave5_Subwave3_SupportGiant3"
-			WaitForAllSpawned "Wave5_Subwave3_Pyros3"
-			Where spawnbot_mid0
-			Where spawnbot_right0
-			Support Limited
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
-			TotalCurrency 60
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Spammer
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_Shotgun_Spammer
 				}
 			}
 		}
@@ -2753,7 +2766,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave6_Subwave2_Check"
-			WaitForAllDead "Wave6_Subwave2_GBurstDemos"
+			WaitForAllSpawned "Wave6_Subwave2_GBurstDemos"
 		}
 
 		// Subwave 3
@@ -2765,7 +2778,7 @@ WaveSchedule
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
-			WaitBeforeStarting 3
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 			
@@ -2857,7 +2870,7 @@ WaveSchedule
 			SpawnCount 5
 			WaitBeforeStarting 30
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 80
 
 			Squad
 			{
@@ -2881,6 +2894,23 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Burst
 				}
+			}
+		}
+		WaveSpawn // 4 Firebrand Pyros
+		{
+			Name "Wave6_Subwave3_FirebrandPyros"
+			WaitForAllSpawned "Wave6_Subwave3_TheRealSquad"
+			Where spawnbot_mid0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Firebrand
 			}
 		}
 	}
