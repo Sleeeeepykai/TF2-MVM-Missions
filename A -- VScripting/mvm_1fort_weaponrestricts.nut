@@ -10,7 +10,7 @@ MissionAttrs({
 		tf_weapon_pep_brawler_blaster = null
 
 		// Secondaries
-		tf_weapon_pistol = null
+		tf_weapon_pistol_scout = null
 		tf_weapon_handgun_scout_secondary = null
 
 		//// SOLDIER ////
@@ -22,7 +22,7 @@ MissionAttrs({
 		tf_weapon_rocketlauncher_airstrike = null
 
 		// Secondaries
-		tf_weapon_shotgun = null
+		tf_weapon_shotgun_soldier = null
 		tf_weapon_raygun = null
 
 		//// PYRO ////
@@ -32,8 +32,9 @@ MissionAttrs({
 		tf_weapon_rocketlauncher_fireball = null
 
 		// Secondaries
-		tf_weapon_shotgun = null
+		tf_weapon_shotgun_pyro = null
 		tf_weapon_flaregun = null
+		tf_weapon_flaregun_revenge = null
 		tf_weapon_jar_gas = null
 
 		//// DEMOMAN ////
@@ -51,14 +52,14 @@ MissionAttrs({
 		tf_weapon_minigun = null
 
 		// Secondaries
-		tf_weapon_shotgun = null
+		tf_weapon_shotgun_hwg = null
 
 		//// ENGINEER ////
 
 		// Primaries
 		tf_weapon_shotgun = null
-		tf_weapon_sentry_revenge = null
 		tf_weapon_shotgun_primary = null
+		tf_weapon_sentry_revenge = null
 		tf_weapon_drg_pomson = null
 		tf_weapon_shotgun_building_rescue = null
 
@@ -74,9 +75,9 @@ MissionAttrs({
 
 		// Primaries
 		tf_weapon_syringegun_medic = null
-		tf_weapon_medigun = null
 
 		// Secondaries
+		tf_weapon_medigun = null
 
 		//// SNIPER ////
 
