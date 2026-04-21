@@ -17,6 +17,9 @@ WaveSchedule
 
 	//// PRECACHES ////
 
+	// Precached Models
+	PrecacheModel "models/bots/boss_bot/boss_tank_color.mdl"
+
 	//// CUSTOM WEAPONS ////
 
 	CustomWeapon
@@ -24,22 +27,22 @@ WaveSchedule
 		"punchieboss_weapon"
         {
             OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
-				"damage bonus"	1
-				"custom item model" "models/weapons/c_models/c_boxing_gloves/c_boxing_gloves.mdl"
-				"custom projectile model" models/props_halloween/hwn_spell_boxing_glove.mdl
-				"custom weapon fire sound" "Weapon_BoxingGloves.Miss"
-				"custom impact sound" "Weapon_BoxingGloves.HitWorld"
-                "custom projectile size" 0.4
-				"explosion particle" mvm_soldier_shockwave
-				"custom kill icon" gloves
-				"clip size upgrade atomic" 8.0
-				"dmg pierces resists absorbs" 1
-				"mult projectile scale" 1.4
-				"Projectile speed increased" 0.7
-				"blast radius increased" 0.2
-                "mod projectile heat seek power" 360
-				"mod projectile heat aim error" 360
-				"mod projectile heat aim time" 0.05
+			"damage bonus" 1
+			"custom item model" "models/weapons/c_models/c_boxing_gloves/c_boxing_gloves.mdl"
+			"custom projectile model" "models/props_halloween/hwn_spell_boxing_glove.mdl"
+			"projectile trail particle" "eyeboss_projectile"
+			"custom weapon fire sound" "Weapon_BoxingGloves.Miss"
+			"custom impact sound" "Weapon_BoxingGloves.HitWorld"
+			"custom projectile size" 0.4
+			"explosion particle" "mvm_soldier_shockwave"
+			"custom kill icon" "gloves"
+			"clip size upgrade atomic" 8.0
+			"mult projectile scale" 1.4
+			"projectile speed decreased" 0.7
+			"blast radius decreased" 0.2
+			"mod projectile heat seek power" 360
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 1
         }
 	}
 
@@ -51,7 +54,7 @@ WaveSchedule
 		{
 			OnSpawnOutput
             {
-                Target "thepaunch"
+                Target "thepaunch1"
                 Action "$SetOwner"
                 Param  "!activator"
                 Delay  0
@@ -70,7 +73,7 @@ WaveSchedule
 		{
 			OnSpawnOutput
             {
-                Target "thepaunch"
+                Target "thepaunch2"
                 Action "$SetOwner"
                 Param  "!activator"
                 Delay  0
@@ -85,6 +88,115 @@ WaveSchedule
                 "$firetime"      "1.0" //Delay between shots for $StartFiring input
             }
 		}
+		RNGTank //a tank that changes color
+		{
+			NoFixup 1
+			logic_timer
+			{
+				"targetname"    "tank_color_timer"
+				"RefireTime"    "0.05"            
+				"spawnflags"    "0"
+				"StartDisabled" "0"
+				"UseRandomTime" "0"
+				"OnTimer"       "tank_color_state,GetValue,,0,-1"
+			}
+			math_counter
+			{
+				"targetname" "tank_color_state"
+				"startvalue" "1"
+				"min"        "1"
+				"max"        "3" 
+				"OnGetValue" "tank_color_changecase,InValue,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "tank_color_changecase"
+				"Case01"     "1"
+				"Case02"     "2"
+				"Case03"     "3"
+				"OnCase01"   "tank_color_rg,Add,5,0,-1"
+				"OnCase02"   "tank_color_gb,Add,5,0,-1"
+				"OnCase03"   "tank_color_br,Add,5,0,-1"
+			}
+			math_counter
+			{
+				"targetname"    "tank_color_rg"
+				"StartDisabled" "0"
+				"startvalue"    "0"
+				"min"           "0"
+				"max"           "255"
+				"OutValue"      "tank_color_rg_blend,InValue,,0,-1"
+				"OnHitMax"      "tank_color_state,SetValueNoFire,2,0,-1"
+				"OnHitMax"      "!self,SetValueNoFire,0,0.01,-1"
+				"OnHitMax"      "!self,Disable,,0.02,-1"
+				"OnHitMax"      "tank_color_gb,Enable,,0.02,-1"                
+			}
+			math_colorblend
+			{
+				"targetname" "tank_color_rg_blend"
+				"spawnflags" "1"
+				"inmin"      "0"
+				"inmax"      "255"
+				"colormin"   "255 0 0"
+				"colormax"   "0 255 0"
+				"OutColor"   "rngtankboss,Color,,0,-1"
+			}
+			math_counter
+			{
+				"targetname"    "tank_color_gb"
+				"StartDisabled" "1"
+				"startvalue"    "0"
+				"min"           "0"
+				"max"           "255"
+				"OutValue"      "tank_color_gb_blend,InValue,,0,-1"
+				"OnHitMax"      "tank_color_state,SetValueNoFire,3,0,-1"
+				"OnHitMax"      "!self,SetValueNoFire,0,0.01,-1"
+				"OnHitMax"      "!self,Disable,,0.02,-1"        
+				"OnHitMax"      "tank_color_br,Enable,,0.02,-1"    
+			}
+			math_colorblend
+			{
+				"targetname" "tank_color_gb_blend"
+				"spawnflags" "1"
+				"inmin"      "0"
+				"inmax"      "255"
+				"colormin"   "0 255 0"
+				"colormax"   "0 0 255"
+				"OutColor"   "rngtankboss,Color,,0,-1"
+			}
+			math_counter
+			{
+				"targetname"    "tank_color_br"
+				"StartDisabled" "1"
+				"startvalue"    "0"
+				"min"           "0"
+				"max"           "255"
+				"OutValue"      "tank_color_br_blend,InValue,,0,-1"
+				"OnHitMax"      "tank_color_state,SetValueNoFire,1,0,-1"
+				"OnHitMax"      "!self,SetValueNoFire,0,0.01,-1"
+				"OnHitMax"      "!self,Disable,,0.02,-1"
+				"OnHitMax"      "tank_color_rg,Enable,,0.02,-1"         
+			}
+			math_colorblend
+			{
+				"targetname" "tank_color_br_blend"
+				"spawnflags" "1"
+				"inmin"      "0"
+				"inmax"      "255"
+				"colormin"   "0 0 255"
+				"colormax"   "255 0 0"
+				"OutColor"   "rngtankboss,Color,,0,-1"
+			}
+		}
+		PunchieProjectileFix
+        {
+			OnSpawnOutput
+			{
+				Target !parent
+				Action skin
+				Param 1
+			}
+        }
 	}
 
 	//// ROBOT TEMPLATES ////
@@ -123,7 +235,14 @@ WaveSchedule
 				ItemName "The Killing Gloves of Boxing"
 				"fire rate bonus" 0.6
 				"fire input on attack" "thepaunch1^firemultiple^1"
-				"fire input on kill" "!self^$taunt"
+				"fire input on kill" "!activator^$taunt"
+			}
+
+			PlayerShootTemplate
+			{
+				Name PunchieProjectileFix
+				AttachToProjectile 1
+				ItemName "punchieboss_weapon"
 			}
 		}
 		T_TFBot_Giant_Heavy_AndThis
@@ -158,7 +277,14 @@ WaveSchedule
 				ItemName "The Killing Gloves of Boxing"
 				"fire rate bonus" 0.6
 				"fire input on attack" "thepaunch2^firemultiple^1"
-				"fire input on kill" "!self^$taunt"
+				"fire input on kill" "!activator^$taunt"
+			}
+
+			PlayerShootTemplate
+			{
+				Name PunchieProjectileFix
+				AttachToProjectile 1
+				ItemName "punchieboss_weapon"
 			}
 		}
 
@@ -239,13 +365,14 @@ WaveSchedule
 
 				"damage bonus" 15
 				"fire rate bonus" 2
-				"faster reload rate" 0.5
+				"faster reload rate" 0.75
 				"override projectile type" 12
 				"mult projectile count" 15
 				"ignores other projectiles" 1
 				"projectile spread angle penalty" 3
 				"projectile acceleration" 50000
 				"projectile acceleration start time" 2
+				"projectile trail particle" "flare_glow"
 			}
 		}
 
@@ -303,7 +430,7 @@ WaveSchedule
 
 			CharacterAttributes
 			{
-				"move speed penalty" 0.5
+				"move speed penalty" 0.4
 				"damage force reduction" 0.5
 				"airblast vulnerability multiplier" 0.5
 				"override footstep sound set" 4
@@ -389,7 +516,8 @@ WaveSchedule
 	//// WAVES ////
 
 	// Wave 1 Notes
-	//
+	// Try out mild homing on the punchies as an aim corrector, might make them more engaging to players
+	// Make the glove projectiles blue
 	Wave
 	{
 		InitWaveOutput
@@ -683,6 +811,7 @@ WaveSchedule
 		}
 	}
 	// Wave 2 Notes
+	// Reduce deflector heavy count perchance?
 	Wave
 	{
 		InitWaveOutput
@@ -1064,7 +1193,6 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// This wave is generally very weak, keep an eye on it to see what's going wrong
 	Wave
 	{
 		InitWaveOutput
@@ -1543,7 +1671,8 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// 12 widowmakers and 9 soldiers straggled
+	// Give the engie a laser pointer to show where his projectiles will go
+	// Maybe slow him down
 	Wave
 	{
 		InitWaveOutput
@@ -1731,24 +1860,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave1_GBattalionSoldier"
 			WaitForAllSpawned "Wave4_Subwave1_GConchSoldier"
-			Where spawnbot_left
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 25
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Extended_Battalion
-			}
-		}
-		WaveSpawn // 1 GBattalion Soldier
-		{
-			Name "Wave4_Subwave1_GBattalionSoldier"
-			WaitForAllSpawned "Wave4_Subwave1_GConchSoldier"
-			Where spawnbot_right
+			Where spawnbot
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1783,7 +1895,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave1_GBattalionSoldier2"
 			WaitForAllSpawned "Wave4_Subwave1_GConchSoldier"
-			Where spawnbot_left
+			Where spawnbot_right
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1805,9 +1917,9 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 65
+			WaitBeforeStarting 70
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 140
 
 			TFBot
 			{
@@ -1819,7 +1931,7 @@ WaveSchedule
 		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 GSoldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo"
-			WaitForAllSpawned "Wave4_Subwave1_TheGigaEngineer"
+			WaitForAllDead "Wave4_Subwave1_TheGigaEngineer"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -1922,24 +2034,6 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 9 Soldiers
-		{
-			Name "Wave4_Subwave2_Soldiers2"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
-			Where spawnbot
-			TotalCount 9
-			MaxActive 9
-			SpawnCount 9
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Soldier
-				Skill Expert
-			}
-		}
 		WaveSpawn // 12 Soldiers
 		{
 			Name "Wave4_Subwave2_Soldiers2"
@@ -2014,6 +2108,7 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
+	// Fix the rainbow tanks
 	Wave
 	{
 		InitWaveOutput
@@ -2055,9 +2150,13 @@ WaveSchedule
 
 			Tank
 			{
+				Name "rngtankboss"
 				Template Tank_Tiny
 				Health 10000
 				StartingPathTrackNode "tank_path_left_a1"
+
+				Model "models/bots/boss_bot/boss_tank_color.mdl"
+				SpawnTemplate "RNGTank"
 			}
 		}
 
