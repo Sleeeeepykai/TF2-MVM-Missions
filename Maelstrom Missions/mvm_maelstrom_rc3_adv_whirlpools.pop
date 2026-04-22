@@ -4,7 +4,7 @@
 #base robot_standard.pop
 #base robot_gatebot.pop
 
-population
+WaveSchedule
 {
 	StartingCurrency	1450
 	RespawnWaveTime	5
@@ -12,15 +12,13 @@ population
 	AddSentryBusterWhenKillCountExceeds	40
 	SentryBusterFriendlyFire 0
 
-	AllowBotExtraSlots 1
-	RobotLimit 28
-
 	RedPlayersAreRobots 1 
 	SniperAllowHeadshots 0
 	TextPrintTime 0
 
-	SpawnTemplate         "RainyParticles"
-	SpawnTemplate         "Interface"
+	//// PRECACHES ////
+
+	// Precached Models
 
 	PrecacheModel "models/bots/boss_bot/boss_blimp.mdl"
 	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_chassis.mdl"  
@@ -39,6 +37,8 @@ population
 	PrecacheModel "models/bots/demo/bot_demo_gibby.mdl"
 	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
 	PrecacheModel "models/bots/heavy/bot_heavy_gibby.mdl"
+
+	//// SOUND OVERRIDES ////
 
 	CustomScriptSounds
 	{
@@ -59,6 +59,9 @@ population
 			"wave"			")npc/combine_gunship/ping_search.wav"
 		}
 	}
+
+	// Special Item Attributes
+
 	ItemAttributes
     {
         ItemName "Warrior's Spirit"
@@ -83,6 +86,7 @@ population
 		"mod_maxhealth_drain_rate" -5
 	}
 
+	//// Extra Tank Paths ////
 	ExtraTankPath
 	{
 	    Name "Blimp_path"
@@ -114,6 +118,7 @@ population
 		Node "-2438.78 -74.23 958.34"
 	}
 
+	//// Extra Spawn Points ////
 	ExtraSpawnPoint
     {
         Name "spawnbot_redbot"
@@ -194,634 +199,8 @@ population
         Y    "1084.49"    
         Z    "178.68"
     }
-	Templates
-	{
-	    Blimp
-		{
-				Health 15000
-				Speed 150
-				DisableSmokestack 1 
-				Classicon blimp2_lite
-				Skin 1
-				MaxTurnRate 50 
-				Model "models/bots/boss_bot/boss_blimp.mdl"
-				Gravity 0 
-				NoCrushDamage 1 
-				DisableTracks 1 
-				DisableChildModels 1 
-				Name "tank_boss"
-				EngineLoopSound "Blimp.Motor" 
-				PingSound "common/null.wav" 
-				OnKilledOutput
-				{
-					Target boss_dead_relay
-					Action Trigger
-				}
-				OnBombDroppedOutput
-				{
-					Target boss_deploy_relay
-					Action Trigger
-				}
 
-		}
-		T_TFBot_Demoman_Malfunction
-		{
-			Name	"Malfunctioning Demoman"
-			Class	Demoman
-			ClassIcon	demo_malfunction
-			Skill	Normal
-			Health	350
-			Scale	1.0
-			Attributes	"HoldFireUntilFullReload"
-
-			MaxVisionRange	1000
-			Tag	"bot_giant"
-
-			UseCustomModel       "models\bots\demo\bot_demo_gibby.mdl"
-			SpawnTemplate "random3eventchangeattributes"
-
-			FireInput
-			{
-				Target "GDXPhase1"
-				Action PickRandomShuffle
-				Delay 0.1
-				Cooldown 6
-			}
-			EventChangeAttributes
-			{
-				"A"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Primary"
-					}
-				}
-				"B"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Secondary"
-					}
-				}
-				"C"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Melee"
-					}
-				}
-				D
-				{
-					MaxVisionRange	500
-					WeaponRestrictions	MeleeOnly
-					CharacterAttributes
-					{
-						"move speed bonus"	1.5
-					}
-				}
-			}
-		}
-		T_TFBot_Soldier_Malfunction
-		{
-			Name	"Malfunctioning Soldier"
-			Class	Soldier
-			ClassIcon	soldier_malfunction
-			Skill	Normal
-			Health	400
-			Scale	1.15
-			Attributes	"HoldFireUntilFullReload"
-
-			MaxVisionRange	1000
-			Tag	"bot_giant"
-			
-			UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
-			SpawnTemplate "random3eventchangeattributes"
-
-			FireInput
-			{
-				Target "GDXPhase1"
-				Action PickRandomShuffle
-				Delay 0.1
-				Cooldown 6
-			}
-			EventChangeAttributes
-			{
-				"A"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Primary"
-					}
-				}
-				"B"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Secondary"
-					}
-				}
-				"C"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Melee"
-					}
-				}
-				D
-				{
-					MaxVisionRange	500
-					WeaponRestrictions	MeleeOnly
-					CharacterAttributes
-					{
-						"move speed bonus"	1.5
-					}
-				}
-			}
-		}
-		T_TFBot_Heavy_Malfunction
-		{
-			Name	"Malfunctioning Heavy"
-			Class	Heavy
-			ClassIcon	heavy_malfunction
-			Skill	Normal
-			Health	600
-			Scale	1.15
-
-			MaxVisionRange	1000
-
-			Tag	"bot_giant"
-
-			UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
-			SpawnTemplate "random3eventchangeattributes"
-
-			CharacterAttributes
-			{
-				"mod minigun can holster while spinning" 1
-			}
-			FireInput
-			{
-				Target "GDXPhase1"
-				Action PickRandomShuffle
-				Delay 0.1
-				Cooldown 8
-			}
-			EventChangeAttributes
-			{
-				"A"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Primary"
-					}
-				}
-				"B"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Secondary"
-					}
-				}
-				"C"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Melee"
-					}
-				}
-				D
-				{
-					MaxVisionRange	500
-					WeaponRestrictions	MeleeOnly
-					CharacterAttributes
-					{
-						"move speed bonus"	1.4
-					}
-				}
-			}
-		}
-		T_TFBot_Pyro_Malfunction
-		{
-			Name	"Malfunctioning Pyro"
-			Class	Pyro
-			ClassIcon	pyro_malfunction
-			Skill	Hard
-			Health	350
-			Scale   1.15
-			Attributes	HoldFireUntilFullReload
-
-			MaxVisionRange	1000
-
-			Tag	"bot_giant"
-
-			UseCustomModel "models/bots/pyro/bot_pyro_gibby.mdl"
-			SpawnTemplate "random3eventchangeattributes"
-			
-			EventChangeAttributes
-			{
-				"A"
-				{
-					ItemAttributes
-					{
-						ItemName   TF_WEAPON_FLAMETHROWER
-						"Airblast Disabled" 1
-					}
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Primary"
-					}
-				}
-				"B"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Secondary"
-					}
-				}
-				"C"
-				{
-					WeaponSwitch
-					{
-						Delay 0.1
-						Repeats 50
-						Type "Melee"
-					}
-				}
-				D
-				{
-					MaxVisionRange	500
-					WeaponRestrictions	MeleeOnly
-					CharacterAttributes
-					{
-						"move speed bonus"	1.3
-					}
-				}
-			}
-		}
-
-	    T_TFBot_Giant_Soldier_SlowBarrage
-		{
-			ClassIcon	soldier_barrage
-			Health	4000
-			Name	"Colonel Barrage"
-			Class	Soldier
-			Skill	Expert
-			WeaponRestrictions	PrimaryOnly
-			Tag	"bot_giant"
-			Attributes	"MiniBoss"
-			Attributes	"HoldFireUntilFullReload"
-			ItemAttributes
-			{
-				ItemName	tf_weapon_rocketlauncher
-				"clip size upgrade atomic"	26.0
-				"faster reload rate"	0.22
-				"fire rate bonus"	0.2
-				"projectile spread angle penalty"	5
-			}
-			CharacterAttributes
-			{
-				"health regen"	40
-				"move speed bonus"	0.5
-				"damage bonus"	1.5
-				"damage force reduction"	0.4
-				"airblast vulnerability multiplier"	0.4
-				"override footstep sound set"	3
-				"airblast vertical vulnerability multiplier"	0.1
-				"Projectile speed increased"	0.4
-			}
-		}
-	    T_TFBot_Giant_Medic_Uber
-		{
-			        Class Medic
-			        ClassIcon           medic_uber_giant
-					Health	3500
-					Name	"Giant Uber Medic"
-					Scale	1.8
-					MaxVisionRange	500
-					WeaponRestrictions	SecondaryOnly
-			        Skill Expert
-			        Attributes "SpawnWithFullCharge"
-					Attributes	"MiniBoss"
-			        ItemAttributes
-			        {
-				           ItemName "TF_WEAPON_MEDIGUN"
-				           "ubercharge rate bonus" 2
-			        }
-			        CharacterAttributes
-			        {
-						 "heal rate bonus"	100
-						 "move speed bonus"	0.5
-						 "damage force reduction"	0.6
-						 "airblast vulnerability multiplier"	0.6
-						 "bot medic uber health threshold"	500
-						 "override footstep sound set"	7
-			        }
-					Item "Medic Mask"
-					Item "prussian pickelhaube"
-		}
-		T_TFBot_Giant_Medic_KritzKrieg
-		{
-			ClassIcon      medic_kritz2_giant
-			Health	4000
-			Name	"Giant Kritzkrieg Medic"
-			Class   Medic
-			Scale	1.8
-			Skill   Expert
-			MaxVisionRange	500
-			WeaponRestrictions	SecondaryOnly
-			Attributes  "SpawnWithFullCharge"
-			Attributes	"MiniBoss"
-            ItemAttributes
-            {
-                ItemName "The Kritzkrieg"
-                "uber duration bonus" 6000
-                "bot medic uber health threshold" 6000
-            }
-			CharacterAttributes
-			{
-				"heal rate bonus" 50
-				"move speed bonus"	0.5
-				"damage force reduction"	0.6
-			    "airblast vulnerability multiplier"	0.6
-				"override footstep sound set"	7
-			}
-			Item	"the kritzkrieg"
-			Item	"medic's mountain cap"
-		}
-		T_TFBot_Giant_Demoman
-		{
-		    ClassIcon	demo
-			Health	3300
-			Name	"Giant Demoman"
-			Scale	1.8
-			Class	Demoman
-			Skill	Expert
-			MaxVisionRange	1000
-			WeaponRestrictions	PrimaryOnly
-			Attributes	"MiniBoss"
-			Attributes	"HoldFireUntilFullReload"
-			ItemAttributes
-			{
-					ItemName	tf_weapon_grenadelauncher
-					"faster reload rate"	1.4
-			}
-			CharacterAttributes
-			{
-				"move speed bonus"	0.5
-				"damage force reduction"	0.5
-				"airblast vulnerability multiplier"	0.5
-				"override footstep sound set"	4
-			}
-		}
-		T_TFBot_Giant_Soldier_Guardian
-		{
-			ClassIcon   vendsoldier
-			Skill Expert
-			Health	10000
-			Name	"Signal Jammer Guardian"
-			Class   Soldier
-			Scale	2
-			MaxVisionRange	1000
-			Action  Mobber
-			WeaponRestrictions PrimaryOnly
-			Attributes  "HoldFireUntilFullReload"
-			Attributes  "MiniBoss"
-			Attributes	"AlwaysCrit"
-			Attributes	"UseBossHealthBar"
-			ItemAttributes
-			{
-				ItemName	tf_weapon_rocketlauncher
-				"damage bonus"	1.2
-				"fire rate bonus"	0.5
-				"faster reload rate"	0.5
-				"projectile spread angle penalty"	5
-				"rocket specialist"	1
-				"mini rockets"	1
-			}
-			CharacterAttributes
-			{
-				"move speed bonus"	0.5
-				"damage force reduction" 0.4
-				"airblast vulnerability multiplier" 0.4
-				"override footstep sound set" 3
-			}
-			Item   "Field Fatigues"
-			Item   "Tank Top"
-		}
-		T_TFBot_Signal
-		{
-		    
-				
-					ClassIcon	engineer_mom
-					Health	60000
-					Name    "Short Signal"
-					Scale	2
-					Class	Engineer
-					Skill	Expert
-					SpawnTemplate "random3eventchangeattributes2"
-					MaxVisionRange	2000
-					Action  Mobber
-					Attributes	"MiniBoss"
-					Attributes	"UseBossHealthBar"
-					FireInput
-                    {
-                        Target "BOSSPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					FireInput
-                    {
-                        Target "upper_text"
-                        Action "Display"
-                        Delay 3
-                        Repeats 1
-                    }
-                    FireInput
-                    {
-                        Target "middle_text"
-                        Action "Display"
-                        Delay 3.2
-                        Repeats 1
-                    }
-					EventChangeAttributes
-					{
-					  "A"
-                      {
-						    Attributes	"HoldFireUntilFullReload"
-						    ItemAttributes
-					        {
-						        ItemName	"the pomson 6000"
-								"Damage Bonus" 0.7
-						        "fire rate bonus"	0.1
-						        "clip size bonus"	30
-						        "faster reload rate"	0.001
-						        "projectile spread angle penalty"	12
-								"Projectile speed increased"	0.7
-                                "mod projectile heat seek power" 180
-                                "mod projectile heat aim error" 60
-                                "mod projectile heat aim time" 3.5
-                                "projectile trail particle" eyeboss_projectile
-					        }
-					        Item	"the pomson 6000"
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 100
-                                Type "Primary"
-                            }
-                      }
-				      "B"
-					  {
-						    Attributes	"HoldFireUntilFullReload"
-						    ItemAttributes
-					        {
-					 	        ItemName	"panic attack shotgun"
-						        "fire rate bonus"	0.5
-						        "damage bonus"	1.3
-						        "faster reload rate"	0.7
-						        "minicritboost on kill"	5
-					        }
-					        Item	"panic attack shotgun"
-						    WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 100
-                                Type "Primary"
-                            }
-					  }
-					  "C"
-					  {
-						    ItemAttributes
-					        {
-						        ItemName	"ttg max pistol"
-						        "damage bonus"	2
-						        "override projectile type"	2
-						        "projectile spread angle penalty"	4
-						        "fire rate bonus"	1.5
-						        "clip size bonus"	2
-						        "Set DamageType Ignite"	1
-					        }
-					        Item	"ttg max pistol"
-						    WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 100
-                                Type "Secondary"
-                            }
-					  }
-					  "D"
-					  {
-						    Attributes	"HoldFireUntilFullReload"
-						    ItemAttributes
-					        {
-						        ItemName	"the frontier justice"
-						        "critboost on kill"	5
-						        "damage bonus"	1.5
-						        "faster reload rate"	1.3
-					        }
-					        Item	"the frontier justice"
-						    WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 100
-                                Type "Primary"
-                            }
-					  }
-					  "E"
-					  {
-						    ItemAttributes
-					        {
-						        ItemName	"the c.a.p.p.e.r"
-						        "sniper fires tracer"	1
-						        "fire rate bonus"	0.2
-						        "clip size bonus"	5
-						        "bullets per shot bonus"	3
-						        "weapon spread bonus"	1.75
-						        "crit kill will gib"	1
-						        "critboost on kill"	3
-								"Damage Bonus" 0.2
-					        }
-					        Item	"the c.a.p.p.e.r"
-						    WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 100
-                                Type "Secondary"
-                            }
-					  }
-					  "F"
-					  {
-						    ExtAttr AlwaysFireWeaponAlt [$SIGSEGV]
-						    ItemAttributes
-					        {
-						        ItemName	"the short circuit"
-						        "damage bonus"	1.5
-						        "fire rate bonus"	0.5
-						        "subtract victim cloak on hit"	1
-					        }
-					        Item	"the short circuit"
-						    WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 100
-                                Type "Secondary"
-                            }
-					  }
-					  "G"
-					  {
-						    Attributes	"HoldFireUntilFullReload"
-						    ItemAttributes
-					        {
-						        ItemName	warbird_shotgun_redbear
-						        "fire rate bonus"	0.1
-						        "clip size bonus"	2.5
-						        "faster reload rate"	0.8
-					        }
-					        Item	"warbird_shotgun_redbear"
-						    WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-					  }
-					  
-					}
-					CharacterAttributes
-					{
-						"move speed bonus"	0.5
-						"damage force reduction"	0.3
-						"airblast vulnerability multiplier"	0.1
-						"override footstep sound set"	7
-					}
-					Item	"iron lung"
-					Item	"Brain Interface"
-					Item	"Delldozer"
-				
-		}
-	}
+	//// POINT TEMPLATES ////
 
 	PointTemplates    // same as it ever was
     {
@@ -867,6 +246,171 @@ population
                 "OnSpawn" "tf_gamerules,PlayVO,player\invulnerable_off.wav,4,-1"
             }
         }
+		StickyBlimp
+		{
+			OnParentKilledOutput // Clean up stickies
+			{
+				Target tf_projectile_pipe
+				Action Kill
+				Delay 0.05
+			}
+			
+			logic_relay
+			{
+				"targetname" "stickytank_shooter_relay"
+				
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.1,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.1,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.2,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.2,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.3,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.3,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.4,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.4,-1"
+				"OnTrigger"  "stickytank_mimic,FireMultiple,4,0.5,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.5,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.6,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.6,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.7,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.7,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.8,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.8,-1"
+				"OnTrigger"  "stickytank_mimic,FireOnce,,0.9,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,0.9,-1"
+				"OnTrigger"  "stickytank_mimic,FireMultiple,4,1,-1"
+				"OnTrigger"  "stickytank_shoot_sound,PlaySound,,1,-1"
+				"OnTrigger"  "stickytank_mimic_crit,FireOnce,,1.5,-1"
+				"OnTrigger"  "stickytank_shoot_sound_crit,PlaySound,,1.5,-1"
+				"OnTrigger"  "stickytank_mimic_crit,FireMultiple,2,2,-1"
+				"OnTrigger"  "stickytank_shoot_sound_crit,PlaySound,,2,-1"
+				"OnTrigger"  "!self,EnableRefire,,2,-1"
+				"OnTrigger"  "stickytank_mimic_crit,FireMultiple,3,2.5,-1"
+				"OnTrigger"  "stickytank_shoot_sound_crit,PlaySound,,2.5,-1"
+				"OnTrigger"  "stickytank_mimic_crit,FireMultiple,6,3,-1"
+				"OnTrigger"  "stickytank_shoot_sound_crit,PlaySound,,3,-1"
+				"OnTrigger"  "stickytank_mimic,DetonateStickies,,7,-1"
+				"OnTrigger"  "stickytank_mimic_crit,DetonateStickies,,7,-1"
+			}
+			logic_timer
+			{
+				"targetname"       "stickytank_timer"
+				"spawnflags"       "0"
+				"UpperRandomBound" "10"
+				"LowerRandomBound" "8"
+				"UseRandomTime"    "1"
+
+				"OnTimer" "stickytank_shooter_relay,Trigger,,0,-1"
+			}
+			prop_dynamic
+			{
+				"targetname"    "stickytank_model"
+				"model"         "models/props_frontline/tank_turret.mdl"
+				"skin"          "2"
+				"solid"         "0"
+				"spawnflags"    "0"
+				"origin"        "46 -66 28"
+				"angles"        "65 0 -90"
+			}
+			prop_dynamic
+			{
+				"targetname"    "stickytank_model"
+				"model"         "models/props_frontline/tank_turret.mdl"
+				"skin"          "2"
+				"solid"         "0"
+				"spawnflags"    "0"
+				"origin"        "46 66 28"
+				"angles"        "65 0 90"
+			}
+			
+			tf_point_weapon_mimic
+			{
+				"targetname"   "stickytank_mimic"
+				"WeaponType"   "3"
+				"ModelScale"   "1"
+				"SpeedMax"     "525"
+				"SpeedMin"     "525"
+				"Crits"        "0"
+				"Damage"       "65"
+				"SpreadAngle"  "25"
+				"SplashRadius" "125"
+				"FireSound"    "weapons/stickybomblauncher_shoot_crit.wav"
+				"origin"       "99 -57 -88"
+				"angles"       "65 359 180"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname"   "stickytank_mimic_crit"
+				"WeaponType"   "3"
+				"ModelScale"   "1"
+				"SpeedMax"     "525"
+				"SpeedMin"     "525"
+				"Crits"        "1"
+				"Damage"       "35"
+				"SpreadAngle"  "25"
+				"SplashRadius" "125"
+				"FireSound"    "weapons/stickybomblauncher_shoot_crit.wav"
+				"origin"       "99 -57 -88"
+				"angles"       "65 359 180"
+			}
+			
+			tf_point_weapon_mimic
+			{
+				"targetname"   "stickytank_mimic"
+				"WeaponType"   "3"
+				"ModelScale"   "1"
+				"SpeedMax"     "525"
+				"SpeedMin"     "525"
+				"Crits"        "0"
+				"Damage"       "65"
+				"SpreadAngle"  "25"
+				"SplashRadius" "125"
+				"FireSound"    "weapons/stickybomblauncher_shoot_crit.wav"
+				"origin"       "99 57 -88"
+				"angles"       "64 359 0"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname"   "stickytank_mimic_crit"
+				"WeaponType"   "3"
+				"ModelScale"   "1"
+				"SpeedMax"     "525"
+				"SpeedMin"     "525"
+				"Crits"        "1"
+				"Damage"       "35"
+				"SpreadAngle"  "25"
+				"SplashRadius" "125"
+				"FireSound"    "weapons/stickybomblauncher_shoot_crit.wav"
+				"origin"       "99 57 -88"
+				"angles"       "64 359 0"
+			}
+			
+			ambient_generic
+			{
+				"targetname" "stickytank_shoot_sound"			
+				"health"     "10"
+				"message"    "weapons/stickybomblauncher_shoot.wav"
+				"pitch"      "100"
+				"pitchstart" "100"
+				"radius"     "5000"
+				"spawnflags" "48"
+				"origin"     "64 0 224"
+			}
+			ambient_generic
+			{
+				"targetname" "stickytank_shoot_sound_crit"			
+				"health"     "10"
+				"message"    "weapons/stickybomblauncher_shoot_crit.wav"
+				"pitch"      "100"
+				"pitchstart" "100"
+				"radius"     "5000"
+				"spawnflags" "48"
+				"origin"     "64 0 224"
+			}
+			
+		}
 		StickyTank
 		{
 			OnParentKilledOutput // Clean up stickies
@@ -1407,6 +951,971 @@ population
         }
     }
 
+	//// SPAWNED TEMPLATES ////
+
+	SpawnTemplate         "RainyParticles"
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+	    Blimp
+		{
+				Health 15000
+				Speed 150
+				DisableSmokestack 1 
+				Classicon blimp2_lite
+				Skin 1
+				MaxTurnRate 50 
+				Model "models/bots/boss_bot/boss_blimp.mdl"
+				Gravity 0 
+				NoCrushDamage 1 
+				DisableTracks 1 
+				DisableChildModels 1 
+				Name "tank_boss"
+				EngineLoopSound "Blimp.Motor" 
+				PingSound "common/null.wav" 
+				OnKilledOutput
+				{
+					Target boss_dead_relay
+					Action Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+
+		}
+		T_TFBot_Demoman_Malfunction
+		{
+			Name	"Malfunctioning Demoman"
+			Class	Demoman
+			ClassIcon	demo_malfunction
+			Skill	Normal
+			Health	350
+			Scale	1.0
+			Attributes	"HoldFireUntilFullReload"
+
+			MaxVisionRange	1000
+			Tag	"bot_giant"
+
+			UseCustomModel       "models\bots\demo\bot_demo_gibby.mdl"
+			SpawnTemplate "random3eventchangeattributes"
+
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 6
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	1.5
+					}
+				}
+			}
+		}
+		T_TFBot_Soldier_Malfunction
+		{
+			Name	"Malfunctioning Soldier"
+			Class	Soldier
+			ClassIcon	soldier_malfunction
+			Skill	Normal
+			Health	400
+			Scale	1.15
+			Attributes	"HoldFireUntilFullReload"
+
+			MaxVisionRange	1000
+			Tag	"bot_giant"
+			
+			UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
+			SpawnTemplate "random3eventchangeattributes"
+
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 6
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	1.5
+					}
+				}
+			}
+		}
+		T_TFBot_Heavy_Malfunction
+		{
+			Name	"Malfunctioning Heavy"
+			Class	Heavy
+			ClassIcon	heavy_malfunction
+			Skill	Normal
+			Health	600
+			Scale	1.15
+
+			MaxVisionRange	1000
+
+			Tag	"bot_giant"
+
+			UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
+			SpawnTemplate "random3eventchangeattributes"
+
+			CharacterAttributes
+			{
+				"mod minigun can holster while spinning" 1
+			}
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 8
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	1.4
+					}
+				}
+			}
+		}
+		T_TFBot_Pyro_Malfunction
+		{
+			Name	"Malfunctioning Pyro"
+			Class	Pyro
+			ClassIcon	pyro_malfunction
+			Skill	Hard
+			Health	350
+			Scale   1.15
+			Attributes	HoldFireUntilFullReload
+
+			MaxVisionRange	1000
+
+			Tag	"bot_giant"
+
+			UseCustomModel "models/bots/pyro/bot_pyro_gibby.mdl"
+			SpawnTemplate "random3eventchangeattributes"
+			
+			EventChangeAttributes
+			{
+				"A"
+				{
+					ItemAttributes
+					{
+						ItemName   TF_WEAPON_FLAMETHROWER
+						"Airblast Disabled" 1
+					}
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	1.3
+					}
+				}
+			}
+		}
+		T_TFBot_Giant_Heavy_Malfunction
+		{
+			ClassIcon     heavy_malfunction_giant
+			Health	10000
+			Name	"Giant Malfunctioning Heavy"
+			Scale	1.8
+			Template	T_TFBot_Giant_Heavyweapons
+			SpawnTemplate "random3eventchangeattributes"
+			UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
+			CharacterAttributes
+			{
+				"mod minigun can holster while spinning" 1
+			}
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 8
+			}
+			ItemAttributes
+			{
+				ItemName	"iron curtain"
+				"damage bonus"	1.5
+			}
+			ItemAttributes
+			{
+				ItemName	tf_weapon_shotgun_hwg
+				"fire rate bonus"	2.5
+				"damage penalty"	0.5
+				"faster reload rate"	0.1
+				"bullets per shot bonus"	10
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	0.8
+					}
+				}
+			}
+			Item	"iron curtain"
+			Item	"fists of steel"
+		}
+		T_TFBot_Giant_Pyro_Malfunction
+		{
+			ClassIcon    pyro_malfunction_giant
+			Health	6000
+			Name	"Giant Malfunctioning Pyro"
+			Scale	1.8
+			MaxVisionRange	1200
+			Template	T_TFBot_Giant_Pyro
+			SpawnTemplate "random3eventchangeattributes"
+			UseCustomModel       "models/bots/pyro/bot_pyro_gibby.mdl"
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 8
+			}
+			ItemAttributes
+			{
+				ItemName	tf_weapon_flamethrower
+				"airblast pushback scale"	2.5
+				"mult airblast refire time"	60
+			}
+			ItemAttributes
+			{
+				ItemName	"the detonator"
+				"fire rate bonus"	0.3
+				"faster reload rate"	0.7
+			}
+			CharacterAttributes
+			{
+				"dmg taken from crit reduced"	0.8
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	0.8
+					}
+				}
+			}
+			Item	"the detonator"
+			Item	"sharpened volcano fragment"
+		}
+		T_TFBot_Giant_Soldier_Malfunction
+		{
+			ClassIcon   soldier_malfunction_giant
+			Health	7600
+			Name	"Giant Malfunctioning Soldier"
+			Scale	1.8
+			MaxVisionRange	1200
+			Template	T_TFBot_Giant_Soldier
+			SpawnTemplate "random3eventchangeattributes"
+			UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 8
+			}
+			ItemAttributes
+			{
+				ItemName	tf_weapon_rocketlauncher
+				"clip size upgrade atomic"	26
+				"fire rate bonus"	0.2
+				"projectile spread angle penalty"	5
+				"faster reload rate"	0.22
+			}
+			ItemAttributes
+			{
+				ItemName	"the righteous bison"
+				"fire rate bonus"	0.5
+				"clip size bonus"	2.5
+				"faster reload rate"	0.7
+			}
+			CharacterAttributes
+			{
+				"dmg taken from crit reduced"	0.8
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	0.8
+					}
+				}
+			}
+			Item	"the righteous bison"
+			Item	"the escape plan"
+		}
+		T_TFBot_Giant_Demoman_Malfunction
+		{
+			ClassIcon	demo_malfunction_giant
+			Health	6600
+			Name	"Giant Malfunctioning Demoman"
+			Scale	1.8
+			Class	Demoman
+			Skill	Expert
+			MaxVisionRange	1200
+			Attributes	"MiniBoss"
+			Attributes	"HoldFireUntilFullReload"
+			SpawnTemplate "random3eventchangeattributes"
+			UseCustomModel       "models\bots\demo\bot_demo_gibby.mdl"
+			FireInput
+			{
+				Target "GDXPhase1"
+				Action PickRandomShuffle
+				Delay 0.1
+				Cooldown 8
+			}
+			ItemAttributes
+			{
+				ItemName	tf_weapon_grenadelauncher
+				"faster reload rate"	0.65
+				"fire rate bonus"	0.1
+				"clip size upgrade atomic"	7
+				"projectile spread angle penalty"	0.5
+				"Projectile speed increased"	1.1
+			}
+			ItemAttributes
+			{
+				ItemName	tf_weapon_pipebomblauncher
+				"stickybomb charge rate"	0.5
+				"Projectile range increased"	1.8
+				"fire rate bonus"	0.5
+				"faster reload rate"	0.7
+			}
+			ItemAttributes
+			{
+				ItemName	"the scotsman's skullcutter"
+				"critboost on kill"	5
+			}
+			CharacterAttributes
+			{
+				"dmg taken from crit reduced"	0.8
+				"move speed bonus"	0.5
+				"damage force reduction"	0.4
+				"airblast vulnerability multiplier"	0.4
+				"override footstep sound set"	4
+			}
+			EventChangeAttributes
+			{
+				"A"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Primary"
+					}
+				}
+				"B"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Secondary"
+					}
+				}
+				"C"
+				{
+					WeaponSwitch
+					{
+						Delay 0.1
+						Repeats 50
+						Type "Melee"
+					}
+				}
+				D
+				{
+					MaxVisionRange	500
+					WeaponRestrictions	MeleeOnly
+					CharacterAttributes
+					{
+						"move speed bonus"	0.8
+					}
+				}
+			}
+			Item	"the scotsman's skullcutter"
+		}
+		T_TFBot_Heavy_BrassBeast
+		{
+			ClassIcon	heavy_brass_nys
+			Name	"Brass Beast Heavy"
+			Class	HeavyWeapons
+			Skill	Normal
+			MaxVisionRange	1000
+			WeaponRestrictions	PrimaryOnly
+			Item	"the brass beast"
+		}
+
+	    T_TFBot_Giant_Soldier_SlowBarrage
+		{
+			ClassIcon	soldier_barrage
+			Health	4000
+			Name	"Colonel Barrage"
+			Class	Soldier
+			Skill	Expert
+			WeaponRestrictions	PrimaryOnly
+			Tag	"bot_giant"
+			Attributes	"MiniBoss"
+			Attributes	"HoldFireUntilFullReload"
+			ItemAttributes
+			{
+				ItemName	tf_weapon_rocketlauncher
+				"clip size upgrade atomic"	26.0
+				"faster reload rate"	0.22
+				"fire rate bonus"	0.2
+				"projectile spread angle penalty"	5
+			}
+			CharacterAttributes
+			{
+				"health regen"	40
+				"move speed bonus"	0.5
+				"damage bonus"	1.5
+				"damage force reduction"	0.4
+				"airblast vulnerability multiplier"	0.4
+				"override footstep sound set"	3
+				"airblast vertical vulnerability multiplier"	0.1
+				"Projectile speed increased"	0.4
+			}
+		}
+	    T_TFBot_Giant_Medic_Uber
+		{
+			        Class Medic
+			        ClassIcon           medic_uber_giant
+					Health	3500
+					Name	"Giant Uber Medic"
+					Scale	1.8
+					MaxVisionRange	500
+					WeaponRestrictions	SecondaryOnly
+			        Skill Expert
+			        Attributes "SpawnWithFullCharge"
+					Attributes	"MiniBoss"
+			        ItemAttributes
+			        {
+				           ItemName "TF_WEAPON_MEDIGUN"
+				           "ubercharge rate bonus" 2
+			        }
+			        CharacterAttributes
+			        {
+						 "heal rate bonus"	100
+						 "move speed bonus"	0.5
+						 "damage force reduction"	0.6
+						 "airblast vulnerability multiplier"	0.6
+						 "bot medic uber health threshold"	500
+						 "override footstep sound set"	7
+			        }
+					Item "Medic Mask"
+					Item "prussian pickelhaube"
+		}
+		T_TFBot_Giant_Medic_KritzKrieg
+		{
+			ClassIcon      medic_kritz2_giant
+			Health	4000
+			Name	"Giant Kritzkrieg Medic"
+			Class   Medic
+			Scale	1.8
+			Skill   Expert
+			MaxVisionRange	500
+			WeaponRestrictions	SecondaryOnly
+			Attributes  "SpawnWithFullCharge"
+			Attributes	"MiniBoss"
+            ItemAttributes
+            {
+                ItemName "The Kritzkrieg"
+                "uber duration bonus" 6000
+                "bot medic uber health threshold" 6000
+            }
+			CharacterAttributes
+			{
+				"heal rate bonus" 50
+				"move speed bonus"	0.5
+				"damage force reduction"	0.6
+			    "airblast vulnerability multiplier"	0.6
+				"override footstep sound set"	7
+			}
+			Item	"the kritzkrieg"
+			Item	"medic's mountain cap"
+		}
+		T_TFBot_Giant_Demoman
+		{
+		    ClassIcon	demo
+			Health	3300
+			Name	"Giant Demoman"
+			Scale	1.8
+			Class	Demoman
+			Skill	Expert
+			MaxVisionRange	1000
+			WeaponRestrictions	PrimaryOnly
+			Attributes	"MiniBoss"
+			Attributes	"HoldFireUntilFullReload"
+			ItemAttributes
+			{
+					ItemName	tf_weapon_grenadelauncher
+					"faster reload rate"	1.4
+			}
+			CharacterAttributes
+			{
+				"move speed bonus"	0.5
+				"damage force reduction"	0.5
+				"airblast vulnerability multiplier"	0.5
+				"override footstep sound set"	4
+			}
+		}
+		T_TFBot_Giant_Soldier_Guardian
+		{
+			ClassIcon   vendsoldier
+			Skill Expert
+			Health	10000
+			Name	"Signal Jammer Guardian"
+			Class   Soldier
+			Scale	2
+			MaxVisionRange	1000
+			Action  Mobber
+			WeaponRestrictions PrimaryOnly
+			Attributes  "HoldFireUntilFullReload"
+			Attributes  "MiniBoss"
+			Attributes	"AlwaysCrit"
+			Attributes	"UseBossHealthBar"
+			ItemAttributes
+			{
+				ItemName	tf_weapon_rocketlauncher
+				"damage bonus"	1.2
+				"fire rate bonus"	0.5
+				"faster reload rate"	0.5
+				"projectile spread angle penalty"	5
+				"rocket specialist"	1
+				"mini rockets"	1
+			}
+			CharacterAttributes
+			{
+				"move speed bonus"	0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 3
+			}
+			Item   "Field Fatigues"
+			Item   "Tank Top"
+		}
+		T_TFBot_Signal
+		{
+					ClassIcon	engineer_mom
+					Health	60000
+					Name    "Short Signal"
+					Scale	2
+					Class	Engineer
+					Skill	Expert
+					SpawnTemplate "random3eventchangeattributes2"
+					MaxVisionRange	2000
+					Action  Mobber
+					Attributes	"MiniBoss"
+					Attributes	"UseBossHealthBar"
+					FireInput
+                    {
+                        Target "BOSSPhase1"
+                        Action PickRandomShuffle
+                        Delay 0.1
+                        Cooldown 8
+                    }
+					FireInput
+                    {
+                        Target "upper_text"
+                        Action "Display"
+                        Delay 3
+                        Repeats 1
+                    }
+                    FireInput
+                    {
+                        Target "middle_text"
+                        Action "Display"
+                        Delay 3.2
+                        Repeats 1
+                    }
+					EventChangeAttributes
+					{
+					  "A"
+                      {
+						    Attributes	"HoldFireUntilFullReload"
+						    ItemAttributes
+					        {
+						        ItemName	"the pomson 6000"
+								"Damage Bonus" 0.7
+						        "fire rate bonus"	0.1
+						        "clip size bonus"	30
+						        "faster reload rate"	0.001
+						        "projectile spread angle penalty"	12
+								"Projectile speed increased"	0.7
+                                "mod projectile heat seek power" 180
+                                "mod projectile heat aim error" 60
+                                "mod projectile heat aim time" 3.5
+                                "projectile trail particle" eyeboss_projectile
+					        }
+					        Item	"the pomson 6000"
+                            WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 100
+                                Type "Primary"
+                            }
+                      }
+				      "B"
+					  {
+						    Attributes	"HoldFireUntilFullReload"
+						    ItemAttributes
+					        {
+					 	        ItemName	"panic attack shotgun"
+						        "fire rate bonus"	0.5
+						        "damage bonus"	1.3
+						        "faster reload rate"	0.7
+						        "minicritboost on kill"	5
+					        }
+					        Item	"panic attack shotgun"
+						    WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 100
+                                Type "Primary"
+                            }
+					  }
+					  "C"
+					  {
+						    ItemAttributes
+					        {
+						        ItemName	"ttg max pistol"
+						        "damage bonus"	2
+						        "override projectile type"	2
+						        "projectile spread angle penalty"	4
+						        "fire rate bonus"	1.5
+						        "clip size bonus"	2
+						        "Set DamageType Ignite"	1
+					        }
+					        Item	"ttg max pistol"
+						    WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 100
+                                Type "Secondary"
+                            }
+					  }
+					  "D"
+					  {
+						    Attributes	"HoldFireUntilFullReload"
+						    ItemAttributes
+					        {
+						        ItemName	"the frontier justice"
+						        "critboost on kill"	5
+						        "damage bonus"	1.5
+						        "faster reload rate"	1.3
+					        }
+					        Item	"the frontier justice"
+						    WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 100
+                                Type "Primary"
+                            }
+					  }
+					  "E"
+					  {
+						    ItemAttributes
+					        {
+						        ItemName	"the c.a.p.p.e.r"
+						        "sniper fires tracer"	1
+						        "fire rate bonus"	0.2
+						        "clip size bonus"	5
+						        "bullets per shot bonus"	3
+						        "weapon spread bonus"	1.75
+						        "crit kill will gib"	1
+						        "critboost on kill"	3
+								"Damage Bonus" 0.2
+					        }
+					        Item	"the c.a.p.p.e.r"
+						    WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 100
+                                Type "Secondary"
+                            }
+					  }
+					  "F"
+					  {
+						    ExtAttr AlwaysFireWeaponAlt [$SIGSEGV]
+						    ItemAttributes
+					        {
+						        ItemName	"the short circuit"
+						        "damage bonus"	1.5
+						        "fire rate bonus"	0.5
+						        "subtract victim cloak on hit"	1
+					        }
+					        Item	"the short circuit"
+						    WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 100
+                                Type "Secondary"
+                            }
+					  }
+					  "G"
+					  {
+						    Attributes	"HoldFireUntilFullReload"
+						    ItemAttributes
+					        {
+						        ItemName	warbird_shotgun_redbear
+						        "fire rate bonus"	0.1
+						        "clip size bonus"	2.5
+						        "faster reload rate"	0.8
+					        }
+					        Item	"warbird_shotgun_redbear"
+						    WeaponSwitch
+                            {
+                                Delay 0.1
+                                Repeats 50
+                                Type "Primary"
+                            }
+					  }
+					  
+					}
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction"	0.3
+						"airblast vulnerability multiplier"	0.1
+						"override footstep sound set"	7
+					}
+					Item	"iron lung"
+					Item	"Brain Interface"
+					Item	"Delldozer"
+					Item "Taunt: Unleashed Rage"
+				
+		}
+	}
+
+	//// MISSION BOTS ////
+
 	Mission
 	{
 		Objective	Spy
@@ -1463,6 +1972,8 @@ population
 			Template	T_TFBot_SentryBuster
 		}
 	}
+
+	//// WAVES ////
 
 	Wave     //   Wave: 1/4    Credits: 1200
 	{
@@ -2803,9 +3314,10 @@ population
                 IncludeScript(`tankextensions/drilltank`, getroottable())
                 IncludeScript(`tankextensions/stickytank`, getroottable())
                 IncludeScript(`tankextensions/teletank`, getroottable())
-                TankExt.SetValueOverrides({
-                        COMBATTANK_ROTATE_SPEED_DEFAULT   = 0.6
-                        COMBATTANK_MINIGUN_BULLET_DAMAGE  = 12
+				
+                TankExt.SetValueOverrides(
+				{
+                        COMBATTANK_MINIGUN_BULLET_DAMAGE  = 10
                 })
 			"
 		}
@@ -2826,6 +3338,7 @@ population
 			Line "{B8383B}Hardhat: I was able to reprogram some of their giant bots in my free time."
 			 Line "{B8383B}Hardhat: Lets see how they like mulching through bulk for once."
 		}
+		
 		// REDBOTS
 		WaveSpawn
 		{
@@ -2912,9 +3425,8 @@ population
 				TFBot
 				{
 					Name	"Giant Phlog Pyro"
-					Scale	1.8
-					MaxVisionRange	1000
 					Template	T_TFBot_Giant_Pyro
+					ClassIcon pyro_phlog_allyred
 					Action Mobber
 					AddCond
                     {
@@ -2931,21 +3443,433 @@ population
 			}
 		}
 		
+		// Subwave 1
+		WaveSpawn // 1 Minigun Rocket Tank
+		{
+			Name	"Wave3_Subwave1_CombatTank"
+			TotalCurrency	200
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	0	
+			Tank
+            {
+			    ClassIcon tank_combat_minigun_rocket
+                Name "combattank_nolaser_bomb|minigun|rocketpod"
+                Health 35000
+                Speed 50
+                Skin 1
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+	    }
+		WaveSpawn // 4 GHeavies
+        {
+            Name  "Wave3_Subwave1_Gheavies1"
+            Where "spawnbot_main"
+            Where "spawnbot_left"
+            TotalCount 4
+            MaxActive  4
+            SpawnCount 1
+            TotalCurrency 300
+
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 12
+
+            TFBot 
+            { 
+				MaxVisionRange	1000
+                Template T_TFBot_Giant_Heavyweapons
+            }
+        }
+		WaveSpawn // 1 GHeavy and 6 Malfunctioning Pyros
+		{
+			Name	"Wave3_Subwave1_Gheavies2"
+			FirstSpawnWarningSound "vo/mvm/mght/heavy_mvm_m_battlecry04.mp3"
+			WaitForAllSpawned	"Wave3_Subwave1_Gheavies1"
+			TotalCurrency	240
+			TotalCount	7
+			MaxActive	7
+			SpawnCount	7
+			WaitBeforeStarting	15
+			WaitBetweenSpawns	0
+			Where "spawnbot_left"
+			Squad
+			{
+				TFBot
+				{
+					MaxVisionRange	1000
+                	Template T_TFBot_Giant_Heavyweapons
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+			}
+		}
+		WaveSpawn // 6 Malfunctioning Heavies
+		{
+			Name "Wave3_Subwave1_MalfunctioningHeavies"
+			WaitForAllSpawned "Wave3_Subwave1_Gheavies2"
+			Where "spawnbot_left"
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 7
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Malfunction
+			}
+		}
+		WaveSpawn // 6 Malfunctioning Soldiers
+		{
+			Name "Wave3_Subwave1_MalfunctioningSoldiers"
+			WaitForAllSpawned "Wave3_Subwave1_Gheavies2"
+			Where "spawnbot_right"
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 7
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Malfunction
+			}
+		}
+
+		WaveSpawn // 2 GFuries and 6 Brass Beast Heavies
+		{
+			Name	"Wave3_Subwave1_GFuries"
+			WaitForAllSpawned "Wave3_Subwave1_MalfunctioningHeavies"
+			TotalCurrency	100
+			TotalCount	8
+			MaxActive	8
+			SpawnCount	4
+			WaitBeforeStarting	10
+			WaitBetweenSpawns	20
+			Where	"spawnbot_main"
+			Squad 
+			{
+				TFBot
+				{
+				    ClassIcon	pyro_dragon_fury_swordstone
+					Name	"Giant Dragon's Fury Pyro"
+					MaxVisionRange	1000
+					Template	T_TFBot_Giant_Pyro
+					Attributes	"AlwaysCrit"
+					Item    "the dragon's fury"
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+			}
+		}
+		WaveSpawn // 6 Malfunctioning Heavies
+		{
+			Name "Wave3_Subwave1_MalfunctioningHeavies2"
+			WaitForAllSpawned "Wave3_Subwave1_MalfunctioningHeavies"
+			Where "spawnbot_left"
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 7
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Malfunction
+			}
+		}
+		WaveSpawn // 6 Malfunctioning Soldiers
+		{
+			Name "Wave3_Subwave1_MalfunctioningSoldiers2"
+			WaitForAllSpawned "Wave3_Subwave1_MalfunctioningHeavies"
+			Where "spawnbot_right"
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 7
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Malfunction
+			}
+		}
+		
+		// Subwave 1 Check
 		WaveSpawn
 		{
-			Name	"Tanks"
-			TotalCurrency	400
-			TotalCount	3
-			MaxActive	3
+			Name "Wave3_Subwave1_Check"
+			WaitForAllDead "Wave3_Subwave1_CombatTank"
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave1_Check"
+			WaitForAllSpawned "Wave3_Subwave1_GFuries"
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Blimp
+		{
+			Name	"Wave3_Blimp1"
+			WaitForAllSpawned	"Wave3_Subwave1_Check"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
 			SpawnCount	1
 			WaitBeforeStarting	10
-			WaitBetweenSpawns	22
+			WaitBetweenSpawns	0
+			
+			Tank
+			{
+				ClassIcon  Blimp2_lite
+				Health	7500
+				Name	"Blimp"
+				Speed	75
+				Template "Blimp"
+				StartingPathTrackNode     Blimp_path_1
+				OnKilledOutput
+				{
+					Target	boss_dead_relay
+					Action	Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target	boss_deploy_relay
+					Action	Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 GBurst Soldier
+		{
+			Name "Wave3_Subwave2_GBurstSoldier"
+			WaitForAllSpawned "Wave3_Blimp1"
+			Where spawnbot_main
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template	T_TFBot_Giant_Soldier_Spammer_Reload
+				Attributes	"AlwaysCrit"
+				Item	"defiant spartan"
+			}
+		}
+		WaveSpawn // 6 Malfunctioning Heavies
+		{
+			Name	"Wave3_Subwave2_MalfunctioningHeavies"
+			WaitForAllSpawned	"Wave3_Blimp1"
+			TotalCurrency	100
+			TotalCount	6
+			MaxActive	6
+			SpawnCount	3
+			WaitBeforeStarting	0
+			WaitBetweenSpawns	8
+			Where   "spawnbot_main" 
+			
+			TFBot
+			{
+				Template T_TFBot_Heavy_Malfunction
+			}
+		}
+
+		WaveSpawn // 1 Blimp
+		{
+			Name	"Wave3_Blimp2"
+			WaitForAllSpawned	"Wave3_Blimp1"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	22
+			WaitBetweenSpawns	0
+			
+			Tank
+			{
+				ClassIcon  Blimp2_lite
+				Health	7500
+				Name	"Blimp"
+				Speed	75
+				Template "Blimp"
+				StartingPathTrackNode     Blimp_path_1
+				OnKilledOutput
+				{
+					Target	boss_dead_relay
+					Action	Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target	boss_deploy_relay
+					Action	Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 GBurst Soldier
+		{
+			Name "Wave3_Subwave2_GBurstSoldier2"
+			WaitForAllSpawned "Wave3_Blimp2"
+			Where spawnbot_main
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template	T_TFBot_Giant_Soldier_Spammer_Reload
+				Attributes	"AlwaysCrit"
+				Item	"defiant spartan"
+			}
+		}
+		WaveSpawn // 6 Malfunctioning Soldiers
+		{
+			Name	"Wave3_Subwave2_MalfunctioningSoldiers"
+			WaitForAllSpawned	"Wave3_Blimp2"
+			TotalCurrency	100
+			TotalCount	6
+			MaxActive	6
+			SpawnCount	3
+			WaitBeforeStarting	0
+			WaitBetweenSpawns	8
+			Where   "spawnbot_main" 
+			
+			TFBot
+			{
+				Template T_TFBot_Soldier_Malfunction
+			}
+		}
+
+		WaveSpawn // 1 Blimp
+		{
+			Name	"Wave3_Blimp3"
+			WaitForAllSpawned	"Wave3_Blimp2"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	22
+			WaitBetweenSpawns	0
+			
+			Tank
+			{
+				ClassIcon  Blimp2_lite
+				Health	7500
+				Name	"Blimp"
+				Speed	75
+				Template "Blimp"
+				StartingPathTrackNode     Blimp_path_1
+				OnKilledOutput
+				{
+					Target	boss_dead_relay
+					Action	Trigger
+				}
+				OnBombDroppedOutput
+				{
+					Target	boss_deploy_relay
+					Action	Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 GBurst Soldiers
+		{
+			Name "Wave3_Subwave2_GBurstSoldier3"
+			WaitForAllSpawned "Wave3_Blimp3"
+			Where spawnbot_main
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template	T_TFBot_Giant_Soldier_Spammer_Reload
+				Attributes	"AlwaysCrit"
+				Item	"defiant spartan"
+			}
+		}
+		WaveSpawn // 8 Malfunctioning Heavies
+		{
+			Name	"Wave3_Subwave2_MalfunctioningHeavies2"
+			WaitForAllSpawned	"Wave3_Blimp3"
+			TotalCurrency	100
+			TotalCount	8
+			MaxActive	8
+			SpawnCount	4
+			WaitBeforeStarting	0
+			WaitBetweenSpawns	8
+			Where   "spawnbot_main" 
+			
+			TFBot
+			{
+				Template T_TFBot_Heavy_Malfunction
+			}
+		}
+
+		WaveSpawn // 1 Bigger Blimp
+		{
+			Name	"Wave3_Blimp4"
+			WaitForAllSpawned "Wave3_Blimp3"
+			TotalCurrency	200
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	22
+			WaitBetweenSpawns	0
 			
 			
 				Tank
 				{
-				    ClassIcon  Blimp2_lite
-					Health	7500
+					ClassIcon  Blimp2_lite
+					Health	12000
 					Name	"Blimp"
 					Speed	75
 					Template "Blimp"
@@ -2963,616 +3887,181 @@ population
 				}
 			
 		}
-		WaveSpawn
+		WaveSpawn // 2 GBurst Soldiers
 		{
-			Name	"Tanks2"
-			TotalCurrency	200
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	70
-			WaitBetweenSpawns	0
-			
-			
-				Tank
-				{
-					ClassIcon  Blimp2_lite
-					Health	12000
-					Name	"Blimp"
-					Speed	75
-					Template "Blimp"
-					StartingPathTrackNode     Blimp_path_upper_1
-					OnKilledOutput
-					{
-						Target	boss_dead_relay
-						Action	Trigger
-					}
-					OnBombDroppedOutput
-					{
-						Target	boss_deploy_relay
-						Action	Trigger
-					}
-				}
-			
+			Name "Wave3_Subwave2_GBurstSoldier4"
+			WaitForAllSpawned "Wave3_Blimp4"
+			Where spawnbot_main
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template	T_TFBot_Giant_Soldier_Spammer_Reload
+				Attributes	"AlwaysCrit"
+				Item	"defiant spartan"
+			}
 		}
-		WaveSpawn
+		WaveSpawn // 8 Malfunctioning Heavies
 		{
-			Name	"Tanks"
-			TotalCurrency	200
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
+			Name	"Wave3_Subwave2_MalfunctioningSoldiers2"
+			WaitForAllSpawned	"Wave3_Blimp4"
+			TotalCurrency	100
+			TotalCount	8
+			MaxActive	8
+			SpawnCount	4
 			WaitBeforeStarting	0
-			WaitBetweenSpawns	0	
-			Tank
-            {
-			    ClassIcon tank_combat_minigun_rocket
-                Name "combattank_nolaser_bomb|minigun|rocketpod"
-                Health 40000
-                Speed 40
-                Skin 1
-                OnBombDroppedOutput
-                {
-                    Target boss_deploy_relay
-                    Action Trigger
-                }
-            }
-	    }
-		WaveSpawn
-        {
-            Name  "Gheavies1"
-			FirstSpawnWarningSound "vo/mvm/mght/heavy_mvm_m_battlecry04.mp3"
-			WaitForAllSpawned	"Tanks2"
-            Where "spawnbot_main"
-            Where "spawnbot_right"
-            TotalCount 4
-            MaxActive  4
-            SpawnCount 1
-            TotalCurrency 300
-
-            WaitBeforeStarting 0
-            WaitBetweenSpawns 13
-            TFBot 
-            { 
-			    Scale 1.8
-				MaxVisionRange	1000
-                Template T_TFBot_Giant_Heavyweapons
-                ClassIcon heavy_giant
-            }
-        }
-		WaveSpawn
-		{
-			Name	"Gheavies2"
-			WaitForAllSpawned	"Gheavies1"
-			TotalCurrency	100
-			TotalCount	7
-			MaxActive	7
-			SpawnCount	7
-			WaitBeforeStarting	17
-			WaitBetweenSpawns	10
-			Where "spawnbot_left"
-			Squad
-			{
-				TFBot
-				{
-					Scale	1.8
-					Template	T_TFBot_Giant_Heavyweapons_Shotgun
-					Attributes	"AlwaysCrit"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	pyro_reflect_daan
-					Health	175
-					Name	Pyro
-					Scale	1.0
-					Class	Pyro
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-				    ClassIcon    medic_uber_armored_mort
-					Health	450
-					Name	"Armored Uber Medic"
-					Scale	1.3
-					MaxVisionRange	500
-					WeaponRestrictions	SecondaryOnly
-					Template	T_TFBot_Medic
-					Item	"berlin brain bowl"
-				}
-				TFBot
-				{
-				    ClassIcon    medic_uber_armored_mort
-					Health	450
-					Name	"Armored Uber Medic"
-					Scale	1.3
-					MaxVisionRange	500
-					WeaponRestrictions	SecondaryOnly
-					Template	T_TFBot_Medic
-					Item	"berlin brain bowl"
-				}
-				TFBot
-				{
-				    ClassIcon    medic_uber_armored_mort
-					Health	450
-					Name	"Armored Uber Medic"
-					Scale	1.3
-					MaxVisionRange	500
-					WeaponRestrictions	SecondaryOnly
-					Template	T_TFBot_Medic
-					Item	"berlin brain bowl"
-				}
-			}
-		}
-		WaveSpawn
-		{
-			Name	"Squad 1"
-			StartWaveWarningSound "music/hl2_song20_submix0.mp3"
-			WaitForAllDead	"Gheavies2"
-			TotalCurrency	100
-			TotalCount	20
-			MaxActive	10
-			SpawnCount	2
-			WaitBeforeStarting	5
-			WaitBetweenSpawns	5
-			Where	"spawnbot_main"
-
-				TFBot
-				{
-					ClassIcon	heavy_malfunction
-					Health	600
-					Name	"Malfunctioning HeavyWeapons"
-					Scale	1.15
-					Class	HeavyWeapons
-					Skill	Normal
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
-					MaxVisionRange	1000
-					CharacterAttributes
-					{
-					    "dmg taken from crit reduced"	0.5
-					    "mod minigun can holster while spinning" 1
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.4
-					        }
-						}
-					}
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Squad 1"
-			WaitForAllDead	"Gheavies2"
-			TotalCurrency	100
-			TotalCount	16
-			MaxActive	6
-			SpawnCount	3
-			WaitBeforeStarting	8
 			WaitBetweenSpawns	8
-			Where	"spawnbot_left"
-			Where   "spawnbot_right"
-
-				TFBot
-				{
-					ClassIcon	soldier_malfunction
-					Health	400
-					Name	"Malfunctioning Soldier"
-					Scale	1.15
-					Class	Soldier
-					Skill	Normal
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
-					MaxVisionRange	1000
-					Attributes	"HoldFireUntilFullReload"
-					CharacterAttributes
-					{
-					    "dmg taken from crit reduced"	0.5
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 150
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 6
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.5
-					        }
-						}
-					}
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 1"
-			WaitForAllDead	"Gheavies2"
-			TotalCurrency	100
-			TotalCount	6
-			MaxActive	6
-			SpawnCount	3
-			WaitBeforeStarting	10
-			WaitBetweenSpawns	22
-			Where	"spawnbot_main"
-			Squad 
-			{
-				TFBot
-				{
-				    ClassIcon	pyro_dragon_fury_swordstone
-					Name	"Giant Dragon's Fury Pyro"
-					Scale	1.8
-					MaxVisionRange	1000
-					Template	T_TFBot_Giant_Pyro
-					Attributes	"AlwaysCrit"
-					Item    "the dragon's fury"
-				}
-			    TFBot
-				{
-				    ClassIcon    medic_uber_armored_mort
-					Health	450
-					Name	"Armored Uber Medic"
-					Scale	1.3
-					MaxVisionRange	500
-					WeaponRestrictions	SecondaryOnly
-					Template	T_TFBot_Medic
-					Item	"berlin brain bowl"
-				}
-				TFBot
-				{
-				    ClassIcon    medic_uber_armored_mort
-					Health	450
-					Name	"Armored Uber Medic"
-					Scale	1.3
-					MaxVisionRange	500
-					WeaponRestrictions	SecondaryOnly
-					Template	T_TFBot_Medic
-					Item	"berlin brain bowl"
-				}
-			}
-		}
-		WaveSpawn
-		{
-			Name	"Squad 2"
-			WaitForAllSpawned	"Squad 1"
-			TotalCurrency	200
-			TotalCount	20
-			MaxActive	10
-			SpawnCount	10
-			WaitBeforeStarting	5
-			WaitBetweenSpawns	5
 			Where   "spawnbot_main" 
 			
-			
-				TFBot
-				{
-					ClassIcon	heavy_malfunction
-					Health	600
-					Name	"Malfunctioning HeavyWeapons"
-					Scale	1.15
-					Class	HeavyWeapons
-					Skill	Normal
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
-					MaxVisionRange	1000
-					CharacterAttributes
-					{
-					    "mod minigun can holster while spinning" 1
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.4
-					        }
-						}
-					}
-				}
-			
+			TFBot
+			{
+				Template T_TFBot_Soldier_Malfunction
+			}
 		}
-		WaveSpawn
+
+		// Subwave 3
+		WaveSpawn // 3 GBurst Demos
 		{
-			Name	"Giants 2"
-			WaitForAllSpawned	"Giants 1"
-			TotalCurrency	200
-			TotalCount	6
-			MaxActive	6
+			Name	"Wave3_Subwave3_GDemoBurst"
+			WaitForAllDead	"Wave3_Blimp4"
+			TotalCurrency	50
+			TotalCount  3
+			MaxActive	3
 			SpawnCount	3
-			WaitBeforeStarting	18
-			WaitBetweenSpawns	18
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	0
 			Where	"spawnbot_right"
 			
-			
-				TFBot
-				{
-					Scale	1.8
-					MaxVisionRange	1000
-					Template	T_TFBot_Giant_Soldier_Spammer_Reload
-					Attributes	"AlwaysCrit"
-					Item	"defiant spartan"
-				}
-			
+			TFBot
+			{
+				Template	T_TFBot_Giant_Demo_Burst
+				Item	"the bearded bombardier"
+				Item	"a whiff of the old brimstone"
+			}
 		}
-		WaveSpawn
+		WaveSpawn // 10 Claidheamhor Demoknights
 		{
-			Name	"Squad 3"
-			WaitForAllDead	"Squad 2"
-			TotalCurrency	50
-			TotalCount	30
+			Name	"Wave3_Subwave3_ClaidheamhorDemoknight"
+			WaitForAllSpawned	"Wave3_Subwave3_GDemoBurst"
+			TotalCurrency	25
+			TotalCount	10
 			MaxActive	10
 			SpawnCount	1
-			WaitBeforeStarting	1.8
-			WaitBetweenSpawns	1.8
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	0
 			Where	"spawnbot_right"
 			
-			
-				TFBot
+			TFBot
+			{
+				ClassIcon   demoknight_charge_targe
+				Name   "Claidheamhor Demoknight"
+				Template	T_TFBot_Demoman_Knight
+				ItemAttributes
 				{
-				    ClassIcon   demoknight_fast
-				    Name   "Fast Charge Demoknight"
-					Scale	1.0
-					MaxVisionRange	500
-					Template	T_TFBot_Demoman_Knight
-					ItemAttributes
-					{
-						ItemName	"the chargin' targe"
-						"charge recharge rate increased"	2
-						"Attack not cancel charge"	1
-					}
-					Item	"spiral sallet"
+					ItemName	"the chargin' targe"
+					"Attack not cancel charge"	1
 				}
-			
+				Item "The Claidheamohmor"
+				Item	"spiral sallet"
+			}
 		}
-		WaveSpawn
+		WaveSpawn // 8 Brass Beast Heavies
 		{
-			Name	"Squad 3"
-			WaitForAllDead	"Squad 2"
-			TotalCurrency	50
-			TotalCount	12
-			MaxActive	6
-			SpawnCount	3
+			Name	"Wave3_Subwave3_CanteenBrass"
+			WaitForAllSpawned	"Wave3_Subwave3_GDemoBurst"
+			TotalCurrency	25
+			TotalCount	8
+			MaxActive	8
+			SpawnCount	4
 			WaitBeforeStarting	5
 			WaitBetweenSpawns	5
 			Where	"spawnbot_main"
 			Where   "spawnbot_left"
 			
-			
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-			
+			TFBot
+			{
+				Template T_TFBot_Heavy_BrassBeast
+			}	
 		}
-		WaveSpawn
+
+		WaveSpawn // 3 GBurst Demos
 		{
-			Name	"Giants 3"
-			WaitForAllDead	"Giants 2"
-			TotalCurrency	100
-			TotalCount	8
-			MaxActive	8
-			SpawnCount	2
-			WaitBeforeStarting	10
-			WaitBetweenSpawns	18
+			Name	"Wave3_Subwave3_GDemoBurst2"
+			WaitForAllSpawned	"Wave3_Subwave3_GDemoBurst"
+			TotalCurrency	50
+			TotalCount	3
+			MaxActive	3
+			SpawnCount	3
+			WaitBeforeStarting  25
+			WaitBetweenSpawns	0
 			Where	"spawnbot_right"
 			
-			
-				TFBot
-				{
-					Scale	1.8
-					MaxVisionRange	1000
-					Template	T_TFBot_Giant_Demo_Burst
-					Item	"the bearded bombardier"
-					Item	"a whiff of the old brimstone"
-				}
-			
+			TFBot
+			{
+				Template	T_TFBot_Giant_Demo_Burst
+				Item	"the bearded bombardier"
+				Item	"a whiff of the old brimstone"
+			}
 		}
-		WaveSpawn
+		WaveSpawn // 10 Claidheamhor Demoknights
 		{
-			Name	"Giants 4"
-			WaitForAllSpawned	"Giants 3"
+			Name	"Wave3_Subwave3_ClaidheamhorDemoknight2"
+			WaitForAllSpawned	"Wave3_Subwave3_GDemoBurst2"
+			TotalCurrency	25
+			TotalCount	10
+			MaxActive	10
+			SpawnCount	1
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	0
+			Where	"spawnbot_right"
+			
+			TFBot
+			{
+				ClassIcon   demoknight_charge_targe
+				Name   "Claidheamhor Demoknight"
+				Template	T_TFBot_Demoman_Knight
+				ItemAttributes
+				{
+					ItemName	"the chargin' targe"
+					"Attack not cancel charge"	1
+				}
+				Item "The Claidheamohmor"
+				Item	"spiral sallet"
+			}
+		}
+		WaveSpawn // 8 Brass Beast Heavies
+		{
+			Name	"Wave3_Subwave3_CanteenBrass2"
+			WaitForAllSpawned	"Wave3_Subwave3_GDemoBurst2"
+			TotalCurrency	25
+			TotalCount	8
+			MaxActive	8
+			SpawnCount	4
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	5
+			Where	"spawnbot_main"
+			Where   "spawnbot_left"
+			
+			TFBot
+			{
+				Template T_TFBot_Heavy_BrassBeast
+			}	
+		}
+
+		WaveSpawn // 1 GDeflector, 1 GKritz Medic and 1 GUber Medic
+		{
+			Name	"Wave3_Subwave3_GHeavy_Deflector"
+			WaitForAllSpawned	"Wave3_Subwave3_GDemoBurst2"
 			TotalCurrency	100
 			TotalCount	3
 			MaxActive	3
 			SpawnCount	3
-			WaitBeforeStarting	20
+			WaitBeforeStarting	10
 			WaitBetweenSpawns	10
 			Where	"spawnbot_right"
 			Squad
@@ -3592,9 +4081,60 @@ population
 				}
 			}
 		}
-		WaveSpawn
+		WaveSpawn // 10 Claidheamhor Demoknights
 		{
-			Name	Support
+			Name	"Wave3_Subwave3_ClaidheamhorDemoknight3"
+			WaitForAllSpawned	"Wave3_Subwave3_GHeavy_Deflector"
+			TotalCurrency	0
+			TotalCount	10
+			MaxActive	10
+			SpawnCount	1
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	0
+			Where	"spawnbot_right"
+			
+			TFBot
+			{
+				ClassIcon   demoknight_charge_targe
+				Name   "Claidheamhor Demoknight"
+				Template	T_TFBot_Demoman_Knight
+				ItemAttributes
+				{
+					ItemName	"the chargin' targe"
+					"Attack not cancel charge"	1
+				}
+				Item "The Claidheamohmor"
+				Item	"spiral sallet"
+			}
+		}
+		// Support
+		WaveSpawn // Support Crit Soldiers
+		{
+			Name	"Wave3_Support"
+			TotalCurrency	0
+			TotalCount	6
+			MaxActive	6
+			SpawnCount	6
+			WaitBeforeStarting	0
+			WaitBetweenSpawns	0
+			Support	Limited
+			Where	"spawnbot_left"
+			Where   "spawnbot_right"
+			Where   "spawnbot_main"
+			
+			TFBot
+			{
+				Class	Soldier
+				Skill	Normal
+				WeaponRestrictions	PrimaryOnly
+				Attributes	"AlwaysCrit"
+				Attributes	"HoldFireUntilFullReload"
+			}
+		}
+		WaveSpawn // Support Crit Soldiers
+		{
+			Name	"Wave3_Support2"
+			WaitForAllSpawned  "Wave3_Support"
 			TotalCurrency	0
 			TotalCount	4
 			MaxActive	2
@@ -3606,26 +4146,18 @@ population
 			Where   "spawnbot_right"
 			Where   "spawnbot_main"
 			
-			
-				TFBot
-				{
-					Health	200
-					Name	Soldier
-					Scale	1.0
-					Class	Soldier
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					Attributes	"AlwaysCrit"
-					Attributes	"HoldFireUntilFullReload"
-				}
-			
+			TFBot
+			{
+				Class	Soldier
+				Skill	Normal
+				WeaponRestrictions	PrimaryOnly
+				Attributes	"AlwaysCrit"
+				Attributes	"HoldFireUntilFullReload"
+			}
 		}
 	}
     Wave   //    Wave: 4/4    Credits: 3000
 	{
-		WaitWhenDone	65
-		Checkpoint	Yes
 		StartWaveOutput
 		{
 			Target	wave_start_relay
@@ -3645,9 +4177,9 @@ population
                 IncludeScript(`tankextensions/drilltank`, getroottable())
                 IncludeScript(`tankextensions/stickytank`, getroottable())
                 IncludeScript(`tankextensions/teletank`, getroottable())
-                TankExt.SetValueOverrides({
-                        COMBATTANK_ROTATE_SPEED_DEFAULT   = 0.6
-                        COMBATTANK_MINIGUN_BULLET_DAMAGE  = 12
+                TankExt.SetValueOverrides(
+				{
+                        COMBATTANK_MINIGUN_BULLET_DAMAGE  = 10
                 })
 			"
 		}
@@ -3660,1594 +4192,7 @@ population
 		{
 		    Line "{B8383B}Hardhat: So#$@#)$&%)(&@)#$(@&*@#%(&^Jamm!@!#%#!$#@%@$#%#%"
 		}
-		WaveSpawn
-		{
-			Name	"Boss Start"
-			FirstSpawnWarningSound "vo/mvm/mght/soldier_mvm_m_dominationheavy02.mp3"
-			TotalCurrency	400
-			TotalCount	12
-			MaxActive	12
-			SpawnCount	12
-			WaitBeforeStarting	0
-			WaitBetweenSpawns	10
-			Where   "spawnbot_main"
-			Squad
-			{
-				TFBot
-				{
-					MaxVisionRange	1200
-					Template	T_TFBot_Chief_Soldier_Atomic
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					ClassIcon	heavy_brass_canteen_nys
-					Health	200
-					Name	"Uber Canteen BrassWeapons"
-					Scale	1.0
-					Class	HeavyWeapons
-					Skill	Normal
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					ItemAttributes
-				    {
-					    ItemName "Battery Canteens"
-					    "Ubercharge" 1
-					    "powerup charges" 1
-				    }
-					Item "Battery Canteens"
-					Item	"the brass beast"
-				}
-				TFBot
-				{
-					Scale	1.0
-					MaxVisionRange	1000
-					WeaponRestrictions	PrimaryOnly
-					Template	T_TFBot_Soldier_Extended_Battalion
-					Attributes	"HoldFireUntilFullReload"
-				}
-			}
-		}
-		WaveSpawn
-		{
-			Name	"Boss Support"
-			FirstSpawnWarningSound "vo/mvm/mght/taunts/scout_mvm_m_taunts11.mp3"
-			TotalCurrency	100
-			TotalCount	4
-			MaxActive	4
-			SpawnCount	2
-			WaitBeforeStarting	15
-			WaitBetweenSpawns	25
-			HideIcon 1
-			Where	"spawnbot_left"
-			Where   "spawnbot_right"
-			Where   "spawnbot_main"
-			
-			
-				TFBot
-				{
-					Scale	1.8
-					WeaponRestrictions	PrimaryOnly
-					Template	T_TFBot_Giant_Scout_FAN
-					Attributes	"AlwaysCrit"
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Final Tank 1"
-			WaitForAllDead	"Boss Start"
-			TotalCurrency	100
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	40
-			WaitBetweenSpawns	40
-			
-			
-				Tank
-				{
-                    ClassIcon         tank_sticky_hellmet
-					Health	12000
-					Name	"Sticky Tank"
-					Speed	75
-					Skin 1
-                    SpawnTemplate "StickyTank"
-					OnKilledOutput
-					{
-						Target	boss_dead_relay
-						Action	Trigger
-					}
-					OnBombDroppedOutput
-					{
-						Target	boss_deploy_relay
-						Action	Trigger
-					}
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Final Tank 2"
-			WaitForAllSpawned	"Final Tank 1"
-			TotalCurrency	100
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	55
-			WaitBetweenSpawns	55
-			
-			
-				Tank
-                {
-			        ClassIcon tank_combat_minigun_rocket
-                    Name "combattank_nolaser_bomb|minigun|rocketpod"
-                    Health 13000
-                    Speed 75
-                    Skin 1
-                    OnBombDroppedOutput
-                    {
-                        Target boss_deploy_relay
-                        Action Trigger
-                    }
-                }
-			
-		}
-		WaveSpawn
-		{
-			Name	"Final Tank 3"
-			WaitForAllSpawned	"Final Tank 2"
-			TotalCurrency	100
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	45
-			WaitBetweenSpawns	45
-			
-			
-				Tank
-                {
-			        ClassIcon tank_combat_minigun_rocket
-                    Name "combattank_nolaser_bomb|minigun|rocketpod"
-                    Health 14000
-                    Speed 75
-                    Skin 1
-                    OnBombDroppedOutput
-                    {
-                        Target boss_deploy_relay
-                        Action Trigger
-                    }
-                }
-			
-		}
-		WaveSpawn
-		{
-			Name	"Final Tank 4"
-			WaitForAllSpawned	"Final Tank 3"
-			TotalCurrency	100
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	1
-			WaitBetweenSpawns	1
-			
-				Tank
-				{
-					ClassIcon  Blimp2_lite
-					Health	15000
-					Name	"Blimp"
-					Speed	75
-					Skin 1
-					Template "Blimp"
-					StartingPathTrackNode     Blimp_path_upper_1
-					OnKilledOutput
-					{
-						Target	boss_dead_relay
-						Action	Trigger
-					}
-					OnBombDroppedOutput
-					{
-						Target	boss_deploy_relay
-						Action	Trigger
-					}
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 1"
-			WaitForAllDead	"Boss Start"
-			TotalCurrency	100
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	10
-			WaitBetweenSpawns	22
-			Where   "spawnbot_right"
-			
-				TFBot
-				{
-				    ClassIcon     heavy_malfunction_giant
-					Health	10000
-					Name	"Giant Malfunctioning Heavy"
-					Scale	1.8
-					Template	T_TFBot_Giant_Heavyweapons
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
-					CharacterAttributes
-					{
-					    "mod minigun can holster while spinning" 1
-						"dmg taken from crit reduced"	0.8
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1600
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	"iron curtain"
-						"damage bonus"	1.5
-					}
-					ItemAttributes
-					{
-						ItemName	tf_weapon_shotgun_hwg
-						"fire rate bonus"	2.5
-						"damage penalty"	0.5
-						"faster reload rate"	0.1
-						"bullets per shot bonus"	10
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"iron curtain"
-					Item	"fists of steel"
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 2"
-			WaitForAllSpawned	"Giants 1"
-			TotalCurrency	100
-			TotalCount  1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	22
-			WaitBetweenSpawns	22
-			Where   "spawnbot_right"
-			
-			
-				TFBot
-				{
-				    ClassIcon    pyro_malfunction_giant
-					Health	6000
-					Name	"Giant Malfunctioning Pyro"
-					Scale	1.8
-					MaxVisionRange	1200
-					Template	T_TFBot_Giant_Pyro
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models/bots/pyro/bot_pyro_gibby.mdl"
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	tf_weapon_flamethrower
-						"airblast pushback scale"	2.5
-						"mult airblast refire time"	60
-					}
-					ItemAttributes
-					{
-						ItemName	"the detonator"
-						"fire rate bonus"	0.3
-						"faster reload rate"	0.7
-					}
-					CharacterAttributes
-					{
-						"dmg taken from crit reduced"	0.8
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"the detonator"
-					Item	"sharpened volcano fragment"
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 3"
-			WaitForAllSpawned	"Giants 2"
-			TotalCurrency	100
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	22
-			WaitBetweenSpawns	22
-			Where   "spawnbot_right"
-			
-				TFBot
-				{
-				    ClassIcon   soldier_malfunction_giant
-					Health	7600
-					Name	"Giant Malfunctioning Soldier"
-					Scale	1.8
-					MaxVisionRange	1200
-					Template	T_TFBot_Giant_Soldier
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	tf_weapon_rocketlauncher
-						"clip size upgrade atomic"	26
-						"fire rate bonus"	0.2
-						"projectile spread angle penalty"	5
-						"faster reload rate"	0.22
-					}
-					ItemAttributes
-					{
-						ItemName	"the righteous bison"
-						"fire rate bonus"	0.5
-						"clip size bonus"	2.5
-						"faster reload rate"	0.7
-					}
-					CharacterAttributes
-					{
-						"dmg taken from crit reduced"	0.8
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"the righteous bison"
-					Item	"the escape plan"
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 4"
-			WaitForAllSpawned	"Giants 3"
-			TotalCurrency	300
-			TotalCount	2
-			MaxActive	2
-			SpawnCount	2
-			WaitBeforeStarting	22
-			WaitBetweenSpawns	22
-			Where   "spawnbot_right"
-		
-			
-				TFBot
-				{
-					ClassIcon	demo_malfunction_giant
-					Health	6600
-					Name	"Giant Malfunctioning Demoman"
-					Scale	1.8
-					Class	Demoman
-					Skill	Expert
-					MaxVisionRange	1200
-					Attributes	"MiniBoss"
-					Attributes	"HoldFireUntilFullReload"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\demo\bot_demo_gibby.mdl"
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	tf_weapon_grenadelauncher
-						"faster reload rate"	0.65
-						"fire rate bonus"	0.1
-						"clip size upgrade atomic"	7
-						"projectile spread angle penalty"	0.5
-						"Projectile speed increased"	1.1
-					}
-					ItemAttributes
-					{
-						ItemName	tf_weapon_pipebomblauncher
-						"stickybomb charge rate"	0.5
-						"Projectile range increased"	1.8
-						"fire rate bonus"	0.5
-						"faster reload rate"	0.7
-					}
-					ItemAttributes
-					{
-						ItemName	"the scotsman's skullcutter"
-						"critboost on kill"	5
-					}
-					CharacterAttributes
-					{
-						"dmg taken from crit reduced"	0.8
-						"move speed bonus"	0.5
-						"damage force reduction"	0.4
-						"airblast vulnerability multiplier"	0.4
-						"override footstep sound set"	4
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"the scotsman's skullcutter"
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 5"
-			TotalCurrency	100
-			TotalCount	2
-			MaxActive	2
-			SpawnCount	1
-			WaitBeforeStarting	40
-			WaitBetweenSpawns	50
-			Where	"spawnbot_left"
-			Where   "spawnbot_right"
-			
-			
-				TFBot
-				{
-				    ClassIcon       soldier_barrage_directhit
-					Name	"Giant Direct Hit Barrage Soldier"
-					Scale	1.8
-					MaxVisionRange	1000
-					Template	T_TFBot_Giant_Soldier
-					ItemAttributes
-					{
-						ItemName	"the direct hit"
-						"fire rate bonus"	0.2
-						"faster reload rate"	0.22
-						"clip size upgrade atomic"	26
-						"projectile spread angle penalty"	5
-						"Projectile speed decreased"	0.4
-					}
-					CharacterAttributes
-					{
-						"health regen"	40
-						"airblast vertical vulnerability multiplier"	0.1
-					}
-					Item	"the direct hit"
-				}
-			
-		}
-		WaveSpawn
-		{
-			Name	"Giants 6"
-			WaitForAllSpawned	"Giants 4"
-			TotalCurrency	100
-			TotalCount	4
-			MaxActive	4
-			SpawnCount	4
-			WaitBeforeStarting	16
-			WaitBetweenSpawns	10
-			Where   "spawnbot_right"
-			Squad
-			{
-				TFBot
-				{
-				    ClassIcon     heavy_malfunction_giant
-					Health	10000
-					Name	"Giant Malfunctioning Heavy"
-					Scale	1.8
-					Template	T_TFBot_Giant_Heavyweapons
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
-					CharacterAttributes
-					{
-					    "mod minigun can holster while spinning" 1
-						"dmg taken from crit reduced"	0.8
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1600
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	"iron curtain"
-						"damage bonus"	1.5
-					}
-					ItemAttributes
-					{
-						ItemName	tf_weapon_shotgun_hwg
-						"fire rate bonus"	2.5
-						"damage penalty"	0.5
-						"faster reload rate"	0.1
-						"bullets per shot bonus"	10
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"iron curtain"
-					Item	"fists of steel"
-				}
-				TFBot
-				{
-				    ClassIcon    pyro_malfunction_giant
-					Health	6000
-					Name	"Giant Malfunctioning Pyro"
-					Scale	1.8
-					MaxVisionRange	1200
-					Template	T_TFBot_Giant_Pyro
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models/bots/pyro/bot_pyro_gibby.mdl"
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	tf_weapon_flamethrower
-						"airblast pushback scale"	2.5
-						"mult airblast refire time"	60
-					}
-					ItemAttributes
-					{
-						ItemName	"the detonator"
-						"fire rate bonus"	0.3
-						"faster reload rate"	0.7
-					}
-					CharacterAttributes
-					{
-						"dmg taken from crit reduced"	0.8
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"the detonator"
-					Item	"sharpened volcano fragment"
-				}
-				TFBot
-				{
-				    ClassIcon   soldier_malfunction_giant
-					Health	7600
-					Name	"Giant Malfunctioning Soldier"
-					Scale	1.8
-					MaxVisionRange	1200
-					Template	T_TFBot_Giant_Soldier
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	tf_weapon_rocketlauncher
-						"clip size upgrade atomic"	26
-						"fire rate bonus"	0.2
-						"projectile spread angle penalty"	5
-						"faster reload rate"	0.22
-					}
-					ItemAttributes
-					{
-						ItemName	"the righteous bison"
-						"fire rate bonus"	0.5
-						"clip size bonus"	2.5
-						"faster reload rate"	0.7
-					}
-					CharacterAttributes
-					{
-						"dmg taken from crit reduced"	0.8
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"the righteous bison"
-					Item	"the escape plan"
-				}
-				TFBot
-				{
-					ClassIcon	demo_malfunction_giant
-					Health	6600
-					Name	"Giant Malfunctioning Demoman"
-					Scale	1.8
-					Class	Demoman
-					Skill	Expert
-					MaxVisionRange	1200
-					Attributes	"MiniBoss"
-					Attributes	"HoldFireUntilFullReload"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\demo\bot_demo_gibby.mdl"
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 1200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					ItemAttributes
-					{
-						ItemName	tf_weapon_grenadelauncher
-						"faster reload rate"	0.65
-						"fire rate bonus"	0.1
-						"clip size upgrade atomic"	7
-						"projectile spread angle penalty"	0.5
-						"Projectile speed increased"	1.1
-					}
-					ItemAttributes
-					{
-						ItemName	tf_weapon_pipebomblauncher
-						"stickybomb charge rate"	0.5
-						"Projectile range increased"	1.8
-						"fire rate bonus"	0.5
-						"faster reload rate"	0.7
-					}
-					ItemAttributes
-					{
-						ItemName	"the scotsman's skullcutter"
-						"critboost on kill"	5
-					}
-					CharacterAttributes
-					{
-						"dmg taken from crit reduced"	0.8
-						"move speed bonus"	0.5
-						"damage force reduction"	0.4
-						"airblast vulnerability multiplier"	0.4
-						"override footstep sound set"	4
-					}
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	0.8
-					        }
-						}
-					}
-					Item	"the scotsman's skullcutter"
-				}
-			}
-		}
-		WaveSpawn
-		{
-			Name	Commons
-			WaitForAllDead	"Boss Start"
-			TotalCurrency	300
-			TotalCount	60
-			MaxActive	14
-			SpawnCount	2
-			WaitBeforeStarting	5
-			WaitBetweenSpawns	5
-			Where	"spawnbot_left"
-			Where   "spawnbot_right"
-			Where   "spawnbot_main"
-			RandomChoice
-			{
-				TFBot
-				{
-					ClassIcon	heavy_malfunction
-					Health	600
-					Name	"Malfunctioning HeavyWeapons"
-					Scale	1.15
-					Class	HeavyWeapons
-					Skill	Normal
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel     "models\bots\heavy\bot_heavy_gibby.mdl"
-					MaxVisionRange	1000
-					CharacterAttributes
-					{
-					    "mod minigun can holster while spinning" 1
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 200
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 8
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.4
-					        }
-						}
-					}
-				}
-				TFBot
-				{
-					ClassIcon	pyro_malfunction
-					Health	350
-					Name	"Malfunctioning Pyro"
-					Class	Pyro
-					Skill	Normal
-					Scale   1.15
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models/bots/pyro/bot_pyro_gibby.mdl"
-					MaxVisionRange	1000
-					Attributes	"HoldFireUntilFullReload"
-					CharacterAttributes
-					{
-					    "dmg taken from crit reduced"	0.5
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 100
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 6
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.3
-					        }
-						}
-					}
-				}
-				TFBot
-				{
-					ClassIcon	soldier_malfunction
-					Health	400
-					Name	"Malfunctioning Soldier"
-					Scale	1.15
-					Class	Soldier
-					Skill	Normal
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\soldier\bot_soldier_gibby.mdl"
-					MaxVisionRange	1000
-					Attributes	"HoldFireUntilFullReload"
-					CharacterAttributes
-					{
-					    "dmg taken from crit reduced"	0.5
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 150
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 6
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.5
-					        }
-						}
-					}
-				}
-				TFBot
-				{
-					ClassIcon	demo_malfunction
-					Health	350
-					Name	"Malfunctioning Demoman"
-					Scale	1.0
-					Class	Demoman
-					Skill	Normal
-					Tag	"bot_giant"
-					SpawnTemplate "random3eventchangeattributes"
-					UseCustomModel       "models\bots\demo\bot_demo_gibby.mdl"
-					MaxVisionRange	1000
-					Attributes	"HoldFireUntilFullReload"
-					CharacterAttributes
-					{
-					    "dmg taken from crit reduced"	0.5
-					}
-					ChangeAttributes 
-                    {
-					    Name "D"
-						IfHealthBelow 100
-						Delay 0
-						Cooldown 0
-						Repeats 1
-						IfSeeTarget 0
-					}
-					FireInput
-                    {
-                        Target "GDXPhase1"
-                        Action PickRandomShuffle
-                        Delay 0.1
-                        Cooldown 6
-                    }
-					EventChangeAttributes
-					{
-					    "A"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Primary"
-                            }
-                        }
-                        "B"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Secondary"
-                            }
-                        }
-                        "C"
-                        {
-                            WeaponSwitch
-                            {
-                                Delay 0.1
-                                Repeats 50
-                                Type "Melee"
-                            }
-                        }
-						D
-						{
-						    MaxVisionRange	500
-							WeaponRestrictions	MeleeOnly
-							CharacterAttributes
-					        {
-						        "move speed bonus"	1.5
-					        }
-						}
-					}
-				}
-			}
-		}
-		WaveSpawn
-		{
-			Name	"Boss Squad"
-			StartWaveWarningSound "music/hl2_song16.mp3"
-			WaitForAllDead	"Final Tank 4"
-			TotalCurrency	500
-			TotalCount	2
-			MaxActive	2
-			SpawnCount	2
-			WaitBeforeStarting	1
-			WaitBetweenSpawns	1
-			HideIcon 1
-			Where	"spawnbot_boss_spawn"
-			
-			    TFBot
-				{
-				    Name "Guardian"
-				    Template T_TFBot_Giant_Soldier_Guardian
-				}
-		}
-		WaveSpawn
-        {
-            Name "Boss Uber Removal Trigger"
-            WaitForAllDead "Boss Squad"
-            TotalCount 0
-            FirstSpawnOutput "w5_phase2_relay,Trigger,,0"
-        }
-		WaveSpawn
-		{
-			Name	Finale
-			WaitForAllSpawned	"Boss Squad"
-			WaitForAllDead	"Final Tank 4"
-			TotalCurrency	500
-			TotalCount	1
-			MaxActive	1
-			SpawnCount	1
-			WaitBeforeStarting	1
-			WaitBetweenSpawns	1
-			Where	"spawnbot_boss_spawn"
-			
-			    TFBot
-				{
-				    Name "Short Signal"
-				    Template T_TFBot_Signal
-					SpawnTemplate "W4BossPT"
-					AddCond
-					{
-					    "Index" 5
-					}
-				}
-		}
-		WaveSpawn
-		{
-			Name	"Boss Support"
-			WaitForAllDead	"Giants 6"
-			TotalCurrency	0
-			TotalCount	2
-			MaxActive	2
-			SpawnCount	1
-			WaitBeforeStarting	22
-			WaitBetweenSpawns	22
-			Support	1
-			Where	"spawnbot_main"
-			RandomChoice
-			{
-					TFBot
-					{
-					    ClassIcon   soldier_bigrock_burst
-						Name	"Giant Bigrock Burst Soldier"
-						Scale	1.8
-						MaxVisionRange	1000
-						Template	T_TFBot_Soldier_BurstFire
-						Item	"eotl_winter_coat"
-						Item	"the hellmet"
-					}
-					TFBot
-					{
-						Scale	1.8
-						MaxVisionRange	1000
-						Template	T_TFBot_Giant_Pyro_Flare_Spammer
-					}
-					TFBot
-					{
-					    ClassIcon   heavy_gauntlet_nys
-						Name	"Giant Gauntlet Heavy"
-						Scale	1.8
-						WeaponRestrictions	MeleeOnly
-						Template	T_TFBot_Giant_Heavyweapons
-						Item	"fists of steel"
-						Item	"war head"
-					}
-				
-			}
-		}
+		// REDBOTS and Hardhat
 		WaveSpawn
 		{
 			Name	Redbot
@@ -5257,13 +4202,12 @@ population
 			SpawnCount	1
 			WaitBeforeStarting	5
 			WaitBetweenSpawns	60
-			HideIcon 1
 			Support	1
 			Where	"spawnbot_redbot"
 			
 				    TFBot
 					{
-					    ClassIcon  red2_lite
+					    ClassIcon  soldier_allyred
 					    Action  Mobber
 						Scale	1.8
 						MaxVisionRange	1000
@@ -5289,8 +4233,7 @@ population
 			HideIcon 1
 			Support	1
 			Where	"spawnbot_redbot"
-			Squad
-			{
+			
 				TFBot
 				{
 					ClassIcon	engineer
@@ -5323,6 +4266,491 @@ population
 					Item	"the trencher's topper"
 					Item	"rocket operator"
 				}
+			
+		}
+		// Subwave 1
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave1_Boss_Start"
+			FirstSpawnWarningSound "vo/mvm/mght/soldier_mvm_m_dominationheavy02.mp3"
+			TotalCurrency	400
+			TotalCount	11
+			MaxActive	11
+			SpawnCount	11
+			WaitBeforeStarting	0
+			WaitBetweenSpawns	0
+			Where   "spawnbot_main"
+			Squad
+			{
+				TFBot
+				{
+					MaxVisionRange	1200
+					Template	T_TFBot_Chief_Soldier_Atomic
+					Health 30000
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BrassBeast
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave1_Boss_Support"
+			FirstSpawnWarningSound "vo/mvm/mght/taunts/scout_mvm_m_taunts11.mp3"
+			TotalCurrency	50
+			TotalCount	2
+			MaxActive	2
+			SpawnCount	2
+			WaitBeforeStarting	15
+			WaitBetweenSpawns	0
+			Where	"spawnbot_left"
+			Where   "spawnbot_right"
+			Where   "spawnbot_main"
+			
+			
+				TFBot
+				{
+					Scale	1.8
+					WeaponRestrictions	PrimaryOnly
+					Template	T_TFBot_Giant_Scout_FAN
+					Attributes	"AlwaysCrit"
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave1_Boss_Support2"
+			WaitForAllSpawned "Wave4_Subwave1_Boss_Support"
+			TotalCurrency	25
+			TotalCount	2
+			MaxActive	2
+			SpawnCount	2
+			WaitBeforeStarting	15
+			WaitBetweenSpawns	0
+			Where	"spawnbot_left"
+			Where   "spawnbot_right"
+			Where   "spawnbot_main"
+			
+			
+				TFBot
+				{
+					Scale	1.8
+					WeaponRestrictions	PrimaryOnly
+					Template	T_TFBot_Giant_Scout_FAN
+					Attributes	"AlwaysCrit"
+				}
+			
+		}
+        WaveSpawn
+		{
+			Name	"Wave4_Subwave1_Boss_Support3"
+			WaitForAllSpawned "Wave4_Subwave1_Boss_Support2"
+			FirstSpawnWarningSound "vo/mvm/mght/soldier_mvm_m_battlecry01.mp3"
+			TotalCurrency	25
+			TotalCount	2
+			MaxActive	2
+			SpawnCount	2
+			WaitBeforeStarting	15
+			WaitBetweenSpawns	0
+			Where	"spawnbot_left"
+			Where   "spawnbot_right"
+			Where   "spawnbot_main"
+			
+			
+				TFBot
+				{
+					ClassIcon   soldier_bigrock_burst
+					Name	"Giant Giga Burst Soldier"
+					Scale	1.8
+					MaxVisionRange	1000
+					Template	T_TFBot_Soldier_BurstFire
+					Item	"eotl_winter_coat"
+					Item	"the hellmet"
+				}
+			
+		}
+		// Subwave 2
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_FinalTanks1"
+			WaitForAllDead	"Wave4_Subwave1_Boss_Start"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	14
+			WaitBetweenSpawns	0
+			
+			
+				Tank
+				{
+                    ClassIcon         tank_sticky_hellmet
+					Health	12000
+					Name	"Sticky Tank"
+					Speed	75
+					Skin 1
+                    SpawnTemplate "StickyTank"
+					OnKilledOutput
+					{
+						Target	boss_dead_relay
+						Action	Trigger
+					}
+					OnBombDroppedOutput
+					{
+						Target	boss_deploy_relay
+						Action	Trigger
+					}
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_FinalTanks2"
+			WaitForAllSpawned	"Wave4_Subwave2_FinalTanks1"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	18
+			WaitBetweenSpawns	0
+			
+			
+				Tank
+                {
+			        ClassIcon tank_combat_minigun_rocket
+                    Name "combattank_nolaser_bomb|minigun|rocketpod"
+                    Health 13000
+                    Speed 75
+                    Skin 1
+                    OnBombDroppedOutput
+                    {
+                        Target boss_deploy_relay
+                        Action Trigger
+                    }
+                }
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_FinalBlimp"
+			WaitForAllSpawned	"Wave4_Subwave2_FinalTanks2"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	1
+			WaitBetweenSpawns	1
+			
+				Tank
+				{
+					ClassIcon  Blimp2_sticky_lite
+					Health	15000
+					Name	"Blimp"
+					Speed	75
+					Skin 1
+					SpawnTemplate "StickyBlimp"
+					StartingPathTrackNode     Blimp_path_upper_1
+					OnKilledOutput
+					{
+						Target	boss_dead_relay
+						Action	Trigger
+					}
+					OnBombDroppedOutput
+					{
+						Target	boss_deploy_relay
+						Action	Trigger
+					}
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_GMalfunctioningHeavy"
+			WaitForAllDead	"Wave4_Subwave1_Boss_Start"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	10
+			WaitBetweenSpawns	22
+			Where   "spawnbot_right"
+			
+				TFBot
+				{
+				    Template T_TFBot_Giant_Heavy_Malfunction
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_GMalfunctioningPyro"
+			WaitForAllSpawned	"Wave4_Subwave2_GMalfunctioningHeavy"
+			TotalCurrency	100
+			TotalCount  1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	22
+			WaitBetweenSpawns	22
+			Where   "spawnbot_right"
+			
+			
+				TFBot
+				{
+				    Template T_TFBot_Giant_Pyro_Malfunction
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_GMalfunctioningSoldier"
+			WaitForAllSpawned	"Wave4_Subwave2_GMalfunctioningPyro"
+			TotalCurrency	100
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	22
+			WaitBetweenSpawns	22
+			Where   "spawnbot_right"
+			
+				TFBot
+				{
+				    Template T_TFBot_Giant_Soldier_Malfunction
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_GMalfunctioningDemoman"
+			WaitForAllSpawned	"Wave4_Subwave2_GMalfunctioningSoldier"
+			TotalCurrency	300
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	22
+			WaitBetweenSpawns	22
+			Where   "spawnbot_right"
+		
+			
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Malfunction
+				}
+			
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_GMalfunctionsEvery"
+			WaitForAllSpawned	"Wave4_Subwave2_GMalfunctioningDemoman"
+			TotalCurrency	300
+			TotalCount	4
+			MaxActive	4
+			SpawnCount	4
+			WaitBeforeStarting	16
+			WaitBetweenSpawns	10
+			Where   "spawnbot_right"
+			Squad
+			{
+				NoFormation 1 [$SIGSEGV]
+				
+				TFBot
+				{
+				    Template T_TFBot_Giant_Heavy_Malfunction
+				}
+				TFBot
+				{
+				    Template T_TFBot_Giant_Pyro_Malfunction
+				}
+				TFBot
+				{
+				    Template T_TFBot_Giant_Demoman_Malfunction
+				}
+				TFBot
+				{
+				    Template T_TFBot_Giant_Soldier_Malfunction
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Subwave2_MalfunctionCommons"
+			WaitForAllDead	"Wave4_Subwave1_Boss_Start"
+			TotalCurrency	300
+			TotalCount	60
+			MaxActive	14
+			SpawnCount	2
+			WaitBeforeStarting	5
+			WaitBetweenSpawns	5
+			Where	"spawnbot_left"
+			Where   "spawnbot_right"
+			Where   "spawnbot_main"
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Malfunction
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Malfunction
+				}
+			}
+		}
+		// Boss Subwave Check
+		WaveSpawn
+		{
+			Name "Wave4_Boss_Subwave_Check"
+			WaitForAllDead "Wave4_Subwave2_FinalBlimp"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Boss_Subwave_Check"
+			WaitForAllDead "Wave4_Subwave2_GMalfunctionsEvery"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Boss_Subwave_Check"
+			WaitForAllDead "Wave4_Subwave2_MalfunctionCommons"
+		}
+		// Boss Subwave
+		WaveSpawn
+		{
+			Name	"Wave4_Boss_Subwave_BossGuardians"
+			StartWaveWarningSound "music/hl2_song16.mp3"
+			WaitForAllSpawned	"Wave4_Boss_Subwave_Check"
+			TotalCurrency	500
+			TotalCount	2
+			MaxActive	2
+			SpawnCount	2
+			WaitBeforeStarting	1
+			WaitBetweenSpawns	1
+			Where	"spawnbot_boss_spawn"
+			
+			    TFBot
+				{
+				    Name "Signal Jammer Guardian"
+				    Template T_TFBot_Giant_Soldier_Guardian
+				}
+		}
+		WaveSpawn
+        {
+            Name "Boss Uber Removal Trigger"
+            WaitForAllDead "Wave4_Boss_Subwave_BossGuardians"
+            TotalCount 0
+            FirstSpawnOutput 
+			{
+				Target w5_phase2_relay
+				Action Trigger
+			}
+        }
+		WaveSpawn
+		{
+			Name	"Wave4_Boss_Subwave_Short_Signal"
+			WaitForAllSpawned	"Wave4_Boss_Subwave_Check"
+			TotalCurrency	500
+			TotalCount	1
+			MaxActive	1
+			SpawnCount	1
+			WaitBeforeStarting	1
+			WaitBetweenSpawns	1
+			Where	"spawnbot_boss_spawn"
+			
+			    TFBot
+				{
+				    Name "Short Signal"
+				    Template T_TFBot_Signal
+					SpawnTemplate "W4BossPT"
+					AddCond
+					{
+					    "Index" 5
+					}
+				}
+		}
+		WaveSpawn
+		{
+			Name	"Wave4_Boss_Subwave_Boss_Support"
+			WaitForAllDead	"Wave4_Boss_Subwave_Check"
+			TotalCurrency	0
+			TotalCount	2
+			MaxActive	2
+			SpawnCount	1
+			WaitBeforeStarting	13
+			WaitBetweenSpawns	13
+			Support	1
+			Where	"spawnbot_main"
+			RandomChoice
+			{
+				TFBot
+				{
+					ClassIcon   soldier_bigrock_burst
+					Name	"Giant Giga Burst Soldier"
+					Scale	1.8
+					MaxVisionRange	1000
+					Template	T_TFBot_Soldier_BurstFire
+					Item	"eotl_winter_coat"
+					Item	"the hellmet"
+				}
+				TFBot
+				{
+					Scale	1.8
+					MaxVisionRange	1000
+					Template	T_TFBot_Giant_Pyro_Flare_Spammer
+				}
+				TFBot
+				{
+					ClassIcon   heavy_gauntlet_nys
+					Name	"Giant Gauntlet Heavy"
+					Scale	1.8
+					WeaponRestrictions	MeleeOnly
+					Template	T_TFBot_Giant_Heavyweapons
+					Item	"fists of steel"
+					Item	"war head"
+				}
+				
 			}
 		}
 	}
