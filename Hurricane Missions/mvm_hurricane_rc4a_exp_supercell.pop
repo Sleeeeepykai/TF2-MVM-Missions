@@ -38,11 +38,12 @@ WaveSchedule
 			"custom kill icon" "gloves"
 			"clip size upgrade atomic" 8.0
 			"mult projectile scale" 1.4
-			"projectile speed decreased" 0.7
+			"projectile speed decreased" 0.65
 			"blast radius decreased" 0.2
 			"mod projectile heat seek power" 360
 			"mod projectile heat aim error" 360
-			"mod projectile heat aim time" 1
+			"mod projectile heat aim time" 0.25
+			"mod projectile heat no predict target speed" 1
         }
 	}
 
@@ -67,6 +68,8 @@ WaveSchedule
                 "teamnum"          "3"
                 "$weaponname"    "punchieboss_weapon"
                 "$firetime"      "1.0" //Delay between shots for $StartFiring input
+
+				"$OnFire" "!activator,Skin,1,0,-1"
             }
 		}
 		PunchieBoss2Logic
@@ -86,6 +89,8 @@ WaveSchedule
                 "teamnum"          "3"
                 "$weaponname"    "punchieboss_weapon"
                 "$firetime"      "1.0" //Delay between shots for $StartFiring input
+
+				"$OnFire" "!activator,Skin,1,0,-1"
             }
 		}
 		RNGTank //a tank that changes color
@@ -188,48 +193,6 @@ WaveSchedule
 				"OutColor"   "rngtankboss,Color,,0,-1"
 			}
 		}
-		PunchieProjectileFix
-        {
-			OnSpawnOutput
-			{
-				Target !parent
-				Action skin
-				Param 1
-			}
-        }
-		EngiLaserPointer
-		{
-			KeepAlive 1
-			RemoveIfKilled "EngiBeam"
-
-			OnSpawnOutput
-			{
-				Target EngiBeam
-				Action Kill
-				Delay 2.5
-			}
-			env_beam
-			{
-				"targetname" "EngiBeam"
-				"origin" "0 0 0"
-				"life" "2"
-				"boltwidth" "10"
-				"LightningStart" "EngiBeam"
-				"LightningEnd" "EngiBeamEnd"
-				"renderamt" "255"
-				"rendercolor" "0 0 255"
-				"NoiseAmplitude" "0"
-				"texture" "sprites/laserbeam.vmt"
-			}
-			prop_dynamic
-			{
-				"targetname" "EngiBeamEnd"
-				"origin" "0 0 80"
-				"model" "models/empty.mdl"
-				"disableshadows" "1"
-				"solid" "0"
-			}
-		}
 	}
 
 	//// ROBOT TEMPLATES ////
@@ -244,6 +207,7 @@ WaveSchedule
 			Skill Expert
 			Health 10000
 			Attributes MiniBoss
+			Attributes SuppressFire
 			Attributes UseBossHealthBar
 			WeaponRestrictions MeleeOnly
 
@@ -271,11 +235,13 @@ WaveSchedule
 				"fire input on kill" "!activator^$taunt"
 			}
 
-			PlayerShootTemplate
-			{
-				Name PunchieProjectileFix
-				AttachToProjectile 1
-				ItemName "punchieboss_weapon"
+			FireWeapon [$SIGSEGV]  //Periodically fires weapon
+            {
+				Delay 0
+				Cooldown 1
+				Repeats 0
+				IfSeeTarget 1
+				Duration 0.5
 			}
 		}
 		T_TFBot_Giant_Heavy_AndThis
@@ -286,6 +252,7 @@ WaveSchedule
 			Skill Expert
 			Health 10000
 			Attributes MiniBoss
+			Attributes SuppressFire
 			Attributes UseBossHealthBar
 			WeaponRestrictions MeleeOnly
 
@@ -313,11 +280,13 @@ WaveSchedule
 				"fire input on kill" "!activator^$taunt"
 			}
 
-			PlayerShootTemplate
-			{
-				Name PunchieProjectileFix
-				AttachToProjectile 1
-				ItemName "punchieboss_weapon"
+			FireWeapon [$SIGSEGV]  //Periodically fires weapon
+            {
+				Delay 0
+				Cooldown 1
+				Repeats 0
+				IfSeeTarget 1
+				Duration 0.5
 			}
 		}
 
@@ -402,10 +371,15 @@ WaveSchedule
 				"override projectile type" 12
 				"mult projectile count" 15
 				"ignores other projectiles" 1
-				"projectile spread angle penalty" 3
+				"projectile spread angle penalty" 2
 				"projectile acceleration" 50000
 				"projectile acceleration start time" 2
 				"projectile trail particle" "flare_glow"
+			}
+
+			ShootTemplate
+			{
+				Name EngiLaserPointer
 			}
 		}
 
@@ -549,8 +523,6 @@ WaveSchedule
 	//// WAVES ////
 
 	// Wave 1 Notes
-	// Try out mild homing on the punchies as an aim corrector, might make them more engaging to players
-	// Make the glove projectiles blue
 	Wave
 	{
 		InitWaveOutput
@@ -1704,8 +1676,6 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// Give the engie a laser pointer to show where his projectiles will go
-	// Maybe slow him down
 	Wave
 	{
 		InitWaveOutput
@@ -2141,7 +2111,6 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
-	// Fix the rainbow tanks
 	Wave
 	{
 		InitWaveOutput
@@ -2844,6 +2813,23 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		WaveSpawn // 1 Chief Giga-Shotgun Engineer
+		{
+			Name "Wave4_Subwave1_TheGigaEngineer"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 140
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Engineer_Gigamaxxing
+			}
+		}
 	}
 	// Wave 8 Notes
 	Wave
