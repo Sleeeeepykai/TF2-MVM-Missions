@@ -44,6 +44,7 @@ WaveSchedule
 			"mod projectile heat aim error" 360
 			"mod projectile heat aim time" 0.25
 			"mod projectile heat no predict target speed" 1
+			"fire input on kill" "!activator^$taunt"
         }
 	}
 
@@ -205,7 +206,7 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_champ
 			Skill Expert
-			Health 10000
+			Health 8000
 			Attributes MiniBoss
 			Attributes SuppressFire
 			Attributes UseBossHealthBar
@@ -250,7 +251,7 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_champ_flipped
 			Skill Expert
-			Health 10000
+			Health 8000
 			Attributes MiniBoss
 			Attributes SuppressFire
 			Attributes UseBossHealthBar
@@ -374,7 +375,7 @@ WaveSchedule
 				"ignores other projectiles" 1
 				"projectile spread angle penalty" 2
 				"projectile acceleration" 8000
-				"projectile acceleration start time" 2
+				"projectile acceleration start time" 1.5
 				"projectile trail particle" "flare_glow"
 			}
 		}
@@ -446,7 +447,7 @@ WaveSchedule
 				"fire rate bonus" 0.2
 				"faster reload rate" 0.22
 				"clip size upgrade atomic" 26.0
-				"projectile speed decreased" 0.6
+				"projectile speed decreased" 0.75
 				"projectile spread angle penalty" 5
 			}
 		}
@@ -469,6 +470,21 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
+	Mission // Spy (Wave 2)
+	{
+		Objective Spy
+		Where spawnbot_mission_spy
+		BeginAtWave 2
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 2
+		
+		TFBot
+		{
+			Template T_TFBot_Sniper
+		}
+	}
 	Mission // Sniper (Wave 3)
 	{
 		Objective Sniper
@@ -476,7 +492,7 @@ WaveSchedule
 		Where spawnbot_mission_sniper2
 		BeginAtWave 3
 		RunForThisManyWaves 1
-		InitialCooldown 5
+		InitialCooldown 30
 		CooldownTime 35
 		DesiredCount 3
 		
@@ -519,7 +535,6 @@ WaveSchedule
 	//// WAVES ////
 
 	// Wave 1 Notes
-	// Consider nerfing punchie boss HP to 8k each
 	Wave
 	{
 		InitWaveOutput
@@ -626,29 +641,25 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GDemo and 4 Heavies
+		WaveSpawn // 1 GDemo and 3 Heavies
 		{
 			Name "Wave1_Subwave2_GDemo"
-			WaitForAllDead "Wave1_Subwave1_BOSSTIME"
+			WaitForAllSpawned "Wave1_Subwave1_BOSSTIME"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 40
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
 				}
 				TFBot
 				{
@@ -688,30 +699,25 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GDemo and 4 Heavies
+		WaveSpawn // 1 GDemo and 3 Heavies
 		{
 			Name "Wave1_Subwave2_GDemo2"
 			WaitForAllSpawned "Wave1_Subwave2_GDemo"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 12
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			Squad
 			{
-				
+				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
 				}
 				TFBot
 				{
@@ -751,30 +757,25 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GDemo and 4 Heavies
+		WaveSpawn // 1 GDemo and 3 Heavies
 		{
 			Name "Wave1_Subwave2_GDemo3"
 			WaitForAllSpawned "Wave1_Subwave2_GDemo2"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 12
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			Squad
 			{
-				
+				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman
-				}
-				TFBot
-				{
-					Class Heavy
-					Skill Easy
 				}
 				TFBot
 				{
@@ -1194,7 +1195,7 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// Reduce deflector heavy count perchance?
+	// Perhaps have deflector heavies on the uncharged burst fire soldiers? 
 	Wave
 	{
 		InitWaveOutput
@@ -1244,7 +1245,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 4 Burst Demos
+		WaveSpawn // 1 GBurst Soldier and 4 Demomen
 		{
 			Name "Wave3_Subwave1_GBurstSoldier"
 			Where spawnbot
@@ -1257,6 +1258,8 @@ WaveSchedule
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst
@@ -1273,19 +1276,23 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 			}
 		}
@@ -1307,7 +1314,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 4 Burst Demos
+		WaveSpawn // 1 GBurst Soldier and 4 Demomen
 		{
 			Name "Wave3_Subwave1_GBurstSoldier2"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier"
@@ -1315,12 +1322,14 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 18
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst
@@ -1337,19 +1346,23 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 			}
 		}
@@ -1371,7 +1384,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 4 Burst Demos
+		WaveSpawn // 1 GBurst Soldier and 4 Demomen
 		{
 			Name "Wave3_Subwave1_GBurstSoldier3"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier2"
@@ -1385,6 +1398,8 @@ WaveSchedule
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst
@@ -1401,29 +1416,33 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 			}
 		}
-		WaveSpawn // 8 Soda Popper Scouts
+		WaveSpawn // 6 Soda Popper Scouts
 		{
 			Name "Wave3_Subwave1_SodaSwarm3"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier3"
 			Where spawnbot_invasion
-			TotalCount 8
-			MaxActive 8
+			TotalCount 6
+			MaxActive 6
 			SpawnCount 1
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
@@ -1434,14 +1453,14 @@ WaveSchedule
 				Template T_TFBot_Scout_Popper
 			}
 		}
-		WaveSpawn // 3 Deflector Heavies
+		WaveSpawn // 2 Deflector Heavies
 		{
 			Name "Wave3_Subwave1_DeflectorHeavies"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier3"
 			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1452,7 +1471,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 4 Burst Demos
+		WaveSpawn // 1 GBurst Soldier and 4 Demomen
 		{
 			Name "Wave3_Subwave1_GBurstSoldier4"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier3"
@@ -1460,12 +1479,14 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 18
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst
@@ -1482,19 +1503,23 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 				TFBot
 				{
-					Template T_TFBot_Demoman_Burst
+					Class Demoman
+					Skill Expert
 				}
 			}
 		}
@@ -1515,14 +1540,14 @@ WaveSchedule
 				Template T_TFBot_Scout_Popper
 			}
 		}
-		WaveSpawn // 3 Deflector Heavies
+		WaveSpawn // 2 Deflector Heavies
 		{
 			Name "Wave3_Subwave1_DeflectorHeavies2"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier4"
 			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1548,7 +1573,7 @@ WaveSchedule
 
 			Squad
 			{
-				
+				NoWaitForFormation 1 [$SIGSEGV]
 
 				TFBot
 				{
@@ -1568,9 +1593,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 6 Burst Demos
+		WaveSpawn // 6 Demomen
 		{
-			Name "Wave3_Subwave2_BurstDemos"
+			Name "Wave3_Subwave2_Demomen"
 			WaitForAllSpawned "Wave3_Subwave2_GChargedBurst"
 			Where spawnbot_left
 			TotalCount 6
@@ -1582,7 +1607,8 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Demoman_Burst
+				Class Demoman
+				Skill Expert
 			}
 		}
 		WaveSpawn // 6 Soda Popper Scouts
@@ -1617,8 +1643,8 @@ WaveSchedule
 
 			Squad
 			{
-				
-				
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Burst_Crit
@@ -1637,9 +1663,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 6 Burst Demos
+		WaveSpawn // 6 Demomen
 		{
-			Name "Wave3_Subwave2_BurstDemos2"
+			Name "Wave3_Subwave2_Demomen2"
 			WaitForAllSpawned "Wave3_Subwave2_GChargedBurst2"
 			Where spawnbot_left
 			TotalCount 6
@@ -1651,7 +1677,8 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Demoman_Burst
+				Class Demoman
+				Skill Expert
 			}
 		}
 		WaveSpawn // 6 Soda Popper Scouts
@@ -1673,7 +1700,7 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// Get the giga shotgun working on the engineer
+	// Think about some evil minigiant support for subwave 2
 	Wave
 	{
 		InitWaveOutput
@@ -1929,21 +1956,21 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 GSoldiers
+		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic and 2 GSoldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo"
-			WaitForAllDead "Wave4_Subwave1_TheGigaEngineer"
+			WaitForAllSpawned "Wave4_Subwave1_TheGigaEngineer"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
 			SpawnCount 4
-			WaitBeforeStarting 0
+			WaitBeforeStarting 40
 			WaitBetweenSpawns 0
 			TotalCurrency 80
 
 			Squad
 			{
-				
+				FormationSize 200
 
 				TFBot
 				{
@@ -1951,7 +1978,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic_Uber
 				}
 				TFBot
 				{
@@ -1962,6 +1989,19 @@ WaveSchedule
 					Template T_TFBot_Giant_Soldier
 				}
 			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave2_"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
 		}
 		WaveSpawn // 12 Widowmaker Engineers
 		{
@@ -1981,17 +2021,17 @@ WaveSchedule
 				Health 275
 			}
 		}
-		WaveSpawn // 9 Soldiers
+		WaveSpawn // 8 Soldiers
 		{
 			Name "Wave4_Subwave2_Soldiers"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
 			Where spawnbot_left
 			Where spawnbot_right
-			TotalCount 9
-			MaxActive 9
-			SpawnCount 3
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 4
 			TotalCurrency 20
 
 			TFBot
@@ -2001,7 +2041,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo, 1 Shield Medic and 2 GSoldiers
+		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic and 2 GSoldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo2"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
@@ -2015,7 +2055,7 @@ WaveSchedule
 
 			Squad
 			{
-				
+				FormationSize 200
 
 				TFBot
 				{
@@ -2023,7 +2063,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic_Uber
 				}
 				TFBot
 				{
@@ -2035,16 +2075,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 12 Soldiers
+		WaveSpawn // 8 Soldiers
 		{
 			Name "Wave4_Subwave2_Soldiers2"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
 			Where spawnbot
-			TotalCount 12
-			MaxActive 10
+			TotalCount 8
+			MaxActive 8
 			SpawnCount 1
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 1
+			WaitBetweenSpawns 2
 			TotalCurrency 20
 
 			TFBot
@@ -2054,7 +2094,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo, 1 Shield Medic, 1 GConch Soldier and 1 GBattalion Soldier
+		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic, 1 GConch Soldier and 1 GBattalion Soldier
 		{
 			Name "Wave4_Subwave2_GRapidDemo3"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
@@ -2064,11 +2104,11 @@ WaveSchedule
 			SpawnCount 4
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 180
+			TotalCurrency 160
 
 			Squad
 			{
-				
+				FormationSize 200
 
 				TFBot
 				{
@@ -2076,7 +2116,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic_Uber
 				}
 				TFBot
 				{
@@ -2096,9 +2136,9 @@ WaveSchedule
 			Where spawnbot_right
 			TotalCount 12
 			MaxActive 12
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 3
+			SpawnCount 6
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 8
 			TotalCurrency 20
 
 			TFBot
@@ -2473,7 +2513,6 @@ WaveSchedule
 		}
 	}
 	// Wave 6 Notes
-	// Replace the persians with mad milk syringe medics
 	// Keep an eye on the GMedic subwave
 	Wave
 	{
