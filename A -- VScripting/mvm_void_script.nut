@@ -48,7 +48,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function VoidScriptInit()
 	{
-		printl("Void Enabled")
+		local SkyboxName = GetStr("sv_skyname")
+		OriginalSkybox = SkyboxName
 
 		SetSkyboxTexture("sky_void_01")
 		EntFire("env_soundscape*", "Disable")
@@ -64,13 +65,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 
 		printl("Void Enable Success")
-	}
-
-	function GetSkybox()
-	{
-		local SkyboxName = GetStr("sv_skyname")
-
-		OriginalSkybox = SkyboxName
 	}
 
 	// Get the index of a soundscape by name.
@@ -107,7 +101,5 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		return soundscape_index
 	}
 }
-
-EntFire("BigNet", "RunScriptCode", "MVM_VoidScript.GetSkybox()", -1, null)
 
 __CollectGameEventCallbacks(MVM_VoidScript)
