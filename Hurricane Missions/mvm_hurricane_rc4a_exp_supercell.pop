@@ -472,7 +472,7 @@ WaveSchedule
 		T_TFBot_Pyro_Airblast
 		{
 			Class Pyro
-			ClassIcon pyro_reflect_daan
+			ClassIcon pyro_reflect_daan_nolod
 			Skill Expert
 			WeaponRestrictions PrimaryOnly
 
@@ -627,6 +627,8 @@ WaveSchedule
 	}
 
 	//// WAVES ////
+
+	// Turn all alwaysfire pyros into no reflect pyros so they don't destroy frames
 
 	// Wave 1 Notes
 	Wave
@@ -789,7 +791,12 @@ WaveSchedule
 			{
 				Class Pyro
 				Skill Expert
-				Attributes AlwaysFireWeapon
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+					"airblast disabled" 1
+				}
 			}
 		}
 
@@ -847,7 +854,12 @@ WaveSchedule
 			{
 				Class Pyro
 				Skill Expert
-				Attributes AlwaysFireWeapon
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+					"airblast disabled" 1
+				}
 			}
 		}
 
@@ -908,6 +920,8 @@ WaveSchedule
 		}
 	}
 	// Wave 2 Notes
+	// Could be worth removing conch to provide leniency with the GHeavies
+	
 	Wave
 	{
 		InitWaveOutput
@@ -1265,8 +1279,6 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// Hitscan perhaps too cancer rn, try with 1 support sniper and if that doesn't work
-	// Then try play around with deflector heavy counts
 	Wave
 	{
 		InitWaveOutput
@@ -1686,14 +1698,14 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 8 Demomen
+		WaveSpawn // 6 Demomen
 		{
 			Name "Wave3_Subwave2_Demomen"
 			WaitForAllSpawned "Wave3_Subwave2_GChargedBurst"
 			Where spawnbot_left
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
 			WaitBeforeStarting 6
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1757,14 +1769,14 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 8 Demomen
+		WaveSpawn // 6 Demomen
 		{
 			Name "Wave3_Subwave2_Demomen2"
 			WaitForAllSpawned "Wave3_Subwave2_GChargedBurst2"
 			Where spawnbot_left
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
 			WaitBeforeStarting 6
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -1777,8 +1789,6 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// Wave ended too late, perhaps condense second subwave down into 3 squads
-	// Either that or reduce giga shotgun HP and Waitbetween on 2nd subwave
 	Wave
 	{
 		InitWaveOutput
@@ -2034,7 +2044,7 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic and 2 GSoldiers
+		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic and 2 GBurst Soldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo"
 			WaitForAllSpawned "Wave4_Subwave1_TheGigaEngineer"
@@ -2042,9 +2052,9 @@ WaveSchedule
 			TotalCount 4
 			MaxActive 4
 			SpawnCount 4
-			WaitBeforeStarting 25
+			WaitBeforeStarting 30
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 160
 
 			Squad
 			{
@@ -2060,11 +2070,11 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier
+					Template T_TFBot_Giant_Soldier_Burst
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier
+					Template T_TFBot_Giant_Soldier_Burst
 				}
 			}
 		}
@@ -2135,7 +2145,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic and 2 GSoldiers
+		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic and 2 GBurst Soldiers
 		{
 			Name "Wave4_Subwave2_GRapidDemo2"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
@@ -2145,7 +2155,7 @@ WaveSchedule
 			SpawnCount 4
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 180
 
 			Squad
 			{
@@ -2161,78 +2171,24 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier
+					Template T_TFBot_Giant_Soldier_Burst
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier
-				}
-			}
-		}
-		WaveSpawn // 8 Soldiers
-		{
-			Name "Wave4_Subwave2_Soldiers2"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
-			Where spawnbot
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 2
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Soldier
-				Skill Expert
-			}
-		}
-
-		WaveSpawn // 1 GRapid Demo, 1 Full-Uber Medic, 1 GConch Soldier and 1 GBattalion Soldier
-		{
-			Name "Wave4_Subwave2_GRapidDemo3"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
-			Where spawnbot
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 160
-
-			Squad
-			{
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_Spammer
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Extended_Concheror
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Extended_Battalion
+					Template T_TFBot_Giant_Soldier_Burst
 				}
 			}
 		}
 		WaveSpawn // 12 Soldiers
 		{
-			Name "Wave4_Subwave2_Soldiers3"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo3"
-			Where spawnbot_left
-			Where spawnbot_right
+			Name "Wave4_Subwave2_Soldiers2"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
+			Where spawnbot
 			TotalCount 12
-			MaxActive 12
-			SpawnCount 6
+			MaxActive 8
+			SpawnCount 2
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 1
 			TotalCurrency 20
 
 			TFBot
@@ -2243,6 +2199,7 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
+	// Keep an eye on the tank HP in this wave, might be proving too much for non-pyro teams
 	Wave
 	{
 		InitWaveOutput
@@ -2283,6 +2240,8 @@ WaveSchedule
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 5
 			TotalCurrency 300
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
 
 			Tank
 			{
@@ -2583,7 +2542,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 20
+			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -2605,30 +2564,23 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 2 Scouts and 2 Full-Uber Medics
+		WaveSpawn // 5 Scouts
 		{
-			Name "Wave5_Subwave2_ScoutSquads"
+			Name "Wave5_Subwave2_Scouts"
 			WaitForAllSpawned "Wave5_Subwave2_GHeavy"
 			Where spawnbot
 			Support Limited
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
-			Squad
+			TFBot
 			{
-				TFBot
-				{
-					Class Scout
-					Skill Normal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
+				Class Scout
+				Skill Normal
 			}
 		}
 
@@ -2662,30 +2614,23 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 2 Demomen and 2 Full-Uber Medics
+		WaveSpawn // 5 Demomen
 		{
-			Name "Wave5_Subwave2_DemoSquads"
+			Name "Wave5_Subwave2_Demomen"
 			WaitForAllSpawned "Wave5_Subwave2_GHeavy2"
 			Where spawnbot
 			Support Limited
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
-			Squad
+			TFBot
 			{
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
+				Class Demoman
+				Skill Expert
 			}
 		}
 
@@ -2719,30 +2664,23 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 2 Heavies and 2 Full-Uber Medics
+		WaveSpawn // 5 Heavies
 		{
 			Name "Wave5_Subwave2_HeavySquads"
 			WaitForAllSpawned "Wave5_Subwave2_GHeavy2"
 			Where spawnbot
 			Support Limited
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
-			Squad
+			TFBot
 			{
-				TFBot
-				{
-					Class Heavy
-					Skill Normal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
+				Class Heavy
+				Skill Normal
 			}
 		}
 	}
@@ -3066,8 +3004,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`bombpath_choose_left_relay`, `Trigger`)
-					EntFire(`weather_storm_relay`, `Trigger`)
-					EntFire(`env_fog_controller*`, `SetEndDist`, 2500)
+					EntFire(`weather_rain_relay`, `Trigger`)
 
 					IncludeScript(`tankextensions_main`, getroottable())
 					IncludeScript(`tankextensions/combattank`, getroottable())
@@ -3109,7 +3046,7 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Combat_DragonFury
-				Health 25000
+				Health 30000
 
 				StartingPathTrackNode "tank_path_left_a1"
 			}
@@ -3130,7 +3067,7 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Combat_Rocket
-				Health 25000
+				Health 30000
 
 				StartingPathTrackNode "tank_path_right_a1"
 			}
@@ -3143,7 +3080,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 10
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -3170,7 +3107,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 10
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -3188,729 +3125,6 @@ WaveSchedule
 				{
 					Template T_TFBot_Medic_Uber
 				}
-			}
-		}
-
-		WaveSpawn // 3 Deflector Heavies
-		{
-			Name "Wave7_Subwave1_DeflectorHeavies"
-			WaitForAllSpawned "Wave7_Subwave1_GBarrage"
-			Where spawnbot_left
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Deflector
-			}
-		}
-		WaveSpawn // 3 Deflector Heavies
-		{
-			Name "Wave7_Subwave1_DeflectorHeavies"
-			WaitForAllSpawned "Wave7_Subwave1_GBarrage"
-			Where spawnbot_right
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Deflector
-			}
-		}
-
-		WaveSpawn // 10 Pyros
-		{
-			Name "Wave7_Subwave1_Pyros"
-			WaitForAllSpawned "Wave7_Subwave1_GBarrage"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 5
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 8
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Pyro
-				Skill Expert
-				Attributes AlwaysFireWeapon
-			}
-		}
-
-		WaveSpawn // 1 GHeavy and 5 Demomen
-		{
-			Name "Wave7_Subwave1_GHeavy"
-			WaitForAllSpawned "Wave7_Subwave1_GBarrage"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-			}
-		}
-		WaveSpawn // 10 Pyros
-		{
-			Name "Wave7_Subwave1_Pyros2"
-			WaitForAllSpawned "Wave7_Subwave1_GHeavy"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 5
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 8
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Pyro
-				Skill Expert
-				Attributes AlwaysFireWeapon
-			}
-		}
-
-		WaveSpawn // 1 GHeavy and 5 Demomen
-		{
-			Name "Wave7_Subwave1_GHeavy2"
-			WaitForAllSpawned "Wave7_Subwave1_GHeavy"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-			}
-		}
-		WaveSpawn // 10 Pyros
-		{
-			Name "Wave7_Subwave1_Pyros3"
-			WaitForAllSpawned "Wave7_Subwave1_GHeavy2"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 5
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 8
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Pyro
-				Skill Expert
-				Attributes AlwaysFireWeapon
-			}
-		}
-
-		// Subwave 2
-		WaveSpawn // 1 GShotgun Demo, 1 Full-Uber Medic, and 2 GFury Pyros
-		{
-			Name "Wave7_Subwave2_GShotgunDemo"
-			WaitForAllSpawned "Wave7_Subwave1_GHeavy2"
-			Where spawnbot
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_GrenadeShotgun
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Dragon_Fury
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Dragon_Fury
-				}
-			}
-		}
-		WaveSpawn // 2 Sledge Scouts
-		{
-			Name "Wave7_Subwave2_TheWreckers"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Homewrecker
-				Attributes AlwaysCrit
-				BehaviorModifiers Push
-				Tag nav_prefer_left_path
-			}
-		}
-		WaveSpawn // 2 Sledge Scouts
-		{
-			Name "Wave7_Subwave2_TheWreckers"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Homewrecker
-				Attributes AlwaysCrit
-				BehaviorModifiers Push
-				Tag nav_prefer_right_path
-			}
-		}
-
-		WaveSpawn // 1 GShotgun Demo, 1 Full-Uber Medic, and 2 GFury Pyros
-		{
-			Name "Wave7_Subwave2_GShotgunDemo2"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo"
-			Where spawnbot
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_GrenadeShotgun
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Dragon_Fury
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Dragon_Fury
-				}
-			}
-		}
-		WaveSpawn // 2 Rapid Sticky Demos
-		{
-			Name "Wave7_Subwave2_StickyDemos"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo2"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Stickybomb_Spammer
-				BehaviorModifiers Push
-				Tag nav_prefer_left_path
-			}
-		}
-		WaveSpawn // 2 Rapid Sticky Demos
-		{
-			Name "Wave7_Subwave2_StickyDemos"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo2"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Stickybomb_Spammer
-				BehaviorModifiers Push
-				Tag nav_prefer_right_path
-			}
-		}
-
-		WaveSpawn // 1 GShotgun Demo, 1 GMedic and 4 Deflector Heavies
-		{
-			Name "Wave7_Subwave2_GShotgunDemo3"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo2"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Demoman_GrenadeShotgun
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Medic_Regen
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Deflector
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Deflector
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Deflector
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Deflector
-				}
-			}
-		}
-		WaveSpawn // 30 Soldiers
-		{
-			Name "Wave7_Subwave2_Soldiers"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo3"
-			Where spawnbot_invasion
-			TotalCount 30
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 1
-			TotalCurrency 40
-
-			TFBot
-			{
-				Class Soldier
-				Skill Expert
-			}
-		}
-		WaveSpawn // 2 Sledge Scouts
-		{
-			Name "Wave7_Subwave2_TheWreckers2"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo3"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Homewrecker
-				Attributes AlwaysCrit
-				BehaviorModifiers Push
-				Tag nav_prefer_left_path
-			}
-		}
-		WaveSpawn // 2 Sledge Scouts
-		{
-			Name "Wave7_Subwave2_TheWreckers2"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo3"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Homewrecker
-				Attributes AlwaysCrit
-				BehaviorModifiers Push
-				Tag nav_prefer_right_path
-			}
-		}
-
-		// Subwave 3
-		WaveSpawn // 10 Demomen
-		{
-			Name "Wave7_Subwave3_Demomen"
-			WaitForAllSpawned "Wave7_Subwave2_GShotgunDemo3"
-			Where spawnbot_invasion
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 1
-			WaitBeforeStarting 30
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Demoman
-				Skill Expert
-			}
-		}
-		WaveSpawn // 1 Rapid Sticky Demo and 1 Full-Uber Medic
-		{
-			Name "Wave7_Subwave3_StickyDemo"
-			WaitForAllSpawned "Wave7_Subwave3_Demomen"
-			Where spawnbot_left
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 1 Rapid Sticky Demo and 1 Full-Uber Medic
-		{
-			Name "Wave7_Subwave3_StickyDemo"
-			WaitForAllSpawned "Wave7_Subwave3_Demomen"
-			Where spawnbot_right
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-
-		WaveSpawn // 10 Demomen
-		{
-			Name "Wave7_Subwave3_Demomen2"
-			WaitForAllSpawned "Wave7_Subwave3_Demomen"
-			Where spawnbot_invasion
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 1
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Demoman
-				Skill Expert
-			}
-		}
-		WaveSpawn // 1 GHeavy and 2 Rapid Sticky Demos
-		{
-			Name "Wave7_Subwave3_GHeavy"
-			WaitForAllSpawned "Wave7_Subwave3_Demomen2"
-			Where spawnbot_left
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-				}
-			}
-		}
-		WaveSpawn // 1 GHeavy and 2 Rapid Sticky Demos
-		{
-			Name "Wave7_Subwave3_GHeavy"
-			WaitForAllSpawned "Wave7_Subwave3_Demomen2"
-			Where spawnbot_right
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-				}
-			}
-		}
-
-		WaveSpawn // 10 Deflector Heavies
-		{
-			Name "Wave7_Subwave3_DeflectorHeavies"
-			WaitForAllSpawned "Wave7_Subwave3_Demomen2"
-			Where spawnbot_invasion
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 1
-			WaitBeforeStarting 25
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Deflector
-			}
-		}
-		WaveSpawn // 5 Soldiers and 10 Demomen
-		{
-			Name "Wave7_Subwave3_SoldierSquads"
-			WaitForAllSpawned "Wave7_Subwave3_DeflectorHeavies"
-			Where spawnbot_invasion
-			TotalCount 15
-			MaxActive 9
-			SpawnCount 3
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 4
-			TotalCurrency 20
-
-			Squad
-			{
-				TFBot
-				{
-					Class Soldier
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-				TFBot
-				{
-					Class Demoman
-					Skill Expert
-				}
-			}
-		}
-
-		WaveSpawn // 1 GDeflector, 1 GMedic and 4 GBarrages
-		{
-			Name "Wave7_Subwave3_TheDoomstack"
-			WaitForAllSpawned "Wave7_Subwave3_DeflectorHeavies"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 200
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_Deflector
-					Attributes AlwaysCrit
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Medic_Regen
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Barrage
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Barrage
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Barrage
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Barrage
-				}
-			}
-		}
-		WaveSpawn // 2 Sledge Scouts
-		{
-			Name "Wave7_Subwave3_TheWreckers"
-			WaitForAllSpawned "Wave7_Subwave3_TheDoomstack"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Homewrecker
-				Attributes AlwaysCrit
-				BehaviorModifiers Push
-				Tag nav_prefer_left_path
-			}
-		}
-		WaveSpawn // 2 Sledge Scouts
-		{
-			Name "Wave7_Subwave3_TheWreckers"
-			WaitForAllSpawned "Wave7_Subwave3_TheDoomstack"
-			Where spawnbot
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Homewrecker
-				Attributes AlwaysCrit
-				BehaviorModifiers Push
-				Tag nav_prefer_right_path
 			}
 		}
 	}
@@ -3923,8 +3137,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`bombpath_choose_right_relay`, `Trigger`)
-					EntFire(`weather_storm_relay`, `Trigger`)
-					EntFire(`env_fog_controller*`, `SetEndDist`, 2500)
+					EntFire(`weather_rain_relay`, `Trigger`)
 				  "
 		}
 		StartWaveOutput
