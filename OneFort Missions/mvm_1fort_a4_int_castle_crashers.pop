@@ -1,0 +1,44 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 800
+	RespawnWaveTime 2
+
+	CanBotsAttackWhileInSpawnRoom No
+
+	Wave
+	{
+		InitWaveOutput // This must be included on every wave
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					// This is what actually handles weapon restrictions
+					IncludeScript(`mvm_1fort/main`, getroottable())
+
+					// Setting Bomb Paths
+					EntFire(`bombpath_random_relay`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+	}
+}
