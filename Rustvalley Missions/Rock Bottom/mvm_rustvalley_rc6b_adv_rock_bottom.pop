@@ -402,6 +402,7 @@ WaveSchedule
 	Mission // Engineer (Wave 5)
 	{
 		Objective Engineer
+		Where spawnbot_left0
 		BeginAtWave 5
 		RunForThisManyWaves 1
 		InitialCooldown 30
@@ -435,8 +436,20 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
+	// FIX THE SHIELD MEDICS
+	// There is a general issue of giant bloat during waves 1-4
+	// Wave 1 suffers a lot with the ending GRapid squads
+	// Wave 2 suffers with the general giant spam of GCharged and GPyros
+	// Wave 3 suffers with the ending GFury squad
+	// Wave 4 suffers with the GRapid spam during subwave 1
+	// Feels like the mission needs to weight more money towards the earlier waves in order to make the later waves acceptable
+
+	// Considering Rustvalley's length, the pacing of missions and the general weight towards heavy/engineer currently
+	// It's probably worth rewriting the entire mission to be extremely short but extremely strong so it's not
+	// Dragged out and bloated by HP
 
 	// Wave 1 Notes
+	// Big break before the ending squads if players are pushed back far
 	Wave
 	{
 		InitWaveOutput
@@ -446,7 +459,8 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 				  "
 		}
 		StartWaveOutput
@@ -571,7 +585,7 @@ WaveSchedule
 			Name "Wave1_Subwave2_Demomen"
 			WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
 			Where spawnbot_mid0
-			TotalCount 24
+			TotalCount 20
 			MaxActive 8
 			SpawnCount 1
 			WaitBeforeStarting 8
@@ -609,7 +623,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
 			Where spawnbot_left0
 			TotalCount 12
-			MaxActive 8
+			MaxActive 6
 			SpawnCount 3
 			WaitBeforeStarting 8
 			WaitBetweenSpawns 4
@@ -703,7 +717,8 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
@@ -1035,6 +1050,8 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
+	// Remove the shield medic soldier squads they're filler
+	// Look at why the other sniper hints aren't being enabled? (might be a timing thing)
 	Wave
 	{
 		InitWaveOutput
@@ -1044,7 +1061,8 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 				  "
 		}
 		StartWaveOutput
@@ -1092,8 +1110,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1104,8 +1123,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1116,8 +1136,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1128,30 +1149,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
-                    }
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Shield
-
-					FireInput
-					{
-						Target !self
-						Action $SetLocalOrigin
-						Param "2783 -1707 15"
-						Delay 0
-						Repeats 1
-						Cooldown -1
-					}
-
-					FireWeapon
-                    {
-                        Type "Special"
-                        Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1172,8 +1172,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1194,8 +1195,32 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
+                    }
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "2783 -1707 15"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireWeapon
+                    {
+                        Type "Special"
+                        Delay 0
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1216,8 +1241,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1238,8 +1264,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 				TFBot
@@ -1260,8 +1287,9 @@ WaveSchedule
                     {
                         Type "Special"
                         Delay 0
-                        Repeats 1
-                        Cooldown -1
+                        Repeats 0
+                        Cooldown 0.5
+						Duration 0.5
                     }
 				}
 			}
@@ -1646,6 +1674,9 @@ WaveSchedule
 
 	}
 	// Wave 4 Notes
+	// Increase dmg vs buildings on the big demo
+	// Change tomislav heavies to regular heavies
+	// More filler to remove (Sticky demo squads)
 	Wave
 	{
 		InitWaveOutput
@@ -1655,7 +1686,8 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
@@ -2189,6 +2221,13 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
+	// Giant Pomson Engineer still carries the bomb even though he is set to action mobber
+	// Other support giants need WaitBetweenSpawnsAfterDeath as they stack up too easily
+	// Maxactive on the pyros needs increasing
+	// spawncount on the pyros needs increasing as well
+	// Might need to reduce the total amount of commons in the wave so it's not padded out to like 5 billion hours
+	// Reduce the common count to either 80 or 60
+	// Tele-In Engineers need the where
 	Wave
 	{
 		InitWaveOutput
@@ -2198,8 +2237,8 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
-					EntFire(`bot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 				  "
 		}
 		StartWaveOutput
@@ -2299,6 +2338,8 @@ WaveSchedule
 				Template T_TFBot_Giant_Soldier_Burst
 				Action Sniper
 
+				Item "The Conscientious Objector"
+
 				CharacterAttributes
 				{
 					"force distribute currency on death" 1
@@ -2312,6 +2353,16 @@ WaveSchedule
 					"faster reload rate" 0.4
 					"clip size upgrade atomic" 5.0
 					"projectile speed decreased" 0.9
+				}
+				ItemAttributes
+				{
+					ItemName "The Conscientious Objector"
+					"damage bonus" 1.5
+					"apply look velocity on damage" 1000
+					"apply z velocity on damage" 1000
+					"fire input on hit" "tf_gamerules^playvo^player\pl_impact_stun_range.wav"
+					"custom texture hi" "-7.063558800285249e-39"
+					"custom texture lo" "77047619584"
 				}
 
 				FireWeapon
@@ -2384,6 +2435,11 @@ WaveSchedule
 		}
 	}
 	// Wave 6 Notes
+	// Think I'm just gonna make the tanks big
+	// The medic AI pyros are idling in spawn? (Probably not a good use of support bots in practice)
+	// Cut out subwave 2 entirely and focus on the giant doom stacks (Probably have like 3 in total)
+	// Cut out the giant pyro support
+	// Either reduce both tanks' HP or cut down tank count to 1
 	Wave
 	{
 		InitWaveOutput
@@ -2393,7 +2449,8 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 				  "
 		}
 		StartWaveOutput
@@ -2740,6 +2797,9 @@ WaveSchedule
 		}
 	}
 	// Wave 7 Notes
+	// 2 Support Limited GStickies at the beginning are filler
+	// Empty asf during the second GDeflector
+	// Cut out the triple GRapid gag and focus on the final doomstack
 	Wave
 	{
 		InitWaveOutput
@@ -2749,14 +2809,15 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`cliff_fence`, `Disable`)
-					EntFire(`func_tfbot_hint*`, `Enable`)
+					EntFire(`func_tfbot_hint*`, `Enable`, null, 5)
+					EntFire(`bot_hint*`, `Enable`, null, 5)
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
                     IncludeScript(`tankextensions/combattank_weapons/railgun`, getroottable())
 
 					TankExt.SetValueOverrides({
-						COMBATTANK_RAILGUN_BULLET_DAMAGE = 50
+						COMBATTANK_RAILGUN_BULLET_DAMAGE = 100
 					})
 				  "
 		}
@@ -2932,13 +2993,13 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Name "CHARGING DEMO"
+					Name "CHARGING Demo"
 					Template T_TFBot_Demoknight_Caber_Crazy
 					Action Mobber
 				}
 				TFBot
 				{
-					Name "CHARGING DEMO"
+					Name "CHARGING Demo"
 					Template T_TFBot_Demoknight_Caber_Crazy
 					Action Mobber
 				}
@@ -2972,6 +3033,342 @@ WaveSchedule
 				DisableSmokeStack 1
 				NoScreenShake 1
 				StartingPathTrackNode "path_tank_road_1"
+			}
+		}
+
+		WaveSpawn // 1 GDeflector, 2 Full-Uber Medics and 12 Demomen
+		{
+			Name "Wave7_Subwave2_GDeflector"
+			WaitForAllSpawned "Wave7_Subwave2_RailgunTank"
+			Where spawnbot_mid0
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 15
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+			}
+		}
+		WaveSpawn // 1 GDeflector and 2 Full-Uber Medics
+		{
+			Name "Wave7_Subwave2_GDeflector2"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector"
+			Where spawnbot_mid0
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+
+		WaveSpawn // 3 GRapid Soldiers
+		{
+			Name "Wave7_Subwave2_GRapidSoldier"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector2"
+			Where spawnbot_mid0
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				FormationSize 200
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+			}
+		}
+		WaveSpawn // 16 Pyros
+		{
+			Name "Wave7_Subwave2_Pyros"
+			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier"
+			Where spawnbot_mid0
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 8
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+				Attributes AlwaysCrit
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GRapid Soldier and 3 Demomen
+		{
+			Name "Wave7_Subwave2_GRapidSoldier2"
+			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier"
+			Where spawnbot_left0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier and 3 Demomen
+		{
+			Name "Wave7_Subwave2_GRapidSoldier2"
+			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier"
+			Where spawnbot_right0
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+			}
+		}
+
+		WaveSpawn // 1 GDeflector, 1 GKritz Medic and 3 GRapid Soldiers
+		{
+			Name "Wave7_Subwave2_TheDoomSquad"
+			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier2"
+			Where spawnbot_mid0
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 120
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Kritzkrieg
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+			}
+		}
+		WaveSpawn // 6 Demomen and 12 Pyros
+		{
+			Name "Wave7_Subwave2_DemoSquads"
+			WaitForAllSpawned "Wave7_Subwave2_TheDoomSquad"
+			Where spawnbot_scattered0
+			TotalCount 18
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Expert
+					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Expert
+					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
+				}
 			}
 		}
 	}
