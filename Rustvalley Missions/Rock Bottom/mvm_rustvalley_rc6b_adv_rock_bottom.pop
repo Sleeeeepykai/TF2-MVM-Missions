@@ -436,4 +436,403 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
+
+	// Wave 1 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`forcecapture_ab_relay`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+
+		WaveSpawn // 10 Charging Demos
+		{
+			Name "Wave1_Subwave1_ChargingDemo"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+
+		WaveSpawn // 1 GBurstSoldier
+		{
+			Name "Wave1_Subwave1_GBurstSoldier"
+			WaitForAllSpawned "Wave1_Subwave1_ChargingDemo"
+			Where spawnbot_main_slow1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst
+			}
+		}
+
+		WaveSpawn // 10 Charging Demos
+		{
+			Name "Wave1_Subwave1_ChargingDemo2"
+			WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+
+		WaveSpawn // 1 GBurstSoldier
+		{
+			Name "Wave1_Subwave1_GBurstSoldier2"
+			WaitForAllSpawned "Wave1_Subwave1_ChargingDemo2"
+			Where spawnbot_main_slow1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst
+			}
+		}
+
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave1_Subwave1_Heavies"
+			WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // Support Bat Scouts
+		{
+			Name "Wave1_Subwave2_BatScouts"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 20
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn // 12 Demomen
+		{
+			Name "Wave1_Subwave2_Demomen"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot_main_slow1
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave1_Subwave2_Heavies"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 3
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 8 Charging Demos
+		{
+			Name "Wave1_Subwave2_ChargingDemo"
+			WaitForAllSpawned "Wave1_Subwave2_Demomen"
+			Where spawnbot_main_slow1
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 1
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+
+		WaveSpawn // 8 Demomen
+		{
+			Name "Wave1_Subwave2_Demomen2"
+			WaitForAllSpawned "Wave1_Subwave2_ChargingDemo"
+			Where spawnbot_main1
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 20
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GRapid Soldier and 4 Heavies
+		{
+			Name "Wave1_Subwave3_GRapidSoldier"
+			WaitForAllSpawned "Wave1_Subwave2_Demomen2"
+			Where spawnbot_main_slow1
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+			}
+		}
+	}
+
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`forcecapture_ab_relay`, `Trigger`)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+
+					TankExt.CreatePaths({
+						path_tank_forward = [
+							Vector(-576, 2688, -96)
+							Vector(-576, 2432, -96)
+							Vector(-512, 2368, -96)
+							Vector(-256, 2304, -96)
+							Vector(-128, 2176, -96)
+							Vector(-128, 1984, -96)
+							Vector(-192, 1856, -96)
+							Vector(-448, 1664, -96)
+							Vector(-512, 1472, -96)
+							Vector(-640, 1408, -96)
+							Vector(-1088, 1408, -96)
+							Vector(-1378, 1546, -96)
+							Vector(-1538, 1690, -96)
+							Vector(-1770, 1798, -96)
+							Vector(-2066, 1884, -96)
+							Vector(-2338, 1890, -96)
+							Vector(-2602, 1874, -96)
+							Vector(-2818, 1818, -96)
+							Vector(-2912, 1656, -96)
+							Vector(-2932, 1422, -96)
+							Vector(-2910, 1152, -96)
+							Vector(-2896, 922, -96)
+							Vector(-2982, 768, -96)
+							Vector(-3012, 686 -96)
+							Vector(-3440, 648, -96)
+							Vector(-4048, 648, -96)
+							Vector(-4190, 506, -96)
+							Vector(-4190, -48, -96)
+							Vector(-4184, -104, -96)
+							Vector(-4168, -184, -96)
+							Vector(-3712, -192, -96)
+						]
+					})
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave2_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 7500
+				StartingPathTrackNode "path_tank_forward_1"
+			}
+		}
+
+		WaveSpawn // 10 Scouts
+		{
+			Name "Wave2_Subwave1_Scouts"
+			WaitForAllSpawned "Wave2_Subwave1_Tank"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		
+		WaveSpawn // 50 Scouts
+		{
+			Name "Wave2_Subwave1_Scouts2"
+			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			Where spawnbot_main_slow1
+			TotalCount 50
+			MaxActive 16
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 1
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+	}
 }
