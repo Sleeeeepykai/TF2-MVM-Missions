@@ -142,6 +142,21 @@ WaveSchedule
 				"OnTrigger" "BarrierProp*,kill,,0,-1"
 				"OnTrigger" "BarrierDestruction*,kill,,0,1"
 			}
+			logic_relay
+			{
+				"targetname" "SneakyBarrierRelay"
+				"OnTrigger" "BarrierShortcutFar,Disable,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_crate_break1.wav,0,-1"
+			}
+			prop_dynamic
+            {
+                "targetname" "BarrierShortcutFar"
+                "model"      "models/props_mvm/mine_elevator_door.mdl"
+                "origin"     "-1825 15 -117"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "solid" "6"
+            }
             prop_dynamic
             {
                 "targetname" "BarrierProp"
@@ -156,15 +171,6 @@ WaveSchedule
                 "targetname" "BarrierProp"
                 "model"      "models/props_mvm/mine_elevator_door.mdl"
                 "origin"     "-1825 648 -117"
-                "disablebonefollowers" "1"
-                "disableshadows" "1"
-                "solid" "6"
-            }
-            prop_dynamic
-            {
-                "targetname" "BarrierProp"
-                "model"      "models/props_mvm/mine_elevator_door.mdl"
-                "origin"     "-1825 15 -117"
                 "disablebonefollowers" "1"
                 "disableshadows" "1"
                 "solid" "6"
@@ -398,7 +404,7 @@ WaveSchedule
 			Class Demoman
 			ClassIcon boss_skeleton_lite
 			Skill Expert
-			Health 7500
+			Health 12500
 			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
@@ -420,11 +426,11 @@ WaveSchedule
 			{
 				ItemName "TF_WEAPON_GRENADELAUNCHER"
 
-				"fire rate bonus with reduced health" 1
+				"fire rate bonus with reduced health" 0.0001
 				"fire rate bonus" 0.3
-				"faster reload rate" 0.15
+				"faster reload rate" -1
 				"clip size upgrade atomic" 36.0
-				"projectile speed decreased" 0.5
+				"projectile speed decreased" 0.6
 				"projectile spread angle penalty" 10
 			}
 		}
@@ -737,32 +743,9 @@ WaveSchedule
 
 		// Subwave 1
 
-		WaveSpawn // 10 Charging Demos
-		{
-			Name "Wave1_Subwave1_ChargingDemo"
-			Where spawnbot_main_slow1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			TFBot
-			{
-				Name "Charging Demo"
-				Template T_TFBot_Demoman_Knight
-				ClassIcon demoknight_bottle_lite
-
-				Item "The Splendid Screen"
-				Item "TF_WEAPON_BOTTLE"
-			}
-		}
-
 		WaveSpawn // 1 GBurstSoldier
 		{
 			Name "Wave1_Subwave1_GBurstSoldier"
-			WaitForAllSpawned "Wave1_Subwave1_ChargingDemo"
 			Where spawnbot_main_slow1
 			TotalCount 1
 			MaxActive 1
@@ -774,6 +757,28 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Soldier_Burst
+			}
+		}
+
+		WaveSpawn // 10 Charging Demos
+		{
+			Name "Wave1_Subwave1_ChargingDemo"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
 			}
 		}
 
@@ -951,6 +956,8 @@ WaveSchedule
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Spammer
@@ -978,6 +985,9 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 2 Notes
+	// Change the scouts to scatter-bonks
+	// Add in pomson-bigheal squads
 	Wave
 	{
 		InitWaveOutput
@@ -1045,22 +1055,7 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 4 Sticky Demos
-		{
-			Name "Wave2_Subwave1_StickyDemos"
-			Where spawnbot_main_slow1
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 20
 
-			TFBot
-			{
-				Template T_TFBot_Demoman_Stickybomb
-			}
-		}
 		WaveSpawn // 1 Tiny Tank
 		{
 			Name "Wave2_Subwave1_Tank"
@@ -1080,30 +1075,11 @@ WaveSchedule
 				StartingPathTrackNode "path_tank_forward_1"
 			}
 		}
-
-		WaveSpawn // 10 Scouts
-		{
-			Name "Wave2_Subwave1_Scouts"
-			WaitForAllSpawned "Wave2_Subwave1_Tank"
-			Where spawnbot_main_slow1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Scout
-				Skill Easy
-			}
-		}
 		
 		WaveSpawn // 50 Scouts
 		{
 			Name "Wave2_Subwave1_Scouts2"
-			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			WaitForAllSpawned "Wave2_Subwave1_RocketShotguns2"
 			Where spawnbot_main_slow1
 			TotalCount 50
 			MaxActive 10
@@ -1118,83 +1094,28 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 8 Sticky Demos
-		{
-			Name "Wave2_Subwave1_StickyDemos"
-			WaitForAllSpawned "Wave2_Subwave1_Scouts"
-			Where spawnbot_main_slow1
-			TotalCount 8
-			MaxActive 4
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 8
-			TotalCurrency 100
-			
-			TFBot
-			{
-				Template T_TFBot_Demoman_Stickybomb
-			}
-		}
 
-		WaveSpawn // 1 GHomewrecker and 4 Sticky Demos
+		WaveSpawn // 1 GHomewrecker
 		{
 			Name "Wave2_Subwave1_GHomewrecker"
-			WaitForAllSpawned "Wave2_Subwave1_Scouts"
+			WaitForAllSpawned "Wave2_Subwave1_RocketShotguns2"
 			Where spawnbot_main_slow1
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 40
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			Squad
+			TFBot
 			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Homewrecker
-					Attributes AlwaysCrit
-					ClassIcon pyro_homewrecker_pierce_lite
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
+				Template T_TFBot_Giant_Pyro_Homewrecker
+				Attributes AlwaysCrit
+				ClassIcon pyro_homewrecker_pierce_lite
 			}
 		}
 
 		// Subwave 2
-		WaveSpawn // 10 Scouts
-		{
-			Name "Wave2_Subwave2_Scouts"
-			WaitForAllSpawned "Wave2_Subwave1_GHomewrecker"
-			Where spawnbot_main_slow1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Scout
-				Skill Easy
-			}
-		}
-
 		WaveSpawn // 1 GHomewrecker and 1 Big-Heal Medic
 		{
 			Name "Wave2_Subwave2_GHomewrecker"
@@ -1222,38 +1143,23 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 5 Sticky Demos
-		{
-			Name "Wave2_Subwave2_StickyDemos"
-			WaitForAllSpawned "Wave2_Subwave2_GHomewrecker"
-			Where spawnbot_main_slow1
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 40
 
-			TFBot
-			{
-				Template T_TFBot_Demoman_Stickybomb
-			}
-		}
-
-		WaveSpawn // 1 GHomewrecker, 1 Big-Heal Medic and 3 Sticky Demos
+		WaveSpawn // 1 GHomewrecker and 1 Big-Heal Medic
 		{
 			Name "Wave2_Subwave2_GHomewrecker2"
 			WaitForAllSpawned "Wave2_Subwave2_StickyDemos"
 			Where spawnbot_main_slow1
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Pyro_Homewrecker
@@ -1264,40 +1170,17 @@ WaveSchedule
 				{
 					Template T_TFBot_Medic_BigHeal
 				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb
-				}
 			}
 		}
 
-		WaveSpawn // 10 Scouts
-		{
-			Name "Wave2_Subwave2_Scouts2"
-			WaitForAllSpawned "Wave2_Subwave2_GHomewrecker2"
-			Where spawnbot_main_slow1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
 
-			TFBot
-			{
-				Class Scout
-				Skill Easy
-			}
-		}
 	}
+	// Wave 3 Notes
+	// Fix the shield medic leaders not popping shield
+	// Give the boss 10k health and 10 shield medics
+	// NoWaitForFormation 1 on the shield medic squads
+	// Needs more soldiers with the squads to provide pressure
+	// Spawncount 2 snipers after the boss?
 	Wave
 	{
 		InitWaveOutput
@@ -1323,6 +1206,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
+					EntFire(`BarrierShortcutFar`, `Enable`)
                   "
         }
 
@@ -1369,6 +1253,11 @@ WaveSchedule
 					Action $Suicide
 					Delay  30
 				}
+			}
+
+			FirstSpawnOutput
+			{
+
 			}
 		}
 
