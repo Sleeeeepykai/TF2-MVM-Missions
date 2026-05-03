@@ -132,6 +132,8 @@ WaveSchedule
 			logic_relay
             {
                 "targetname" "BarrierDestructionRelay"
+				"OnTrigger"  "BarrierNoBuild,Disable,,0,-1"
+				"OnTrigger"  "BarrierForcefield,Disable,,0,-1"
                 "OnTrigger"  "BarrierDestroyParticles,start,,0,1"
                 "OnTrigger"  "BarrierDestroyParticles,stop,,5,1"
                 "OnTrigger"  "BarrierDestruction,enable,,0,1"
@@ -148,8 +150,28 @@ WaveSchedule
 			logic_relay
 			{
 				"targetname" "BarrierDisableRelay"
-				"OnTrigger" "BarrierProp*,kill,,0,-1"
-				"OnTrigger" "BarrierDestruction*,kill,,0,1"
+				"OnTrigger"  "BarrierProp*,kill,,0,-1"
+				"OnTrigger"  "BarrierDestruction*,kill,,0,1"
+				"OnTrigger"  "BarrierNoBuild,Disable,,0,-1"
+				"OnTrigger"  "BarrierForcefield,Disable,,0,-1"
+			}
+			func_forcefield
+			{
+				"targetname" "BarrierForcefield"
+				"origin" "-1375 1184 -608"
+				"mins" "-448 -32 -768"
+				"maxs" "448 32 768"
+				"teamnum" "3"
+			}
+			func_nobuild
+			{
+			    "targetname" "BarrierNoBuild"
+                "origin" "-1799 1067 -295"
+                "mins" "-36 -1200 0"
+                "maxs" "36 50 700"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
 			}
 			prop_dynamic
             {
@@ -468,24 +490,6 @@ WaveSchedule
                 "set item tint RGB" 15185211
             }
         }
-		T_TFBot_Engineer_Gunslinger_Battle_Speed
-		{
-			Name "Overdrive Gunslinger Engineer"
-			Class Engineer
-			ClassIcon engineer_gunslinger_blu_eyes
-			Skill Expert
-			Health 275
-			Attributes AlwaysCrit
-			WeaponRestrictions MeleeOnly
-			Action Mobber
-
-			Item "The Gunslinger"
-
-            CharacterAttributes
-            {
-                "move speed bonus" 2
-            }
-		}
 		T_TFBot_Giant_Demoman_THEHAMMER
 		{
 			Name "THE HAMMER"
@@ -664,9 +668,9 @@ WaveSchedule
 	Mission // Sentry Buster
 	{
 		Objective DestroySentries
-		Where spawnbot_mid0
+		Where spawnbot_main_slow1
 		BeginAtWave 1
-		RunForThisManyWaves 10
+		RunForThisManyWaves 5
 		InitialCooldown 30
 		CooldownTime 30
 		DesiredCount 1
@@ -674,40 +678,6 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
-		}
-	}
-
-	Mission // Engineer (Wave 5)
-	{
-		Objective Engineer
-		Where spawnbot_left0
-		BeginAtWave 5
-		RunForThisManyWaves 1
-		InitialCooldown 30
-		CooldownTime 30
-		DesiredCount 1
-
-		TFBot
-		{
-			Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
-			TeleportWhere spawnbot_scattered0
-			TeleportWhere spawnbot_left0
-		}
-	}
-
-	Mission // Spy (Wave 6)
-	{
-		Objective Spy
-		Where spawnbot_boss0
-		BeginAtWave 6
-		RunForThisManyWaves 1
-		InitialCooldown 10
-		CooldownTime 30
-		DesiredCount 2
-
-		TFBot
-		{
-			Template T_TFBot_Spy
 		}
 	}
 
@@ -725,6 +695,7 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`forcecapture_ab_relay`, `Trigger`)
+					EntFire(`ambush_gate_a_disable`, `Trigger`, null, 0.5)
 				  "
 		}
 		StartWaveOutput
@@ -999,6 +970,7 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`forcecapture_ab_relay`, `Trigger`)
+					EntFire(`ambush_gate_a_disable`, `Trigger`, null, 0.5)
 
 					IncludeScript(`tankextensions_main`, getroottable())
 
@@ -1285,16 +1257,16 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 12 Ranger Engineers
+		WaveSpawn // 8 Ranger Engineers
 		{
 			Name "Wave2_Subwave2_Engineers2"
 			WaitForAllSpawned "Wave2_Subwave2_GHomewrecker2"
 			Where spawnbot_main_slow1
-			TotalCount 12
-			MaxActive 9
-			SpawnCount 3
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
 			WaitBeforeStarting 4
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			TFBot
@@ -1313,6 +1285,7 @@ WaveSchedule
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
 					EntFire(`forcecapture_ab_relay`, `Trigger`)
+					EntFire(`ambush_gate_a_disable`, `Trigger`, null, 0.5)
 				  "
 		}
 		StartWaveOutput
@@ -1564,6 +1537,11 @@ WaveSchedule
 					Template T_TFBot_Medic_Shield
 					WeaponRestrictions SecondaryOnly
 
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+
 					FireWeapon
 					{
 						Type "Special"
@@ -1664,6 +1642,11 @@ WaveSchedule
 				{
 					Template T_TFBot_Medic_Shield
 					WeaponRestrictions SecondaryOnly
+					
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
 
 					FireWeapon
 					{
@@ -1745,7 +1728,7 @@ WaveSchedule
 		}
 		WaveSpawn // 6 Soldiers
 		{
-			Name "Wave3_Subwave2_Soldiers"
+			Name "Wave3_Subwave2_Soldiers2"
 			WaitForAllSpawned "Wave3_Subwave2_ShieldSquads2"
 			Where spawnbot_main_slow1
 			TotalCount 6
@@ -1803,12 +1786,12 @@ WaveSchedule
 		WaveSpawn // 1 GHeater, 1 Shield Medic and 12 Pyros
 		{
 			Name "Wave3_Subwave3_GHeater"
-			WaitForAllSpawned "Wave3_Subwave3_ClaymoreKnights"
+			WaitForAllSpawned "Wave3_Subwave3_Soldiers"
 			Where spawnbot_main_slow1
 			TotalCount 14
 			MaxActive 14
 			SpawnCount 14
-			WaitBeforeStarting 8
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 140
 
@@ -1926,7 +1909,7 @@ WaveSchedule
 		}
 		WaveSpawn // 6 Soldiers
 		{
-			Name "Wave3_Subwave3_Soldiers"
+			Name "Wave3_Subwave3_Soldiers2"
 			WaitForAllSpawned "Wave3_Subwave3_GHeater"
 			Where spawnbot_main_slow1
 			TotalCount 6
@@ -1943,5 +1926,407 @@ WaveSchedule
 			}
 		}
 
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`forcecapture_ab_relay`, `Trigger`)
+					EntFire(`ambush_gate_a_disable`, `Trigger`, null, 0.5)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+					})
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+					EntFire(`func_tfbot_hint*`, `Disable`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+					EntFire(`BarrierShortcutFar`, `Enable`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Charging Demo
+		{
+			Name "Wave4_Subwave1_ChargingDemo"
+			Where spawnbot_mid0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 1
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+			TFBot
+			{
+				Name "The CHARGING Demo"
+				Template T_TFBot_Demoknight_Caber_Crazy
+				Health 10000
+				Scale 2
+				Attributes MiniBoss
+				Attributes UseBossHealthBar
+
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"move speed penalty" 0.5
+					"damage force reduction" 0.5
+					"airblast vulnerability multiplier" 0.5
+					"override footstep sound set" 4
+				}
+
+				ItemAttributes
+				{
+					ItemName "The Splendid Screen"
+
+					"attack not cancel charge" 0
+				}
+
+				ItemAttributes
+				{
+					ItemName "The Ullapool Caber"
+					"fire rate penalty" 2
+					"damage bonus" 2
+					"dmg bonus vs buildings" 3
+					"blast dmg to self increased" 2.0
+					"blast radius increased" 1.25
+					"use large smoke explosion" 1
+					"regenerate stickbomb" 1
+					"fire input on hit" "tf_gamerules^playvo^misc/doomsday_missile_explosion.wav"
+				}
+			}
+		}
+		WaveSpawn // 6 Speedy Gunslingers
+		{
+			Name "Wave4_Subwave1_SpeedyGunslingers"
+			WaitForAllSpawned "Wave4_Subwave1_ChargingDemo"
+			Where spawnbot_main_slow1
+			Support Limited
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+			}
+		}
+
+		WaveSpawn // 6 Explosive Jarate Snipers
+		{
+			Name "Wave4_Subwave1_JarateSnipers"
+			WaitForAllSpawned "Wave4_Subwave1_ChargingDemo"
+			Where spawnbot_main_slow1
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Jarate_Explosive
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GRapid Soldier and 4 Heavies
+		{
+			Name "Wave4_Subwave2_GRapidSoldier"
+			WaitForAllDead "Wave4_Subwave1_ChargingDemo"
+			Where spawnbot_main_slow1
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 8 Battalion Soldiers
+		{
+			Name "Wave4_Subwave2_BattSoldiers"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidSoldier"
+			Where spawnbot_main_slow1
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Battalion
+			}
+		}
+
+		WaveSpawn // 6 Jarate Snipers
+		{
+			Name "Wave4_Subwave2_JarateSnipers"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidSoldier"
+			Where spawnbot_main_slow1
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Jarate_Explosive
+			}
+		}
+		WaveSpawn // 8 Battalion Soldiers
+		{
+			Name "Wave4_Subwave2_BattSoldiers2"
+			WaitForAllSpawned "Wave4_Subwave2_JarateSnipers"
+			Where spawnbot_main_slow1
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Battalion
+			}
+		}
+
+		WaveSpawn // 1 GRapid Soldier and 4 Heavies
+		{
+			Name "Wave4_Subwave2_GRapidSoldier2"
+			WaitForAllDead "Wave4_Subwave2_JarateSnipers"
+			Where spawnbot_main_slow1
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 8 Battalion Soldiers
+		{
+			Name "Wave4_Subwave2_BattSoldiers3"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidSoldier2"
+			Where spawnbot_main_slow1
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Battalion
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 Mini Rocket Tank
+		{
+			Name "Wave4_Subwave3_MiniRocketTank"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidSoldier2"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Rocket
+				Health 7500
+				Scale 0.5
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				NoScreenShake 1
+				StartingPathTrackNode "path_tank_forward_1"
+			}
+		}
+		WaveSpawn // 6 Speedy Gunslingers
+		{
+			Name "Wave4_Subwave3_SpeedyGunslingers"
+			WaitForAllSpawned "Wave4_Subwave3_MiniRocketTank"
+			Where spawnbot_main_slow1
+			Support Limited
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+			}
+		}
+
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave4_Subwave3_Heavies"
+			WaitForAllSpawned "Wave4_Subwave3_MiniRocketTank"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier
+		{
+			Name "Wave4_Subwave3_GRapidSoldier"
+			WaitForAllSpawned "Wave4_Subwave3_Heavies"
+			Where spawnbot_main_slow1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // 5 Heavies
+		{
+			Name "Wave4_Subwave3_Heavies2"
+			WaitForAllSpawned "Wave4_Subwave3_GRapidSoldier"
+			Where spawnbot_main_slow1
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 3 Explosive Jarate Snipers
+		{
+			Name "Wave4_Subwave3_JarateSnipers"
+			WaitForAllSpawned "Wave4_Subwave3_GRapidSoldier"
+			Where spawnbot_main_slow1
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Jarate_Explosive
+			}
+		}
 	}
 }
