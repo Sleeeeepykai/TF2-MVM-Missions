@@ -490,6 +490,30 @@ WaveSchedule
                 "set item tint RGB" 15185211
             }
         }
+		T_TFBot_Soldier_Bison_Shotgun
+		{
+			Name "Bison Shotgun Soldier"
+			Class Soldier
+			ClassIcon soldier_bison
+			Skill Expert
+			Health 600
+			Scale 1.4
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions SecondaryOnly
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_SHOTGUN_SOLDIER"
+
+				"dmg penalty vs players" 0.33
+				"fire rate penalty" 1.25
+				"faster reload rate" 0.75
+				"override projectile type" 13
+				"mult projectile count" 9
+				"energy weapon penetration" 1
+				"projectile spread angle penalty" 2
+			}
+		}
 		T_TFBot_Giant_Demoman_THEHAMMER
 		{
 			Name "THE HAMMER"
@@ -678,6 +702,20 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
+		}
+	}
+	Mission // Spy (Wave 5)
+	{
+		Objective Spy
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -1303,12 +1341,11 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
-					EntFire(`BarrierShortcutFar`, `Enable`)
                   "
         }
 
 		// Subwave 1
-		WaveSpawn // 1 GIGA DESTROYER
+		WaveSpawn // 1 GIGA DESTROYER and 10 Shield Medics
 		{
 			Name "Wave3_Subwave1_GIGADESTROYER"
 			Where spawnbot_main_slow1
@@ -1927,6 +1964,7 @@ WaveSchedule
 		}
 
 	}
+	// Wave 4 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -1962,7 +2000,6 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
-					EntFire(`BarrierShortcutFar`, `Enable`)
                   "
         }
 
@@ -2369,6 +2406,214 @@ WaveSchedule
 					Repeats 0
 					Type "Battle Cry"
 				}
+			}
+		}
+	}
+	// Wave 5 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`forcecapture_ab_relay`, `Trigger`)
+					EntFire(`ambush_gate_a_disable`, `Trigger`, null, 0.5)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+					EntFire(`func_tfbot_hint*`, `Disable`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 GFury Pyro
+		{
+			Name "Wave5_Subwave1_GFury"
+			Where spawnbot_main_slow1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Dragon_Fury
+			}
+		}
+		WaveSpawn // 20 Sticky Demos
+		{
+			Name "Wave5_Subwave1_StickyDemos"
+			Where spawnbot_main_slow1
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+
+		WaveSpawn // 5 Claymore Demoknights
+		{
+			Name "Wave5_Subwave1_ClaymoreKnights"
+			WaitForAllSpawned "Wave5_Subwave1_StickyDemos"
+			Where spawnbot_main_slow1
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Claymore
+			}
+		}
+
+		WaveSpawn // 1 GFury, 2 Full-Uber Medics, 1 Kritz Medic and 2 Bison Shotgun Soldiers
+		{
+			Name "Wave5_Subwave1_GFury2"
+			WaitForAllSpawned "Wave5_Subwave1_ClaymoreKnights"
+			Where spawnbot_main_slow1
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Bison_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Bison_Shotgun
+				}
+			}
+		}
+		WaveSpawn // 10 Sticky Demos
+		{
+			Name "Wave5_Subwave1_StickyDemos2"
+			WaitForAllSpawned "Wave5_Subwave1_GFury2"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GHeavy and 2 Full-Uber Medics
+		{
+			Name "Wave5_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave5_Subwave1_GFury2"
+			Where spawnbot_main_slow1
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 10 Demomen
+		{
+			Name "Wave5_Subwave2_Demomen"
+			WaitForAllSpawned "Wave5_Subwave2_GHeavy"
+			Where spawnbot_main_slow1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+		WaveSpawn // 2 Bison Shotgun Soldiers
+		{
+			Name "Wave5_Subwave2_Bisons"
+			WaitForAllSpawned "Wave5_Subwave2_GHeavy"
+			Where spawnbot_main_slow1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Bison_Shotgun
 			}
 		}
 	}
