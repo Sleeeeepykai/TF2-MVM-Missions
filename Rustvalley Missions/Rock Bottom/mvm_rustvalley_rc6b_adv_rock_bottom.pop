@@ -718,6 +718,21 @@ WaveSchedule
 			Template T_TFBot_Spy
 		}
 	}
+	Mission // Sniper (Wave 6)
+	{
+		Objective Sniper
+		Where spawnbot_main1
+		BeginAtWave 6
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Sniper
+		}
+	}
 
 	//// WAVES ////
 
@@ -999,7 +1014,6 @@ WaveSchedule
 		}
 	}
 	// Wave 2 Notes
-	// Reduce GHomewrecker speed from 0.75 to 0.65
 	Wave
 	{
 		InitWaveOutput
@@ -1038,7 +1052,7 @@ WaveSchedule
 							Vector(-2910, 1152, -96)
 							Vector(-2896, 922, -96)
 							Vector(-2982, 768, -96)
-							Vector(-3102, 686 -96)
+							Vector(-3102, 686, -96)
 							Vector(-3246, 658, -96)
 							Vector(-3440, 648, -96)
 							Vector(-4048, 648, -96)
@@ -2587,7 +2601,6 @@ WaveSchedule
 			{
 				Template T_TFBot_Engineer_Ranger
 				Skill Normal
-				Attributes AlwaysCrit
 			}
 		}
 		WaveSpawn // 3 Claymore Demoknights
@@ -2726,14 +2739,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 5 Demomen and 5 Quick-Uber Medics
+		WaveSpawn // 6 Demomen and 6 Quick-Uber Medics
 		{
 			Name "Wave5_Subwave3_Demomen"
 			WaitForAllSpawned "Wave5_Subwave3_GHeavy"
 			Where spawnbot_main_slow1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 12
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 60
@@ -2768,6 +2781,152 @@ WaveSchedule
 				Template T_TFBot_Demoman_Knight_Claymore
 			}
 		}
+
+		// Wave End Check
+		WaveSpawn
+		{
+			Name "Wave5_Check"
+			WaitForAllDead "Wave5_Subwave3_GHeavy"
+		}
+		WaveSpawn
+		{
+			Name "Wave5_Check"
+			WaitForAllDead "Wave5_Subwave3_Demomen"
+		}
+		WaveSpawn
+		{
+			Name "Wave5_Check"
+			WaitForAllDead "Wave5_Subwave3_ClaymoreKnights"
+		}
+
+		// Ending Sequence
+		WaveSpawn // The Troll
+		{
+			Name "Wave5_End"
+			WaitForAllSpawned "Wave5_Check"
+			Where spawnbot_main_slow1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+			TFBot
+			{
+				Name "The CHARGING Demo?"
+				Template T_TFBot_Demoknight_Caber_Crazy
+				Health 1
+				Scale 2
+				Attributes MiniBoss
+				Attributes UseBossHealthBar
+
+				Action Mobber
+
+				Addcond
+				{
+					Index 51
+				}
+
+				CharacterAttributes
+				{
+					"move speed penalty" 0.5
+					"damage force reduction" 0.5
+					"airblast vulnerability multiplier" 0.5
+					"override footstep sound set" 4
+					"displace touched enemies" 1
+				}
+
+				ItemAttributes
+				{
+					ItemName "The Splendid Screen"
+					"charge recharge rate increased" 0.0001
+					"attack not cancel charge" 1
+				}
+
+				ItemAttributes
+				{
+					ItemName "The Ullapool Caber"
+					"fire rate penalty" 2.5
+					"damage bonus" 5
+					"dmg bonus vs buildings" 5
+					"blast dmg to self increased" 2.0
+					"blast radius increased" 1.25
+					"use large smoke explosion" 1
+					"regenerate stickbomb" 1
+					"custom impact sound" "misc/doomsday_missile_explosion.wav"
+				}
+
+				FireInput
+				{
+					Target tf_gamerules
+					Action PlayVO
+					Param "vo/mvm/mght/demoman_mvm_m_specialcompleted02.mp3"
+					Delay 3
+					Repeats 1
+					Cooldown -1
+				}
+
+				InterruptAction
+				{
+					Target "-1318 1250 -297"
+					Delay 0.5
+					Repeats 1
+					Cooldown -1
+					Distance 100
+					Duration 0.1
+					WaitUntilDone 0.1
+					OnDoneChangeAttributes "Kablooey"
+				}
+
+				EventChangeAttributes
+				{
+					Kablooey [$SIGSEGV]
+					{
+						FireInput
+						{
+							Target !self
+							Action $Taunt
+							Delay 0
+							Repeats 0
+							Cooldown 0.5
+						}
+						FireInput
+						{
+							Target tf_gamerules
+							Action PlayVO
+							Param "mvm/sentrybuster/mvm_sentrybuster_spin.wav"
+							Delay 0
+							Repeats 1
+							Cooldown -1
+						}
+
+						FireInput
+						{
+							Target !self
+							Action $Suicide
+							Delay 2
+							Repeats 1
+							Cooldown -1
+						}
+					}
+				}
+			}
+
+			DoneOutput
+			{
+				Target "BarrierDestructionRelay"
+				Action Trigger
+			}
+		}
+
+		WaveSpawn
+		{
+			WaitForAllDead "Wave5_End"
+			WaitBeforeStarting 5
+		}
 	}
 	// Wave 6 Notes
 	Wave
@@ -2778,8 +2937,64 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
-					EntFire(`forcecapture_ab_relay`, `Trigger`)
-					EntFire(`ambush_gate_a_disable`, `Trigger`, null, 0.5)
+					EntFire(`forcecapture_a_relay`, `Trigger`)
+					EntFire(`BarrierDisableRelay`, `Trigger`, null, 0.5)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_MINIGUN_BULLET_DAMAGE = 10
+					})
+
+					TankExt.CreatePaths({
+						path_tank_forward = [
+							Vector(-576, 2688, -96)
+							Vector(-576, 2432, -96)
+							Vector(-512, 2368, -96)
+							Vector(-256, 2304, -96)
+							Vector(-128, 2176, -96)
+							Vector(-128, 1984, -96)
+							Vector(-192, 1856, -96)
+							Vector(-448, 1664, -96)
+							Vector(-512, 1472, -96)
+							Vector(-448, 1280, -96)
+							Vector(-224, 1088, -96)
+							Vector(-224, 480, -96)
+							Vector(-288, 288, -96)
+							Vector(-416, 160, -96)
+							Vector(-576, 64, -96)
+							Vector(-820, 44, -96)
+							Vector(-970, 24, -96)
+							Vector(-1196, 62, -96)
+							Vector(-1336, 132, -96)
+							Vector(-1362, 262, -96)
+							Vector(-1378, 392, -96)
+							Vector(-1378, 1170, -96)
+							Vector(-1378, 1546, -96)
+							Vector(-1538, 1690, -96)
+							Vector(-1770, 1798, -96)
+							Vector(-2066, 1884, -96)
+							Vector(-2338, 1890, -96)
+							Vector(-2602, 1874, -96)
+							Vector(-2818, 1818, -96)
+							Vector(-2912, 1656, -96)
+							Vector(-2932, 1422, -96)
+							Vector(-2910, 1152, -96)
+							Vector(-2896, 922, -96)
+							Vector(-2982, 768, -96)
+							Vector(-3102, 686, -96)
+							Vector(-3246, 658, -96)
+							Vector(-3440, 648, -96)
+							Vector(-4048, 648, -96)
+							Vector(-4190, 506, -96)
+							Vector(-4190, -48, -96)
+							Vector(-4184, -104, -96)
+							Vector(-4168, -184, -96)
+							Vector(-3712, -192, -96)
+						]
+					})
 				  "
 		}
 		StartWaveOutput
