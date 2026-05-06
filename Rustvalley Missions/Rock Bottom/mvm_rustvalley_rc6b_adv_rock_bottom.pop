@@ -30,7 +30,7 @@ WaveSchedule
 		"Hammer_Weapon"
         {
             OriginalItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
-			"damage bonus" 5
+			"damage bonus" 10
 			"blast radius increased" 2.5
 			"use large smoke explosion" 1
 			"custom projectile model" "models/empty.mdl"
@@ -725,12 +725,27 @@ WaveSchedule
 		BeginAtWave 6
 		RunForThisManyWaves 1
 		InitialCooldown 15
-		CooldownTime 30
-		DesiredCount 2
+		CooldownTime 40
+		DesiredCount 1
 
 		TFBot
 		{
 			Template T_TFBot_Sniper
+		}
+	}
+	Mission // Spy (Wave 6)
+	{
+		Objective Spy
+		Where spawnbot_main_slow1
+		BeginAtWave 6
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 40
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -2129,13 +2144,13 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Heavies
+		WaveSpawn // 6 Heavies
 		{
 			Name "Wave4_Subwave1_Heavies"
 			WaitForAllSpawned "Wave4_Subwave1_ChargingDemo"
 			Where spawnbot_main_slow1
-			TotalCount 8
-			MaxActive 8
+			TotalCount 6
+			MaxActive 6
 			SpawnCount 1
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 0.1
@@ -2270,14 +2285,14 @@ WaveSchedule
 				Template T_TFBot_Sniper_Jarate_Explosive
 			}
 		}
-		WaveSpawn // 6 Heavies
+		WaveSpawn // 4 Heavies
 		{
 			Name "Wave4_Subwave2_Heavies2"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidSoldier2"
 			Where spawnbot_main_slow1
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 3
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 5
 			TotalCurrency 20
@@ -2321,10 +2336,10 @@ WaveSchedule
 			WaitForAllSpawned "Wave4_Subwave3_MiniRocketTank"
 			Where spawnbot_main_slow1
 			TotalCount 20
-			MaxActive 8
+			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
+			WaitBetweenSpawns 1
 			TotalCurrency 20
 
 			TFBot
@@ -2420,13 +2435,13 @@ WaveSchedule
 		WaveSpawn // Speedy Gunslinger Jumpscare
 		{
 			Name "Wave4_Subwave3_SpeedyGunslingers"
-			WaitForAllDead "Wave4_Subwave3_GRapidSoldier"
+			WaitForAllSpawned "Wave4_Subwave3_GRapidSoldier"
 			Where spawnbot_main_slow1
 			Support Limited
 			TotalCount 20
 			MaxActive 20
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 15
 			WaitBetweenSpawns 0.1
 			TotalCurrency 0
 
@@ -2445,6 +2460,7 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
+	// Keep an eye on subwave 1, might be too front-loaded
 	Wave
 	{
 		InitWaveOutput
@@ -2812,7 +2828,7 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 0
 
-			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_specialcompleted02.mp3"
 
 			TFBot
 			{
@@ -2859,16 +2875,6 @@ WaveSchedule
 					"custom impact sound" "misc/doomsday_missile_explosion.wav"
 				}
 
-				FireInput
-				{
-					Target tf_gamerules
-					Action PlayVO
-					Param "vo/mvm/mght/demoman_mvm_m_specialcompleted02.mp3"
-					Delay 3
-					Repeats 1
-					Cooldown -1
-				}
-
 				InterruptAction
 				{
 					Target "-1318 1250 -297"
@@ -2888,8 +2894,9 @@ WaveSchedule
 						FireInput
 						{
 							Target !self
-							Action $Taunt
-							Delay 0
+							Action $TauntFromItem
+							Param "The Ullapool Caber"
+							Delay 0.2
 							Repeats 0
 							Cooldown 0.5
 						}
@@ -2898,7 +2905,7 @@ WaveSchedule
 							Target tf_gamerules
 							Action PlayVO
 							Param "mvm/sentrybuster/mvm_sentrybuster_spin.wav"
-							Delay 0
+							Delay 0.2
 							Repeats 1
 							Cooldown -1
 						}
@@ -2907,7 +2914,7 @@ WaveSchedule
 						{
 							Target !self
 							Action $Suicide
-							Delay 2
+							Delay 2.2
 							Repeats 1
 							Cooldown -1
 						}
@@ -2937,7 +2944,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
-					EntFire(`forcecapture_a_relay`, `Trigger`)
+					EntFire(`forcecapture_a_relay`, `Trigger`, null, 0.5)
 					EntFire(`BarrierDisableRelay`, `Trigger`, null, 0.5)
 
 					IncludeScript(`tankextensions_main`, getroottable())
@@ -2946,6 +2953,172 @@ WaveSchedule
 
 					TankExt.SetValueOverrides({
 						COMBATTANK_MINIGUN_BULLET_DAMAGE = 10
+					})
+
+					TankExt.CreatePaths({
+						path_tank_forward_a = [
+							Vector(-576, 2688, -96)
+							Vector(-576, 2432, -96)
+							Vector(-512, 2368, -96)
+							Vector(-256, 2304, -96)
+							Vector(-128, 2176, -96)
+							Vector(-128, 1984, -96)
+							Vector(-192, 1856, -96)
+							Vector(-448, 1664, -96)
+							Vector(-512, 1472, -96)
+							Vector(-448, 1280, -96)
+							Vector(-224, 1088, -96)
+							Vector(-224, 480, -96)
+							Vector(-288, 288, -96)
+							Vector(-416, 160, -96)
+							Vector(-576, 64, -96)
+							Vector(-820, 44, -96)
+							Vector(-970, 24, -96)
+							Vector(-1196, 62, -96)
+							Vector(-1336, 132, -96)
+							Vector(-1362, 262, -96)
+							Vector(-1378, 392, -96)
+							Vector(-1378, 1170, -96)
+							Vector(-1378, 1546, -96)
+							Vector(-1538, 1690, -96)
+							Vector(-1770, 1798, -96)
+							Vector(-2066, 1884, -96)
+							Vector(-2338, 1890, -96)
+							Vector(-2602, 1874, -96)
+							Vector(-2818, 1818, -96)
+							Vector(-2912, 1656, -96)
+							Vector(-2932, 1422, -96)
+							Vector(-2910, 1152, -96)
+							Vector(-2896, 922, -96)
+							Vector(-2982, 768, -96)
+							Vector(-3102, 686, -96)
+							Vector(-3246, 658, -96)
+							Vector(-3440, 648, -96)
+							Vector(-4048, 648, -96)
+							Vector(-4190, 506, -96)
+							Vector(-4190, -48, -96)
+							Vector(-4184, -104, -96)
+							Vector(-4168, -184, -96)
+							Vector(-3712, -192, -96)
+						]
+					})
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay_classic`, `Trigger`)
+					EntFire(`func_tfbot_hint*`, `Disable`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Minigun Tank
+		{
+			Name "Wave6_Subwave1_MinigunTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+			
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Minigun
+				Health 10000
+				Scale 0.5
+				IsMiniBoss 0
+				DisableSmokeStack 1
+				NoScreenShake 1
+				StartingPathTrackNode "path_tank_forward_a_1"
+			}
+		}
+
+		WaveSpawn // 1 GDiffractor and 1 GMedic
+		{
+			Name "Wave6_Subwave1_GDiffractor"
+			WaitForAllSpawned "Wave6_Subwave1_MinigunTank"
+			Where spawnbot_main1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+			Squad
+			{
+				TFBot
+				{
+					Name "Prismatic Diffractor"
+					Template T_TFBot_Giant_Soldier_Prismatic [$SIGSEGV]
+					Health 10000
+					Attributes UseBossHealthBar
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Regen
+				}
+			}
+		}
+		WaveSpawn // 10 Scatter-Bonk Scouts
+		{
+			Name "Wave6_Subwave1_ScatterBonks"
+			WaitForAllSpawned "Wave6_Subwave1_GDiffractor"
+			Where spawnbot_main1
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Normal
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave6_Subwave1_"
+		}
+	}
+	// Wave 7 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`team_control_point_master`, `SetCapLayoutCustomPositionY`, `5`)
+					EntFire(`forcecapture_a_relay`, `Trigger`)
+					EntFire(`BarrierDisableRelay`, `Trigger`, null, 0.5)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/railgun`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_RAILGUN_BULLET_DAMAGE = 100
 					})
 
 					TankExt.CreatePaths({
@@ -3014,5 +3187,168 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // ITS THE HAMMER, HE'S REAL
+		{
+			Name "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_THEHAMMER
+			}
+		}
+
+		WaveSpawn // 10 Charging Demos
+		{
+			Name "Wave7_Subwave1_ChargingDemo"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+		WaveSpawn // 5 CHARGING DEMOS
+		{
+			Name "Wave7_Subwave1_ChargingDemo2"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			RandomSpawn 1
+			Support Limited
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Name "CHARGING Demo"
+				Template T_TFBot_Demoknight_Caber_Crazy
+			}
+		}
+		WaveSpawn // 5 Claymore Knights
+		{
+			Name "Wave7_Subwave1_ClaymoreKnights"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_mid0
+			Support Limited
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Claymore
+			}
+		}
+		WaveSpawn // 10 Speedy Gunslingers
+		{
+			Name "Wave7_Subwave1_Gunslingers"
+			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 35
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // Support Charging Demos
+		{
+			Name "Wave7_Subwave2_TheHorde"
+			WaitForAllDead "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			Support 1
+			TotalCount 40
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "Charging Demo"
+				Template T_TFBot_Demoman_Knight
+				ClassIcon demoknight_bottle_lite
+
+				Item "The Splendid Screen"
+				Item "TF_WEAPON_BOTTLE"
+			}
+		}
+		WaveSpawn // Support CHARGING Demos
+		{
+			Name "Wave7_Subwave2_TheHorde"
+			WaitForAllDead "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			Support 1
+			TotalCount 40
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "CHARGING Demo"
+				Template T_TFBot_Demoknight_Caber_Crazy
+			}
+		}
+		WaveSpawn // Support Claymore Knights
+		{
+			Name "Wave7_Subwave2_TheHorde"
+			WaitForAllDead "Wave7_Subwave1_THEHAMMER"
+			Where spawnbot_main1
+			Support 1
+			TotalCount 20
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawnsAfterDeath 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "CHARGING Demo"
+				Template T_TFBot_Demoman_Knight_Claymore
+			}
+		}
 	}
 }
