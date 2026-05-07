@@ -1053,6 +1053,7 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
+	// Reduce gunslinger swarm size
 
 	// Wave 1 Notes
 	Wave
@@ -1488,22 +1489,33 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GHomewrecker
+		WaveSpawn // 1 GHomewrecker and 2 Bigheal Medics
 		{
 			Name "Wave2_Subwave1_GHomewrecker"
 			Where spawnbot_main_slow1
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
 			WaitBeforeStarting 60
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Pyro_Homewrecker
-				Attributes AlwaysCrit
-				ClassIcon pyro_homewrecker_pierce_lite
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Homewrecker
+					Attributes AlwaysCrit
+					ClassIcon pyro_homewrecker_pierce_lite
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
 			}
 		}
 
@@ -2275,7 +2287,6 @@ WaveSchedule
 
 	}
 	// Wave 4 Notes
-	// Feels like it needs something other than heavies
 	Wave
 	{
 		InitWaveOutput
@@ -2361,14 +2372,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Speedy Gunslingers
+		WaveSpawn // 5 Speedy Gunslingers
 		{
 			Name "Wave4_Subwave1_SpeedyGunslingers"
 			WaitForAllSpawned "Wave4_Subwave1_ChargingDemo"
 			Where spawnbot_main_slow1
 			Support Limited
-			TotalCount 8
-			MaxActive 8
+			TotalCount 5
+			MaxActive 5
 			SpawnCount 1
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 0.1
@@ -2573,12 +2584,12 @@ WaveSchedule
 				StartingPathTrackNode "path_tank_forward_b_1"
 			}
 		}
-		WaveSpawn // 20 Heavies
+		WaveSpawn // 16 Heavies
 		{
 			Name "Wave4_Subwave3_Heavies"
 			WaitForAllSpawned "Wave4_Subwave3_MiniRocketTank"
 			Where spawnbot_main_slow1
-			TotalCount 20
+			TotalCount 16
 			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 0
@@ -2609,14 +2620,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 8 Speedy Gunslingers
+		WaveSpawn // 5 Speedy Gunslingers
 		{
 			Name "Wave4_Subwave3_SpeedyGunslingers"
 			WaitForAllSpawned "Wave4_Subwave3_MiniRocketTank"
 			Where spawnbot_main_slow1
 			Support Limited
-			TotalCount 8
-			MaxActive 8
+			TotalCount 5
+			MaxActive 5
 			SpawnCount 1
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0.1
@@ -2684,7 +2695,7 @@ WaveSchedule
 			TotalCount 20
 			MaxActive 20
 			SpawnCount 10
-			WaitBeforeStarting 15
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0.1
 			TotalCurrency 0
 
@@ -2703,7 +2714,6 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
-	// Keep an eye on subwave 1, might be too front-loaded
 	Wave
 	{
 		InitWaveOutput
@@ -3670,6 +3680,15 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Shield
+
+					FireWeapon
+					{
+						Type "Special"
+						Duration 0.5
+						Delay 0.5
+						Repeats 0
+						Cooldown 0.5
+					}
 				}
 				TFBot
 				{
@@ -3689,13 +3708,13 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 12 Soldiers
+		WaveSpawn // 18 Soldiers
 		{
 			Name "Wave6_Subwave3_Soldiers"
 			WaitForAllSpawned "Wave6_Subwave3_DoomStack"
 			Where spawnbot_main1
 			Support Limited
-			TotalCount 12
+			TotalCount 18
 			MaxActive 9
 			SpawnCount 3
 			WaitBeforeStarting 5
@@ -3710,6 +3729,8 @@ WaveSchedule
 		}
 	}
 	// Wave 7 Notes
+	// Have the mini tanks spawn faster (7 seconds)
+	// More support on the opener
 	Wave
 	{
 		InitWaveOutput
@@ -3773,11 +3794,11 @@ WaveSchedule
 			Name "Wave7_Subwave1_Demomen"
 			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
 			Where spawnbot_main1
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
 			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			TFBot
@@ -3791,11 +3812,11 @@ WaveSchedule
 			Name "Wave7_Subwave1_Heavies"
 			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
 			Where spawnbot_main1
-			TotalCount 4
-			MaxActive 4
+			TotalCount 8
+			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			TFBot
@@ -3933,7 +3954,7 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
-						EntFire(`tank_boss*`, `RemoveHealth`, 25000)
+						EntFire(`tank_boss*`, `RemoveHealth`, 50000)
 						EntFire(`tf_gamerules`, `$StopVO`, `vehicles/v8/v8_turbo_on_loop1.wav`)
 						EntFire(`tf_gamerules`, `$StopVO`, `vehicles/v8/v8_turbo_on_loop1.wav`)
 					  "
@@ -4034,7 +4055,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 10
+			WaitBeforeStarting 7
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -4103,7 +4124,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 10
+			WaitBeforeStarting 7
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -4182,7 +4203,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 10
+			WaitBeforeStarting 7
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -4255,7 +4276,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 10
+			WaitBeforeStarting 7
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -4325,8 +4346,8 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 1
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
+			WaitBeforeStarting 7
+			WaitBetweenSpawns 2
 			TotalCurrency 40
 
 			Tank
