@@ -993,21 +993,6 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
-	Mission // Spy (Wave 5)
-	{
-		Objective Spy
-		Where spawnbot_main_slow1
-		BeginAtWave 5
-		RunForThisManyWaves 1
-		InitialCooldown 15
-		CooldownTime 30
-		DesiredCount 2
-
-		TFBot
-		{
-			Template T_TFBot_Spy
-		}
-	}
 	Mission // Sniper (Wave 6)
 	{
 		Objective Sniper
@@ -3248,7 +3233,6 @@ WaveSchedule
 		}
 	}
 	// Wave 6 Notes
-	// Keep an eye on the Giant Shield Medic and the shield squads
 	Wave
 	{
 		InitWaveOutput
@@ -3782,14 +3766,14 @@ WaveSchedule
 		}
 
 		// Subwave 3
-		WaveSpawn // 1 GDeflector, 1 GShield Medic and 4 GRapid Demos
+		WaveSpawn // 1 GDeflector and 4 GRapid Demos
 		{
 			Name "Wave6_Subwave3_DoomStack"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstSoldier2"
 			Where spawnbot_main1
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 30
 			WaitBetweenSpawns 0
 			TotalCurrency 200
@@ -3803,19 +3787,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Heavy_Deflector
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Medic_Shield
-
-					FireWeapon
-					{
-						Type "Special"
-						Duration 0.5
-						Delay 0.5
-						Repeats 0
-						Cooldown 0.5
-					}
 				}
 				TFBot
 				{
@@ -3916,6 +3887,25 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn // Support GRapid Soldiers (It's here because valve formatting sucks)
+		{
+			Name "Wave7_Subwave2_GRapidSoldier"
+			WaitForAllDead "Wave7_Subwave1_FunnyTank"
+			Where spawnbot_main1
+			Support 1
+			TotalCount 10
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawnsAfterDeath 15
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+
 		WaveSpawn // 10 Demomen
 		{
 			Name "Wave7_Subwave1_Demomen"
@@ -3952,42 +3942,7 @@ WaveSchedule
 				Skill Normal
 			}
 		}
-		WaveSpawn // 4 Claymore Knights
-		{
-			Name "Wave7_Subwave1_ClaymoreKnights"
-			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
-			Where spawnbot_main1
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
-			WaitBeforeStarting 25
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Knight_Claymore
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave7_Subwave1_GRapidSoldier"
-			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
-			Where spawnbot_main1
-			Support Limited
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 35
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-			}
-		}
-		WaveSpawn // 8 Speedy Gunslingers
+		WaveSpawn // 8 Gunslingers
 		{
 			Name "Wave7_Subwave1_Gunslingers"
 			WaitForAllSpawned "Wave7_Subwave1_THEHAMMER"
@@ -3996,7 +3951,7 @@ WaveSchedule
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
-			WaitBeforeStarting 35
+			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -4013,7 +3968,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -4023,7 +3978,7 @@ WaveSchedule
 			{
 				Template Tank_Tiny
 				Health 30000
-				Speed 120
+				Speed 100
 				StartingPathTrackNode "path_tank_forward_funny_1"
 			}
 
@@ -4076,9 +4031,9 @@ WaveSchedule
 			TotalCount 12
 			MaxActive 12
 			SpawnCount 12
-			WaitBeforeStarting 3
-			WaitBetweenSpawns 5
-			TotalCurrency 100
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 140
 
 			Squad
 			{
@@ -4147,27 +4102,26 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_TinyTanks"
 			WaitForAllDead "Wave7_Subwave1_FunnyTank"
-			Where spawnbot_main1
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 1
-			WaitBeforeStarting 2
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 5
 			TotalCurrency 40
 
 			Tank
 			{
 				Template Tank_Tiny
-				Health 7500
-				Speed 120
-				StartingPathTrackNode "path_tank_forward_1"
+				Health 5000
+				Speed 100
+				MaxTurnRate 75
+				StartingPathTrackNode "path_tank_forward_a_1"
 			}
 		}
 		WaveSpawn // 1 Tiny Tank (Flank A)
 		{
 			Name "Wave7_Subwave2_TinyTank2"
 			WaitForAllSpawned "Wave7_Subwave2_TinyTanks"
-			Where spawnbot_main1
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -4178,8 +4132,9 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Tiny
-				Health 5000
-				Speed 120
+				Health 4000
+				Speed 100
+				MaxTurnRate 75
 				StartingPathTrackNode "path_tank_flank_a_1"
 			}
 		}
@@ -4187,7 +4142,6 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_TinyTank3"
 			WaitForAllSpawned "Wave7_Subwave2_TinyTank2"
-			Where spawnbot_main1
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -4198,16 +4152,16 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Tiny
-				Health 7500
-				Speed 120
-				StartingPathTrackNode "path_tank_forward_1"
+				Health 5000
+				Speed 100
+				MaxTurnRate 75
+				StartingPathTrackNode "path_tank_forward_a_1"
 			}
 		}
 		WaveSpawn // 2 Tiny Tanks (Flank B)
 		{
 			Name "Wave7_Subwave2_TinyTank4"
-			WaitForAllDead "Wave7_Subwave2_TinyTank3"
-			Where spawnbot_main1
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank3"
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 1
@@ -4218,8 +4172,9 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Tiny
-				Health 5000
-				Speed 120
+				Health 4000
+				Speed 100
+				MaxTurnRate 75
 				StartingPathTrackNode "path_tank_flank_b_1"
 			}
 		}
@@ -4227,27 +4182,6 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_TinyTank5"
 			WaitForAllSpawned "Wave7_Subwave2_TinyTank4"
-			Where spawnbot_main1
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Tank
-			{
-				Template Tank_Tiny
-				Health 7500
-				Speed 120
-				StartingPathTrackNode "path_tank_forward_1"
-			}
-		}
-		WaveSpawn // 1 Tiny Tank (Flank A)
-		{
-			Name "Wave7_Subwave2_TinyTank6"
-			WaitForAllSpawned "Wave7_Subwave2_TinyTank5"
-			Where spawnbot_main1
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -4259,7 +4193,28 @@ WaveSchedule
 			{
 				Template Tank_Tiny
 				Health 5000
-				Speed 120
+				Speed 100
+				MaxTurnRate 75
+				StartingPathTrackNode "path_tank_forward_a_1"
+			}
+		}
+		WaveSpawn // 1 Tiny Tank (Flank A)
+		{
+			Name "Wave7_Subwave2_TinyTank6"
+			WaitForAllSpawned "Wave7_Subwave2_TinyTank5"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 4000
+				Speed 100
+				MaxTurnRate 75
 				StartingPathTrackNode "path_tank_flank_a_1"
 			}
 		}
@@ -4267,7 +4222,6 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_TinyTank7"
 			WaitForAllSpawned "Wave7_Subwave2_TinyTank6"
-			Where spawnbot_main1
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -4278,8 +4232,9 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Tiny
-				Health 5000
-				Speed 120
+				Health 4000
+				Speed 100
+				MaxTurnRate 75
 				StartingPathTrackNode "path_tank_flank_b_1"
 			}
 		}
@@ -4287,7 +4242,6 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_TinyTank8"
 			WaitForAllSpawned "Wave7_Subwave2_TinyTank7"
-			Where spawnbot_main1
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 1
@@ -4298,28 +4252,10 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Tiny
-				Health 7500
-				Speed 120
+				Health 5000
+				Speed 100
+				MaxTurnRate 75
 				StartingPathTrackNode "path_tank_flank_c_1"
-			}
-		}
-
-		WaveSpawn // Support GRapid Soldiers
-		{
-			Name "Wave7_Subwave2_GRapidSoldier"
-			WaitForAllDead "Wave7_Subwave1_FunnyTank"
-			Where spawnbot_main1
-			Support 1
-			TotalCount 10
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawnsAfterDeath 15
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
 			}
 		}
 
@@ -4331,7 +4267,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 2
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
@@ -4353,16 +4289,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 12 Heavies
+		WaveSpawn // 8 Heavies
 		{
-			Name "Wave7_Subwave2_Heavies"
+			Name "Wave7_Subwave2_Gunslingers"
 			WaitForAllSpawned "Wave7_Subwave2_GBurstDemo"
 			Where spawnbot_main1
-			TotalCount 12
-			MaxActive 9
-			SpawnCount 3
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			TFBot
@@ -4477,21 +4413,22 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 4 Claymore Knights
+		WaveSpawn // 8 Gunslingers
 		{
-			Name "Wave7_Subwave2_ClaymoreKnights"
+			Name "Wave7_Subwave2_Gunslingers"
 			WaitForAllSpawned "Wave7_Subwave2_GHeavy"
 			Where spawnbot_main1
-			TotalCount 4
-			MaxActive 4
+			Support Limited
+			TotalCount 8
+			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 5
 			TotalCurrency 20
 
 			TFBot
 			{
-				Template T_TFBot_Demoman_Knight_Claymore
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
 			}
 		}
 
@@ -4537,12 +4474,11 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Gunslingers
+		WaveSpawn // 8 Heavies
 		{
-			Name "Wave7_Subwave2_Gunslingers"
+			Name "Wave7_Subwave2_Heavies2"
 			WaitForAllSpawned "Wave7_Subwave2_GBurstDemo2"
 			Where spawnbot_main1
-			Support Limited
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 4
@@ -4552,7 +4488,8 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+				Class Heavy
+				Skill Normal
 			}
 		}
 
@@ -4641,7 +4578,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GHeavy, 1 GKritz Medic and 4 GRapid Sticky Demos
+		WaveSpawn // 1 GHeavy, 1 GKritz Medic and 4 Bison Shotgun Soldiers
 		{
 			Name "Wave7_Subwave2_GHeavy2"
 			WaitForAllSpawned "Wave7_Subwave2_GBarrage2"
@@ -4649,15 +4586,13 @@ WaveSchedule
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 6
-			WaitBeforeStarting 20
+			WaitBeforeStarting 30
 			WaitBetweenSpawns 0
-			TotalCurrency 200
+			TotalCurrency 180
 
 			Squad
 			{
 				NoWaitForFormation 1 [$SIGSEGV]
-
-				FormationSize 200
 
 				TFBot
 				{
@@ -4669,20 +4604,38 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Stickybomb_Spammer
+					Template T_TFBot_Soldier_Bison_Shotgun
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Stickybomb_Spammer
+					Template T_TFBot_Soldier_Bison_Shotgun
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Stickybomb_Spammer
+					Template T_TFBot_Soldier_Bison_Shotgun
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Stickybomb_Spammer
+					Template T_TFBot_Soldier_Bison_Shotgun
 				}
+			}
+		}
+		WaveSpawn // 8 Gunslingers
+		{
+			Name "Wave7_Subwave2_Gunslingers2"
+			WaitForAllSpawned "Wave7_Subwave2_GHeavy2"
+			Where spawnbot_main1
+			Support Limited
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
 			}
 		}
 	}
