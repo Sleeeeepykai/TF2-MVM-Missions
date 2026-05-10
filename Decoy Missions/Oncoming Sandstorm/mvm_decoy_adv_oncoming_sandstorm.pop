@@ -1,0 +1,171 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1000
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	BodyPartScaleSpeed 8
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	//// EXTRA TANK PATHS ////
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 5
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					IncludeScript(`tankextensions_main`, getroottable())
+					//IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`combattank_mini_test`, getroottable())
+
+					IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/fireball`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/railgun`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
+						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
+						COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
+					})
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		WaveSpawn // 1 Mini Rocket Tank
+		{
+			Name "Wave1_Subwave1_MiniRocketTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Rocket_Tiny
+				Health 7500
+				StartingPathTrackNode "boss_path_1"
+			}
+		}
+		WaveSpawn // 1 Mini Rocket Tank
+		{
+			Name "Wave1_Subwave1_MiniMinigunTank"
+			WaitForAllDead "Wave1_Subwave1_MiniRocketTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Minigun_Tiny
+				Health 7500
+				StartingPathTrackNode "boss_path_1"
+			}
+		}
+		WaveSpawn // 1 Mini Rocket Tank
+		{
+			Name "Wave1_Subwave1_MiniDragonFuryTank"
+			WaitForAllDead "Wave1_Subwave1_MiniMinigunTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Combat_DragonFury_Tiny
+				Health 7500
+				StartingPathTrackNode "boss_path_1"
+			}
+		}
+		WaveSpawn // 1 Mini Rocket Tank
+		{
+			Name "Wave1_Subwave1_MiniRailgunTank"
+			WaitForAllDead "Wave1_Subwave1_MiniDragonFuryTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Railgun_Tiny
+				Health 7500
+				StartingPathTrackNode "boss_path_1"
+			}
+		}
+	}
+}
