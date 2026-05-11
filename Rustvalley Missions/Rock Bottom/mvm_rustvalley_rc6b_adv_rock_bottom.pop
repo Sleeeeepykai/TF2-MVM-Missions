@@ -1027,6 +1027,10 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
+	// Map out a trigger_teleport on the opposite side of the barrier to prevent bot displacement softlocks
+	// Map out a nav_avoid on the inside of the flank area to prevent bots from pathing inside
+	// Map out some new barriers to further close off the indoors flanks
+	// Cook up normal pilled hyper icon for the charging demo boss
 
 	// Wave 1 Notes
 	Wave
@@ -1404,12 +1408,31 @@ WaveSchedule
 			}
 		}
 		
+		WaveSpawn // Support GHomewreckers
+		{
+			Name "Wave2_Subwave1_GHomewrecker"
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 20
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawnsAfterDeath 15
+			TotalCurrency 300
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Homewrecker
+				Attributes AlwaysCrit
+				Action Mobber
+			}
+		}
 		WaveSpawn // 25 Scouts
 		{
 			Name "Wave2_Subwave1_Scouts"
 			Where spawnbot_main_slow1
 			TotalCount 25
-			MaxActive 5
+			MaxActive 6
 			SpawnCount 1
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 1
@@ -1426,7 +1449,7 @@ WaveSchedule
 			Name "Wave2_Subwave1_Scouts"
 			Where spawnbot_main_slow1
 			TotalCount 25
-			MaxActive 5
+			MaxActive 6
 			SpawnCount 1
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 1
@@ -1459,149 +1482,6 @@ WaveSchedule
 				{
 					Template T_TFBot_Medic_BigHeal
 				}
-			}
-		}
-
-		WaveSpawn // 1 GHomewrecker and 2 Bigheal Medics
-		{
-			Name "Wave2_Subwave1_GHomewrecker"
-			Where spawnbot_main_slow1
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 60
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Homewrecker
-					Attributes AlwaysCrit
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-			}
-		}
-
-		// Subwave 2
-		WaveSpawn // 10 Scatter-Bonk Scouts
-		{
-			Name "Wave2_Subwave2_Scouts"
-			WaitForAllSpawned "Wave2_Subwave1_Scouts"
-			Where spawnbot_main_slow1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Bonk_Scatter
-			}
-		}
-		WaveSpawn // 1 GHomewrecker and 2 Bigheal Medics
-		{
-			Name "Wave2_Subwave2_GHomewrecker"
-			WaitForAllSpawned "Wave2_Subwave2_Scouts"
-			Where spawnbot_main_slow1
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Homewrecker
-					Attributes AlwaysCrit
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-			}
-		}
-
-		WaveSpawn // 12 Ranger Engineers
-		{
-			Name "Wave2_Subwave2_Engineers"
-			WaitForAllSpawned "Wave2_Subwave2_GHomewrecker"
-			Where spawnbot_main_slow1
-			TotalCount 12
-			MaxActive 9
-			SpawnCount 3
-			WaitBeforeStarting 4
-			WaitBetweenSpawns 3
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Ranger
-			}
-		}
-
-		WaveSpawn // 1 GHomewrecker and 2 Bigheal Medics
-		{
-			Name "Wave2_Subwave2_GHomewrecker2"
-			WaitForAllSpawned "Wave2_Subwave2_GHomewrecker"
-			Where spawnbot_main_slow1
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro_Homewrecker
-					Attributes AlwaysCrit
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-			}
-		}
-
-		WaveSpawn // 8 Ranger Engineers
-		{
-			Name "Wave2_Subwave2_Engineers2"
-			WaitForAllSpawned "Wave2_Subwave2_GHomewrecker2"
-			Where spawnbot_main_slow1
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 0.1
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Ranger
 			}
 		}
 	}
@@ -2623,7 +2503,7 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Combat_Rocket_Tiny
-				Health 7500
+				Health 10000
 				StartingPathTrackNode "path_tank_forward_b_1"
 			}
 		}
@@ -3405,7 +3285,7 @@ WaveSchedule
 				Skill Hard
 			}
 		}
-		WaveSpawn // 3 Shield Medics and Pyros
+		WaveSpawn // 3 Shield Medics and 9 Pyros
 		{
 			Name "Wave6_Subwave2_ShieldSquads"
 			WaitForAllSpawned "Wave6_Subwave2_GDeflector"
