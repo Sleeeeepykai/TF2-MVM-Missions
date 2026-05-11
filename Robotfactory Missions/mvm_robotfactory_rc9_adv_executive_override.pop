@@ -254,11 +254,51 @@ WaveSchedule
 		}
 
 		//// Wave PTs ////
+
 		Wave1_PTs
 		{
 			logic_relay // Wave 1 Setup
 			{
 				"targetname" "Wave1_SetupRelay"
+
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0.2,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0.2,-1"
+
+				"OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A_route_wall_1_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_2_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "A2_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
+
+				"OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,0,-1"
+
+				"OnTrigger" "carrier_lift_raise_relay,Trigger,,0,-1"
+				"OnTrigger" "carrier_door_front_close_relay,Trigger,,0,-1"
+				"OnTrigger" "container_lift_raise_relay,Trigger,,0,-1"
+
+				"OnTrigger" "door_front_l,Lock,,0,-1"
+				"OnTrigger" "door_front_r,Lock,,0,-1"
+				"OnTrigger" "door_front_l,Close,,0.1,-1"
+				"OnTrigger" "door_front_r,Close,,0.1,-1"
+			}
+		}
+
+		Wave2_PTs
+		{
+			logic_relay // Wave 2 Setup
+			{
+				"targetname" "Wave2_SetupRelay"
 
 				"OnTrigger" "B1_wall_fix_relay,Trigger,,0,-1"
 				"OnTrigger" "C1_wall_fix_relay,Trigger,,0,-1"
@@ -569,11 +609,12 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
-					EntFire(`Wave1_PTs`, `ForceSpawn`)
-					EntFire(`Wave1_SetupRelay`, `Trigger`)
+					EntFire(`Stage1_PTs`, `ForceSpawn`)
+					EntFire(`Wave2_PTs`, `ForceSpawn`)
+					EntFire(`Wave2_SetupRelay`, `Trigger`)
 					EntFire(`Relay_D`, `Trigger`)
-					EntFire(`holograms`, `Disable`)
-					EntFire(`D_E_holograms`, `Disable`)
+					EntFire(`holograms`, `Disable`, null, 0.2)
+					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
 			  	  "
 		}
 		StartWaveOutput
@@ -595,21 +636,198 @@ WaveSchedule
 				  "
 		}
 
-		WaveSpawn
+		// Subwave 1
+		WaveSpawn // 1 GSoldier
 		{
-			Name "Wave1_Subwave1_Soldiers"
+			Name "Wave2_Subwave1_GSoldier"
 			Where spawnbot_stage1_left [$SIGSEGV]
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave2_Subwave1_Heavies"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			Where spawnbot_stage1_right [$SIGSEGV]
+			RandomSpawn 1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 6 Shotgun Soldiers
+		{
+			Name "Wave2_Subwave1_ShotgunSoldiers"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Shotgun
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GSoldier
+		{
+			Name "Wave2_Subwave1_GSoldier2"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
+		WaveSpawn // 10 Shotgun Soldiers
+		{
+			Name "Wave2_Subwave1_ShotgunSoldiers2"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			Where spawnbot_stage1_right [$SIGSEGV]
+			RandomSpawn 1
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Shotgun
+				Skill Easy
+			}
+		}
+		WaveSpawn // 6 Heavies
+		{
+			Name "Wave2_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GSoldier
+		{
+			Name "Wave2_Subwave2_GSoldier"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
+		WaveSpawn // 6 Soldiers and 6 Shotgun Soldiers
+		{
+			Name "Wave2_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Shotgun
+					Skill Easy
+				}
+			}
+		}
+
+		WaveSpawn // 1 GSoldier
+		{
+			Name "Wave2_Subwave2_GSoldier2"
+			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
+		WaveSpawn // 8 Soldiers
+		{
+			Name "Wave2_Subwave2_Soldiers2"
+			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
 
 			TFBot
 			{
 				Class Soldier
-				Skill Normal
+				Skill Easy
 			}
 		}
 	}
