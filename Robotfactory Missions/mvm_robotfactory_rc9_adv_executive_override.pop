@@ -1,0 +1,616 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 800
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	BodyPartScaleSpeed 8
+
+	//// PRECACHES ////
+
+	// Precached Models
+
+	PrecacheModel "models/mvm/barrier/barrier_spawn_blue1.mdl"
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		//// Map Stage PTs ////
+
+		Stage1_PTs
+		{
+			// Stage 1 Relays
+			logic_relay // Stage 1 Start
+			{
+				"targetname" "Stage1_StartRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion1.wav,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Left,Enable,,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Right,Enable,,0,-1"
+				"OnTrigger" "B1_door_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "A1_door_unlock_relay,Trigger,,0,-1"
+			}
+			logic_relay // Stage 1 Finish
+			{
+				"targetname" "Stage1_FinishRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion5.wav,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Left,Disable,,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Right,Disable,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
+				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+			}
+
+			// Stage 1 Respawn Rooms
+			trigger_multiple // Left Spawn Room
+			{
+				"targetname" "Stage1RespawnRoom_Left"
+				"origin" "-1408 -776 336"
+				"mins" "-760 -760 -336"
+				"maxs" "760 760 336"
+				"wait" "0.5"
+				"spawnflags" "64"
+
+				"filtername" "blue_team_filter"
+
+				"OnStartTouch" "!activator,$Addcond,51,0,-1"
+				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+				"OnEndTouch" "!activator,$Removecond,51,0,-1"
+				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+			}
+			trigger_multiple // Right Spawn Room
+			{
+				"targetname" "Stage1RespawnRoom_Right"
+				"origin" "0 0 336"
+				"mins" "-512 -384 -336"
+				"maxs" "512 384 336"
+				"wait" "0.5"
+				"spawnflags" "64"
+
+				"filtername" "blue_team_filter"
+
+				"OnStartTouch" "!activator,$Addcond,51,0,-1"
+				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+				"OnEndTouch" "!activator,$Removecond,51,0,-1"
+				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+			}
+			func_nobuild // Left Spawn Room Nobuild
+			{
+				"targetname" "Stage1RespawnRoom_NobuildLeft"
+				"origin" "-1408 -776 336"
+				"mins" "-760 -760 -336"
+				"maxs" "760 760 336"
+			}
+			func_nobuild // Right Spawn Room Nobuild
+			{
+				"targetname" "Stage1RespawnRoom_NobuildRight"
+				"origin" "0 0 336"
+				"mins" "-512 -384 -336"
+				"maxs" "512 384 336"
+			}
+			prop_dynamic // Left Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Left"
+				"origin" "-642 -1280 116"
+				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
+				"modelscale" "0.75"
+				"solid" "0"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			func_forcefield // Left Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Left"
+				"origin" "-642 -1280 116"
+				"mins" "-5 -176 -120"
+				"maxs" "5 176 120"
+				"teamnum" "3"
+			}
+			prop_dynamic // Right Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Right"
+				"origin" "0 -382 116"
+				"angles" "0 270 0"
+				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
+				"modelscale" "0.75"
+				"solid" "0"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			func_forcefield // Left Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Right"
+				"origin" "0 -382 116"
+				"mins" "-176 5 -120"
+				"maxs" "176 5 120"
+				"teamnum" "3"
+			}
+
+			// Stage 1 Blockers
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage1_Forcefield"
+				"origin" "-1408 -1568 336"
+				"mins" "-760 -76 -336"
+				"maxs" "760 76 336"
+				"teamnum" "3"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage1_ContainerProp"
+				"origin" "-1960 -1600 0"
+				"angles" "0 0 0"
+				"model" "models/props_urban/urban_shipping_container02.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage1_ContainerProp"
+				"origin" "-1960 -1728 0"
+				"angles" "0 0 0"
+				"model" "models/props_urban/urban_shipping_container02.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage1_ContainerProp"
+				"origin" "-1960 -1656 106"
+				"angles" "0 345 0"
+				"model" "models/props_urban/urban_shipping_container02.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage1_ContainerProp"
+				"origin" "-1512 -1480 0"
+				"angles" "0 30 0"
+				"model" "models/props_urban/urban_shipping_container01.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage1_ContainerProp"
+				"origin" "-1024 -1456 0"
+				"angles" "0 0 0"
+				"model" "models/props_urban/urban_shipping_container01.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Crate
+			{
+				"targetname" "Stage1_CrateProp"
+				"origin" "-1695 -1640 0"
+				"angles" "0 345 0"
+				"model" "models/props_lakeside/wood_crate_01.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Crate
+			{
+				"targetname" "Stage1_CrateProp"
+				"origin" "-1707 -1740 0"
+				"angles" "0 0 0"
+				"model" "models/props_mvm/barrel_crate.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Crate
+			{
+				"targetname" "Stage1_CrateProp"
+				"origin" "-1599 -1592 0"
+				"angles" "0 15 0"
+				"model" "models/props_hydro/barrel_crate.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Crate
+			{
+				"targetname" "Stage1_CrateProp"
+				"origin" "-1695 -1632 98"
+				"angles" "0 15 0"
+				"model" "models/props_hydro/barrel_crate_half.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+		}
+
+		//// Wave PTs ////
+		Wave1_PTs
+		{
+			logic_relay // Wave 1 Setup
+			{
+				"targetname" "Wave1_SetupRelay"
+
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0.2,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0.2,-1"
+
+				"OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A_route_wall_1_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_2_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "A2_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
+
+				"OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,0,-1"
+
+				"OnTrigger" "carrier_lift_raise_relay,Trigger,,0,-1"
+				"OnTrigger" "carrier_door_front_close_relay,Trigger,,0,-1"
+				"OnTrigger" "container_lift_raise_relay,Trigger,,0,-1"
+
+				"OnTrigger" "door_front_l,Lock,,0,-1"
+				"OnTrigger" "door_front_r,Lock,,0,-1"
+				"OnTrigger" "door_front_l,Close,,0.1,-1"
+				"OnTrigger" "door_front_r,Close,,0.1,-1"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// EXTRA TANK PATHS ////
+
+	//// EXTRA SPAWNPOINTS ////
+
+	// Stage 1 Spawns
+	ExtraSpawnPoint // Left
+    {
+        Name "spawnbot_stage1_left"
+        TeamNum 3
+        X "-1024"                     
+        Y "-960"                  
+        Z "64"        
+    }
+	ExtraSpawnPoint // Right
+	{
+		Name "spawnbot_stage1_right"
+		TeamNum 3
+		X "320"
+		Y "-256"
+		Z "64"
+	}
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_stage1_left [$SIGSEGV]
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage1_PTs`, `ForceSpawn`)
+					EntFire(`Wave1_PTs`, `ForceSpawn`)
+					EntFire(`Wave1_SetupRelay`, `Trigger`)
+					EntFire(`Relay_D`, `Trigger`)
+					EntFire(`holograms`, `Disable`, null, 0.2)
+					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
+			  	  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage1_StartRelay`, `Trigger`)
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage1_FinishRelay`, `Trigger`)
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+
+		// Subwave 1
+		WaveSpawn // 4 Homewrecker Pyros
+		{
+			Name "Wave1_Subwave1_Homewreckers"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Homewrecker
+			}
+		}
+		WaveSpawn // 16 Pomson Engineers
+		{
+			Name "Wave1_Subwave1_Pomsons"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Pomson
+			}
+		}
+
+		WaveSpawn // 1 GPyro
+		{
+			Name "Wave1_Subwave1_GPyro"
+			WaitForAllSpawned "Wave1_Subwave1_Homewreckers"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysFireWeapon
+			}
+		}
+		WaveSpawn // 8 Pomson Engineers
+		{
+			Name "Wave1_Subwave1_Pomsons2"
+			WaitForAllSpawned "Wave1_Subwave1_GPyro"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Pomson
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // Support GRU Heavies
+		{
+			Name "Wave1_Subwave2_GRUHeavies"
+			WaitForAllSpawned "Wave1_Subwave1_GPyro"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			Support 1
+			TotalCount 60
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 2
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 2 Homewrecker Pyros
+		{
+			Name "Wave1_Subwave2_GPyro"
+			WaitForAllSpawned "Wave1_Subwave1_GPyro"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Homewrecker
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Homewrecker
+				}
+			}
+		}
+		WaveSpawn // 12 Pomson Engineers
+		{
+			Name "Wave1_Subwave2_Pomsons"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Pomson
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 2 Homewrecker Pyros
+		{
+			Name "Wave1_Subwave2_GPyro2"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Homewrecker
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Homewrecker
+				}
+			}
+		}
+		WaveSpawn // 6 Pomson Engineers
+		{
+			Name "Wave1_Subwave2_Pomsons2"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro2"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Pomson
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Wave1_PTs`, `ForceSpawn`)
+					EntFire(`Wave1_SetupRelay`, `Trigger`)
+					EntFire(`Relay_D`, `Trigger`)
+					EntFire(`holograms`, `Disable`)
+					EntFire(`D_E_holograms`, `Disable`)
+			  	  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage1_StartRelay`, `Trigger`)
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage1_FinishRelay`, `Trigger`)
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_Soldiers"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Normal
+			}
+		}
+	}
+}
