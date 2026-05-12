@@ -30,6 +30,15 @@ WaveSchedule
 
 	PointTemplates
 	{
+		//// Core PTs ////
+
+		Core_PTs
+		{
+			point_populator_interface
+			{
+				"targetname" "pop_interface"
+			}
+		}
 		//// Map Stage PTs ////
 
 		Stage1_PTs
@@ -375,16 +384,6 @@ WaveSchedule
 				"OnTrigger" "door_front_r,Close,,0.1,-1"
 			}
 
-			env_shake // Explosion Shake
-			{
-				"targetname" "Wave3_BombPlantExplosionShake"
-				"amplitude"  "10"
-				"frequency"  "15"
-				"duration"   "10"
-				"radius"     "2000"
-				"spawnflags" "5"
-			}
-
 			// 1st Bomb Plant Sequence
 			func_flagdetectionzone // Bomb Plant Zone
 			{
@@ -400,8 +399,23 @@ WaveSchedule
 				"OnDroppedFlag" "Wave3_ExtraBombTeamFlag,SetTeam,2,0,-1"
 				"OnDroppedFlag" "Wave3_ExtraBombTeamFlag,SetReturnTime,10,0,-1"
 				"OnDroppedFlag" "Wave3_FirstBombPlantHint,Disable,,0,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,0,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,2,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,4,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,6,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,8,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.7,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.8,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.9,-1"
 			}
-			prop_dynamic // Bomb Hint Prop
+			training_annotation // Bomb Plant Hint Annotation
+			{
+				"targetname" "Wave3_FirstBombPlantAnnotation"
+				"origin" "1407 -1176 28"
+				"display_text" "Plant the bomb here!"
+				"lifetime" "3"
+			}
+			prop_dynamic // Bomb Plant Hint Prop
 			{
 				"targetname" "Wave3_FirstBombPlantHint"
 				"origin" "1407 -1176 28"
@@ -415,17 +429,111 @@ WaveSchedule
 				"disablereceiveshadows" "1"
 				"startdisabled" "1"
 			}
-			info_particle_system // Bomb Plant Explosion
+			logic_relay // Bomb Plant Explosion Relay
+			{
+				"targetname" "Wave3_FirstBombPlantExplosionRelay"
+				"OnTrigger" "A_route_wall_1_break_relay,Trigger,,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 192, 1, 0, 1)0-1"
+				"OnTrigger" "Wave3_FirstBombPlantExplosion,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/debris2.wav,0,-1"
+
+				"OnTrigger" "Wave3_FirstBombPlantZone,Disable,,0,-1"
+				"OnTrigger" "Wave3_SecondBombPlantZone,Enable,,1,-1"
+				"OnTrigger" "Wave3_FirstBombPlantExplosion,Stop,,3,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave2_GBurstSoldierBombCarrier,5,-1"
+			}
+			info_particle_system // Bomb Plant Explosion Particle
 			{
 				"targetname" "Wave3_FirstBombPlantExplosion"
-				"origin" "1408 -1168 28"
+				"origin" "1408 -1168 0"
 				"effect_name" "cinefx_goldrush"
 				"start_active" "0"
 			}
-			info_particle_system // Bomb Plant Explosion
+			info_particle_system // Bomb Plant Explosion Particle
 			{
 				"targetname" "Wave3_FirstBombPlantExplosion"
-				"origin" "1408 -1168 28"
+				"origin" "1408 -1168 0"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
+
+			// 2nd Bomb Plant Sequence
+			func_flagdetectionzone // Bomb Plant Zone
+			{
+				"targetname" "Wave3_SecondBombPlantZone"
+				"origin" "1408 -912 32"
+				"mins" "-80 -64 -32"
+				"maxs" "80 64 32"
+				"TeamNum" "2"
+				"startdisabled" "1"
+
+				"OnStartTouchFlag" "Wave3_ExtraBombTeamFlag2,ForceDrop,,0,-1"
+				"OnStartTouchFlag" "Wave3_ExtraBombArrow,HideSprite,,0,-1"
+
+				"OnDroppedFlag" "Wave3_ExtraBombTeamFlag2,SetTeam,2,0,-1"
+				"OnDroppedFlag" "Wave3_ExtraBombTeamFlag2,SetReturnTime,10,0,-1"
+				"OnDroppedFlag" "Wave3_SecondBombPlantHint,Disable,,0,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,0,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,2,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,4,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,6,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,8,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.7,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.8,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.9,-1"
+			}
+			training_annotation // Bomb Plant Hint Annotation
+			{
+				"targetname" "Wave3_SecondBombPlantAnnotation"
+				"origin" "1407 -920 32"
+				"display_text" "Plant the bomb here!"
+				"lifetime" "3"
+			}
+			prop_dynamic // Bomb Plant Hint Prop
+			{
+				"targetname" "Wave3_SecondBombPlantHint"
+				"origin" "1407 -920 32"
+				"angles" "0 270 0"
+				"model" "models\props_td\atom_bomb_blue2.mdl"
+				"modelscale" "1.5"
+				"solid" "0"
+				"renderfx" "15"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"disablereceiveshadows" "1"
+				"startdisabled" "1"
+			}
+			logic_relay // Bomb Plant Explosion Relay
+			{
+				"targetname" "Wave3_SecondBombPlantExplosionRelay"
+				"OnTrigger" "A_route_wall_2_break_relay,Trigger,,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 192, 1, 0, 1)0-1"
+				"OnTrigger" "Wave3_SecondBombPlantExplosion,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/debris2.wav,0,-1"
+
+				"OnTrigger" "Wave3_SecondBombPlantZone,Disable,,0,-1"
+				"OnTrigger" "Wave3_SecondBombPlantExplosion,Stop,,3,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave3_TheBoss,5,-1"
+			}
+			info_particle_system // Bomb Plant Explosion Particle
+			{
+				"targetname" "Wave3_SecondBombPlantExplosion"
+				"origin" "1407 -920 0"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system // Bomb Plant Explosion Particle
+			{
+				"targetname" "Wave3_SecondBombPlantExplosion"
+				"origin" "1407 -920 0"
 				"effect_name" "fireSmoke_Collumn_mvmAcres"
 				"start_active" "0"
 			}
@@ -452,6 +560,8 @@ WaveSchedule
 		{
 			KeepAlive 1
 			
+			RemoveIfKilled "Wave3_ExtraBombTeamFlag"
+			
 			item_teamflag // Dropped Extra Bomb
 			{
 				"targetname" "Wave3_ExtraBombTeamFlag"
@@ -464,6 +574,9 @@ WaveSchedule
 				"OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
 				"OnPickup1" "Wave3_ExtraBombArrow,HideSprite,,0,-1"
 				"OnPickup1" "Wave3_FirstBombPlantHint,Enable,,0,-1"
+				"OnPickup1" "Wave3_FirstBombPlantHint,Show,,0,-1"
+				"OnReturn" "Wave3_FirstBombPlantExplosionRelay,Trigger,,0,-1"
+				"OnReturn" "!self,Kill,,0.2,-1"
 			}
 			tf_glow // Extra Bomb Glow
 			{
@@ -505,26 +618,35 @@ WaveSchedule
 		Wave3_PlayerBombCarrierLogic2
 		{
 			KeepAlive 1
+
+			RemoveIfKilled "Wave3_ExtraBombTeamFlag2"
 			
 			item_teamflag // Dropped Extra Bomb
 			{
-				"targetname" "Wave3_ExtraBombTeamFlag"
+				"targetname" "Wave3_ExtraBombTeamFlag2"
 				"origin" "0 0 0"
 				"flag_model" "models\props_td\atom_bomb_blue2.mdl"
 				"modelscale" "1"
 				"TeamNum" "2"
 				"startdisabled" "1"
+
+				"OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
+				"OnPickup1" "Wave3_ExtraBombArrow,HideSprite,,0,-1"
+				"OnPickup1" "Wave3_SecondBombPlantHint,Show,,0,-1"
+				"OnPickup1" "Wave3_SecondBombPlantHint,Enable,,0,-1"
+				"OnReturn" "Wave3_SecondBombPlantExplosionRelay,Trigger,,0,-1"
+				"OnReturn" "!self,Kill,,0.2,-1"
 			}
 			tf_glow // Extra Bomb Glow
 			{
-				"targetname" "Wave3_ExtraBombGlow"
-				"target" "Wave3_ExtraBombTeamFlag"
+				"targetname" "Wave3_ExtraBombGlow2"
+				"target" "Wave3_ExtraBombTeamFlag2"
 				"GlowColor" "0 176 199 255"
 				"startdisabled" "1"
 			}
 			env_sprite // Extra Bomb Arrow Sprite
 			{
-				"targetname" "Wave3_ExtraBombArrow"
+				"targetname" "Wave3_ExtraBombArrow2"
 				"origin" "0 0 100"
 				"model" "materials/hud/arrow_big_down.vmt"
 				"scale" "0.2"
@@ -532,29 +654,31 @@ WaveSchedule
 
 			OnParentKilledOutput
 			{
-				Target "Wave3_ExtraBombTeamFlag"
+				Target "Wave3_ExtraBombTeamFlag2"
 				Action Enable
 			}
 			OnParentKilledOutput
 			{
-				Target "Wave3_ExtraBombTeamFlag"
+				Target "Wave3_ExtraBombTeamFlag2"
 				Action SetTeam
 				Param 3
 			}
 			OnParentKilledOutput
 			{
-				Target "Wave3_ExtraBombGlow"
+				Target "Wave3_ExtraBombGlow2"
 				Action Enable
 			}
 			OnParentKilledOutput
 			{
-				Target "Wave3_ExtraBombArrow"
+				Target "Wave3_ExtraBombArrow2"
 				Action ShowSprite
 			}
 		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "Core_PTs"
 
 	//// EXTRA TANK PATHS ////
 
@@ -579,6 +703,158 @@ WaveSchedule
 	}
 
 	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Giant_Soldier_Burst_ExtraBomb1
+		{
+			Template T_TFBot_Giant_Soldier_Burst
+			Action Mobber
+			AlwaysGlow 1
+
+			SpawnTemplate
+			{
+				Name "Wave3_ExtraBotBomb"
+				Bone bip_spine_2
+			}
+			SpawnTemplate "Wave3_PlayerBombCarrierLogic1"
+
+			InterruptAction // Moves to Hatch
+			{
+				Target "1280 -2816 25"
+				Delay 0.1
+				Repeats 1
+				Duration 2
+				Cooldown 0
+				WaitUntilDone 1
+				OnDoneChangeAttributes "DeployBomb"
+			}
+
+			EventChangeAttributes
+			{
+				DeployBomb [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					ActionOverride Idle
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.001
+						"no_jump" 1
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $PlaySequence
+						Param "melee_deploybomb"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "mvm/mvm_deploy_giant.wav"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target bomb_deploy_relay
+						Action Trigger
+						Delay 2
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $Suicide
+						Delay 2.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+			}
+		}
+		T_TFBot_Giant_Soldier_Burst_ExtraBomb2
+		{
+			Template T_TFBot_Giant_Soldier_Burst
+			Action Mobber
+			AlwaysGlow 1
+
+			SpawnTemplate
+			{
+				Name "Wave3_ExtraBotBomb"
+				Bone bip_spine_2
+			}
+			SpawnTemplate "Wave3_PlayerBombCarrierLogic2"
+
+			InterruptAction // Moves to Hatch
+			{
+				Target "1280 -2816 25"
+				Delay 0.1
+				Repeats 1
+				Duration 2
+				Cooldown 0
+				WaitUntilDone 1
+				OnDoneChangeAttributes "DeployBomb"
+			}
+
+			EventChangeAttributes
+			{
+				DeployBomb [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					ActionOverride Idle
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.001
+						"no_jump" 1
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $PlaySequence
+						Param "melee_deploybomb"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "mvm/mvm_deploy_giant.wav"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target bomb_deploy_relay
+						Action Trigger
+						Delay 2
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $Suicide
+						Delay 2.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+			}
+		}
+	}
 
 	//// MISSION BOTS ////
 
@@ -1085,5 +1361,62 @@ WaveSchedule
 					EntFire(`wave_finished_relay`, `Trigger`)
 				  "
 		}
+
+		WaveSpawn
+		{
+			Name "Wave3_Subwave1_GBurstSoldierBombCarrier"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_ExtraBomb1
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave3_Subwave2_GBurstSoldierBombCarrier"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_ExtraBomb2
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave3_Subwave3_TheBoss"
+			Where spawnbot_A_route
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Engineer_Pomson
+			}
+		}
 	}
+
+	// Stage 2
 }
