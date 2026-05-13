@@ -26,6 +26,33 @@ WaveSchedule
 
 	//// CUSTOM WEAPONS ////
 
+	CustomWeapon
+	{
+		"Batsaber_Range_Weapon"
+		{
+			OriginalItemName "The Rescue Ranger"
+			"damage penalty" 0.875
+			"no damage falloff" 1
+			"add damage type" 128
+			"remove damage type" 2
+			"custom projectile size" 24
+
+			"fire rate bonus" 0.8
+			"faster reload rate" 0.8
+			"clip size bonus" 1.5
+
+			"penetrate teammates" 1
+			"projectile speed decreased" 0.4
+			"projectile gravity" -1
+			"arrow hit kill time" 0.1
+
+			"custom item model" "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+			"custom weapon fire sound" "common/null.wav"
+			"custom kill icon" "batsaber"
+		}
+	}
+
 	//// POINT TEMPLATES ////
 
 	PointTemplates
@@ -34,9 +61,74 @@ WaveSchedule
 
 		Core_PTs
 		{
+			OnSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+						::DispatchParticleEffectOn <- function(hEntity, sName)
+						{
+							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = Entities.CreateByClassname(`trigger_particle`)
+							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromString(`particle_name`, sName)
+							hParticle.KeyValueFromInt(`attachment_type`, 1)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
+							hParticle.Kill()
+						}
+					  "
+            }
+
 			point_populator_interface
 			{
 				"targetname" "pop_interface"
+			}
+		}
+
+		RotatingBatsaber_PT
+        {
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+            prop_dynamic
+            {
+                "targetname" "BatsaberProjectile"
+                "parentname" "BatsaberRotator"
+				"angles" "90 0 0"
+				"skin" "1"
+                "model" "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"
+            }
+            func_rotating
+            {
+                "targetname" "BatsaberRotator"
+                "spawnflags" "67"
+                "maxspeed" "500"
+            }
+        }
+
+		ElectricalAura_PT
+        {
+			OnSpawnOutput
+			{
+				Target !activator
+				Action RunScriptCode
+				Param "
+						DispatchParticleEffectOn(self, `utaunt_electricity_purple_discharge`)
+					  "
+			}
+			OnParentKilledOutput
+			{
+				Target !activator
+				Action RunScriptCode
+				Param "
+						DispatchParticleEffectOn(self, null)
+					  "
 			}
 		}
 
@@ -444,7 +536,8 @@ WaveSchedule
 				"OnTrigger" "Wave3_SecondBombPlantZone,Enable,,1,-1"
 				"OnTrigger" "Wave3_FirstBombPlantExplosion,Stop,,3,-1"
 
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave2_GBurstSoldierBombCarrier,5,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave3_Subwave1_HomewreckerDemoknights,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave2_DirectHitSoldiers,5,-1"
 			}
 			info_particle_system // Bomb Plant Explosion Particle
 			{
@@ -520,7 +613,9 @@ WaveSchedule
 				"OnTrigger" "Wave3_SecondBombPlantZone,Disable,,0,-1"
 				"OnTrigger" "Wave3_SecondBombPlantExplosion,Stop,,3,-1"
 
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave3_TheBoss,5,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave3_Subwave1_HomewreckerDemoknights,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_HomewreckerDemoknights,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave3_GPomson,5,-1"
 			}
 			info_particle_system // Bomb Plant Explosion Particle
 			{
@@ -784,7 +879,7 @@ WaveSchedule
 				"custom item model" "models\props_td\atom_bomb_blue2.mdl"
 				"attachment name" "flag"
 			}
-			
+
 			SpawnTemplate
 			{
 				Name "Wave3_PlayerBombCarrierLogic2"
@@ -850,6 +945,64 @@ WaveSchedule
 						Cooldown -1
 					}
 				}
+			}
+		}
+
+		T_TFBot_Scout_Batsaber_Slinger
+		{
+			Name "Batslinger Scout"
+			Class Scout
+			ClassIcon scout_batsaber_nys
+			Skill Expert
+			Health 375
+			Scale 1.4
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			Item "Batsaber_Range_Weapon" [$SIGSEGV]
+			Item "Batsaber"
+
+			Item "Cadet Visor"
+			Item "Courtly Cuirass"
+			Item "Forest Footwear"
+
+			SpawnTemplate "ElectricalAura_PT"
+
+			CharacterAttributes
+			{
+				"head scale" 0.7
+				"voice pitch scale" 0
+			}
+
+			ItemAttributes
+			{
+				ItemName "Batsaber"
+				"is_passive_weapon" 1
+			}
+
+			ShootTemplate
+			{
+				Name "RotatingBatsaber_PT"
+				AttachToProjectile 1
+				ItemName "Batsaber_Range_Weapon"
+			}
+		}
+		T_TFBot_Demoman_Knight_Homewrecker
+		{
+			Name "Homewrecker Demoknight"
+			Class Demoman
+			ClassIcon demoknight_homewrecker
+			Skill Hard
+			WeaponRestrictions MeleeOnly
+
+			Item "The Chargin' Targe"
+
+			Item "The Homewrecker"
+
+			ItemAttributes
+			{
+				ItemName "The Homewrecker"
+				"critboost on kill" 3
 			}
 		}
 	}
@@ -1366,7 +1519,7 @@ WaveSchedule
 			Name "Wave3_Subwave1_LochDemos"
 			Where spawnbot_stage1_left [$SIGSEGV]
 			TotalCount 14
-			MaxActive 8
+			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 2
@@ -1377,14 +1530,14 @@ WaveSchedule
 				Template T_TFBot_Demoman_LochnLoad
 			}
 		}
-		WaveSpawn // 6 Punchies and 6 Bigheal Medics
+		WaveSpawn // 6 GRU Heavies and 6 Bigheal Medics
 		{
-			Name "Wave3_Subwave1_PunchieSquads"
+			Name "Wave3_Subwave1_GRUHeavySquads"
 			Where spawnbot_stage1_right [$SIGSEGV]
 			TotalCount 12
 			MaxActive 8
 			SpawnCount 4
-			WaitBeforeStarting 2
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 4
 			TotalCurrency 20
 
@@ -1392,7 +1545,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Heavy_Heavyweight_Champ
+					Template T_TFBot_Heavy_Lightweight_Champ
 				}
 				TFBot
 				{
@@ -1401,11 +1554,342 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn
+		WaveSpawn // 6 Batslinger Scouts
 		{
-			Name "Wave3_Subwave1_"
+			Name "Wave3_Subwave1_BatslingerScouts"
+			WaitForAllSpawned "Wave3_Subwave1_LochDemos"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Batsaber_Slinger
+				Skill Normal
+			}
+		}
+		WaveSpawn // 12 Direct Hit Soldiers
+		{
+			Name "Wave3_Subwave1_DirectHitSoldiers"
+			WaitForAllSpawned "Wave3_Subwave1_LochDemos"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DirectHit
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier and 2 Banner Soldiers
+		{
+			Name "Wave3_Subwave1_GBurstSoldier"
+			WaitForAllSpawned "Wave3_Subwave1_BatslingerScouts"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst_ExtraBomb1
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Action Mobber
+				}
+			}
+		}
+		WaveSpawn // Support Homewrecker Demoknights
+		{
+			Name "Wave3_Subwave1_HomewreckerDemoknights"
+			WaitForAllSpawned "Wave3_Subwave1_GBurstSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			Support 1
+			TotalCount 100
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Homewrecker
+				Action Mobber
+			}
+		}
+		WaveSpawn // 1 GRapid Demo and 1 Bigheal Medic
+		{
+			Name "Wave3_Subwave1_GRapidDemo"
+			WaitForAllDead "Wave3_Subwave1_GBurstSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 16 Direct Hit Soldiers
+		{
+			Name "Wave3_Subwave2_DirectHitSoldiers"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 8
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DirectHit
+			}
+		}
+		WaveSpawn // 6 GRU Heavies and 6 Bigheal Medics
+		{
+			Name "Wave3_Subwave2_GRUHeavies"
+			WaitForAllSpawned "Wave3_Subwave2_DirectHitSoldiers"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 6
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_Lightweight_Champ
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		WaveSpawn // 6 Batslinger Scouts
+		{
+			Name "Wave3_Subwave2_BatslingerScouts"
+			WaitForAllSpawned "Wave3_Subwave2_DirectHitSoldiers"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Batsaber_Slinger
+				Skill Normal
+			}
+		}
+		WaveSpawn // 12 Loch Demos
+		{
+			Name "Wave3_Subwave2_LochDemos"
+			WaitForAllSpawned "Wave3_Subwave2_DirectHitSoldiers"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_LochnLoad
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier and 2 Banner Soldiers
+		{
+			Name "Wave3_Subwave2_GBurstSoldier"
+			WaitForAllSpawned "Wave3_Subwave2_BatslingerScouts"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst_ExtraBomb2
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Action Mobber
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target pop_interface
+				Action $ResumeWaveSpawn
+				Param "Wave3_Subwave1_HomewreckerDemoknights"
+				Delay 2
+			}
+		}
+		WaveSpawn // 1 GRapid Demo and 1 Bigheal Medic
+		{
+			Name "Wave3_Subwave2_GRapidDemo"
+			WaitForAllDead "Wave3_Subwave2_GBurstSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 GPomson Engineer
+		{
+			Name "Wave3_Subwave3_GPomson"
+			Where spawnbot_A_route
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+			TFBot
+			{
+				Name "Chief Technician Engineer"
+				Template T_TFBot_Giant_Engineer_Pomson
+				Health 7500
+				Attributes UseBossHealthBar
+			}
+		}
+		WaveSpawn // 6 Loch Demos
+		{
+			Name "Wave3_Subwave3_LochDemos"
+			WaitForAllSpawned "Wave3_Subwave3_GPomson"
+			Where spawnbot_A_route
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_LochnLoad
+			}
+		}
+		WaveSpawn // 6 Direct Hit Soldiers
+		{
+			Name "Wave3_Subwave3_DirectHitSoldiers"
+			WaitForAllSpawned "Wave3_Subwave3_GPomson"
+			Where spawnbot_A_route
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DirectHit
+			}
+		}
+		WaveSpawn // 4 Batslinger Scouts
+		{
+			Name "Wave3_Subwave3_BatslingerScouts"
+			WaitForAllSpawned "Wave3_Subwave3_GPomson"
+			Where spawnbot_A_route
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Batsaber_Slinger
+			}
 		}
 	}
 
 	// Stage 2
+	Wave
+	{
+
+	}
 }
