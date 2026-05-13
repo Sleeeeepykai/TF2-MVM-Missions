@@ -15,14 +15,64 @@ WaveSchedule
 	AddSentryBusterWhenDamageDealtExceeds 3000
     AddSentryBusterWhenKillCountExceeds 10
 
-	BodyPartScaleSpeed 8
-
 	//// PRECACHES ////
 
 	// Precached Models
 
 	PrecacheModel "models/mvm/barrier/barrier_spawn_blue1.mdl"
 	PrecacheModel "models\props_td\atom_bomb_blue2.mdl"
+
+	// Precached Voicelines
+
+
+	//// VOICELINE OVERRIDES ////
+
+	OverrideSounds
+	{
+		// Wave Related Voicelines
+		"Announcer.MVM_Get_To_Upgrade" ""
+		"Announcer.MVM_General_Wave_Start" ""
+
+		"Announcer.MVM_First_Wave_Start" ""
+		"Announcer.MVM_Wave_Start" ""
+		"Announcer.MVM_Final_Wave_Start" ""
+		"Announcer.MVM_Wave_End" ""
+		"Announcer.MVM_Final_Wave_End" ""
+		"Announcer.MVM_Bonus" ""
+
+		"Announcer.MVM_All_Dead" ""
+		"Announcer.MVM_Bomb_Alert_Near_Hatch" ""
+		"Announcer.MVM_Bomb_Alert_Deploying" ""
+		"Announcer.MVM_Robots_Planted" ""
+		"Announcer.MVM_Wave_Lose" ""
+		"Announcer.MVM_Game_Over_Loss" ""
+
+		"Announcer.MVM_Bomb_Reset" ""
+
+		// Mission-Bot Related Voicelines
+		"Announcer.MVM_Sentry_Buster_Alert" ""
+		"Announcer.MVM_Sentry_Buster_Alert_Another" ""
+		"Announcer.MVM_Spy_Alert" ""
+		"Announcer.mvm_spybot_death" ""
+		"Announcer.mvm_spybot_death_all" ""
+		"Announcer.MVM_First_Engineer_Teleport_Spawned" ""
+		"Announcer.MVM_Another_Engineer_Teleport_Spawned" ""
+		"Announcer.MVM_An_Engineer_Bot_Is_Dead_But_Not_Teleporter" ""
+		"Announcer.MVM_An_Engineer_Bot_Is_Dead" ""
+
+		// Tank Related Voicelines
+		"Announcer.MVM_Tank_Alert_Spawn" ""
+		"Announcer.MVM_Tank_Alert_Another" ""
+		"Announcer.MVM_Tank_Alert_Multiple" ""
+
+		"Announcer.MVM_Tank_Alert_Halfway" ""
+		"Announcer.MVM_Tank_Alert_Halfway_Multiple" ""
+		"Announcer.MVM_Tank_Alert_Near_Hatch" ""
+		"Announcer.MVM_Tank_Alert_Deploying" ""
+		"Announcer.MVM_Tank_Planted" ""
+
+		"Announcer.MVM_General_Destruction" ""
+ 	}
 
 	//// CUSTOM WEAPONS ////
 
@@ -80,181 +130,69 @@ WaveSchedule
 						}
 					  "
             }
+			OnSpawnOutput
+			{
+				Target tube_bot_model
+				Action Disable
+			}
+			OnSpawnOutput
+			{
+				Target robot_arm
+				Action SetAnimation
+				Param Idle
+			}
 
 			point_populator_interface
 			{
 				"targetname" "pop_interface"
 			}
-		}
 
-		RotatingBatsaber_PT
-        {
-            OnSpawnOutput
-            {
-                Target "!activator"
-                Action "AddOutput"
-                Param "rendermode 10"
-                Delay 0.01
-            }
-            prop_dynamic
-            {
-                "targetname" "BatsaberProjectile"
-                "parentname" "BatsaberRotator"
-				"angles" "90 0 0"
+			math_counter // Wave Counter for Voicelines
+			{
+				"targetname" "Voiceline_WaveCounter"
+				"startvalue" "1"
+				"min" "1"
+				"max" "8"
+
+				"OnGetValue" "Voiceline_WaveCase,Invalue,,2,-1"
+			}
+			logic_case // Logic Case Comparing Wave Count to Play Appropriate Voicelines
+			{
+				"targetname" "Voiceline_WaveCase"
+				"OnCase01" "Wave1_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase02" "Wave2_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase03" "Wave3_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase04" "Wave4_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase05" "Wave5_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase06" "Wave6_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase07" "Wave7_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase08" "Wave8_VoiceSetupRelay,Trigger,,0,-1"
+			}
+
+			// Final Boss Prop
+			prop_dynamic // Spy Boss Model
+			{
+				"targetname" "Spy_Architect_Model"
+				"origin" "1792 256 0"
+				"angles" "0 180 0"
+				"model" "models/bots/spy/bot_spy.mdl"
+				"modelscale" "1.5"
 				"skin" "1"
-                "model" "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"
-            }
-            func_rotating
-            {
-                "targetname" "BatsaberRotator"
-                "spawnflags" "67"
-                "maxspeed" "500"
-            }
-        }
-
-		ElectricalAura_PT
-        {
-			OnSpawnOutput
-			{
-				Target !activator
-				Action RunScriptCode
-				Param "
-						DispatchParticleEffectOn(self, `utaunt_electricity_purple_discharge`)
-					  "
-			}
-			OnParentKilledOutput
-			{
-				Target !activator
-				Action RunScriptCode
-				Param "
-						DispatchParticleEffectOn(self, null)
-					  "
-			}
-		}
-
-		//// Map Stage PTs ////
-
-		Stage1_PTs
-		{
-			// Stage 1 Relays
-			logic_relay // Stage 1 Start
-			{
-				"targetname" "Stage1_StartRelay"
-
-				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion1.wav,0,-1"
-				"OnTrigger" "Stage1RespawnBarrier_Left,Enable,,0,-1"
-				"OnTrigger" "Stage1RespawnBarrier_Right,Enable,,0,-1"
-				"OnTrigger" "B1_door_unlock_relay,Trigger,,0,-1"
-				"OnTrigger" "A1_door_unlock_relay,Trigger,,0,-1"
-			}
-			logic_relay // Stage 1 Finish
-			{
-				"targetname" "Stage1_FinishRelay"
-
-				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion5.wav,0,-1"
-				"OnTrigger" "Stage1RespawnBarrier_Left,Disable,,0,-1"
-				"OnTrigger" "Stage1RespawnBarrier_Right,Disable,,0,-1"
-				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
-				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
-				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+				"defaultanim" "PRIMARY_stun_middle"
 			}
 
-			// Stage 1 Respawn Rooms
-			trigger_multiple // Left Spawn Room
+			// Map Additions
+			func_nobuild
 			{
-				"targetname" "Stage1RespawnRoom_Left"
-				"origin" "-1408 -776 336"
-				"mins" "-760 -760 -336"
-				"maxs" "760 760 336"
-				"wait" "0.5"
-				"spawnflags" "64"
-
-				"filtername" "blue_team_filter"
-
-				"OnStartTouch" "!activator,$Addcond,51,0,-1"
-				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
-				"OnEndTouch" "!activator,$Removecond,51,0,-1"
-				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
-			}
-			trigger_multiple // Right Spawn Room
-			{
-				"targetname" "Stage1RespawnRoom_Right"
-				"origin" "0 0 336"
-				"mins" "-512 -384 -336"
-				"maxs" "512 384 336"
-				"wait" "0.5"
-				"spawnflags" "64"
-
-				"filtername" "blue_team_filter"
-
-				"OnStartTouch" "!activator,$Addcond,51,0,-1"
-				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
-				"OnEndTouch" "!activator,$Removecond,51,0,-1"
-				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
-			}
-			func_nobuild // Left Spawn Room Nobuild
-			{
-				"targetname" "Stage1RespawnRoom_NobuildLeft"
-				"origin" "-1408 -776 336"
-				"mins" "-760 -760 -336"
-				"maxs" "760 760 336"
-			}
-			func_nobuild // Right Spawn Room Nobuild
-			{
-				"targetname" "Stage1RespawnRoom_NobuildRight"
-				"origin" "0 0 336"
-				"mins" "-512 -384 -336"
-				"maxs" "512 384 336"
-			}
-			prop_dynamic // Left Spawn Room Barrier
-			{
-				"targetname" "Stage1RespawnBarrier_Left"
-				"origin" "-642 -1280 116"
-				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
-				"modelscale" "0.75"
-				"solid" "0"
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
-				"startdisabled" "1"
-			}
-			func_forcefield // Left Spawn Room Barrier
-			{
-				"targetname" "Stage1RespawnBarrier_Left"
-				"origin" "-642 -1280 116"
-				"mins" "-5 -176 -120"
-				"maxs" "5 176 120"
-				"teamnum" "3"
-			}
-			prop_dynamic // Right Spawn Room Barrier
-			{
-				"targetname" "Stage1RespawnBarrier_Right"
-				"origin" "0 -382 116"
-				"angles" "0 270 0"
-				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
-				"modelscale" "0.75"
-				"solid" "0"
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
-				"startdisabled" "1"
-			}
-			func_forcefield // Left Spawn Room Barrier
-			{
-				"targetname" "Stage1RespawnBarrier_Right"
-				"origin" "0 -382 116"
-				"mins" "-176 5 -120"
-				"maxs" "176 5 120"
-				"teamnum" "3"
+				"targetname" "Nobuild"
+				"origin" "-114 -1650 254"
+				"mins" "-250 -250 -32"
+				"maxs" "250 250 32"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
 			}
 
-			// Stage 1 Blockers
-			func_forcefield // Blocker Forcefield
-			{
-				"targetname" "Stage1_Forcefield"
-				"origin" "-1408 -1568 336"
-				"mins" "-760 -76 -336"
-				"maxs" "760 76 336"
-				"teamnum" "3"
-			}
 			prop_dynamic // Container
 			{
 				"targetname" "Stage1_ContainerProp"
@@ -353,6 +291,400 @@ WaveSchedule
 				"solid" "6"
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
+			}
+			
+			prop_dynamic // Container
+			{
+				"targetname" "Stage3_ContainerProp"
+				"origin" "-1752 1472 -192"
+				"angles" "0 30 0"
+				"model" "models/props_urban/urban_shipping_container02.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage3_ContainerProp"
+				"origin" "-1752 1472 -84"
+				"angles" "0 210 0"
+				"model" "models/props_urban/urban_shipping_container02.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Container
+			{
+				"targetname" "Stage3_ContainerProp"
+				"origin" "-1812 2298 -192"
+				"angles" "0 210 0"
+				"model" "models/props_urban/urban_shipping_container01.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Crate
+			{
+				"targetname" "Stage3_CrateProp"
+				"origin" "-1679 1636 -192"
+				"angles" "0 30 0"
+				"model" "models/props_hydro/barrel_crate_half.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic // Crate
+			{
+				"targetname" "Stage3_CrateProp"
+				"origin" "-1695 1708 -192"
+				"angles" "0 0 0"
+				"model" "models/props_hydro/barrel_crate_half.mdl"
+				"modelscale" "1"
+				"solid" "6"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+		}
+
+		PlayerVoiceline_PTs
+		{
+			logic_relay // Wave 1 Setup Relay
+			{
+				"targetname" "Wave1_VoiceSetupRelay"
+			}
+			logic_relay // Wave 2 Setup Relay
+			{
+				"targetname" "Wave2_VoiceSetupRelay"
+			}
+			logic_relay // Wave 3 Setup Relay
+			{
+				"targetname" "Wave3_VoiceSetupRelay"
+			}
+			logic_relay // Wave 4 Setup Relay
+			{
+				"targetname" "Wave4_VoiceSetupRelay"
+			}
+			logic_relay // Wave 5 Setup Relay
+			{
+				"targetname" "Wave5_VoiceSetupRelay"
+			}
+			logic_relay // Wave 6 Setup Relay
+			{
+				"targetname" "Wave6_VoiceSetupRelay"
+			}
+			logic_relay // Wave 7 Setup Relay
+			{
+				"targetname" "Wave7_VoiceSetupRelay"
+			}
+			logic_relay // Wave 8 Setup Relay
+			{
+				"targetname" "Wave8_VoiceSetupRelay"
+			}
+		}
+
+		RotatingBatsaber_PT
+        {
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+            prop_dynamic
+            {
+                "targetname" "BatsaberProjectile"
+                "parentname" "BatsaberRotator"
+				"angles" "90 0 0"
+				"skin" "1"
+                "model" "models/workshop/weapons/c_models/c_invasion_bat/c_invasion_bat.mdl"
+            }
+            func_rotating
+            {
+                "targetname" "BatsaberRotator"
+                "spawnflags" "67"
+                "maxspeed" "500"
+            }
+        }
+
+		ElectricalAura_PT
+        {
+			OnSpawnOutput
+			{
+				Target !activator
+				Action RunScriptCode
+				Param "
+						DispatchParticleEffectOn(self, `utaunt_electricity_purple_discharge`)
+					  "
+			}
+			OnParentKilledOutput
+			{
+				Target !activator
+				Action RunScriptCode
+				Param "
+						DispatchParticleEffectOn(self, null)
+					  "
+			}
+		}
+
+		//// Map Stage PTs ////
+
+		Stage1_PTs
+		{
+			// Stage 1 Relays
+			logic_relay // Stage 1 Start
+			{
+				"targetname" "Stage1_StartRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion1.wav,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Left,Enable,,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Right,Enable,,0,-1"
+				"OnTrigger" "B1_door_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "A1_door_unlock_relay,Trigger,,0,-1"
+			}
+			logic_relay // Stage 1 Finish
+			{
+				"targetname" "Stage1_FinishRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion5.wav,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Left,Disable,,0,-1"
+				"OnTrigger" "Stage1RespawnBarrier_Right,Disable,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
+				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "C1_door_trigger,StartTouch,,0.2,-1"
+			}
+
+			// Stage 1 Respawn Rooms
+			trigger_multiple // Left Spawn Room
+			{
+				"targetname" "Stage1RespawnRoom_Left"
+				"origin" "-1408 -776 336"
+				"mins" "-760 -760 -336"
+				"maxs" "760 760 336"
+				"wait" "0.5"
+				"spawnflags" "64"
+
+				"filtername" "blue_team_filter"
+
+				"OnStartTouch" "!activator,$Addcond,51,0,-1"
+				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+				"OnEndTouch" "!activator,$Removecond,51,0,-1"
+				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+			}
+			trigger_multiple // Right Spawn Room
+			{
+				"targetname" "Stage1RespawnRoom_Right"
+				"origin" "0 0 336"
+				"mins" "-512 -384 -336"
+				"maxs" "512 384 336"
+				"wait" "0.5"
+				"spawnflags" "64"
+
+				"filtername" "blue_team_filter"
+
+				"OnStartTouch" "!activator,$Addcond,51,0,-1"
+				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+				"OnEndTouch" "!activator,$Removecond,51,0,-1"
+				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+			}
+			func_nobuild // Left Spawn Room Nobuild
+			{
+				"targetname" "Stage1RespawnRoom_NobuildLeft"
+				"origin" "-1408 -776 336"
+				"mins" "-760 -760 -336"
+				"maxs" "760 760 336"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
+			}
+			func_nobuild // Right Spawn Room Nobuild
+			{
+				"targetname" "Stage1RespawnRoom_NobuildRight"
+				"origin" "0 0 336"
+				"mins" "-512 -384 -336"
+				"maxs" "512 384 336"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
+			}
+			prop_dynamic // Left Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Left"
+				"origin" "-642 -1280 116"
+				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
+				"modelscale" "0.75"
+				"solid" "0"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			func_forcefield // Left Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Left"
+				"origin" "-642 -1280 116"
+				"mins" "-5 -176 -120"
+				"maxs" "5 176 120"
+				"teamnum" "3"
+			}
+			prop_dynamic // Right Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Right"
+				"origin" "0 -382 116"
+				"angles" "0 270 0"
+				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
+				"modelscale" "0.75"
+				"solid" "0"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			func_forcefield // Left Spawn Room Barrier
+			{
+				"targetname" "Stage1RespawnBarrier_Right"
+				"origin" "0 -382 116"
+				"mins" "-176 5 -120"
+				"maxs" "176 5 120"
+				"teamnum" "3"
+			}
+
+			// Stage 1 Blockers
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage1_Forcefield"
+				"origin" "-1408 -1568 336"
+				"mins" "-760 -76 -336"
+				"maxs" "760 76 336"
+				"teamnum" "3"
+			}
+		}
+
+		Stage2_PTs
+		{
+			// Stage 2 Relays
+			logic_relay // Stage 2 Start
+			{
+				"targetname" "Stage2_StartRelay"
+
+				"OnTrigger" "cylindrical_upgrades_retract_relay,Trigger,,0,-1"
+			}
+			logic_relay // Stage 2 Finish
+			{
+				"targetname" "Stage2_FinishRelay"
+
+				"OnTrigger" "C1_door_trigger,StartTouch,,0.2,-1"
+			}
+
+			// Stage 2 Respawn Rooms
+			trigger_multiple // Left Spawn Room
+			{
+				"targetname" "Stage2RespawnRoom"
+				"origin" "84 852 336"
+				"mins" "-476 -476 -336"
+				"maxs" "476 476 336"
+				"wait" "0.5"
+				"spawnflags" "64"
+
+				"filtername" "blue_team_filter"
+
+				"OnStartTouch" "!activator,$Addcond,51,0,-1"
+				"OnStartTouch" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
+				"OnEndTouch" "!activator,$Removecond,51,0,-1"
+				"OnEndTouch" "!activator,$RemovePlayerAttribute,no_attack,0,-1"
+			}
+			prop_dynamic // Left Spawn Room Barrier
+			{
+				"targetname" "Stage2RespawnBarrier"
+				"origin" "520 648 0"
+				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
+				"modelscale" "1"
+				"solid" "0"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			func_forcefield // Left Spawn Room Barrier
+			{
+				"targetname" "Stage2RespawnBarrier"
+				"origin" "520 648 184"
+				"mins" "-8 -272 -184"
+				"maxs" "8 272 184"
+				"teamnum" "3"
+			}
+			func_nobuild // Left Spawn Room Nobuild
+			{
+				"targetname" "Stage2RespawnRoom_NoBuild"
+				"origin" "496 648 184"
+				"mins" "-64 -272 -184"
+				"maxs" "64 272 184"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
+			}
+		}
+
+		Stage3_PTs
+		{
+			// Stage 3 Blockers
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-2120 1902 240"
+				"mins" "-244 -460 -432"
+				"maxs" "244 460 432"
+				"teamnum" "2"
+			}
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-1752 1577 240"
+				"mins" "-124 -93 -432"
+				"maxs" "124 93 432"
+				"teamnum" "2"
+			}
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-1775 1726 240"
+				"mins" "-101 -56 -432"
+				"maxs" "101 56 432"
+				"teamnum" "2"
+			}
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-1797 1838 240"
+				"mins" "-79 -56 -432"
+				"maxs" "79 56 432"
+				"teamnum" "2"
+			}
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-1811 1916 240"
+				"mins" "-65 -22 -432"
+				"maxs" "65 22 432"
+				"teamnum" "2"
+			}
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-1847 1953 240"
+				"mins" "-29 -15 -432"
+				"maxs" "29 15 432"
+				"teamnum" "2"
+			}
+			func_forcefield // Blocker Forcefield
+			{
+				"targetname" "Stage3_Forcefield"
+				"origin" "-1866 1992 240"
+				"mins" "-10 -24 -432"
+				"maxs" "10 24 432"
+				"teamnum" "2"
 			}
 		}
 
@@ -496,8 +828,8 @@ WaveSchedule
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,4,-1"
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,6,-1"
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,8,-1"
-				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.7,-1"
-				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.75,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.5,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.65,-1"
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.8,-1"
 			}
 			training_annotation // Bomb Plant Hint Annotation
@@ -574,8 +906,8 @@ WaveSchedule
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,4,-1"
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,6,-1"
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,8,-1"
-				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.7,-1"
-				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.75,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.5,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.65,-1"
 				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,9.8,-1"
 			}
 			training_annotation // Bomb Plant Hint Annotation
@@ -751,11 +1083,19 @@ WaveSchedule
 				Action ShowSprite
 			}
 		}
+
+		// Wave 4
+		Wave4_PTs
+		{
+
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "Core_PTs"
+
+	PlayerSpawnOnceTemplate "PlayerVoiceline_PTs"
 
 	//// EXTRA TANK PATHS ////
 
@@ -776,6 +1116,16 @@ WaveSchedule
 		TeamNum 3
 		X "320"
 		Y "-256"
+		Z "64"
+	}
+	
+	// Stage 2 Spawns
+	ExtraSpawnPoint // Left
+	{
+		Name "spawnbot_stage2"
+		TeamNum 3
+		X "316"
+		Y "1236"
 		Z "64"
 	}
 
@@ -1028,12 +1378,10 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
-	// Force door open after wave end
 
 	//// Stage 1 ////
 
 	// Wave 1 Notes
-	// Homewreckers into mobbers
 	Wave
 	{
 		InitWaveOutput
@@ -1047,6 +1395,9 @@ WaveSchedule
 					EntFire(`Relay_D`, `Trigger`)
 					EntFire(`holograms`, `Disable`, null, 0.2)
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
+
+					EntFire(`Voiceline_WaveCounter`, `SetValue`, 1)
+					EntFire(`Voiceline_WaveCounter`, `GetValue`, null, 0.2)
 			  	  "
 		}
 		StartWaveOutput
@@ -1083,15 +1434,16 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Pyro_Homewrecker
+				Action Mobber
 			}
 		}
-		WaveSpawn // 16 Pomson Engineers
+		WaveSpawn // 12 Pomson Engineers
 		{
 			Name "Wave1_Subwave1_Pomsons"
 			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 16
-			MaxActive 8
-			SpawnCount 4
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 3
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 4
 			TotalCurrency 40
@@ -1146,7 +1498,7 @@ WaveSchedule
 			Where spawnbot_stage1_left [$SIGSEGV]
 			Support 1
 			TotalCount 60
-			MaxActive 10
+			MaxActive 8
 			SpawnCount 2
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 2
@@ -1182,10 +1534,12 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Pyro_Homewrecker
+					Action Mobber
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Homewrecker
+					Action Mobber
 				}
 			}
 		}
@@ -1231,10 +1585,12 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Pyro_Homewrecker
+					Action Mobber
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Homewrecker
+					Action Mobber
 				}
 			}
 		}
@@ -1270,6 +1626,9 @@ WaveSchedule
 					EntFire(`Relay_D`, `Trigger`)
 					EntFire(`holograms`, `Disable`, null, 0.2)
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
+
+					EntFire(`Voiceline_WaveCounter`, `SetValue`, 2)
+					EntFire(`Voiceline_WaveCounter`, `GetValue`, null, 0.2)
 			  	  "
 		}
 		StartWaveOutput
@@ -1500,6 +1859,9 @@ WaveSchedule
 					EntFire(`Relay_D`, `Trigger`)
 					EntFire(`holograms`, `Disable`, null, 0.2)
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
+
+					EntFire(`Voiceline_WaveCounter`, `SetValue`, 3)
+					EntFire(`Voiceline_WaveCounter`, `GetValue`, null, 0.2)
 			  	  "
 		}
 		StartWaveOutput
@@ -1898,6 +2260,34 @@ WaveSchedule
 	}
 
 	//// Stage 2 ///
+
+	// Wave 4 Notes
+	Wave
+	{
+
+	}
+	// Wave 5 Notes
+	Wave
+	{
+
+	}
+
+	//// Stage 3 ////
+
+	// Wave 6 Notes
+	Wave
+	{
+
+	}
+	// Wave 7 Notes
+	Wave
+	{
+
+	}
+
+	//// Boss Fight ////
+
+	// Wave 8 Notes
 	Wave
 	{
 
