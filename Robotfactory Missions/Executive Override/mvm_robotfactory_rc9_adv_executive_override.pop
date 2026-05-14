@@ -571,12 +571,16 @@ WaveSchedule
 				"targetname" "Stage2_StartRelay"
 
 				"OnTrigger" "cylindrical_upgrades_retract_relay,Trigger,,0,-1"
+				"OnTrigger" "door_front_l,Open,,0.2,-1"
+				"OnTrigger" "door_front_r,Open,,0.2,-1"
 			}
 			logic_relay // Stage 2 Finish
 			{
 				"targetname" "Stage2_FinishRelay"
 
 				"OnTrigger" "C1_door_trigger,StartTouch,,0.2,-1"
+				"OnTrigger" "door_front_l,Open,,0.2,-1"
+				"OnTrigger" "door_front_r,Open,,0.2,-1"
 			}
 
 			// Stage 2 Respawn Rooms
@@ -1087,7 +1091,67 @@ WaveSchedule
 		// Wave 4
 		Wave4_PTs
 		{
+			logic_relay // Wave 4 Setup
+			{
+				"targetname" "Wave4_SetupRelay"
 
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0.2,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0.2,-1"
+
+				"OnTrigger" "hatch_shortcut_A_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "hatch_shortcut_B_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A_route_wall_3_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "A2_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
+
+				"OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,0,-1"
+
+				"OnTrigger" "carrier_lift_raise_relay,Trigger,,0,-1"
+				"OnTrigger" "carrier_door_front_close_relay,Trigger,,0,-1"
+				"OnTrigger" "container_lift_raise_relay,Trigger,,0,-1"
+
+				"OnTrigger" "door_front_l,Unlock,,0,-1"
+				"OnTrigger" "door_front_r,Unlock,,0,-1"
+				"OnTrigger" "door_front_l,Open,,0.1,-1"
+				"OnTrigger" "door_front_r,Open,,0.1,-1"
+
+				"OnTrigger" "cylindrical_upgrades_deploy_relay,Trigger,,0,-1"
+			}
+			logic_relay // Bomb Plant Explosion Relay
+			{
+				"targetname" "Wave4_ExplosionRelay"
+				"OnTrigger" "A_route_wall_3_break_relay,Trigger,,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 5, 50000, 0, true)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 192, 1, 0, 1)0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode.wav,0,-1"
+				"OnTrigger" "Wave4_BigBombExplosion,Start,0,-1"
+				"OnTrigger" "Wave4_BigBombExplosion,Stop,5,-1"
+				"OnTrigger" "Stage2RespawnBarrier,Enable,,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion1.wav,10,-1"
+			}
+			info_particle_system // Big Explosion Particle
+			{
+				"targetname" "Wave4_BigBombExplosion"
+				"origin" "520 648 0"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system // Big Explosion Particle
+			{
+				"targetname" "Wave3_SecondBombPlantExplosion"
+				"origin" "1407 -920 0"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
 		}
 	}
 
@@ -2002,7 +2066,7 @@ WaveSchedule
 			TotalCount 100
 			MaxActive 8
 			SpawnCount 2
-			WaitBeforeStarting 2
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 2
 			TotalCurrency 100
 
@@ -2154,7 +2218,7 @@ WaveSchedule
 				Target pop_interface
 				Action $ResumeWaveSpawn
 				Param "Wave3_Subwave1_HomewreckerDemoknights"
-				Delay 2
+				Delay 4
 			}
 		}
 		WaveSpawn // 1 GRapid Demo and 1 Bigheal Medic
@@ -2264,7 +2328,41 @@ WaveSchedule
 	// Wave 4 Notes
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage2_PTs`, `ForceSpawn`)
+					EntFire(`Wave4_PTs`, `ForceSpawn`)
+					EntFire(`Wave4_SetupRelay`, `Trigger`)
+					EntFire(`Relay_A`, `Trigger`)
+					EntFire(`holograms`, `Disable`, null, 0.2)
+					EntFire(`A_B_C_holograms`, `Disable`, null, 0.2)
 
+					EntFire(`Voiceline_WaveCounter`, `SetValue`, 4)
+					EntFire(`Voiceline_WaveCounter`, `GetValue`, null, 0.2)
+			  	  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage2_StartRelay`, `Trigger`)
+					EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`Wave4_ExplosionRelay`, `Trigger`, null, 3)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage2_FinishRelay`, `Trigger`)
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
 	}
 	// Wave 5 Notes
 	Wave
