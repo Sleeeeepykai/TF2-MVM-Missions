@@ -1,5 +1,5 @@
 // Terrorlict Expert - Echoes of a Warzone by Sergeant Table https://steamcommunity.com/id/FinalBossConnoisseur/
-// Shockwave script by Claudz
+// Shockwave Script by Claudz
 // Weapon Pack by Athazar
 // Timer by Lite
 // Overclocks by DrCactus
@@ -35,12 +35,13 @@ WaveSchedule
 	NoCritPumpkin 1
 	NoThrillerTaunt 1
 
-	    //// SOUND OVERRIDES ////
+	//// SOUND OVERRIDES ////
     DisableSound "music.mvm_lost_wave"
 
     //// PRECACHES ////
 
     // Precached Models
+    PrecacheModel "models/props_frontline/zeppelin_skybox.mdl"
     PrecacheModel "models/props_halloween/fist_projectile_purple.mdl"
     PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
     PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"  
@@ -49,7 +50,6 @@ WaveSchedule
     PrecacheModel "models/bots/pyro_boss/bot_pyro_gray_boss.mdl" 
     PrecacheModel "models/bots/engineer/bot_engineer_gray.mdl"
     PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
-    PrecacheModel "models/bots/gameplay_cosmetic/bot_light_bomb_helmet.mdl"
     PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
     PrecacheModel "models/bots/boss_bot/combat_tank/combat_tank.mdl"
@@ -103,6 +103,7 @@ WaveSchedule
     PrecacheGeneric "materials/colorcorrection/highlighted_desaturated.raw"
 
 	//// CUSTOM WEAPONS ////
+
     CustomWeapon
     {
         "daveisback"
@@ -226,7 +227,48 @@ WaveSchedule
                 "OnTrigger" "tf_gamerules,PlayVO,mvm\mvm_warning.wav,10,-1"
                 "OnTrigger" "MissionIntroShake,StartShake,,10,-1"
                 "OnTrigger" "MissionCC,Enable,,10,1"
+                "OnTrigger" "EVILZeppelin,Enable,,10,-1"
+                "OnTrigger" "EVILFog,Enable,,10,-1"
             }
+
+            OnSpawnOutput
+            {
+                Target "EVILZeppelin"
+                Action SetPlaybackRate
+                Param 0.6
+            }
+            prop_dynamic // Zeppelin
+            {
+                "targetname" "EVILZeppelin"
+                "model"      "models/props_frontline/zeppelin_skybox.mdl"
+                "modelscale" "2"
+                "skin" "2"
+                "origin"     "6200 -2916 1200"
+                "defaultanim" "idle"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Fog
+            {
+                "targetname" "EVILFog"
+                "model"      "models\props_lakeside_event\fog_plane01.mdl"
+                "origin"     "6200 -2916 984"
+                "modelscale" "0.17"
+                "rendercolor"     "204 153 255"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Fog
+            {
+                "targetname" "EVILFog"
+                "model"      "models\props_lakeside_event\fog_plane01.mdl"
+                "origin"     "6200 -2916 984"
+                "modelscale" "0.17"
+                "rendercolor"     "204 153 255"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+
             ambient_generic // EVIL Laugh
             {
                 "targetname" "MissionIntroLaughter"
@@ -272,6 +314,910 @@ WaveSchedule
                 "filename" "materials/colorcorrection/highlighted_desaturated.raw"
                 "maxweight" "0.4"
             }
+
+            logic_relay // First Undead
+            {
+                "targetname" "MissionIntroBots"
+                "OnTrigger" "SniperVoiceline*,PlaySound,,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,#militaryprecision.mp3,3,-1"
+                "OnTrigger" "SoldierVoiceline*,PlaySound,,5,-1"
+            }
+
+            ambient_generic // Sniper Voiceline
+            {
+                "targetname" "SniperVoiceline"
+                "message" "vo\mvm\norm\sniper_mvm_battlecry03.mp3"
+                "health" "10"
+                "pitch" "40"
+                "spawnflags" "17"
+            }
+            ambient_generic // Sniper Voiceline
+            {
+                "targetname" "SniperVoiceline"
+                "message" "vo\mvm\norm\sniper_mvm_battlecry03.mp3"
+                "health" "10"
+                "pitch" "40"
+                "spawnflags" "17"
+            }
+            ambient_generic // Soldier Voiceline
+            {
+                "targetname" "SoldierVoiceline"
+                "message" "vo\mvm\mght\soldier_mvm_m_laughevil01.mp3"
+                "health" "10"
+                "pitch" "65"
+                "spawnflags" "17"
+            }
+            ambient_generic // Soldier Voiceline
+            {
+                "targetname" "SoldierVoiceline"
+                "message" "vo\mvm\mght\soldier_mvm_m_laughevil01.mp3"
+                "health" "10"
+                "pitch" "65"
+                "spawnflags" "17"
+            }
+        }
+
+        MissionTimer
+		{
+            info_target
+            {
+                "targetname" "bossteleport"
+                "origin" "-2822 353 -149"
+            }
+
+            OnSpawnOutput // Setting up the Timer
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        IncludeScript(`textualtimer_v3`, getroottable())
+                        TextualTimer.SetParams({
+                            minutes = 1
+                            seconds = 59
+                            x = -1
+                            y = 0.77
+                            color = `0 255 555`
+                            relayname = `TimerLossRelay`
+                        })
+                        
+                        TextualTimer.AddCallbacks({
+                            `all` : function() 
+                            { 
+                                EntFire(`TheTicker`, `Trigger`) 
+                            }
+                            `120` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `vo/announcer_ends_2min.mp3`)
+                            }
+                            `60` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds60seconds`)
+                            }
+                            `30` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds30seconds`)
+                            }
+                            `20` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds20seconds`);
+                                EntFire(`fadetest`, `enable`);
+                            }
+                            `10` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds10seconds`)
+                            }
+                            `5` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds5seconds`)
+                            }
+                            `4` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds4seconds`)
+                            }
+                            `3` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds3seconds`)
+                            }
+                            `2` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds2seconds`)
+                            }
+                            `1` : function()
+                            {
+                                EntFire(`tf_gamerules`, `PlayVO`, `Announcer.RoundEnds1seconds`)
+                                EntFire(`fadetest`, `disable`);
+                            }
+                        })
+                      "
+            }
+            OnSpawnOutput // Setting up Glowing Enemy Mechanic
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        ::Echoes <- {
+                            function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3) delete ::Echoes }
+                            function OnGameEvent_player_death(params)
+                            {
+                                local hVictim = GetPlayerFromUserID(params.userid)
+                                if(hVictim.IsBotOfType(1337))
+                                {
+                                    if(hVictim.HasBotTag(`bot_add5seconds`))
+                                        EntFire(`add5seconds`,`Trigger`)
+                                    if(hVictim.HasBotTag(`bot_add15seconds`))
+                                        EntFire(`add15seconds`,`Trigger`)
+                                    if(hVictim.HasBotTag(`bot_add30seconds`))
+                                        EntFire(`add30seconds`,`Trigger`)
+                                    if(hVictim.HasBotTag(`bot_add45seconds`))
+                                        EntFire(`add45seconds`,`Trigger`)
+                                    if(hVictim.HasBotTag(`bot_add60seconds`))
+                                        EntFire(`add60seconds`,`Trigger`)
+                                    if(hVictim.HasBotTag(`bot_addbossseconds`))
+                                        EntFire(`addbossseconds`,`Trigger`)
+                                }
+                            }
+                        }
+                        __CollectGameEventCallbacks(Echoes)
+                      "
+            }
+
+            logic_relay // BIG BOMB Relay
+            {
+                "targetname" "BIGBombRelay"
+                "OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,2,1"
+                "OnTrigger" "TheBIGBomb,Enable,,3.6,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics\metal\metal_large_debris2.wav,3.6,1"
+                "OnTrigger" "BIGBombShake,StartShake,,3.6,1"
+                "OnTrigger" "BIGBombParticle,Start,,4,1"
+                "OnTrigger" "BIGBombWarning,Show,,4,1"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Start(),5,1"
+                "OnTrigger" "BIGBombTutorial,Show,,12,1"
+            }
+
+            prop_dynamic // The Big Bomb
+            {
+                "targetname" "TheBIGBomb"
+                "model"      "models\props_trainyard\cart_bomb_separate.mdl"
+                "origin"     "704 2880 160"
+                "modelscale" "3.5"
+                "angles"    "-95 0 0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic // The Big Bomb
+            {
+                "targetname" "TheBIGBomb"
+                "model"      "models\props_debris\concrete_debris256pile001a.mdl"
+                "origin"     "704 2880 128"
+                "modelscale" "1.75"
+                "angles"    "-10 0 0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+
+            info_particle_system // Big Bomb Particle
+            {
+                "targetname" "BIGBombParticle"
+                "origin" "704 2880 160"
+                "effect_name" "eyeboss_doorway_vortex"
+                "start_active" "0"
+            }
+            info_particle_system // Big Bomb Particle
+            {
+                "targetname" "BIGBombParticle"
+                "origin" "704 2880 160"
+                "effect_name" "eb_death_vortex04"
+                "start_active" "0"
+            }
+            info_particle_system // Big Bomb Particle
+            {
+                "targetname" "BIGBombParticle"
+                "origin" "704 2880 160"
+                "effect_name" "dxhr_lightningball_parent_blue"
+                "start_active" "0"
+            }
+            info_particle_system // Big Bomb Particle
+            {
+                "targetname" "BIGBombParticle"
+                "origin" "704 2880 160"
+                "effect_name" "dxhr_lightningball_parent_blue"
+                "start_active" "0"
+            }
+            info_particle_system // Big Bomb Particle
+            {
+                "targetname" "BIGBombParticle"
+                "origin" "704 2880 160"
+                "effect_name" "dxhr_lightningball_parent_blue"
+                "start_active" "0"
+            }
+            info_particle_system // Big Bomb Particle
+            {
+                "targetname" "BIGBombParticle"
+                "origin" "704 2880 160"
+                "effect_name" "dxhr_lightningball_parent_blue"
+                "start_active" "0"
+            }
+
+            env_shake // Big Bomb Shake
+			{
+                "targetname" "BIGBombShake"
+                "spawnflags" "5" 
+                "amplitude" "16"	
+                "duration" "3"	
+                "frequency" "9"	
+            }
+            training_annotation // Big Bomb Warning
+			{
+				"targetname"   "BIGBombWarning"
+                "origin" "704 2880 612"
+				"display_text" "ERM, GUYS, YOU'RE GONNA WANNA SEE THIS!!!"
+				"lifetime" "8"
+			} 
+            training_annotation // Big Bomb Tutorial
+			{
+				"targetname"   "BIGBombTutorial"
+                "origin" "704 2880 612"
+				"display_text" "Destroying Tanks, War Machines and Glowing Enemies will delay the Nuke's detonation!"
+				"lifetime" "12"
+			}
+
+            ambient_generic	// Timer Increase Sound
+			{
+				"targetname" "TimerIncrease"
+				"health" "10"
+				"message" "war_timer_increase.mp3"
+				"pitch" "100"
+				"spawnflags" "17"
+			}
+
+            logic_relay // Tutorial Complete Relay
+            {
+                "targetname" "TutorialCompleteRelay"
+                "OnTrigger" "intel*,ForceResetSilent,,0,1"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Set(120),0,1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,1"
+
+                "OnTrigger" "player,$DisplayTextChat,{yellow}///NOW PLAYING: THOUSAND MARCH BY MR SAUCEMAN///,0,-1"
+
+                "OnTrigger" "TimerIncrease,PlaySound,,0,1"
+                "OnTrigger" "TimerIncrease,StopSound,,3,1"
+                
+                "OnTrigger" "ThousandMarchIntro,PlaySound,,1,1"
+                "OnTrigger" "ThousandMarchIntro,StopSound,,30,1"
+                "OnTrigger" "ThousandMarchLoop,Trigger,,29.1,1"
+            }
+
+            ambient_generic // Thousand March Intro
+			{
+				"targetname"	"ThousandMarchIntro"
+				"health"		"10"
+				"message"		"#thousand_march_intro.mp3"
+				"pitch"			"100"
+				"spawnflags"	"17"
+			}
+			ambient_generic	// Thousand March Loop
+			{
+				"targetname"	"ThousandMarch"
+				"health"		"10"
+				"message"		"#thousand_march_loop.mp3"
+				"pitch"			"100"
+				"spawnflags"	"17"
+			}
+            ambient_generic	// Thousand March Loop
+			{
+				"targetname"	"ThousandMarch2"
+				"health"		"10"
+				"message"		"#thousand_march_loop.mp3"
+				"pitch"			"100"
+				"spawnflags"	"17"
+			}
+
+            logic_relay // Thousand March Loop
+            {
+                "targetname" "ThousandMarchLoop"
+                "OnTrigger" "ThousandMarch,PlaySound,,0,-1"
+                "OnTrigger" "ThousandMarch2,PlaySound,,367,-1"
+                "OnTrigger" "ThousandMarch,StopSound,,366.9,-1"
+                "OnTrigger" "ThousandMarch2,StopSound,,734,-1"
+            }
+            logic_relay // Thousand March Loop
+            {
+                "targetname" "ThousandMarchLoop2"
+                "OnTrigger" "ThousandMarch,PlaySound,,0,-1"
+                "OnTrigger" "ThousandMarch2,PlaySound,,367,-1"
+                "OnTrigger" "ThousandMarch,StopSound,,366.9,-1"
+                "OnTrigger" "ThousandMarch2,StopSound,,734,-1"
+            }
+
+            logic_relay // +5 Seconds
+            {
+                "targetname" "Add5Seconds"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Add(5),0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,war_timer_increase.mp3,0,-1"
+                
+                "OnTrigger" "WarningFade,Disable,,0,-1"
+            }
+            logic_relay // +15 Seconds
+            {
+                "targetname" "Add15Seconds"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Add(15),0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,war_timer_increase.mp3,0,-1"
+                
+                "OnTrigger" "WarningFade,Disable,,0,-1"
+            }
+            logic_relay // +30 Seconds
+            {
+                "targetname" "Add30Seconds"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Add(30),0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,war_timer_increase.mp3,0,-1"
+                
+                "OnTrigger" "WarningFade,Disable,,0,-1"
+            }
+            logic_relay // +45 Seconds
+            {
+                "targetname" "Add45Seconds"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Add(45),0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,war_timer_increase.mp3,0,-1"
+                
+                "OnTrigger" "WarningFade,Disable,,0,-1"
+            }
+            logic_relay // +60 Seconds
+            {
+                "targetname" "Add60Seconds"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Add(60),0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,war_timer_increase.mp3,0,-1"
+               
+                "OnTrigger" "WarningFade,Disable,,0,-1"
+            }
+            logic_relay // +120 Seconds
+            {
+                "targetname" "Add120Seconds"
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Add(120),0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo\announcer_time_added.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,war_timer_increase.mp3,0,-1"
+                
+                "OnTrigger" "WarningFade,Disable,,0,-1"
+            }
+
+            logic_relay // War Timer Ticking
+            {
+                "targetname" "TheTicking"
+                "OnTrigger"  "player,$PlaySoundToSelf,=35|#war_timer_idle_loop.mp3,0,-1"
+            }
+            ambient_generic	// War Timer Ticking
+			{
+				"targetname"	"War_Terminal_Idle"
+				"health"		"10"
+				"message"		"war_timer_idle_loop.mp3"
+				"pitch"			"100"
+				"spawnflags"	"17"
+			}
+
+            logic_timer // Panic Warning Fade
+			{
+				"targetname" "WarningFade"
+                "startdisabled" 1
+				"OnTimer" "WarningFade1,Fade,,0,-1"
+				"OnTimer" "WarningFade2,Fade,,0.7,-1"
+                "RefireTime" 1.5
+			}
+            env_fade // Panic Warning Fade
+			{
+				"targetname" "WarningFade1"
+				"duration" "0.7"
+				"holdtime" "0.2"
+				"rendercolor" "255 0 0"
+				"spawnflags" "0"
+                "renderamt" "10"
+			}
+			env_fade // Panic Warning Fade
+			{
+				"targetname" "WarningFade2"
+				"duration" "0.7"
+				"holdtime" "0.2"
+				"rendercolor" "255 0 0"
+				"spawnflags" "1"
+                "renderamt" "10"
+			}
+
+            logic_relay // Timer Loss Relay
+			{
+				"targetname" "TimerLossRelay"
+                "OnTrigger" "playerRunScriptCodeself.ViewPunch(QAngle(-80,10,0))0-1"
+                "OnTrigger" "player*,$AddCond,22,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient\explosions\citadel_end_explosion1.wav,0,1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient\explosions\citadel_end_explosion1.wav,0,1"
+                "OnTrigger" "tf_gamerules,PlayVO,misc\doomsday_missile_explosion.wav,0,1"
+
+                "OnTrigger" "pop_interface,PauseBotSpawning,,0,1"
+
+                "OnTrigger" "Add5Seconds,Disable,,0,1"
+                "OnTrigger" "Add15Seconds,Disable,,0,1"
+                "OnTrigger" "Add30Seconds,Disable,,0,1"
+                "OnTrigger" "Add45Seconds,Disable,,0,1"
+                "OnTrigger" "Add60Seconds,Disable,,0,1"
+                "OnTrigger" "Add120Seconds,Disable,,0,1"
+
+                "OnTrigger" "BIGBombParticle*,Kill,,0,1"
+                "OnTrigger" "TimerLossFade,Fade,,0.1,-1"
+                "OnTrigger" "TheBIGBomb*,Disable,,0.15,1"
+                "OnTrigger" "BotRemoverEnable,,0.3,-1"
+				"OnTrigger" "bots_win,RoundWin,,1,-1"
+			}
+
+            env_fade // Timer Loss Fade
+			{
+				"targetname" "TimerLossFade"
+				"duration" "5"
+				"holdtime" "1.5"
+				"rendercolor" "255 255 255"
+				"spawnflags" "1"
+			}
+
+            trigger_hurt // Bot Remover
+			{
+				"TargetName" "BotRemover"
+				"origin" "0 0 0"
+				"mins" "-10000 -10000 -10000"
+				"maxs" "10000 10000 10000"
+				"damage" "80000"
+                "damagecap" "80000"
+                "damagemodel" "0"
+                "damagetype" "1"
+                "filtername" "filter_generic_bot"
+                "nodmgforce" "1"
+                "spawnflags" "1"
+                "StartDisabled" "1"
+			}
+            filter_tf_bot_has_tag // Bot Remover Tag
+            {
+                "targetname" "filter_generic_bot"
+                "Negated" "1"
+                "require_all_tags" "1"
+                "tags" "bot_boss"
+            }
+		}
+        MissionTimerBot
+        {
+            tf_glow
+            {
+                "GlowColor" "0 255 0 255"
+                "target" "!parent"
+				"targetname" "tower_glow"
+            }
+        }
+
+        DropPodSetup
+        {
+            logic_relay
+            {
+                "targetname" "DropPodClearRelay"
+                "OnTrigger" "airstrike_inbound_relay*,kill,,0,-1"
+                "OnTrigger" "prop_move*,kill,,0,-1"
+                "OnTrigger" "death_inbound*,kill,,0,-1"
+                "OnTrigger" "missile_model*,kill,,0,-1"
+                "OnTrigger" "missile_shake*,kill,,0,-1"
+                "OnTrigger" "missileparticle*,kill,,0,-1"
+                "OnTrigger" "oops_you_died_1*,kill,,0,-1"
+            }
+        }
+        DropPodWarning
+        {
+            OnSpawnOutput
+            {
+                Target "DropPodWarningText"
+                Action "Show"
+            }
+            training_annotation
+            {
+                "targetname"   "DropPodWarningText"
+                "display_text" "Danger!"
+                "lifetime"     "5"
+                "origin"       "0 0 120"
+            }
+        }
+
+        DropPod_Variant1
+        {
+            NoFixUp 1
+
+            OnSpawnOutput
+            {
+                Target "DropPodStrikeRelay"
+                Action Trigger
+            }
+            logic_relay
+            {
+                "targetname" "DropPodStrikeRelay"
+                "OnTrigger"	"tf_gamerules,PlayVO,ambient\alarms\manhack_alert_pass1.wav,0,-1"
+                "OnTrigger" "DropPodWarning,Enable,,0.1,-1"
+
+                "OnTrigger"	"tf_gamerules,$StopVO,ambient\alarms\manhack_alert_pass1.wav,6,-1"
+                "OnTrigger"	"tf_gamerules,PlayVO,npc/env_headcrabcanister/launch.wav,6,-1"
+
+                "OnTrigger" "DropPodModel,Enable,,6,-1"
+                "OnTrigger"	"DropPodModelTrail,Start,,6,-1"
+                "OnTrigger" "DropPodMain,SetSpeed,0.1,6,-1"
+
+                "OnTrigger" "DropPodMain,SetSpeed,1,7,-1"
+
+                "OnTrigger"	"DropPodExplosion,Start,,7.7,-1"
+                "OnTrigger"	"DropPodExplosionDamage,Enable,,7.84,-1"
+
+                "OnTrigger"	"tf_gamerules,PlayVO,ambient\explosions\explode_3.wav,7.85,-1"
+                "OnTrigger"	"DropPodShake,StartShake,,7.85,-1"
+
+                "OnTrigger" "DropPodModel,Disable,,7.85,-1"
+                "OnTrigger" "DropPodWarning,Disable,,7.85,-1"
+                "OnTrigger"	"DropPodModelTrail,Stop,,7.85,-1"
+                "OnTrigger"	"DropPodExplosionDamage,Disable,,7.85,-1"
+
+                "OnTrigger" "DropPodClearRelay,Trigger,,8,-1"
+            }
+
+            func_tracktrain // Drop Pod Path
+            {
+                "targetname" "DropPodMain"
+                "target" "missile_path_a_1"
+                "origin" "310 -119 1425"
+                "velocitytype" "1"
+                "orientationtype" "1"
+                "startspeed" "2500"
+                "speed" "0"
+            }
+            prop_dynamic // Drop Pod Model
+            {
+                "targetname" "DropPodModel"
+                "DisableBoneFollowers" "1"
+                "model" "models/props_combine/headcrabcannister01a.mdl"
+                "modelscale"	"1.75"
+                "origin" "310 -119 1425"
+                "angles" "10 0 0"
+                "StartDisabled" "1"
+                "parentname" "prop_move"
+            }
+            prop_dynamic // Drop Pod Warning Circle
+            {
+                "targetname" "DropPodWarning"
+                "DisableBoneFollowers" "1"
+                "skin" "1"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale"	"5"
+                "DefaultAnim" "start"
+                "disableshadows" "1"
+                "origin" "2206 -82 10"
+                "angles" "0 0 0"
+                "StartDisabled" "1"
+            }
+
+            env_shake // Drop Pod Shake
+            {
+                "targetname" "DropPodShake"
+                "parentname" "DropPodMain"
+                "spawnflags" "5" 
+                "amplitude" "16"
+                "duration" "3"
+                "frequency" "9"
+            }
+
+            info_particle_system // Drop Pod Trail Particle
+            {
+                "targetname" "DropPodModelTrail"
+                "parentname" "DropPodMain"
+                "origin" "310 -119 1425"
+                "angles" "190 0 0"
+                "effect_name" "rockettrail_vents_doomsday"
+            }
+
+            info_particle_system // Drop Pod Explosion Particle
+            {
+                "targetname" "DropPodExplosion"
+                "origin" "2206 -82 50"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+            }
+            info_particle_system // Drop Pod Explosion Particle
+            {
+                "targetname" "DropPodExplosion"
+                "origin" "2206 -82 50"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres_sm"
+            }
+
+            trigger_hurt // Drop Pod Explosion Damage
+            {
+                "targetname" "DropPodExplosionDamage"
+                "origin" "2206 -82 -16"
+                "angles" "0 0 0"
+                "mins" "-300 -300 -300"
+                "maxs" "300 300 300"
+                "damagetype" "64"
+                "damage" "500"
+                "StartDisabled" "1"
+                "spawnflags" "64"
+                "filtername" "filter_redteam"
+            }
+        }
+        DropPod_Variant2
+        {
+            NoFixUp 1
+
+            OnSpawnOutput
+            {
+                Target "DropPodStrikeRelay"
+                Action Trigger
+            }
+            logic_relay
+            {
+                "targetname" "DropPodStrikeRelay"
+                "OnTrigger"	"tf_gamerules,PlayVO,ambient\alarms\manhack_alert_pass1.wav,0,-1"
+                "OnTrigger" "DropPodWarning,Enable,,0.1,-1"
+
+                "OnTrigger"	"tf_gamerules,$StopVO,ambient\alarms\manhack_alert_pass1.wav,6,-1"
+                "OnTrigger"	"tf_gamerules,PlayVO,npc/env_headcrabcanister/launch.wav,6,-1"
+
+                "OnTrigger" "DropPodModel,Enable,,6,-1"
+                "OnTrigger"	"DropPodModelTrail,Start,,6,-1"
+                "OnTrigger" "DropPodMain,SetSpeed,0.1,6,-1"
+
+                "OnTrigger" "DropPodMain,SetSpeed,1,7,-1"
+
+                "OnTrigger"	"DropPodExplosion,Start,,7.7,-1"
+                "OnTrigger"	"DropPodExplosionDamage,Enable,,7.84,-1"
+
+                "OnTrigger"	"tf_gamerules,PlayVO,ambient\explosions\explode_3.wav,7.85,-1"
+                "OnTrigger"	"DropPodShake,StartShake,,7.85,-1"
+
+                "OnTrigger" "DropPodModel,Disable,,7.85,-1"
+                "OnTrigger" "DropPodWarning,Disable,,7.85,-1"
+                "OnTrigger"	"DropPodModelTrail,Stop,,7.85,-1"
+                "OnTrigger"	"DropPodExplosionDamage,Disable,,7.85,-1"
+                
+                "OnTrigger" "DropPodClearRelay,Trigger,,8,-1"
+            }
+
+            func_tracktrain // Drop Pod Path
+            {
+                "targetname" "DropPodMain"
+                "target" "missile_path_a_1"
+                "origin" "310 -119 1425"
+                "velocitytype" "1"
+                "orientationtype" "1"
+                "startspeed" "2500"
+                "speed" "0"
+            }
+            prop_dynamic // Drop Pod Model
+            {
+                "targetname" "DropPodModel"
+                "DisableBoneFollowers" "1"
+                "model" "models/props_combine/headcrabcannister01a.mdl"
+                "modelscale"	"1.75"
+                "origin" "310 -119 1425"
+                "angles" "10 0 0"
+                "StartDisabled" "1"
+                "parentname" "prop_move"
+            }
+            prop_dynamic // Drop Pod Warning Circle
+            {
+                "targetname" "DropPodWarning"
+                "DisableBoneFollowers" "1"
+                "skin" "1"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale"	"5"
+                "DefaultAnim" "start"
+                "disableshadows" "1"
+                "origin" "2206 -82 10"
+                "angles" "0 0 0"
+                "StartDisabled" "1"
+            }
+
+            env_shake // Drop Pod Shake
+            {
+                "targetname" "DropPodShake"
+                "parentname" "DropPodMain"
+                "spawnflags" "5" 
+                "amplitude" "16"
+                "duration" "3"
+                "frequency" "9"
+            }
+
+            info_particle_system // Drop Pod Trail Particle
+            {
+                "targetname" "DropPodModelTrail"
+                "parentname" "DropPodMain"
+                "origin" "310 -119 1425"
+                "angles" "190 0 0"
+                "effect_name" "rockettrail_vents_doomsday"
+            }
+
+            info_particle_system // Drop Pod Explosion Particle
+            {
+                "targetname" "DropPodExplosion"
+                "origin" "2206 -82 50"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+            }
+            info_particle_system // Drop Pod Explosion Particle
+            {
+                "targetname" "DropPodExplosion"
+                "origin" "2206 -82 50"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres_sm"
+            }
+
+            trigger_hurt // Drop Pod Explosion Damage
+            {
+                "targetname" "DropPodExplosionDamage"
+                "origin" "2206 -82 -16"
+                "angles" "0 0 0"
+                "mins" "-300 -300 -300"
+                "maxs" "300 300 300"
+                "damagetype" "64"
+                "damage" "500"
+                "StartDisabled" "1"
+                "spawnflags" "64"
+                "filtername" "filter_redteam"
+            }
+        }
+        DropPod_Variant3
+        {
+            NoFixUp 1
+
+            OnSpawnOutput
+            {
+                Target "DropPodStrikeRelay"
+                Action Trigger
+            }
+            logic_relay
+            {
+                "targetname" "DropPodStrikeRelay"
+                "OnTrigger"	"tf_gamerules,PlayVO,ambient\alarms\manhack_alert_pass1.wav,0,-1"
+                "OnTrigger" "DropPodWarning,Enable,,0.1,-1"
+
+                "OnTrigger"	"tf_gamerules,$StopVO,ambient\alarms\manhack_alert_pass1.wav,6,-1"
+                "OnTrigger"	"tf_gamerules,PlayVO,npc/env_headcrabcanister/launch.wav,6,-1"
+
+                "OnTrigger" "DropPodModel,Enable,,6,-1"
+                "OnTrigger"	"DropPodModelTrail,Start,,6,-1"
+                "OnTrigger" "DropPodMain,SetSpeed,0.1,6,-1"
+
+                "OnTrigger" "DropPodMain,SetSpeed,1,7,-1"
+
+                "OnTrigger"	"DropPodExplosion,Start,,7.7,-1"
+                "OnTrigger"	"DropPodExplosionDamage,Enable,,7.84,-1"
+
+                "OnTrigger"	"tf_gamerules,PlayVO,ambient\explosions\explode_3.wav,7.85,-1"
+                "OnTrigger"	"DropPodShake,StartShake,,7.85,-1"
+
+                "OnTrigger" "DropPodModel,Disable,,7.85,-1"
+                "OnTrigger" "DropPodWarning,Disable,,7.85,-1"
+                "OnTrigger"	"DropPodModelTrail,Stop,,7.85,-1"
+                "OnTrigger"	"DropPodExplosionDamage,Disable,,7.85,-1"
+                
+                "OnTrigger" "DropPodClearRelay,Trigger,,8,-1"
+            }
+
+            func_tracktrain // Drop Pod Path
+            {
+                "targetname" "DropPodMain"
+                "target" "missile_path_a_1"
+                "origin" "310 -119 1425"
+                "velocitytype" "1"
+                "orientationtype" "1"
+                "startspeed" "2500"
+                "speed" "0"
+            }
+            prop_dynamic // Drop Pod Model
+            {
+                "targetname" "DropPodModel"
+                "DisableBoneFollowers" "1"
+                "model" "models/props_combine/headcrabcannister01a.mdl"
+                "modelscale"	"1.75"
+                "origin" "310 -119 1425"
+                "angles" "10 0 0"
+                "StartDisabled" "1"
+                "parentname" "prop_move"
+            }
+            prop_dynamic // Drop Pod Warning Circle
+            {
+                "targetname" "DropPodWarning"
+                "DisableBoneFollowers" "1"
+                "skin" "1"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale"	"5"
+                "DefaultAnim" "start"
+                "disableshadows" "1"
+                "origin" "2206 -82 10"
+                "angles" "0 0 0"
+                "StartDisabled" "1"
+            }
+
+            env_shake // Drop Pod Shake
+            {
+                "targetname" "DropPodShake"
+                "parentname" "DropPodMain"
+                "spawnflags" "5" 
+                "amplitude" "16"
+                "duration" "3"
+                "frequency" "9"
+            }
+
+            info_particle_system // Drop Pod Trail Particle
+            {
+                "targetname" "DropPodModelTrail"
+                "parentname" "DropPodMain"
+                "origin" "310 -119 1425"
+                "angles" "190 0 0"
+                "effect_name" "rockettrail_vents_doomsday"
+            }
+
+            info_particle_system // Drop Pod Explosion Particle
+            {
+                "targetname" "DropPodExplosion"
+                "origin" "2206 -82 50"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres"
+            }
+            info_particle_system // Drop Pod Explosion Particle
+            {
+                "targetname" "DropPodExplosion"
+                "origin" "2206 -82 50"
+                "angles" "0 0 0"
+                "effect_name" "fireSmoke_Collumn_mvmAcres_sm"
+            }
+
+            trigger_hurt // Drop Pod Explosion Damage
+            {
+                "targetname" "DropPodExplosionDamage"
+                "origin" "2206 -82 -16"
+                "angles" "0 0 0"
+                "mins" "-300 -300 -300"
+                "maxs" "300 300 300"
+                "damagetype" "64"
+                "damage" "500"
+                "StartDisabled" "1"
+                "spawnflags" "64"
+                "filtername" "filter_redteam"
+            }
+        }
+
+        UberTankWarning
+        {
+            OnSpawnOutput
+            {
+                Target UberTankWarningText
+                Action Show
+                Delay 6
+            }
+            training_annotation 
+			{
+				"targetname"   "UberTankWarningText"
+				"display_text" "Defeat the War Machines to disable the Tank's Uber!"
+				"lifetime"     "10"
+				"origin" "0 0 140"
+			}
+        
+            training_annotation 
+			{
+				"targetname"   "UberTankDisableText"
+				"display_text" "Uber Depleted!"
+				"lifetime"     "10"
+				"origin" "0 0 140"
+			}
+
+            logic_relay
+            {
+                "targetname" "UberTankDisable"
+                "OnTrigger" "ubertank,CallScriptFunction,ToggleUber,0,-1"
+                "OnTrigger" "ubertank,SetSpeed,75,0,-1"
+                "OnTrigger" "UberTankDisableText,Show,,4,-1"
+            }
         }
 	}
 
@@ -281,26 +1227,81 @@ WaveSchedule
     ExtraTankPath
     {
         Name "tankfromthesky"
-        Node "-1726 -67 1200"
-        Node "-1400 -67 1200"
+        Node "928 2080 1200"
+        Node "928 1280 1200"
+    }
+
+    // Arena Mode Tank Path
+    ExtraTankPath
+    {
+        Name "tank_path_arena"
+
+        Node "480 6352 -164"
+        Node "480 5836 -164"
+        Node "480 3809 28"
+        Node "480 3776 28"
+        Node "460 3700 28"
+        Node "412 3644 28"
+        Node "332 3619 28"
+        Node "48 3620 28"
+        Node "-59 3595 28"
+        Node "-159 3491 28"
+        Node "-160 3072 -40"
+        Node "-194 2988 -40"
+        Node "-276 2920 -40"
+        Node "-320 2816 -40"
+        Node "-320 2432 28"
+        Node "-244 2308 28"
+        Node "-160 2236 28"
+        Node "148 2112 28"
+        Node "352 2080 28"
+        Node "688 2080 28"
+        Node "800 2048 28"
+        Node "896 1952 28"
+        Node "948 1944 28"
+        Node "1056 1916 28"
+        Node "1272 1916 28"
+        Node "1380 1980 28"
+        Node "1432 2076 28"
+        Node "1648 2345 28"
+        Node "1648 2384 28"
+        Node "1648 2624 28"
+        Node "1616 2720 28"
+        Node "1568 2784 28"
+        Node "1504 2848 28"
+        Node "1472 2912 28"
+        Node "1472 3264 28"
+        Node "1424 3376 28"
+        Node "1360 3396 28"
+        Node "1328 3344 28"
+        Node "1264 3280 28"
+        Node "1152 3248 28"
+        Node "416 3248 28"
+        Node "340 3216 28"
+        Node "296 3152 28"
+        Node "272 3084 28"
+        Node "272 3004 28"
+        Node "304 2924 28"
+        Node "396 2880 28"
+        Node "460 2880 28"
     }
 
     // Drop Pod Paths
     ExtraTankPath
     {
-        Name "missile_path_a"
+        Name "DropPod_PathA"
         Node "310 -119 1425"
         Node "2206 -82 -16"
     }
     ExtraTankPath
     {
-        Name "missile_path_b"
+        Name "DropPod_PathB"
         Node "-1256 -859 1425"
         Node "705 -774 -139"
     }
     ExtraTankPath
     {
-        Name "missile_path_c"
+        Name "DropPod_PathC"
         Node "-1237 576 1613"
         Node "307 621 -135"
     }
@@ -310,21 +1311,1189 @@ WaveSchedule
     // Drop Pod Spawn Points
     ExtraSpawnPoint
     {
-        Name "missile_spawn_a"
+        Name "spawnbot_droppod_a"
         X 2206 Y -82 Z -0
         TeamNum 3
     }
     ExtraSpawnPoint
     {
-        Name "missile_spawn_b"
+        Name "spawnbot_droppod_b"
         X 705 Y -774 Z -130
         TeamNum 3
     }
     ExtraSpawnPoint
     {
-        Name "missile_spawn_c"
+        Name "spawnbot_droppod_c"
         X 307 Y 621 Z -135
         TeamNum 3
     }
 
+    //// SPAWNED POINT TEMPLATES ////
+
+    SpawnTemplate "MissionAesthetics"
+    SpawnTemplate "DropPodSetup"
+
+    //// ROBOT TEMPLATES ////
+
+    Templates
+    {
+        T_TFBot_Giant_Engineer_Widowmaker
+        {
+            Name "Mutated Armed Mechanic"
+            Class Engineer
+            ClassIcon engineer_widowmaker_nys
+            Skill Expert
+            Health	3000
+            Attributes MiniBoss
+            WeaponRestrictions PrimaryOnly
+            Action FetchFlag
+
+            MaxVisionRange 1500
+
+            Item "The Widowmaker"
+            Item "Hazard Handler"
+            Item "Cargo Constructor"
+
+            CharacterAttributes
+            {
+                "move speed bonus"	0.5
+                "damage force reduction"	0.5
+                "airblast vulnerability multiplier"	0.5
+                "override footstep sound set"	4
+                "voice pitch scale"	0.2
+            }
+        }
+
+        T_TFBot_Scout_Bonk_Conch_Scatter
+        {
+            Name "Bonch Addicted Scout"
+            Class Scout
+            Skill Easy
+            WeaponRestrictions PrimaryOnly
+
+            Item "Bonk! Atomic Punch"
+
+            Item "Bonk Helm"
+
+            ItemAttributes
+            {
+                ItemName "Bonk! Atomic Punch"
+                "mult effect duration" 3
+                "effect cond override" 29
+            }
+        }
+
+        T_TFBot_Giant_Sniper_Armored
+        {
+            Name "Armored Mutated Sharpshooter"
+            Template T_TFBot_Sniper
+            ClassIcon sniper_armored
+            Skill Expert
+            Health 4000
+            Attributes MiniBoss
+            ExtAttr IgnoreNPC
+            Action Sniper
+            
+            Tag bot_add15seconds
+
+            SpawnTemplate "MissionTimerBot"
+
+            Item "The AWPer Hand"
+
+            Item "The Razorback"
+
+            CharacterAttributes
+            {
+                "move speed bonus"	0.7
+                "head scale" 0.65
+                "damage force reduction" 0.6
+                "airblast vulnerability multiplier" 0.6
+                "override footstep sound set" 6
+                "attach particle effect" 3043
+            }
+
+            ItemAttributes
+            {
+                ItemName "The AWPer Hand"
+                "damage bonus" 2
+            }
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_CLUB"
+                "damage bonus" 1.5
+            }
+        }
+
+        T_TFBot_Giant_Sniper_WarMachine
+        {
+            Name "R1-SL War Machine"
+            
+            Template T_TFBot_Sniper
+            ClassIcon sniper_armored
+            Skill Expert
+            Health 15000
+            Scale 1.7
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Attributes AlwaysCrit
+            ExtAttr IgnoreNPC
+            Action Sniper
+
+            Tag bot_add60seconds
+
+            UseCustomModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+            SpawnTemplate "MissionTimerBot"
+            SpawnTemplate "DropPodWarning"
+
+            Item "The AWPer Hand"
+            
+            AddCond
+            {
+                Index 4
+                Duration 0.75
+            }
+
+            CharacterAttributes
+            {
+                "move speed bonus"	0.6
+                "head scale" 0.65
+                "damage force reduction" 0.6
+                "airblast vulnerability multiplier" 0.6
+                "override footstep sound set" 6
+            }
+            ItemAttributes
+            {
+                ItemName "The AWPer Hand"
+                "damage bonus" 2
+            }
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_CLUB"
+                "damage bonus" 1.5
+            }
+        }
+    }
+
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+    {
+        Where spawnbot_arena_left
+        Where spawnbot_arena_right
+        Objective DestroySentries
+        BeginAtWave 1
+        RunForThisManyWaves 1
+        DesiredCount 1
+
+        InitialCooldown 20
+        CooldownTime 30
+
+        TFBot
+        {
+            Template T_TFBot_SentryBuster
+        }
+    }
+    Mission // Sniper
+    {
+        Where spawnbot_arena_left
+        Where spawnbot_arena_right
+        Objective Sniper
+        BeginAtWave 1
+        RunForThisManyWaves 1
+        DesiredCount 3
+    
+        InitialCooldown 80
+        CooldownTime 90
+    
+        TFBot
+        {
+            Template T_TFBot_Sniper
+            PreferClass Sniper
+        }
+    }
+    Mission // Spy
+    {
+        Where spawnbot_arena_left
+        Where spawnbot_arena_right
+        Objective Spy
+        BeginAtWave 1
+        RunForThisManyWaves 1
+        DesiredCount 3
+    
+        InitialCooldown 60
+        CooldownTime 120
+    
+        TFBot
+        { 
+            Template T_TFBot_Spy
+            PreferClass Medic
+        }
+    }
+
+    Wave
+    {
+        InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+                    EntFire(`bombpath_left_relay`, `Trigger`)
+                    EntFire(`bombpath_lowerhatch_relay`, `Trigger`)
+
+                    IncludeScript(`claudz_logic`)
+                    IncludeScript(`seel_ins`)
+
+                    IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/vactank`, getroottable())
+                    IncludeScript(`tankextensions/ubertank`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/railgun`, getroottable())
+
+                    TankExt.SetValueOverrides({
+                        COMBATTANK_ROTATE_SPEED_DEFAULT = 1.4   // default: 0.8
+                        COMBATTANK_MAX_RANGE = 2000            // default: 1400
+                    })
+
+                    TankExt.CreateLoopPaths({
+                        tank_loop = [
+                            Vector(480, 6532, -164)
+                            Vector(480, 5836, -164)
+                            Vector(480, 3809, 28)
+                            Vector(480, 3776, 28)
+                            Vector(460, 3700, 28)
+                            Vector(412, 3644, 28)
+                            Vector(332, 3619, 28)
+                            Vector(48, 3620, 28)
+                            Vector(-59, 3595, 28)
+                            Vector(-159, 3491, 28)
+                            Vector(-160, 3072, -40)
+                            Vector(-194, 2988, -40)
+                            Vector(-276, 2920, -40)
+                            Vector(-320, 2816, -40)
+                            Vector(-320, 2432, 28)
+                            Vector(-244, 2308, 28)
+                            Vector(-112, 2200, 28)
+                            Vector(16, 2140, 28)
+                            Vector(148, 2112, 28)
+                            Vector(352, 2080, 28)
+                            Vector(688, 2080, 28)
+                            Vector(800, 2048, 28)
+                            Vector(948, 1944, 28)
+                            Vector(1056, 1916, 28)
+                            Vector(1272, 1916, 28)
+                            Vector(1380, 1980, 28)
+                            Vector(1432, 2076, 28)
+                            Vector(1648, 2345, 44)
+                            Vector(1648, 2384, 44)
+                            Vector(1648, 2624, 52)
+                            Vector(1616, 2720, 52)
+                            Vector(1568, 2784, 52)
+                            Vector(1504, 2848, 52)
+                            Vector(1472, 2912, 52)
+                            Vector(1472, 3264, 52)
+                            Vector(1360, 3440, 28)
+                            Vector(1328, 3504, 28)
+                            Vector(1264, 3568, 28)
+                            Vector(620, 3604, 28)
+                            Vector(332, 3619, 28)
+                        ]
+                    })
+                  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                    EntFire(`MissionIntroRelay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)        
+                  "
+        }
+
+        Explanation
+		{
+            Line "{yellow}///YOU'VE BEEN SENT DOWN TO HELL AS PART OF THE HELL EXPLORATION PROJECT.///"
+            Line "{yellow}///LOCATION: ACTIVE WARZONE///"
+			Line "{yellow}///THIS MISSION USES CUSTOM MUSIC, USE THE VOLUME SLIDER IN YOUR SETTINGS MENU.///"
+            Line "{yellow}///THIS MISSION USES COLOR CORRECTION, SET MAT_COLORCORRECTION TO 1 IN CONSOLE TO ENABLE IT, SET IT TO 0 TO OPT OUT.///"
+		}
+
+        SpawnTemplate "MissionTimer"
+
+        // Fake Icons
+        WaveSpawn // Timer
+        {
+            WaitBeforeStarting 99999
+            Support 1
+            TotalCount 1
+            TFBot
+            {
+                ClassIcon timer_lite
+            }         
+        }
+
+        // Subwave 1
+        WaveSpawn // 2 GRapid Soldiers and 4 Quick-Fix Medics
+        {
+            Name "Nightmare_Subwave1_GRapidSoldiers"
+            Where spawnbot_left
+            Where spawnbot_right
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 15.5
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Squad
+            {
+                TFBot
+                { 
+                    Name "Mutated Private"
+                    Template T_TFBot_Giant_Soldier
+                    ClassIcon soldier_giant
+                    Attributes AlwaysCrit 
+                    Item "The Diplomat"
+                    Item "Breach and Bomb"
+
+                    CharacterAttributes
+                    {
+                        "voice pitch scale" 0.2
+                    }
+                }
+                TFBot
+                {
+                    Name "Fallen Doctor"
+                    Template T_TFBot_Medic_QuickFix
+                    Item "The Second Opinion"
+                    Item "Bunnyhopper's Ballistics Vest"
+
+                    CharacterAttributes
+                    {
+                        "voice pitch scale" 0.2
+                    }
+                }
+                TFBot
+                {
+                    Name "Fallen Doctor"
+                    Template T_TFBot_Medic_QuickFix
+                    Item "The Second Opinion"
+                    Item "Bunnyhopper's Ballistics Vest"
+
+                    CharacterAttributes
+                    {
+                        "voice pitch scale" 0.2
+                    }
+                }
+                TFBot
+                {
+                    Name "Fallen Doctor"
+                    Template T_TFBot_Medic_QuickFix
+                    Item "The Second Opinion"
+                    Item "Bunnyhopper's Ballistics Vest"
+
+                    CharacterAttributes
+                    {
+                        "voice pitch scale" 0.2
+                    }
+                }
+            }
+        }
+        WaveSpawn // 25 Carbine Snipers
+        {
+            Name "Nightmare_Subwave1_CarbineSnipers"
+            Where spawnbot_invasion
+            TotalCount 25
+            MaxActive 25
+            SpawnCount 5
+            WaitBeforeStarting 11.5
+            WaitBetweenSpawns 7
+        
+            TotalCurrency 50
+        
+            TFBot
+            {
+                Name "Fallen Gunner"
+                Class Sniper
+                Skill	Normal
+				WeaponRestrictions	SecondaryOnly
+
+                MaxVisionRange 600
+
+                Item "The Cleaner's Carbine"
+
+				Item "Shortness Of Breath"
+				Item "Preventative Measure"
+				Item "Stealth Bomber"
+				Item "EOTL_Coldfront Curbstompers"
+
+                CharacterAttributes
+                {
+                    "cannot pick up intelligence" 1
+                    "voice pitch scale" 0.2
+                }
+            }
+
+            FirstSpawnOutput
+            {
+                Target startingvoicelines
+                Action Trigger
+            }
+        }
+
+        WaveSpawn // 30 Demomen
+        {
+            Name "Nightmare_Subwave1_Demomen"
+            WaitForAllSpawned "Nightmare_Subwave1_CarbineSnipers"
+            Where spawnbot_invasion
+            TotalCount 30
+            MaxActive 30
+            SpawnCount 5
+            WaitBeforeStarting 9
+            WaitBetweenSpawns 6.5
+        
+            TotalCurrency 50
+        
+            TFBot
+            {
+                Name "Fallen Grenadier"
+                Class Demoman
+                Skill Expert
+
+                Item "The Loch-n-Load"
+
+                Item "The Juggernaut Jacket"
+                Item "Blast Blocker"
+                Item "Hazard Headgear"
+            }
+        }
+
+        WaveSpawn // 4 GWidowmaker Engineers
+        {
+            Name "Nightmare_Subwave1_GWidowmakers"
+            WaitForAllSpawned "Nightmare_Subwave1_CarbineSnipers"
+            Where spawnbot_invasion
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 12
+            WaitBetweenSpawns 7
+        
+            TotalCurrency 100
+        
+            TFBot
+            {
+                Template T_TFBot_Giant_Engineer_Widowmaker
+            }
+        }
+
+        // Subwave 1 Check
+        WaveSpawn
+        {
+            Name "Subwave1_Check"
+            WaitForAllDead "Nightmare_Subwave1_GRapidSoldiers"
+        }
+        WaveSpawn
+        {
+            Name "Subwave1_Check"
+            WaitForAllDead "Nightmare_Subwave1_CarbineSnipers"
+        }
+        WaveSpawn
+        {
+            Name "Subwave1_Check"
+            WaitForAllDead "Nightmare_Subwave1_Demomen"
+        }
+        WaveSpawn
+        {
+            Name "Subwave1_Check"
+            WaitForAllDead "Nightmare_Subwave1_GWidowmakers"
+        }
+
+        //// THE MISSION BEGINS (REAL CONFIRMED 2027) ////
+
+        // Timer Tutorial
+        WaveSpawn // Tank Jumpscare
+        {
+            Name "TankTutorial"
+            WaitForAllSpawned "Subwave1_Check"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 0
+        
+            Tank
+            {
+                Name "tankboss"
+                StartingPathTrackNode "tankfromthesky"
+                Health 7500
+                Speed 0
+        
+                OnKilledOutput
+                {
+                    Target BigNet
+                    Action RunScriptCode
+                    Param "
+                            EntFire(`TutorialCompleteRelay`, `Trigger`)
+                            EntFire(`arena_mode_sidefence_break`, `Trigger`, null, 2)
+						    EntFire(`arena_mode_sidefence_spawnbot_enable`, `Trigger`, null, 2)
+                            EntFire(`arena_mode_sidegate_open`, `Trigger`, null, 2)
+						    EntFire(`arena_mode_sidegate_spawnbot_enable`, `Trigger`, null, 2)
+                          "
+                }
+            }
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`BIGBombRelay`, `Trigger`)
+                        EntFire(`arena_mode_transition_relay`, `Trigger`)
+                      "
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 8 GRapid Demos
+        {
+            Name "Nightmare_Subwave2_GRapidDemos"
+            WaitForAllDead "TankTutorial"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 12
+        
+            TotalCurrency 200
+        
+            TFBot
+            {
+                Name "Mutated Demolitionist"
+                Template T_TFBot_Giant_Demoman_Spammer
+                ClassIcon demo_giant
+                Action Mobber
+            }
+        }
+        WaveSpawn // 1 Timer GRapid Demo
+        {
+            Name "Nightmare_Subwave2_GRapidDemos"
+            WaitForAllDead "TankTutorial"
+            Where spawnbot_arena_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 50
+        
+            TFBot
+            {
+                Name "Mutated Demolitionist"
+                Template T_TFBot_Giant_Demoman_Spammer
+                ClassIcon demo_giant
+                Action Mobber
+
+                Tag bot_add60seconds
+
+                SpawnTemplate "MissionTimerBot"
+
+                CharacterAttributes
+                {
+                    "attach particle effect" 3043
+                }
+            }
+        }
+        WaveSpawn // 50 Scatter-Bonch Scouts
+        {
+            Name "Nightmare_Subwave2_BonchScouts"
+            WaitForAllDead "TankTutorial"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 50
+            MaxActive 20
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 1.2
+            TotalCurrency 50
+        
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk_Conch_Scatter
+                Action Mobber
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // 1 Tank
+        {
+            Name "Nightmare_Subwave3_Tank"
+            WaitForAllDead "Nightmare_Subwave2_GRapidDemos"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            Tank
+            {
+                Name "tankboss"
+                StartingPathTrackNode "tank_path_arena_1"
+                Health 15000
+                Speed 200
+                Skin 0
+                OnKilledOutput 
+                {
+                    Target "Add45Seconds"
+                    Action Trigger
+                }
+                OnBombDroppedOutput
+                {
+                    Target TimerLossRelay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankdoor_open_relay`, `Trigger`)
+                        EntFire(`tankdoor_siren_enable_relay`, `Trigger`)
+                        EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
+                        EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
+                        EntFire(`arena_mode_maingate_open`, `Trigger`, null, 10)
+                        EntFire(`arena_mode_maingate_spawnbot_enable`, `Trigger`, null, 10)
+                        EntFire(`tankboss`, `SetSpeed`, 75, 12.5)
+                      "
+            }
+        }
+        WaveSpawn // 1 Tank
+        {
+            Name "Nightmare_Subwave3_Tank2"
+            WaitForAllSpawned "Nightmare_Subwave3_Tank"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            Tank
+            {
+                Name "tankboss"
+                StartingPathTrackNode "tank_path_arena_1"
+                Health 15000
+                Speed 200
+                Skin 0
+                OnKilledOutput 
+                {
+                    Target "Add45Seconds"
+                    Action Trigger
+                }
+                OnBombDroppedOutput
+                {
+                    Target TimerLossRelay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankdoor_open_relay`, `Trigger`)
+                        EntFire(`tankdoor_siren_enable_relay`, `Trigger`)
+                        EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
+                        EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
+                        EntFire(`tankboss`, `SetSpeed`, 75, 12.5)
+                      "
+            }
+        }
+        WaveSpawn // 3 GHeavies
+        {
+            Name "Nightmare_Subwave3_GHeavies"
+            WaitForAllDead "Nightmare_Subwave2_GRapidDemos"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 25  
+            TotalCurrency 250
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Heavy
+                Action Mobber
+            }
+        }
+        WaveSpawn // 48 Bazooka Soldiers
+        {
+            Name "Nightmare_Subwave3_BazookaSoldiers"
+            WaitForAllDead "Nightmare_Subwave2_GRapidDemos"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 48
+            MaxActive 12
+            SpawnCount 3
+            WaitBeforeStarting 4
+            WaitBetweenSpawns 6
+        
+            TotalCurrency 200
+        
+            TFBot
+            {
+                Name "Fallen Trash Cannon"
+                Class Soldier
+                Skill Hard
+                Action Mobber
+
+                Item "The Beggar's Bazooka"
+
+                Item "The Kringle Collection"
+                Item "The Captain's Cocktails"
+                
+                ItemAttributes
+                {
+                    ItemName "The Beggar's Bazooka"
+                    "can overload" 0
+                    "auto fires full clip" 1
+                    "reload time increased hidden" 1
+                    "faster reload rate" 0.6
+                }
+            }
+        }
+
+        // Subwave 4
+        WaveSpawn // 2 GSnipers
+        {
+            Name "Nightmare_Subwave4_GSnipers"
+            WaitForAllDead "Nightmare_Subwave3_Tank2"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            TFBot
+            {
+                Template T_TFBot_Giant_Sniper_Armored
+            }
+        }
+
+        WaveSpawn // Drop Pod Spawn
+        {
+            Name "Nightmare_Subwave4_DropPod"
+            WaitForAllDead "Nightmare_Subwave3_Tank2"
+            WaitBeforeStarting 0
+
+            FirstSpawnOutput
+            {
+                Target DropPod_Variant3
+                Action ForceSpawn
+            }
+        }
+        WaveSpawn // Sniper War Machine
+        {
+            Name "Nightmare_Subwave4_WarMachine"
+            WaitForAllDead "Nightmare_Subwave3_Tank2"
+            Where spawnbot_droppod_c [$SIGSEGV]
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 9.75
+            WaitBetweenSpawns 0
+            FirstSpawnWarningSound "mvm\giant_heavy\giant_heavy_entrance.wav"
+            TotalCurrency 100
+        
+            TFBot
+            {
+                Template T_TFBot_Giant_Sniper_WarMachine
+            }
+        }
+
+        // Subwave 5
+        WaveSpawn // 1 Bullet Vac Tank
+        {
+            Name "Nightmare_Subwave5_VacTank"
+            WaitForAllDead "Nightmare_Subwave4_WarMachine"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            Tank
+            {
+                Name "vactank_bullet"
+                StartingPathTrackNode "tank_path_arena_1"
+                Health 15000
+                Speed 200
+        
+                OnKilledOutput 
+                {
+                    Target "Add45Seconds"
+                    Action Trigger
+                }
+                OnBombDroppedOutput
+                {
+                    Target TimerLossRelay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankdoor_open_relay`, `Trigger`)
+                        EntFire(`tankdoor_siren_enable_relay`, `Trigger`)
+                        EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
+                        EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
+                        EntFire(`vactank_bullet`, `SetSpeed`, 75, 12.5)
+                      "
+            }
+        }
+        WaveSpawn // 1 Blast Vac Tank
+        {
+            Name "Nightmare_Subwave5_VacTank"
+            WaitForAllDead "Nightmare_Subwave4_WarMachine"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            Tank
+            {
+                Name "vactank_blast"
+                StartingPathTrackNode "tank_path_arena_1"
+                Health 15000
+                Speed 200
+        
+                OnKilledOutput 
+                {
+                    Target "Add45Seconds"
+                    Action Trigger
+                }
+                OnBombDroppedOutput
+                {
+                    Target TimerLossRelay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankdoor_open_relay`, `Trigger`)
+                        EntFire(`tankdoor_siren_enable_relay`, `Trigger`)
+                        EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
+                        EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
+                        EntFire(`vactank_blast`, `SetSpeed`, 75, 12.5)
+                      "
+            }
+        }
+        WaveSpawn // 1 Fire Vac Tank
+        {
+            Name "Nightmare_Subwave5_VacTank"
+            WaitForAllDead "Nightmare_Subwave4_WarMachine"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 40
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            Tank
+            {
+                Name "vactank_fire"
+                StartingPathTrackNode "tank_path_arena_1"
+                Health 15000
+                Speed 200
+        
+                OnKilledOutput 
+                {
+                    Target "Add45Seconds"
+                    Action Trigger
+                }
+                OnBombDroppedOutput
+                {
+                    Target TimerLossRelay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankdoor_open_relay`, `Trigger`)
+                        EntFire(`tankdoor_siren_enable_relay`, `Trigger`)
+                        EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
+                        EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
+                        EntFire(`vactank_fire`, `SetSpeed`, 75, 12.5)
+                      "
+            }
+        }
+
+        WaveSpawn // 23 Armored Burst Demos and 23 Quick-Uber Medics
+        {
+            Name "Nightmare_Subwave5_BurstDemos"
+            WaitForAllDead "Nightmare_Subwave4_WarMachine"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 46
+            MaxActive 14
+            SpawnCount 2
+            WaitBeforeStarting 6
+            WaitBetweenSpawns 1
+        
+            TotalCurrency 100
+
+            Squad
+            {
+                TFBot
+                {
+                    Name "Fallen Scatter Bomber"
+                    Template T_TFBot_Demoman_Burst
+                    ClassIcon demo
+                    Health 400
+                    Scale 1.3
+                    Attributes HoldFireUntilFullReload
+                    Attributes AlwaysFireWeapon
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                    ClassIcon medic
+                    Action Mobber
+                }
+            }
+            
+        }
+
+        // Subwave 6
+        WaveSpawn // 4 GBarrages, 4 GRegen Medics and 8 Battalion Soldiers
+        {
+            Name "Nightmare_Subwave6_GBarrage"
+            WaitForAllDead "Nightmare_Subwave5_VacTank"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 16
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 25
+        
+            TotalCurrency 200
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Barrage
+                    ClassIcon soldier_giant
+                    Action Mobber
+                    Tag bot_add30seconds
+
+                    SpawnTemplate "MissionTimerBot"
+                    CharacterAttributes
+                    {
+                        "attach particle effect" 3043
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Regen
+                    ClassIcon medic_giant
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion
+                    ClassIcon soldier
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion
+                    ClassIcon soldier
+                }
+            }
+        }
+        WaveSpawn // 24 Shotgun Heavies, 12 Deflector Heavies and 12 Steel Manlets
+        {
+            Name "Nightmare_Subwave6_Heavies"
+            WaitForAllDead "Nightmare_Subwave5_VacTank"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 48
+            MaxActive 16
+            SpawnCount 4
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 7
+        
+            TotalCurrency 150
+
+            RandomChoice
+            {
+                Shuffle 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Shotgun
+                    ClassIcon heavy
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Shotgun
+                    ClassIcon heavy
+                    Action Mobber
+                }
+                TFBot
+                {  
+                    Template T_TFBot_Heavy_Deflector
+                    ClassIcon heavy
+                    Skill Easy
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Name "Steel Manlet"
+                    Template T_TFBot_Heavy_SteelFist
+                    ClassIcon heavy
+                    Health 300 
+                    Scale 1
+                    Action Mobber
+                }
+            }
+        }
+
+        // Subwave 7
+        WaveSpawn // 1 Uber Tank
+        {
+            Name "Nightmare_Subwave7_UberTank"
+            WaitForAllDead "Nightmare_Subwave6_GBarrage"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+        
+            TotalCurrency 100
+        
+            Tank
+            {
+                Name "ubertank|0|-1"
+                StartingPathTrackNode "tank_path_arena_1"
+                Health 20000
+                Speed 200
+
+                SpawnTemplate "UberTankWarning"
+
+                OnKilledOutput
+                {
+                    Target "Add60Seconds"
+                    Action Trigger
+                }
+                OnBombDroppedOutput
+                {
+                    Target TimerLossRelay
+                    Action Trigger
+                }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`tankdoor_open_relay`, `Trigger`)
+                        EntFire(`tankdoor_siren_enable_relay`, `Trigger`)
+                        EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
+                        EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
+                        EntFire(`ubertank|0|-1`, `SetSpeed`, 40, 12.5)
+                      "
+            }
+        }
+        WaveSpawn // 6 Tomislav Heavies, 12 Shotgun Heavies, 6 Deflector Heavies and 6 Steel Manlet Pushers
+        {
+            Name "Nightmare_Subwave7_Heavies"
+            WaitForAllSpawned "Nightmare_Subwave7_UberTank"
+            Where spawnbot_arena_left
+            Where spawnbot_arena_right
+            TotalCount 30
+            MaxActive 10
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 4
+        
+            TotalCurrency 150
+
+            RandomChoice
+            {
+                Shuffle 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Shotgun
+                    ClassIcon heavy
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Shotgun
+                    ClassIcon heavy
+                    Action Mobber
+                }
+                TFBot
+                {  
+                    Template T_TFBot_Heavy_Deflector
+                    ClassIcon heavy
+                    Skill Easy
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Name "Steel Manlet"
+                    Template T_TFBot_Heavy_SteelFist
+                    ClassIcon heavy
+                    Health 300 
+                    Scale 1
+                    Action Mobber
+                }
+            }
+        }
+    }
 }
