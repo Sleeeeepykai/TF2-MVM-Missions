@@ -35,6 +35,16 @@ WaveSchedule
 	NoCritPumpkin 1
 	NoThrillerTaunt 1
 
+    MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_forced_holiday`, 0)
+			  "
+		Delay -1
+	}
+
 	//// SOUND OVERRIDES ////
     DisableSound "music.mvm_lost_wave"
 
@@ -105,6 +115,13 @@ WaveSchedule
     PrecacheGeneric "materials/hud/leaderboard_class_scout_bonch"
     PrecacheGeneric "materials/hud/leaderboard_class_soldier_bazooka"
     PrecacheGeneric "materials/hud/leaderboard_class_tank_vac_trio_lite"
+    PrecacheGeneric "materials/hud/leaderboard_class_tank_uber_lite"
+    PrecacheGeneric "materials/hud/leaderboard_class_medic_jug_ubersaw"
+    PrecacheGeneric "materials/hud/leaderboard_class_pyro_dragon_fury_swordstone_spammer_giant"
+    PrecacheGeneric "materials/hud/leaderboard_class_medic_pop_giant"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_burstfire_hyper_lite"
+    PrecacheGeneric "materials/hud/leaderboard_class_scout_bat_nys_armored"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_shotgun_yoovy"
 
     // Precached ColorCorrection
     PrecacheGeneric "materials/colorcorrection/highlighted_desaturated.raw"
@@ -496,9 +513,9 @@ WaveSchedule
             {
                 "targetname" "TheBIGBomb"
                 "model"      "models\props_debris\concrete_debris256pile001a.mdl"
-                "origin"     "704 2880 128"
+                "origin"     "704 2880 112"
                 "modelscale" "1.75"
-                "angles"    "-10 0 0"
+                "angles"    "0 0 0"
                 "disableshadows" "1"
                 "startdisabled" "1"
             }
@@ -2610,8 +2627,8 @@ WaveSchedule
     ExtraTankPath
     {
         Name "tankfromthesky"
-        Node "928 2080 1200"
-        Node "928 1280 1200"
+        Node "928 2080 1000"
+        Node "928 1280 1000"
     }
 
     // Arena Mode Tank Path
@@ -2740,6 +2757,7 @@ WaveSchedule
 
     SpawnTemplate "MissionAesthetics"
     SpawnTemplate "BossIntro"
+    SpawnTemplate "MissionPauseRelays"
 
     //// ROBOT TEMPLATES ////
 
@@ -3213,6 +3231,16 @@ WaveSchedule
             Item "Officer's Ushanka"
 			Item "The Apparatchik's Apparel"
 
+            FireInput
+            {
+                Target !self
+                Action $SetProp$m_iszClassIcon
+                Param "heavy_deflector_healonkill"
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+
 			CharacterAttributes
 			{
 				"move speed bonus"	0.5
@@ -3297,6 +3325,8 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
+                    Convars.SetValue(`tf_forced_holiday`, 2)
+
                     EntFire(`bombpath_left_relay`, `Trigger`)
                     EntFire(`bombpath_lowerhatch_relay`, `Trigger`)
 
@@ -3402,9 +3432,9 @@ WaveSchedule
         }
 
         // Subwave 1
-        WaveSpawn // 2 GRapid Soldiers and 4 Quick-Fix Medics
+        WaveSpawn // 2 GSoldiers and 4 Quick-Fix Medics
         {
-            Name "Nightmare_Subwave1_GRapidSoldiers"
+            Name "Nightmare_Subwave1_GSoldiers"
             Where spawnbot_left
             Where spawnbot_right
             TotalCount 8
@@ -3511,7 +3541,6 @@ WaveSchedule
                 Param "
                         EntFire(`MissionIntroBots`, `Trigger`)
 
-                        SINS.ChangeIconByName(`soldier_giant`, `soldier_spammer`)
                         SINS.ChangeIconByName(`sniper_but_they_use_huntsman_sometimes`, `sniper_carbine`)
                         SINS.ChangeIconByName(`engineer_giant`, `engineer_widowmaker_nys_giant`)
                       "
@@ -3568,7 +3597,7 @@ WaveSchedule
         WaveSpawn
         {
             Name "Subwave1_Check"
-            WaitForAllDead "Nightmare_Subwave1_GRapidSoldiers"
+            WaitForAllDead "Nightmare_Subwave1_GSoldiers"
         }
         WaveSpawn
         {
@@ -3589,14 +3618,29 @@ WaveSchedule
         //// THE MISSION BEGINS (REAL CONFIRMED 2027) ////
 
         // Timer Tutorial
+        WaveSpawn
+        {
+            Name "TankTutorialBegin"
+            WaitForAllSpawned "Subwave1_Check"
+            WaitBeforeStarting 2
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`arena_mode_transition_relay`, `Trigger`)
+                      "
+            }
+        }
         WaveSpawn // Tank Jumpscare
         {
             Name "TankTutorial"
-            WaitForAllSpawned "Subwave1_Check"
+            WaitForAllSpawned "TankTutorialBegin"
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 5
+            WaitBeforeStarting 10.5
             WaitBetweenSpawns 0
         
             TotalCurrency 0
@@ -3604,22 +3648,9 @@ WaveSchedule
             Tank
             {
                 Name "tankboss"
-                StartingPathTrackNode "tankfromthesky"
+                StartingPathTrackNode "tankfromthesky_1"
                 Health 7500
                 Speed 0
-        
-                OnKilledOutput
-                {
-                    Target BigNet
-                    Action RunScriptCode
-                    Param "
-                            EntFire(`TutorialCompleteRelay`, `Trigger`)
-                            EntFire(`arena_mode_sidefence_break`, `Trigger`, null, 2)
-						    EntFire(`arena_mode_sidefence_spawnbot_enable`, `Trigger`, null, 2)
-                            EntFire(`arena_mode_sidegate_open`, `Trigger`, null, 2)
-						    EntFire(`arena_mode_sidegate_spawnbot_enable`, `Trigger`, null, 2)
-                          "
-                }
             }
 
             FirstSpawnOutput
@@ -3628,8 +3659,25 @@ WaveSchedule
                 Action RunScriptCode
                 Param "
                         EntFire(`BIGBombRelay`, `Trigger`)
-                        EntFire(`arena_mode_transition_relay`, `Trigger`)
                       "
+            }
+        }
+        WaveSpawn
+        {
+            Name "TankTutorialComplete"
+            WaitForAllDead "TankTutorial"
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`TutorialCompleteRelay`, `Trigger`)
+                        EntFire(`arena_mode_sidefence_break`, `Trigger`, null, 2)
+                        EntFire(`arena_mode_sidefence_spawnbot_enable`, `Trigger`, null, 4)
+                        EntFire(`arena_mode_sidegate_open`, `Trigger`, null, 2)
+                        EntFire(`arena_mode_sidegate_spawnbot_enable`, `Trigger`, null, 4)
+                        "
             }
         }
 
@@ -3909,7 +3957,7 @@ WaveSchedule
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 9.75
+            WaitBeforeStarting 9
             WaitBetweenSpawns 0
             FirstSpawnWarningSound "mvm\giant_heavy\giant_heavy_entrance.wav"
             TotalCurrency 100
@@ -4132,11 +4180,13 @@ WaveSchedule
                 {
                     Template T_TFBot_Soldier_Extended_Battalion
                     ClassIcon soldier
+                    Action Mobber
                 }
                 TFBot
                 {
                     Template T_TFBot_Soldier_Extended_Battalion
                     ClassIcon soldier
+                    Action Mobber
                 }
             }
             FirstSpawnOutput
@@ -4144,7 +4194,7 @@ WaveSchedule
                 Target BigNet
                 Action RunScriptCode
                 Param "
-                        SINS.ChangeIconByName(`soldier_spammer`, `soldier_barrage`)
+                        SINS.ChangeIconByName(`soldier_giant`, `soldier_barrage`)
                         SINS.ChangeIconByName(`soldier_bazooka`, `soldier_backup`)
                       "
             }
@@ -4241,6 +4291,9 @@ WaveSchedule
                         EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
                         EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
                         EntFire(`ubertank|0|-1`, `SetSpeed`, 40, 12.5)
+
+                        SINS.ChangeIconByName(`tank_vac_trio_lite`, `tank_uber_lite`)
+                        SINS.ChangeIconByName(`medic_uber`, `medic_jug_ubersaw`)
                       "
             }
         }
@@ -4308,6 +4361,7 @@ WaveSchedule
             TFBot
             {
                 Template T_TFBot_Medic_Ubersaw
+                Action Mobber
             }
         }
 
@@ -4516,6 +4570,14 @@ WaveSchedule
                     }
                 }
             }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`soldier_backup`, `heavy_shotgun`)
+                      "
+            }
         }
         WaveSpawn // 50 Shotgun Soldiers
         {
@@ -4592,6 +4654,16 @@ WaveSchedule
                         "uber duration bonus" -7
                     }
 				}
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`pyro_giant`, `pyro_dragon_fury_swordstone_spammer_giant`)
+                        SINS.ChangeIconByName(`medic_giant`, `medic_pop_giant`)
+                        SINS.ChangeIconByName(`sniper_carbine`, `sniper_bow`)
+                      "
             }
         }
         WaveSpawn // 38 Huntsmen Variants
@@ -4838,6 +4910,17 @@ WaveSchedule
                     }  
                 }
             }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`soldier_barrage`, `soldier_burstfire_hyper_lite`)
+                        SINS.ChangeIconByName(`scout_bonch`, `scout_bat_nys_armored`)
+                        SINS.ChangeIconByName(`heavy_shotgun`, `soldier_shotgun_yoovy`)
+                        SINS.ChangeIconByName(`tank_uber_lite`, `tank`)
+                      "
+            }
         }
         WaveSpawn // 1 Tank
         {
@@ -4907,6 +4990,7 @@ WaveSchedule
                     Name "Armored Bat Scout"
                     Scale 1.4
                     Health 900
+                    Action Mobber
                     CharacterAttributes
                     {
                         "move speed bonus" 1.5
@@ -4917,6 +5001,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     WeaponRestrictions PrimaryOnly
+                    Action Mobber
                 }
                 TFBot
                 {
@@ -4925,6 +5010,7 @@ WaveSchedule
                     Skill Expert
                     WeaponRestrictions SecondaryOnly
                     Item "The Righteous Bison"
+                    Action Mobber
                 }
                 TFBot
                 {
@@ -4934,6 +5020,7 @@ WaveSchedule
                     WeaponRestrictions PrimaryOnly
                     Attributes SpawnWithFullCharge
                     Item "The Buff Banner"
+                    Action Mobber
                     CharacterAttributes
                     {
                         "increase buff duration"	9.0
@@ -4947,6 +5034,7 @@ WaveSchedule
                     WeaponRestrictions PrimaryOnly
                     Attributes SpawnWithFullCharge
                     Item "The Concheror"
+                    Action Mobber
                     CharacterAttributes
                     {
                         "increase buff duration"	9.0
@@ -4960,6 +5048,7 @@ WaveSchedule
                     WeaponRestrictions PrimaryOnly
                     Attributes SpawnWithFullCharge
                     Item "The Buff Banner"
+                    Action Mobber
                     CharacterAttributes
                     {
                         "increase buff duration"	9.0
@@ -5010,6 +5099,9 @@ WaveSchedule
                         EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
                         EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
                         EntFire(`tankboss`, `SetSpeed`, 75, 12.5)
+
+                        SINS.ChangeIconByName(`heavy_giant`, `heavy_deflector_healonkill`)
+                        SINS.ChangeIconByName(`soldier_burstfire_hyper_lite`, `soldier_spammer`)
                       "
             }
         }
@@ -5145,6 +5237,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     WeaponRestrictions PrimaryOnly
+                    Action Mobber
                 }
 
                 TFBot
@@ -5153,6 +5246,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     WeaponRestrictions SecondaryOnly
+                    Action Mobber
                 }
             }
             
@@ -5192,7 +5286,7 @@ WaveSchedule
         {
             Name "Nightmare_Subwave12_FinalBoss"
             WaitForAllDead "Subwave11_Check"
-            Where spawnbot
+            Where spawnbot_boss
             TotalCount 1
             MaxActive 1
             SpawnCount 1
@@ -6144,6 +6238,15 @@ WaveSchedule
                     }
                 }
             }
+
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`soldier_shotgun_yoovy`, `soldier`)
+                      "
+            }
         }
 
         WaveSpawn // 125 Randomchoiced Armored Bat Scouts, Soldiers and Bison Soldiers
@@ -6169,7 +6272,8 @@ WaveSchedule
                     ClassIcon scout
                     Scale 1.4
                     Health 900
-                    UseCustomModel "models/bots/scout_boss/bot_scout_gray_boss.mdl" 
+                    UseCustomModel "models/bots/scout_boss/bot_scout_gray_boss.mdl"
+                    Action Mobber
                     CharacterAttributes
                     {
                         "move speed bonus" 1.5
@@ -6180,6 +6284,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     UseCustomModel "models/bots/soldier/bot_soldier_gibby.mdl"
+                    Action Mobber
                     WeaponRestrictions PrimaryOnly
                 }
                 TFBot
@@ -6188,6 +6293,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     UseCustomModel "models/bots/soldier/bot_soldier_gibby.mdl"
+                    Action Mobber
                     WeaponRestrictions SecondaryOnly
                     Item "The Righteous Bison"
                 }
@@ -6196,6 +6302,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     UseCustomModel "models/bots/soldier/bot_soldier_gibby.mdl"
+                    Action Mobber
                     WeaponRestrictions PrimaryOnly
                 }
                 TFBot
@@ -6204,6 +6311,7 @@ WaveSchedule
                     Class Soldier
                     Skill Expert
                     UseCustomModel "models/bots/soldier/bot_soldier_gibby.mdl"
+                    Action Mobber
                     WeaponRestrictions SecondaryOnly
                     Item "The Righteous Bison"
                 }
