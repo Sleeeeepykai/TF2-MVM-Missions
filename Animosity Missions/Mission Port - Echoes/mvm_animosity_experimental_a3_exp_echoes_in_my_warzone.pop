@@ -98,6 +98,14 @@ WaveSchedule
     PrecacheGeneric "materials/models/bots/boss_bot/carrier_tracks_backwards.vmt"
     PrecacheGeneric "materials/models/bots/boss_bot/carrier_tracks_forwards.vmt"
 
+    // Precached Icons
+    PrecacheGeneric "materials/hud/leaderboard_class_sniper_carbine"
+    PrecacheGeneric "materials/hud/leaderboard_class_engineer_widowmaker_nys_giant"
+    PrecacheGeneric "materials/hud/leaderboard_class_demo_spammer_package"
+    PrecacheGeneric "materials/hud/leaderboard_class_scout_bonch"
+    PrecacheGeneric "materials/hud/leaderboard_class_soldier_bazooka"
+    PrecacheGeneric "materials/hud/leaderboard_class_tank_vac_trio_lite"
+
     // Precached ColorCorrection
     PrecacheGeneric "materials/colorcorrection/highlighted_desaturated.raw"
 
@@ -2826,8 +2834,7 @@ WaveSchedule
 
         T_TFBot_Giant_Sniper_WarMachine
         {
-            Name "R1-SL War Machine"
-            
+            Name "R1-SL War Machine"           
             Template T_TFBot_Sniper
             ClassIcon sniper_armored
             Skill Expert
@@ -2876,7 +2883,7 @@ WaveSchedule
         {
             Name	"RSC-5ST War Machine"
             Class	Engineer
-            ClassIcon engineer_giant
+            ClassIcon engineer_ranger_electric_hyper_giant
             Health	25000
             Skill	Expert
             Attributes MiniBoss
@@ -2958,7 +2965,7 @@ WaveSchedule
         {
             Name "GHK-GBII War Machine"
             Class Heavy
-            ClassIcon heavy_giant
+            ClassIcon heavy_shotgun_champ_giant
             Skill Expert
             Health 27000
             Attributes MiniBoss
@@ -3063,7 +3070,7 @@ WaveSchedule
         {
             Name	"THR-M4L Trenchburner"
             Class	Pyro
-            ClassIcon	pyro_giant
+            ClassIcon pyro_degreaser_flare
             Health	23000
             Attributes MiniBoss
             Attributes UseBossHealthBar
@@ -3208,7 +3215,7 @@ WaveSchedule
 
 			CharacterAttributes
 			{
-				"move speed bonus"	0.35
+				"move speed bonus"	0.5
 				"damage force reduction" 0.3
 				"airblast vulnerability multiplier" 0.3
 				"override footstep sound set" 2
@@ -3259,6 +3266,7 @@ WaveSchedule
         TFBot
         {
             Template T_TFBot_Sniper
+            ClassIcon spy_sniper
             PreferClass Sniper
         }
     }
@@ -3277,6 +3285,7 @@ WaveSchedule
         TFBot
         { 
             Template T_TFBot_Spy
+            ClassIcon spy_sniper
             PreferClass Medic
         }
     }
@@ -3497,8 +3506,15 @@ WaveSchedule
 
             FirstSpawnOutput
             {
-                Target startingvoicelines
-                Action Trigger
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        EntFire(`MissionIntroBots`, `Trigger`)
+
+                        SINS.ChangeIconByName(`soldier_giant`, `soldier_spammer`)
+                        SINS.ChangeIconByName(`sniper_but_they_use_huntsman_sometimes`, `sniper_carbine`)
+                        SINS.ChangeIconByName(`engineer_giant`, `engineer_widowmaker_nys_giant`)
+                      "
             }
         }
 
@@ -3638,6 +3654,15 @@ WaveSchedule
                 Template T_TFBot_Giant_Demoman_Spammer
                 ClassIcon demo_giant
                 Action Mobber
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`demo_giant`, `demo_spammer_package`)
+                        SINS.ChangeIconByName(`scout`, `scout_bonch`)
+                      "
             }
         }
         WaveSpawn // 1 Timer GRapid Demo
@@ -3797,6 +3822,14 @@ WaveSchedule
                 Template T_TFBot_Giant_Heavy
                 Action Mobber
             }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`soldier`, `soldier_bazooka`)
+                      "
+            }
         }
         WaveSpawn // 48 Bazooka Soldiers
         {
@@ -3928,6 +3961,10 @@ WaveSchedule
                         EntFire(`tankdoor_close_relay`, `Trigger`, null, 10)
                         EntFire(`tankdoor_siren_disable_relay`, `Trigger`, null, 10)
                         EntFire(`vactank_bullet`, `SetSpeed`, 75, 12.5)
+
+                        SINS.ChangeIconByName(`tank`, `tank_vac_trio_lite`)
+                        SINS.ChangeIconByName(`demo`, `demo_burst`)
+                        SINS.ChangeIconByName(`medic`, `medic_uber`)
                       "
             }
         }
@@ -4101,6 +4138,15 @@ WaveSchedule
                     Template T_TFBot_Soldier_Extended_Battalion
                     ClassIcon soldier
                 }
+            }
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SINS.ChangeIconByName(`soldier_spammer`, `soldier_barrage`)
+                        SINS.ChangeIconByName(`soldier_bazooka`, `soldier_backup`)
+                      "
             }
         }
         WaveSpawn // 24 Shotgun Heavies, 12 Deflector Heavies and 12 Steel Manlets
@@ -6173,6 +6219,8 @@ WaveSchedule
             SpawnCount 1
             WaitBeforeStarting 5
             WaitBetweenSpawns 0
+
+            StartDisabled 1
         
             TotalCurrency 200
         
