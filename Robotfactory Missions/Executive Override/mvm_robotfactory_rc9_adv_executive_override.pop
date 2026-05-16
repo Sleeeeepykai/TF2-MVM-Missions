@@ -173,7 +173,7 @@ WaveSchedule
 			prop_dynamic // Spy Boss Model
 			{
 				"targetname" "Spy_Architect_Model"
-				"origin" "1792 256 0"
+				"origin" "1792 256 74"
 				"angles" "0 180 0"
 				"model" "models/bots/spy/bot_spy.mdl"
 				"modelscale" "1.5"
@@ -603,7 +603,7 @@ WaveSchedule
 			prop_dynamic // Left Spawn Room Barrier
 			{
 				"targetname" "Stage2RespawnBarrier"
-				"origin" "520 648 0"
+				"origin" "520 648 184"
 				"model" "models/mvm/barrier/barrier_spawn_blue1.mdl"
 				"modelscale" "1"
 				"solid" "0"
@@ -1130,25 +1130,25 @@ WaveSchedule
 			{
 				"targetname" "Wave4_ExplosionRelay"
 				"OnTrigger" "A_route_wall_3_break_relay,Trigger,,0,-1"
-				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 5, 50000, 0, true)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 4, 50000, 0, true)0-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 192, 1, 0, 1)0-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode.wav,0,-1"
-				"OnTrigger" "Wave4_BigBombExplosion,Start,0,-1"
-				"OnTrigger" "Wave4_BigBombExplosion,Stop,5,-1"
-				"OnTrigger" "Stage2RespawnBarrier,Enable,,10,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion1.wav,10,-1"
+				"OnTrigger" "Wave4_BigBombExplosion,Start,,0,-1"
+				"OnTrigger" "Wave4_BigBombExplosion,Stop,,4,-1"
+				"OnTrigger" "Stage2RespawnBarrier,Enable,,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\labs\electric_explosion1.wav,6,-1"
 			}
 			info_particle_system // Big Explosion Particle
 			{
 				"targetname" "Wave4_BigBombExplosion"
-				"origin" "520 648 0"
+				"origin" "676 648 0"
 				"effect_name" "cinefx_goldrush"
 				"start_active" "0"
 			}
 			info_particle_system // Big Explosion Particle
 			{
-				"targetname" "Wave3_SecondBombPlantExplosion"
-				"origin" "1407 -920 0"
+				"targetname" "Wave4_BigBombExplosion"
+				"origin" "676 648 0"
 				"effect_name" "fireSmoke_Collumn_mvmAcres"
 				"start_active" "0"
 			}
@@ -2351,7 +2351,7 @@ WaveSchedule
 			Param "
 					EntFire(`Stage2_StartRelay`, `Trigger`)
 					EntFire(`wave_start_relay`, `Trigger`)
-					EntFire(`Wave4_ExplosionRelay`, `Trigger`, null, 3)
+					EntFire(`Wave4_ExplosionRelay`, `Trigger`, null, 2)
 				  "
 		}
 		DoneOutput
@@ -2363,6 +2363,147 @@ WaveSchedule
 					EntFire(`wave_finished_relay`, `Trigger`)
 				  "
 		}
+
+		// Subwave 1
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave4_Subwave1_GScout"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout
+			}
+		}
+		WaveSpawn // 12 Pyros
+		{
+			Name "Wave4_Subwave1_Pyros"
+			WaitForAllSpawned "Wave4_Subwave1_GScout"
+			Where spawnbot_A_route_giant
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 12
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+				Attributes AlwaysFireWeapon
+			}
+		}
+
+		WaveSpawn // 5 Steel Gauntlets and 5 Kritz Medics
+		{
+			Name "Wave4_Subwave1_SteelGauntlets"
+			WaitForAllSpawned "Wave4_Subwave1_GScout"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 14 Demomen
+		{
+			Name "Wave4_Subwave1_Demomen"
+			WaitForAllSpawned "Wave4_Subwave1_SteelGauntlets"
+			Where spawnbot_A_route_giant
+			TotalCount 14
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GScout
+		{
+			Name "Wave4_Subwave1_GScout2"
+			WaitForAllSpawned "Wave4_Subwave1_SteelGauntlets"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GPyro, 1 Quick-Uber Medic and 3 Rocketeer Heavies
+		{
+			Name "Wave4_Subwave2_GPyro"
+			WaitForAllSpawned "Wave4_Subwave1_GScout2"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Rocketeer
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Rocketeer
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Rocketeer
+				}
+			}
+		}
+
+
 	}
 	// Wave 5 Notes
 	Wave
