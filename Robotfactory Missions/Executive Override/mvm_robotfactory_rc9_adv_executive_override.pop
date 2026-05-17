@@ -109,6 +109,31 @@ WaveSchedule
 	// Precached Soundscript File
 	PrecacheGeneric "scripts/mvm_robotfactory_rc9_executive_override_voicelines.txt"
 
+	// Precached Soundscripts
+	PrecacheScriptSound "Announcer_Butler.First_Wave_Start"
+	PrecacheScriptSound "Announcer_Butler.Wave_Start"
+	PrecacheScriptSound "Announcer_Butler.Final_Wave_Start"
+	PrecacheScriptSound "Announcer_Butler.Wave_End"
+	PrecacheScriptSound "Announcer_Butler.Final_Wave_End"
+	PrecacheScriptSound "Announcer_Butler.Wave_Lose"
+	PrecacheScriptSound "Announcer_Butler.Bonus"
+	PrecacheScriptSound "Announcer_Butler.UpgradeReminder"
+	PrecacheScriptSound "Announcer_Butler.Bomb_Alert_Near_Hatch"
+	PrecacheScriptSound "Announcer_Butler.Bomb_Reset"
+	PrecacheScriptSound "Announcer_Butler.Sentry_Buster_Alert"
+	PrecacheScriptSound "Announcer_Butler.Spy_Alert"
+	PrecacheScriptSound "Announcer_Butler.SpiesDestroyed"
+	PrecacheScriptSound "Announcer_Butler.Engineer_Alert"
+	PrecacheScriptSound "Announcer_Butler.Engineer_Destroyed"
+	PrecacheScriptSound "Announcer_Butler.Engineer_Destroyed_Teleporter"
+	PrecacheScriptSound "Announcer_Butler.Tank_Alert"
+	PrecacheScriptSound "Announcer_Butler.Tank_Alert_Another"
+	PrecacheScriptSound "Announcer_Butler.Tank_Alert_Halfway"
+	PrecacheScriptSound "Announcer_Butler.Tank_Alert_Halfway_Multiple"
+	PrecacheScriptSound "Announcer_Butler.Tank_Alert_Hatch"
+	PrecacheScriptSound "Announcer_Butler.Tank_Alert_Deploying"
+	PrecacheScriptSound "Announcer_Butler.Tank_Destroyed"
+
 	//// VOICELINE OVERRIDES ////
 
 	CustomScriptSoundFile "scripts/mvm_robotfactory_rc9_executive_override_voicelines.txt"
@@ -222,12 +247,6 @@ WaveSchedule
 				Target robot_arm
 				Action SetAnimation
 				Param Idle
-			}
-			OnSpawnOutput
-			{
-				Target Voiceline_WaveCounter
-				Action GetValue
-				Delay 2
 			}
 
 			point_populator_interface
@@ -450,35 +469,48 @@ WaveSchedule
 		{
 			OnSpawnOutput
 			{
-				Target Voiceline_WaveCounter
-				Action GetValue
-				Delay 2
+				Target VoiceFirstInitRelay
+				Action Trigger
 			}
-			
+			logic_relay
+			{
+				"targetname" "VoiceFirstInitRelay"
+
+				"OnTrigger" "Voiceline_WaveCounter,GetValue,,2.5,-1"
+				"OnTrigger" "VoiceDefaultInitRelay,Enable,,3,-1"
+			}
+			logic_relay
+			{
+				"targetname" "VoiceDefaultInitRelay"
+				"startdisabled" "1"
+
+				"OnTrigger" "Voiceline_WaveCounter,GetValue,,2.5,-1"
+			}
+
 			logic_relay // Wave 1 Setup Relay
 			{
 				"targetname" "Wave1_VoiceSetupRelay"
 
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave1setup.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave1setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave1setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave1setup.mp3,0,-1"
 			}
 			logic_relay // Wave 2 Setup Relay
 			{
 				"targetname" "Wave2_VoiceSetupRelay"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave2setup.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave2setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave2setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave2setup.mp3,0,-1"
 			}
 			logic_relay // Wave 3 Setup Relay
 			{
 				"targetname" "Wave3_VoiceSetupRelay"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave3setup.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave3setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave3setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave3setup.mp3,0,-1"
 			}
 			logic_relay // Wave 4 Setup Relay
 			{
 				"targetname" "Wave4_VoiceSetupRelay"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave4setup.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/butler_wave4setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave4setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/butler_wave4setup.mp3,0,-1"
 			}
 			logic_relay // Wave 5 Setup Relay
 			{
@@ -1808,6 +1840,7 @@ WaveSchedule
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
 
 					EntFire(`Voiceline_WaveCounter`, `SetValue`, 2)
+					EntFire(`VoiceDefaultInitRelay`, `Trigger`, null, 2.5)
 			  	  "
 		}
 		StartWaveOutput
@@ -2040,6 +2073,7 @@ WaveSchedule
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
 
 					EntFire(`Voiceline_WaveCounter`, `SetValue`, 3)
+					EntFire(`VoiceDefaultInitRelay`, `Trigger`, null, 2.5)
 			  	  "
 		}
 		StartWaveOutput
