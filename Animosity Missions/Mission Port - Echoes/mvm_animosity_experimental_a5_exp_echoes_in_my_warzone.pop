@@ -111,6 +111,7 @@ WaveSchedule
     // Precached Icons
     PrecacheGeneric "materials/hud/leaderboard_class_sniper_carbine"
     PrecacheGeneric "materials/hud/leaderboard_class_engineer_widowmaker_nys_giant"
+    PrecacheGeneric "materials/hud/leaderboard_class_demo_loch_nys"
     PrecacheGeneric "materials/hud/leaderboard_class_demo_spammer_package"
     PrecacheGeneric "materials/hud/leaderboard_class_scout_bonch"
     PrecacheGeneric "materials/hud/leaderboard_class_soldier_bazooka"
@@ -387,7 +388,7 @@ WaveSchedule
             info_target
             {
                 "targetname" "bossteleport"
-                "origin" "-2822 353 -149"
+                "origin" "480 6324 -153"
             }
 
             OnSpawnOutput // Setting up the Timer
@@ -640,6 +641,14 @@ WaveSchedule
             logic_relay // Thousand March Loop
             {
                 "targetname" "ThousandMarchLoop"
+                "OnTrigger" "ThousandMarch,PlaySound,,0,-1"
+                "OnTrigger" "ThousandMarch2,PlaySound,,367,-1"
+                "OnTrigger" "ThousandMarch,StopSound,,366.9,-1"
+                "OnTrigger" "ThousandMarch2,StopSound,,734,-1"
+            }
+            logic_relay // Thousand March Loop 2
+            {
+                "targetname" "ThousandMarchLoop2"
                 "OnTrigger" "ThousandMarch,PlaySound,,0,-1"
                 "OnTrigger" "ThousandMarch2,PlaySound,,367,-1"
                 "OnTrigger" "ThousandMarch,StopSound,,366.9,-1"
@@ -1247,12 +1256,10 @@ WaveSchedule
 
                 "OnTrigger" "ThousandMarchLoop,$CancelPending,,10,1"
                 "OnTrigger" "ThousandMarchLoop,Disable,,10,1"
-
-                "OnTrigger" "ThousandMarchLoop,Enable,,34.9,1"
                                 
                 "OnTrigger" "tf_gamerules,PlayVO,vo\mvm_general_wav_start05.mp3,31,1"
 
-                "OnTrigger" "ThousandMarchLoop,Trigger,,35,1"
+                "OnTrigger" "ThousandMarchLoop2,Trigger,,35,1"
                 "OnTrigger" "tf_gamerules,PlayVO,mvm\mvm_warning.wav,35,-1"
                 
                 "OnTrigger" "pop_interface,UnpauseBotSpawning,,35,1"
@@ -1282,8 +1289,8 @@ WaveSchedule
                 "OnTrigger" "ThousandMarch,StopSound,,5,-1"
                 "OnTrigger" "ThousandMarch2,StopSound,,5,-1"
 
-                "OnTrigger" "ThousandMarchLoop,$CancelPending,,10,1"
-                "OnTrigger" "ThousandMarchLoop,Kill,,10,1"
+                "OnTrigger" "ThousandMarchLoop2,$CancelPending,,10,1"
+                "OnTrigger" "ThousandMarchLoop2,Kill,,10,1"
                               
                 "OnTrigger" "tf_gamerules,PlayVO,vo\mvm_general_wav_start05.mp3,31,1"
                                 
@@ -1555,6 +1562,11 @@ WaveSchedule
             {
                 "targetname" "timeforarealbrawl"
                 "origin" "480 3072 112"
+            }
+            info_target
+            {
+                "targetname" "bossteleport"
+                "origin" "480 6324 -153"
             }
 
             prop_dynamic // Dave Bot Model
@@ -1837,17 +1849,17 @@ WaveSchedule
 			}
             game_text
             {
-            "origin" "1984 1984 99999"
-            "targetname" "layer_text"
-            "message" "OVERCLOCKED DAVE REBORN"
-            "x" "-1"
-            "y" "0.45"
-            "channel" "4"
-            "spawnflags" "1"
-            "color" "255 0 0"
-            "fadein" "0.2"
-            "fadeout" "1"
-            "holdtime" "3"
+                "origin" "1984 1984 99999"
+                "targetname" "layer_text"
+                "message" "OVERCLOCKED DAVE REBORN"
+                "x" "-1"
+                "y" "0.45"
+                "channel" "4"
+                "spawnflags" "1"
+                "color" "255 0 0"
+                "fadein" "0.2"
+                "fadeout" "1"
+                "holdtime" "3"
             }
             info_particle_system
             {
@@ -1967,14 +1979,6 @@ WaveSchedule
                 "origin" "0 0 80"
                 "angles" "0 0 0"
                 "effect_name" "fireSmoke_Collumn_mvmAcres_sm"
-            }
-            logic_case
-            {
-                "targetname" "magolorreference"
-                "OnCase01" "!activator,$TeleportToEntity,bossteleport2,0,-1"
-                "OnCase02" "!activator,$TeleportToEntity,bossteleport3,0,-1"
-                "OnCase03" "!activator,$TeleportToEntity,bossteleport4,0,-1"
-                "OnCase04" "!activator,$TeleportToEntity,bossteleport5,0,-1"
             }
             logic_relay
             {
@@ -2297,6 +2301,8 @@ WaveSchedule
                 "teamnum"          "3"
                 "$weaponname"    "punch_weapon"
                 "$firetime"      "1.0" //Delay between shots for $StartFiring input
+
+                "$OnFire" "!activator,Skin,1,0,-1"
             }
             OnSpawnOutput
             {
@@ -2385,7 +2391,7 @@ WaveSchedule
                 "damagecap" "3000000"
                 "damagemodel" "0"
                 "damagetype" "16"
-                "filtername" "filter_bluteam"
+                "filtername" "filter_blue"
                 "nodmgforce" "1"
                 "spawnflags" "1"
                 "StartDisabled" "1"
@@ -3543,6 +3549,7 @@ WaveSchedule
 
                         SINS.ChangeIconByName(`sniper_but_they_use_huntsman_sometimes`, `sniper_carbine`)
                         SINS.ChangeIconByName(`engineer_giant`, `engineer_widowmaker_nys_giant`)
+                        SINS.ChangeIconByName(`demo`, `demo_loch_nys`)
                       "
             }
         }
@@ -4011,7 +4018,7 @@ WaveSchedule
                         EntFire(`vactank_bullet`, `SetSpeed`, 75, 12.5)
 
                         SINS.ChangeIconByName(`tank`, `tank_vac_trio_lite`)
-                        SINS.ChangeIconByName(`demo`, `demo_burst`)
+                        SINS.ChangeIconByName(`demo_loch_nys`, `demo_burst`)
                         SINS.ChangeIconByName(`medic`, `medic_uber`)
                       "
             }
@@ -4579,14 +4586,14 @@ WaveSchedule
                       "
             }
         }
-        WaveSpawn // 50 Shotgun Soldiers
+        WaveSpawn // 40 Shotgun Soldiers
         {
             Name "Nightmare_Subwave8_ShotgunSoldiers"
             WaitForAllDead "Nightmare_Subwave7_UberTank"
             Where spawnbot_arena_left
             Where spawnbot_arena_right
-            TotalCount 50
-            MaxActive 30
+            TotalCount 40
+            MaxActive 20
             SpawnCount 1
             WaitBeforeStarting 2
             WaitBetweenSpawns 1
@@ -4597,7 +4604,7 @@ WaveSchedule
 			{
 				Name "Shotgun Soldier"
 				Class Soldier
-				Skill Expert
+				Skill Normal
 				ClassIcon soldier
 				WeaponRestrictions SecondaryOnly
                 Action Mobber
@@ -4614,7 +4621,7 @@ WaveSchedule
             TotalCount 8
             MaxActive 4
             SpawnCount 2
-            WaitBeforeStarting 15
+            WaitBeforeStarting 0
             WaitBetweenSpawns 15
         
             TotalCurrency 100
@@ -4666,14 +4673,14 @@ WaveSchedule
                       "
             }
         }
-        WaveSpawn // 38 Huntsmen Variants
+        WaveSpawn // 40 Huntsmen Variants
         {
             Name "Nightmare_Subwave9_Huntsmen"
             WaitForAllDead "Nightmare_Subwave8_GScouts"
             Where spawnbot_arena_left
             Where spawnbot_arena_right
-            TotalCount 38
-            MaxActive 12
+            TotalCount 40
+            MaxActive 16
             SpawnCount 4
             WaitBeforeStarting 0
             WaitBetweenSpawns 5
@@ -4966,13 +4973,13 @@ WaveSchedule
                     "
             }
         }
-        WaveSpawn // 60 Randomchoiced Armored Bat Scouts, Soldiers, Banner Soldiers, Conch Soldiers and Bison Soldiers
+        WaveSpawn // 44 Randomchoiced Armored Bat Scouts, Soldiers, Banner Soldiers, Conch Soldiers and Bison Soldiers
         {
             Name "Nightmare_Subwave10_TheAssortment"
             WaitForAllDead "Nightmare_Subwave9_GFuries"
             Where spawnbot_arena_left
             Where spawnbot_arena_right
-            TotalCount 60
+            TotalCount 44
             MaxActive 20
             SpawnCount 1
             WaitBeforeStarting 1.7
@@ -5066,8 +5073,8 @@ WaveSchedule
             TotalCount	1
             MaxActive	1
             SpawnCount	1
-            WaitBeforeStarting 20
-            WaitBetweenSpawns	10
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 10
 
             Tank
             {
@@ -5215,17 +5222,17 @@ WaveSchedule
                 Action Mobber
             }
         }
-        WaveSpawn // 50 Soldiers and 50 Shotgun Soldiers
+        WaveSpawn // 15 Soldiers and 15 Shotgun Soldiers
         {
             Name "Nightmare_Subwave11_Soldiers"
             WaitForAllDead "Nightmare_Subwave10_GigaBursts"
             Where spawnbot_arena_left
             Where spawnbot_arena_right
-            TotalCount 100
+            TotalCount 30
             MaxActive 20
             SpawnCount 1
             WaitBeforeStarting 0
-            WaitBetweenSpawns 3
+            WaitBetweenSpawns 2
         
             TotalCurrency 100
             RandomChoice
@@ -5244,12 +5251,11 @@ WaveSchedule
                 {
                     Name "Shotgun Soldier"
                     Class Soldier
-                    Skill Expert
+                    Skill Hard
                     WeaponRestrictions SecondaryOnly
                     Action Mobber
                 }
             }
-            
         }
 
         WaveSpawn
@@ -5485,8 +5491,8 @@ WaveSchedule
                             Action "$TeleportToEntity"
                             Param "bossteleport"
                             Delay 3
-                            Cooldown 2
-                            Repeats 100
+                            Cooldown 1
+                            Repeats 0
                         }
                         FireInput
                         {
@@ -6249,17 +6255,17 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 125 Randomchoiced Armored Bat Scouts, Soldiers and Bison Soldiers
+        WaveSpawn // 100 Randomchoiced Armored Bat Scouts, Soldiers and Bison Soldiers
         {
             Name "Nightmare_Subwave12_Support"
             WaitForAllSpawned "Nightmare_Subwave12_FinalBoss"
             Where spawnbot_arena_left
             Where spawnbot_arena_right
-            TotalCount 125
+            TotalCount 100
             MaxActive 12
             SpawnCount 1
             WaitBeforeStarting 0
-            WaitBetweenSpawns 2.4
+            WaitBetweenSpawns 2
         
             TotalCurrency 100
 

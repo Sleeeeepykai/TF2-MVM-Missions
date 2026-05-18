@@ -189,6 +189,12 @@ WaveSchedule
 				"OnCase08" "Wave8_VoiceSetupRelay,Trigger,,0,-1"
 			}
 
+			logic_relay // Subtitle Toggle Menu Relay
+			{
+				"targetname" "SubtitlesMenuRelay"
+
+				"OnTrigger" "SubtitlesMenu,$DisplayMenu,!activator,0,-1"
+			}
 			logic_case // Subtitle Toggle Menu
 			{
 				"targetname" "SubtitlesMenu"
@@ -198,7 +204,8 @@ WaveSchedule
 				"case01" "Enable Subtitles"
 				"case02" "Disable Subtitles"
 
-				"OnCase01" ""
+				"OnCase01" "Wave2,Enable,,0,-1"
+				"OnCase02" "Wave2,Disable,,0,-1"
 			}
 
 			// Final Boss Prop
@@ -374,7 +381,7 @@ WaveSchedule
 				"targetname" "Stage3_CrateProp"
 				"origin" "-1695 1708 -192"
 				"angles" "0 0 0"
-				"model" "models/props_hydro/barrel_crate_half.mdl"
+				"model" "models/props_2fort/miningcrate002.mdl"
 				"modelscale" "1"
 				"solid" "6"
 				"disablebonefollowers" "1"
@@ -1129,6 +1136,7 @@ WaveSchedule
 				"targetname" "VoiceFirstInitRelay"
 
 				"OnTrigger" "Voiceline_WaveCounter,GetValue,,5,-1"
+				"OnTrigger" "VoiceFirstInitRelay,Disable,,6,-1"
 				"OnTrigger" "VoiceDefaultInitRelay,Enable,,6,-1"
 			}
 			logic_relay
@@ -1200,10 +1208,10 @@ WaveSchedule
 				"targetname" "Wave2_VoiceSubtitlesRelay"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: I am attempting to decrypt robot security. Continue the defense.,0,-1"
 			}
-			logic_relay // Wave 3 Voice Subtitles Relay
+			logic_relay // Wave 3 Setup Subtitles Relay
 			{
 				"targetname" "Wave3_VoiceSubtitlesRelay"
-				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Decryption has been unsuccessful. Mercenaries we require brute force.,0,-1"
+				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Decryption has been unsuccessful. Mercenaries we will require brute force.,0,-1"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Seize the bomb from the robots.,6,-1"
 			}
 			logic_relay // Wave 3 Second Bomb Subtitles Relay
@@ -1233,13 +1241,13 @@ WaveSchedule
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Turn their Technician to scrap.,4,-1"
 			}
 
-			logic_relay // Wave 4 Second Bomb Subtitles Relay
+			logic_relay // Wave 4 Setup Subtitles Relay
 			{
 				"targetname" "Wave4_VoiceSubtitlesRelay"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: We are now in control of the security room. Robotfactory will now slowly be restored under control.,0,-1"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Mercenaries prevent recapture of the Manufactory.,8,-1"
 			}
-			logic_relay
+			logic_relay // Wave 4 Start Subtitles Relay
 			{
 				"targetname" "Wave4_StartSubtitlesRelay"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: An explosive charge has been detected.,0,-1"
@@ -1260,7 +1268,10 @@ WaveSchedule
 				"targetname" "SentryBusterVoiceCase"
 
 				"OnCase01" "tf_gamerules,PlayVO,mvm/executive_override/butler_sentrybusterinbound.mp3"
+				"OnCase01" "tf_gamerules,PlayVO,mvm/executive_override/butler_sentrybusterinbound.mp3"
 				"OnCase02" "tf_gamerules,PlayVO,mvm/executive_override/butler_sentrybusterinbound2.mp3"
+				"OnCase02" "tf_gamerules,PlayVO,mvm/executive_override/butler_sentrybusterinbound2.mp3"
+				"OnCase03" "tf_gamerules,PlayVO,mvm/executive_override/butler_sentrybusterinbound3.mp3"
 				"OnCase03" "tf_gamerules,PlayVO,mvm/executive_override/butler_sentrybusterinbound3.mp3"
 			}
 		}
@@ -1623,7 +1634,7 @@ WaveSchedule
 
 							if(params.text.tolower() == `!subtitles`)
 							{
-								EntFire(`SubtitlesMenu`, `$DisplayMenu`, Player)
+								EntFire(`SubtitlesMenuRelay`, `Trigger`, null, 0, Player)
 							}
 						}
 
@@ -1661,6 +1672,8 @@ WaveSchedule
 						return -1
 					}
 					AddThinkToEnt(CountdownCallbacks.ThinkEnt, `Think`)
+
+					__CollectGameEventCallbacks(CountdownCallbacks)
 			  	  "
 		}
 		StartWaveOutput
@@ -1897,6 +1910,16 @@ WaveSchedule
 					EntFire(`VoiceDefaultInitRelay`, `Trigger`, null, 5)
 
 					::CountdownCallbacks <- {
+						function OnGameEvent_player_say(params)
+						{
+							local Player = GetPlayerFromUserID(params.userid)
+
+							if(params.text.tolower() == `!subtitles`)
+							{
+								EntFire(`SubtitlesMenuRelay`, `Trigger`, null, 0, Player)
+							}
+						}
+
 						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3)
 						{
 							if(ThinkEnt && ThinkEnt.IsValid())
@@ -1931,6 +1954,8 @@ WaveSchedule
 						return -1
 					}
 					AddThinkToEnt(CountdownCallbacks.ThinkEnt, `Think`)
+
+					__CollectGameEventCallbacks(CountdownCallbacks)
 			  	  "
 		}
 		StartWaveOutput
