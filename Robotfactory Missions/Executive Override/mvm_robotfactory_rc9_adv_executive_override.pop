@@ -43,7 +43,9 @@ WaveSchedule
 
 	// Precached Wave Announcer Voicelines
 	PrecacheSound "mvm/executive_override/butler_firstwavebegin.mp3"
+	PrecacheSound "mvm/executive_override/butler_genericwavebegin.mp3"
 	PrecacheSound "mvm/executive_override/butler_genericwavebegin2.mp3"
+	PrecacheSound "mvm/executive_override/butler_genericwavebegin3.mp3"
 
 	PrecacheSound "mvm/executive_override/butler_wavecompleted.mp3"
 
@@ -157,36 +159,6 @@ WaveSchedule
 			point_populator_interface
 			{
 				"targetname" "pop_interface"
-			}
-
-			math_counter // Wave Counter for Voicelines
-			{
-				"targetname" "Voiceline_WaveCounter"
-				"startvalue" "1"
-				"min" "1"
-				"max" "8"
-
-				"OnGetValue" "Voiceline_WaveCase,InValue,,0,-1"
-			}
-			logic_case // Logic Case Comparing Wave Count to Play Appropriate Voicelines
-			{
-				"targetname" "Voiceline_WaveCase"
-				"Case01" "1"
-				"Case02" "2"
-				"Case03" "3"
-				"Case04" "4"
-				"Case05" "5"
-				"Case06" "6"
-				"Case07" "7"
-				"Case08" "8"
-				"OnCase01" "Wave1_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase02" "Wave2_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase03" "Wave3_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase04" "Wave4_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase05" "Wave5_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase06" "Wave6_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase07" "Wave7_VoiceSetupRelay,Trigger,,0,-1"
-				"OnCase08" "Wave8_VoiceSetupRelay,Trigger,,0,-1"
 			}
 
 			logic_relay // Subtitle Toggle Menu Relay
@@ -936,6 +908,40 @@ WaveSchedule
 			KeepAlive 1
 			
 			RemoveIfKilled "Wave3_ExtraBombTeamFlag"
+
+			OnSpawnOutput
+			{
+				Target "Wave3_ExtraBombTeamFlag"
+				Action SetParent
+				Param !activator
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "Wave3_ExtraBombTeamFlag"
+				Action SetParentAttachment
+				Param "flag"
+				Delay 0.05
+			}
+
+			OnParentKilledOutput
+			{
+				Target "Wave3_ExtraBombTeamFlag"
+				Action ClearParent
+			}
+			OnParentKilledOutput
+			{
+				Target "Wave3_ExtraBombTeamFlag"
+				Action $TeleportToEntity
+				Param !activator
+			}
+			OnParentKilledOutput
+			{
+				Target "Wave3_ExtraBombTeamFlag"
+				Action $SetLocalAngles
+				Param "0 0 0"
+				Delay 0.05
+			}
 			
 			item_teamflag // Dropped Extra Bomb
 			{
@@ -1147,6 +1153,36 @@ WaveSchedule
 				"OnTrigger" "Voiceline_WaveCounter,GetValue,,5,-1"
 			}
 
+			math_counter // Wave Counter for Voicelines
+			{
+				"targetname" "Voiceline_WaveCounter"
+				"startvalue" "1"
+				"min" "1"
+				"max" "8"
+
+				"OnGetValue" "Voiceline_WaveCase,InValue,,0,-1"
+			}
+			logic_case // Logic Case Comparing Wave Count to Play Appropriate Voicelines
+			{
+				"targetname" "Voiceline_WaveCase"
+				"Case01" "1"
+				"Case02" "2"
+				"Case03" "3"
+				"Case04" "4"
+				"Case05" "5"
+				"Case06" "6"
+				"Case07" "7"
+				"Case08" "8"
+				"OnCase01" "Wave1_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase02" "Wave2_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase03" "Wave3_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase04" "Wave4_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase05" "Wave5_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase06" "Wave6_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase07" "Wave7_VoiceSetupRelay,Trigger,,0,-1"
+				"OnCase08" "Wave8_VoiceSetupRelay,Trigger,,0,-1"
+			}
+
 			logic_relay // Wave 1 Setup Relay
 			{
 				"targetname" "Wave1_VoiceSetupRelay"
@@ -1234,7 +1270,7 @@ WaveSchedule
 				"targetname" "Wave3_ThirdBombPickedUpSubtitlesRelay"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Deploy the bomb at the designated area.,0,-1"
 			}
-			logic_relay // Wave 3 Third Bomb Subtitles Relay
+			logic_relay // Wave 3 Manufactory Breached Subtitles Relay
 			{
 				"targetname" "Wave3_ManufactoryBreachedSubtitlesRelay"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Well done Mercenaries. The Manufactory has been breached.,0,-1"
@@ -1376,13 +1412,20 @@ WaveSchedule
 			{
 				ItemName "Potato of Labor"
 				"custom item model" "models\props_td\atom_bomb_blue2.mdl"
-				"attachment name" "flag"
+			}
+
+			AddAttribute
+			{
+				Item "Potato of Labor"
+				Name "attachment name"
+				Value "flag"
+				Delay 0.05
+				Repeats 1
 			}
 
 			SpawnTemplate
 			{
 				Name "Wave3_PlayerBombCarrierLogic1"
-				Bone bip_spine_2
 			}
 
 			InterruptAction // Moves to Hatch
@@ -1458,13 +1501,20 @@ WaveSchedule
 			{
 				ItemName "Potato of Labor"
 				"custom item model" "models\props_td\atom_bomb_blue2.mdl"
-				"attachment name" "flag"
+			}
+
+			AddAttribute
+			{
+				Item "Potato of Labor"
+				Name "attachment name"
+				Value "flag"
+				Delay 0.05
+				Repeats 1
 			}
 
 			SpawnTemplate
 			{
 				Name "Wave3_PlayerBombCarrierLogic2"
-				Bone bip_spine_2
 			}
 
 			InterruptAction // Moves to Hatch
@@ -1638,12 +1688,18 @@ WaveSchedule
 							}
 						}
 
-						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3)
+						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3) }
 						{
 							if(ThinkEnt && ThinkEnt.IsValid())
 								ThinkEnt.Kill()
 							delete ::CountdownCallbacks
-						}}
+						}
+						function OnGameEvent_mvm_wave_complete(_)
+						{
+							if(ThinkEnt && ThinkEnt.IsValid())
+								ThinkEnt.Kill()
+							delete ::CountdownCallbacks
+						}
 						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
 						iCountdownLast = -1
 						hGameRules = Entities.FindByClassname(null, `tf_gamerules`)
@@ -1730,6 +1786,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Pomson
+				Health 200
 			}
 		}
 
@@ -1766,6 +1823,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Pomson
+				Health 200
 			}
 		}
 
@@ -1837,6 +1895,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Pomson
+				Health 200
 			}
 		}
 
@@ -1888,6 +1947,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Pomson
+				Health 200
 			}
 		}
 	}
@@ -1906,8 +1966,8 @@ WaveSchedule
 					EntFire(`holograms`, `Disable`, null, 0.2)
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
 
-					EntFire(`Voiceline_WaveCounter`, `SetValue`, 2)
-					EntFire(`VoiceDefaultInitRelay`, `Trigger`, null, 5)
+					EntFire(`Voiceline_WaveCounter*`, `SetValue`, 2)
+					EntFire(`VoiceDefaultInitRelay*`, `Trigger`, null, 5)
 
 					::CountdownCallbacks <- {
 						function OnGameEvent_player_say(params)
@@ -1920,12 +1980,18 @@ WaveSchedule
 							}
 						}
 
-						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3)
+						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3) }
 						{
 							if(ThinkEnt && ThinkEnt.IsValid())
 								ThinkEnt.Kill()
 							delete ::CountdownCallbacks
-						}}
+						}
+						function OnGameEvent_mvm_wave_complete(_)
+						{
+							if(ThinkEnt && ThinkEnt.IsValid())
+								ThinkEnt.Kill()
+							delete ::CountdownCallbacks
+						}
 						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
 						iCountdownLast = -1
 						hGameRules = Entities.FindByClassname(null, `tf_gamerules`)
@@ -1974,6 +2040,9 @@ WaveSchedule
 			Param "
 					EntFire(`Stage1_FinishRelay`, `Trigger`)
 					EntFire(`wave_finished_relay`, `Trigger`)
+
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
 				  "
 		}
 
@@ -2187,8 +2256,62 @@ WaveSchedule
 					EntFire(`holograms`, `Disable`, null, 0.2)
 					EntFire(`D_E_holograms`, `Disable`, null, 0.2)
 
-					EntFire(`Voiceline_WaveCounter`, `SetValue`, 3)
-					EntFire(`VoiceDefaultInitRelay`, `Trigger`, null, 5)
+					EntFire(`Voiceline_WaveCounter*`, `SetValue`, 3)
+					EntFire(`VoiceDefaultInitRelay*`, `Trigger`, null, 5)
+
+					::CountdownCallbacks <- {
+						function OnGameEvent_player_say(params)
+						{
+							local Player = GetPlayerFromUserID(params.userid)
+
+							if(params.text.tolower() == `!subtitles`)
+							{
+								EntFire(`SubtitlesMenuRelay`, `Trigger`, null, 0, Player)
+							}
+						}
+
+						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3) }
+						{
+							if(ThinkEnt && ThinkEnt.IsValid())
+								ThinkEnt.Kill()
+							delete ::CountdownCallbacks
+						}
+						function OnGameEvent_mvm_wave_complete(_)
+						{
+							if(ThinkEnt && ThinkEnt.IsValid())
+								ThinkEnt.Kill()
+							delete ::CountdownCallbacks
+						}
+						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
+						iCountdownLast = -1
+						hGameRules = Entities.FindByClassname(null, `tf_gamerules`)
+						Think = function()
+						{
+							local flRestartRoundTime = GetPropFloat(hGameRules, `m_flRestartRoundTime`)
+							if(flRestartRoundTime != -1)
+							{
+								local iCountdown = ceil(flRestartRoundTime - Time()).tointeger()
+								if(iCountdown != iCountdownLast && iCountdown in Callbacks)
+									Callbacks[iCountdown]()
+								iCountdownLast = iCountdown
+							}
+							else iCountdownLast = -1
+						}
+						Callbacks = {
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_genericwavebegin.mp3`) },
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_genericwavebegin.mp3`) },
+						}
+					}
+
+					CountdownCallbacks.ThinkEnt.ValidateScriptScope()
+					CountdownCallbacks.ThinkEnt.GetScriptScope().Think <- function()
+					{
+						CountdownCallbacks.Think()
+						return -1
+					}
+					AddThinkToEnt(CountdownCallbacks.ThinkEnt, `Think`)
+
+					__CollectGameEventCallbacks(CountdownCallbacks)
 			  	  "
 		}
 		StartWaveOutput
@@ -2207,6 +2330,9 @@ WaveSchedule
 			Param "
 					EntFire(`Stage1_FinishRelay`, `Trigger`)
 					EntFire(`wave_finished_relay`, `Trigger`)
+
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted3.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted3.mp3`)
 				  "
 		}
 
@@ -2288,7 +2414,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 2 Banner Soldiers
+		WaveSpawn // 1 GBurst Soldier and 2 Direct Hit Soldiers
 		{
 			Name "Wave3_Subwave1_GBurstSoldier"
 			WaitForAllSpawned "Wave3_Subwave1_BatslingerScouts"
@@ -2296,7 +2422,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 8
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -2310,12 +2436,12 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Buff_Banner
+					Template T_TFBot_Soldier_DirectHit
 					Action Mobber
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Buff_Banner
+					Template T_TFBot_Soldier_DirectHit
 					Action Mobber
 				}
 			}
@@ -2454,14 +2580,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 2 Banner Soldiers
+		WaveSpawn // 1 GBurst Soldier and 4 Loch Demos
 		{
 			Name "Wave3_Subwave2_GBurstSoldier"
 			WaitForAllSpawned "Wave3_Subwave2_BatslingerScouts"
 			Where spawnbot_stage1_right [$SIGSEGV]
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
 			TotalCurrency 100
@@ -2476,12 +2602,22 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Buff_Banner
+					Template T_TFBot_Demoman_LochnLoad
 					Action Mobber
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Buff_Banner
+					Template T_TFBot_Demoman_LochnLoad
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
 					Action Mobber
 				}
 			}
@@ -2542,7 +2678,7 @@ WaveSchedule
 			{
 				Name "Chief Technician Engineer"
 				Template T_TFBot_Giant_Engineer_Pomson
-				Health 7500
+				Health 6000
 				Attributes UseBossHealthBar
 			}
 		}
@@ -2617,6 +2753,61 @@ WaveSchedule
 					EntFire(`A_B_C_holograms`, `Disable`, null, 0.2)
 
 					EntFire(`Voiceline_WaveCounter`, `SetValue`, 4)
+					EntFire(`VoiceDefaultInitRelay*`, `Trigger`, null, 5)
+
+					::CountdownCallbacks <- {
+						function OnGameEvent_player_say(params)
+						{
+							local Player = GetPlayerFromUserID(params.userid)
+
+							if(params.text.tolower() == `!subtitles`)
+							{
+								EntFire(`SubtitlesMenuRelay`, `Trigger`, null, 0, Player)
+							}
+						}
+
+						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3) }
+						{
+							if(ThinkEnt && ThinkEnt.IsValid())
+								ThinkEnt.Kill()
+							delete ::CountdownCallbacks
+						}
+						function OnGameEvent_mvm_wave_complete(_)
+						{
+							if(ThinkEnt && ThinkEnt.IsValid())
+								ThinkEnt.Kill()
+							delete ::CountdownCallbacks
+						}
+						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
+						iCountdownLast = -1
+						hGameRules = Entities.FindByClassname(null, `tf_gamerules`)
+						Think = function()
+						{
+							local flRestartRoundTime = GetPropFloat(hGameRules, `m_flRestartRoundTime`)
+							if(flRestartRoundTime != -1)
+							{
+								local iCountdown = ceil(flRestartRoundTime - Time()).tointeger()
+								if(iCountdown != iCountdownLast && iCountdown in Callbacks)
+									Callbacks[iCountdown]()
+								iCountdownLast = iCountdown
+							}
+							else iCountdownLast = -1
+						}
+						Callbacks = {
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_genericwavebegin3.mp3`) },
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_genericwavebegin3.mp3`) },
+						}
+					}
+
+					CountdownCallbacks.ThinkEnt.ValidateScriptScope()
+					CountdownCallbacks.ThinkEnt.GetScriptScope().Think <- function()
+					{
+						CountdownCallbacks.Think()
+						return -1
+					}
+					AddThinkToEnt(CountdownCallbacks.ThinkEnt, `Think`)
+
+					__CollectGameEventCallbacks(CountdownCallbacks)
 			  	  "
 		}
 		StartWaveOutput
@@ -2636,6 +2827,9 @@ WaveSchedule
 			Param "
 					EntFire(`Stage2_FinishRelay`, `Trigger`)
 					EntFire(`wave_finished_relay`, `Trigger`)
+
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
 				  "
 		}
 
@@ -2675,110 +2869,6 @@ WaveSchedule
 				Attributes AlwaysFireWeapon
 			}
 		}
-
-		WaveSpawn // 5 Steel Gauntlets and 5 Kritz Medics
-		{
-			Name "Wave4_Subwave1_SteelGauntlets"
-			WaitForAllSpawned "Wave4_Subwave1_GScout"
-			Where spawnbot_stage2 [$SIGSEGV]
-			TotalCount 10
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 3
-			TotalCurrency 20
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Heavy_SteelFist
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-			}
-		}
-		WaveSpawn // 14 Demomen
-		{
-			Name "Wave4_Subwave1_Demomen"
-			WaitForAllSpawned "Wave4_Subwave1_SteelGauntlets"
-			Where spawnbot_A_route_giant
-			TotalCount 14
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 8
-			WaitBetweenSpawns 2
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Demoman
-				Skill Normal
-			}
-		}
-
-		WaveSpawn // 1 GScout
-		{
-			Name "Wave4_Subwave1_GScout2"
-			WaitForAllSpawned "Wave4_Subwave1_SteelGauntlets"
-			Where spawnbot_stage2 [$SIGSEGV]
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Scout
-			}
-		}
-
-		// Subwave 2
-		WaveSpawn // 1 GPyro, 1 Quick-Uber Medic and 3 Rocketeer Heavies
-		{
-			Name "Wave4_Subwave2_GPyro"
-			WaitForAllSpawned "Wave4_Subwave1_GScout2"
-			Where spawnbot_stage2 [$SIGSEGV]
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 12
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-				
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro
-					Attributes AlwaysFireWeapon
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_QuickUber
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-				}
-			}
-		}
-
-
 	}
 	// Wave 5 Notes
 	Wave
