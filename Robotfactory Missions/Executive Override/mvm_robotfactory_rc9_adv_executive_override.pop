@@ -36,10 +36,17 @@ WaveSchedule
 	PrecacheSound "mvm/executive_override/butler_wave3_thirdbombpickedup.mp3"
 	PrecacheSound "mvm/executive_override/butler_wave3_manufactorybreached.mp3"
 
+	PrecacheSound "mvm/executive_override/butler_wave4start.mp3"
+
 	// Precached Mission Support Voicelines
 	PrecacheSound "mvm/executive_override/butler_sentrybusterinbound.mp3"
 	PrecacheSound "mvm/executive_override/butler_sentrybusterinbound2.mp3"
 	PrecacheSound "mvm/executive_override/butler_sentrybusterinbound3.mp3"
+
+	PrecacheSound "mvm/executive_override/butler_spiesinbound2.mp3"
+	PrecacheSound "mvm/executive_override/butler_spiesinbound3.mp3"
+	PrecacheSound "mvm/executive_override/butler_spiesdestroyed2.mp3"
+	PrecacheSound "mvm/executive_override/butler_spiesdestroyed3.mp3"
 
 	// Precached Wave Announcer Voicelines
 	PrecacheSound "mvm/executive_override/butler_firstwavebegin.mp3"
@@ -419,6 +426,8 @@ WaveSchedule
 
 		Stage1_PTs
 		{
+			RemoveIfKilled "Stage1_StartRelay"
+
 			// Stage 1 Relays
 			logic_relay // Stage 1 Start
 			{
@@ -545,10 +554,22 @@ WaveSchedule
 				"maxs" "760 76 336"
 				"teamnum" "3"
 			}
+			func_nobuild // Nobuild for Sneaky Control Room
+			{
+				"targetname" "Stage1_NoBuild"
+				"origin" "416 -672 336"
+				"maxs" "-80 -80 -80"
+				"maxs" "80 80 80"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
+			}
 		}
 
 		Stage2_PTs
 		{
+			RemoveIfKilled "Stage2_StartRelay"
+
 			// Stage 2 Relays
 			logic_relay // Stage 2 Start
 			{
@@ -1392,6 +1413,9 @@ WaveSchedule
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "Core_PTs"
+	SpawnTemplate "Stage1_PTs"
+	SpawnTemplate "Stage2_PTs"
+	SpawnTemplate "Stage3_PTs"
 
 	PlayerSpawnOnceTemplate "PlayerVoiceline_PTs"
 
@@ -1671,12 +1695,29 @@ WaveSchedule
 
 	//// MISSION BOTS ////
 
-	Mission // Sentry Buster
+	Mission // Sentry Buster (Waves 1-3)
 	{
 		Objective DestroySentries
 		Where spawnbot_stage1_left [$SIGSEGV]
 		BeginAtWave 1
-		RunForThisManyWaves 1
+		RunForThisManyWaves 3
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+
+			SpawnTemplate "SentryBuster_Voiceline_PT"
+		}
+	}
+	Mission // Sentry Buster (Wave 4-5)
+	{
+		Objective DestroySentries
+		Where spawnbot_stage2 [$SIGSEGV]
+		BeginAtWave 4
+		RunForThisManyWaves 2
 		InitialCooldown 30
 		CooldownTime 30
 		DesiredCount 1
@@ -1703,7 +1744,6 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
-					EntFire(`Stage1_PTs`, `ForceSpawn`)
 					EntFire(`Wave1_PTs`, `ForceSpawn`)
 					EntFire(`Wave1_SetupRelay`, `Trigger`)
 					EntFire(`Relay_D`, `Trigger`)
@@ -1729,12 +1769,6 @@ WaveSchedule
 									ThinkEnt.Kill()
 								delete ::CountdownCallbacks
 							}
-						}
-						function OnGameEvent_mvm_wave_complete(_)
-						{
-							if(ThinkEnt && ThinkEnt.IsValid())
-								ThinkEnt.Kill()
-							delete ::CountdownCallbacks
 						}
 						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
 						iCountdownLast = -1
@@ -1806,6 +1840,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Pyro_Homewrecker
 				Action Mobber
+				PreferClass Engineer
+				PreferClass Spy
 			}
 		}
 		WaveSpawn // 12 Pomson Engineers
@@ -1888,32 +1924,37 @@ WaveSchedule
 			Name "Wave1_Subwave2_GPyro"
 			WaitForAllSpawned "Wave1_Subwave1_GPyro"
 			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 60
 
-			Squad
+			TFBot
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysFireWeapon
+			}
+		}
+		WaveSpawn // 2 Homewrecker Pyros
+		{
+			Name "Wave1_Subwave2_Homewreckers"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
 
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro
-					Attributes AlwaysFireWeapon
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Homewrecker
-					Action Mobber
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Homewrecker
-					Action Mobber
-				}
+			TFBot
+			{
+				Template T_TFBot_Pyro_Homewrecker
+				Action Mobber
+				PreferClass Engineer
+				PreferClass Spy
 			}
 		}
 		WaveSpawn // 12 Pomson Engineers
@@ -1940,32 +1981,37 @@ WaveSchedule
 			Name "Wave1_Subwave2_GPyro2"
 			WaitForAllSpawned "Wave1_Subwave2_GPyro"
 			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 60
 
-			Squad
+			TFBot
 			{
-				NoWaitForFormation 1 [$SIGSEGV]
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysFireWeapon
+			}
+		}
+		WaveSpawn // 2 Homewrecker Pyros
+		{
+			Name "Wave1_Subwave2_Homewreckers2"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro2"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
 
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro
-					Attributes AlwaysFireWeapon
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Homewrecker
-					Action Mobber
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Homewrecker
-					Action Mobber
-				}
+			TFBot
+			{
+				Template T_TFBot_Pyro_Homewrecker
+				Action Mobber
+				PreferClass Engineer
+				PreferClass Spy
 			}
 		}
 		WaveSpawn // 6 Pomson Engineers
@@ -1995,7 +2041,6 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
-					EntFire(`Stage1_PTs`, `ForceSpawn`)
 					EntFire(`Wave2_PTs`, `ForceSpawn`)
 					EntFire(`Wave2_SetupRelay`, `Trigger`)
 					EntFire(`Relay_D`, `Trigger`)
@@ -2024,12 +2069,6 @@ WaveSchedule
 									ThinkEnt.Kill()
 								delete ::CountdownCallbacks
 							}
-						}
-						function OnGameEvent_mvm_wave_complete(_)
-						{
-							if(ThinkEnt && ThinkEnt.IsValid())
-								ThinkEnt.Kill()
-							delete ::CountdownCallbacks
 						}
 						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
 						iCountdownLast = -1
@@ -2102,18 +2141,52 @@ WaveSchedule
 				Template T_TFBot_Giant_Soldier
 			}
 		}
-		WaveSpawn // 10 Heavies
+		WaveSpawn // 20 Bonk Scouts
+		{
+			Name "Wave2_Subwave1_BonkScouts"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+			}
+		}
+
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave2_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 6
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+		WaveSpawn // 12 Heavies
 		{
 			Name "Wave2_Subwave1_Heavies"
 			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
-			Where spawnbot_stage1_left [$SIGSEGV]
 			Where spawnbot_stage1_right [$SIGSEGV]
-			RandomSpawn 1
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 5
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 3
 			TotalCurrency 60
 
 			TFBot
@@ -2122,110 +2195,18 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 6 Shotgun Soldiers
-		{
-			Name "Wave2_Subwave1_ShotgunSoldiers"
-			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
-			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 40
 
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-				Skill Easy
-			}
-		}
-
-		WaveSpawn // 1 GSoldier
+		WaveSpawn // 1 GSoldier and 4 Soldiers
 		{
 			Name "Wave2_Subwave1_GSoldier2"
-			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
-			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier
-			}
-		}
-		WaveSpawn // 10 Shotgun Soldiers
-		{
-			Name "Wave2_Subwave1_ShotgunSoldiers2"
-			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
-			Where spawnbot_stage1_left [$SIGSEGV]
+			WaitForAllSpawned "Wave2_Subwave1_Soldiers"
 			Where spawnbot_stage1_right [$SIGSEGV]
-			RandomSpawn 1
-			TotalCount 10
-			MaxActive 10
+			TotalCount 5
+			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 5
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Shotgun
-				Skill Easy
-			}
-		}
-		WaveSpawn // 6 Heavies
-		{
-			Name "Wave2_Subwave1_Heavies2"
-			WaitForAllSpawned "Wave2_Subwave1_GSoldier"
-			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 40
-
-			TFBot
-			{
-				Class Heavy
-				Skill Easy
-			}
-		}
-
-		// Subwave 2
-		WaveSpawn // 1 GSoldier
-		{
-			Name "Wave2_Subwave2_GSoldier"
-			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
-			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
 			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier
-			}
-		}
-		WaveSpawn // 6 Soldiers and 6 Shotgun Soldiers
-		{
-			Name "Wave2_Subwave2_Soldiers"
-			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
-			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 4
-			TotalCurrency 60
 
 			Squad
 			{
@@ -2233,50 +2214,141 @@ WaveSchedule
 
 				TFBot
 				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
 					Class Soldier
 					Skill Easy
 				}
 				TFBot
 				{
-					Template T_TFBot_Soldier_Shotgun
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Soldier
 					Skill Easy
 				}
 			}
 		}
-
-		WaveSpawn // 1 GSoldier
+		WaveSpawn // 8 Bonk Scouts
 		{
-			Name "Wave2_Subwave2_GSoldier2"
-			WaitForAllSpawned "Wave2_Subwave2_GSoldier"
-			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
+			Name "Wave2_Subwave1_BonkScouts2"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Soldier
+				Template T_TFBot_Scout_Bonk
 			}
 		}
-		WaveSpawn // 8 Soldiers
+		WaveSpawn // 10 Heavies
 		{
-			Name "Wave2_Subwave2_Soldiers2"
-			WaitForAllSpawned "Wave2_Subwave2_GSoldier2"
+			Name "Wave2_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
 			Where spawnbot_stage1_left [$SIGSEGV]
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
-			WaitBeforeStarting 4
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GSoldier and 4 Heavies
+		{
+			Name "Wave2_Subwave1_GSoldier3"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier2"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
-			TotalCurrency 40
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 14 Soldiers
+		{
+			Name "Wave2_Subwave1_Soldiers2"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier3"
+			Where spawnbot_stage1_left [$SIGSEGV]
+			TotalCount 14
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 1
+			TotalCurrency 60
 
 			TFBot
 			{
 				Class Soldier
 				Skill Easy
+			}
+		}
+		WaveSpawn // 8 Bonk Scouts
+		{
+			Name "Wave2_Subwave1_BonkScouts3"
+			WaitForAllSpawned "Wave2_Subwave1_GSoldier3"
+			Where spawnbot_stage1_right [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
 			}
 		}
 	}
@@ -2288,7 +2360,6 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
-					EntFire(`Stage1_PTs`, `ForceSpawn`)
 					EntFire(`Wave3_PTs`, `ForceSpawn`)
 					EntFire(`Wave3_SetupRelay`, `Trigger`)
 					EntFire(`Relay_D`, `Trigger`)
@@ -2317,12 +2388,6 @@ WaveSchedule
 									ThinkEnt.Kill()
 								delete ::CountdownCallbacks
 							}
-						}
-						function OnGameEvent_mvm_wave_complete(_)
-						{
-							if(ThinkEnt && ThinkEnt.IsValid())
-								ThinkEnt.Kill()
-							delete ::CountdownCallbacks
 						}
 						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
 						iCountdownLast = -1
@@ -2787,7 +2852,6 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
-					EntFire(`Stage2_PTs`, `ForceSpawn`)
 					EntFire(`Wave4_PTs`, `ForceSpawn`)
 					EntFire(`Wave4_SetupRelay`, `Trigger`)
 					EntFire(`Relay_A`, `Trigger`)
@@ -2817,12 +2881,6 @@ WaveSchedule
 								delete ::CountdownCallbacks
 							}
 						}
-						function OnGameEvent_mvm_wave_complete(_)
-						{
-							if(ThinkEnt && ThinkEnt.IsValid())
-								ThinkEnt.Kill()
-							delete ::CountdownCallbacks
-						}
 						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
 						iCountdownLast = -1
 						hGameRules = Entities.FindByClassname(null, `tf_gamerules`)
@@ -2839,8 +2897,8 @@ WaveSchedule
 							else iCountdownLast = -1
 						}
 						Callbacks = {
-							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_genericwavebegin3.mp3`) },
-							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_genericwavebegin3.mp3`) },
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wave4start.mp3`) },
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wave4start.mp3`) },
 						}
 					}
 
@@ -2863,6 +2921,10 @@ WaveSchedule
 					EntFire(`Stage2_StartRelay`, `Trigger`)
 					EntFire(`wave_start_relay`, `Trigger`)
 					EntFire(`Wave4_ExplosionRelay`, `Trigger`, null, 2)
+
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
+					EntFire(`Wave4_StartSubtitlesRelay`, `Trigger`)
 				  "
 		}
 		DoneOutput
@@ -2888,11 +2950,29 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 40
 
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout
+			}
+		}
+		WaveSpawn // 4 Soldiers
+		{
+			Name "Wave4_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave4_Subwave1_GScout"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Normal
 			}
 		}
 		WaveSpawn // 12 Pyros
@@ -2919,13 +2999,13 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave1_GPhlogPyro"
 			WaitForAllSpawned "Wave4_Subwave1_GScout"
-			Where spawnbot_A_route_giant
+			Where spawnbot_stage2 [$SIGSEGV]
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 10
+			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
-			TotalCurrency 20
+			TotalCurrency 100
 
 			Squad
 			{
@@ -2949,15 +3029,52 @@ WaveSchedule
 				}
 			}
 		}
+		WaveSpawn // 3 Spies
+		{
+			Name "Wave4_Subwave1_Spies"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro"
+			Where spawnbot_stage2 [$SIGSEGV]
+			Support Limited
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes IgnoreFlag
+			}
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesinbound2.mp3`)
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesinbound2.mp3`)
+					  "
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesdestroyed2.mp3`)
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesdestroyed2.mp3`)
+					  "
+			}
+		}
 		WaveSpawn // 20 Scouts
 		{
 			Name "Wave4_Subwave1_Scouts"
-			WaitForAllSpawned "Wave4_Subwave1_GScout"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro"
 			Where spawnbot_A_route_giant
 			TotalCount 20
 			MaxActive 10
 			SpawnCount 2
-			WaitBeforeStarting 10
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 1
 			TotalCurrency 20
 
@@ -2965,6 +3082,311 @@ WaveSchedule
 			{
 				Class Scout
 				Skill Normal
+			}
+		}
+		WaveSpawn // 12 Soldiers
+		{
+			Name "Wave4_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GPhlog Pyro and 1 Shield Medic
+		{
+			Name "Wave4_Subwave1_GPhlogPyro2"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Phlogistinator
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					WeaponRestrictions SecondaryOnly
+
+					FireWeapon
+					{
+						Type "Special"
+						Duration 0.5
+						Delay 0.5
+						Repeats 0
+						Cooldown 0.5
+					}
+				}
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave4_Subwave1_Soldiers2"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro2"
+			Where spawnbot_A_route_giant
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Normal
+			}
+		}
+		WaveSpawn // 12 Pyros
+		{
+			Name "Wave4_Subwave1_Pyros2"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro2"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 3 Shield Medics and 9 Soldiers
+		{
+			Name "Wave4_Subwave2_ShieldSquads"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro2"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					WeaponRestrictions SecondaryOnly
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.6
+					}
+
+					FireWeapon
+					{
+						Type "Special"
+						Duration 0.5
+						Delay 0.5
+						Repeats 0
+						Cooldown 0.5
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Normal
+				}
+			}
+		}
+		WaveSpawn // 3 Spies
+		{
+			Name "Wave4_Subwave2_Spies"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro2"
+			Where spawnbot_stage2 [$SIGSEGV]
+			Support Limited
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes IgnoreFlag
+			}
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesinbound3.mp3`)
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesinbound3.mp3`)
+					  "
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesdestroyed3.mp3`)
+						EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_spiesdestroyed3.mp3`)
+					  "
+			}
+		}
+		WaveSpawn // 12 Scouts
+		{
+			Name "Wave4_Subwave2_Scouts"
+			WaitForAllSpawned "Wave4_Subwave1_GPhlogPyro2"
+			Where spawnbot_A_route_giant
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 2 GScouts
+		{
+			Name "Wave4_Subwave2_GScout"
+			WaitForAllSpawned "Wave4_Subwave2_ShieldSquads"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave4_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave4_Subwave2_ShieldSquads"
+			Where spawnbot_A_route_giant
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GPhlog Pyro, 1 Shield Medic and 3 Soldiers
+		{
+			Name "Wave4_Subwave2_GPhlogPyro"
+			WaitForAllSpawned "Wave4_Subwave2_GScout"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Phlogistinator
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					WeaponRestrictions SecondaryOnly
+
+					FireWeapon
+					{
+						Type "Special"
+						Duration 0.5
+						Delay 0.5
+						Repeats 0
+						Cooldown 0.5
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Normal
+				}
+			}
+		}
+		WaveSpawn // 6 Pyros
+		{
+			Name "Wave4_Subwave2_Pyros"
+			WaitForAllSpawned "Wave4_Subwave2_GPhlogPyro"
+			Where spawnbot_A_route_giant
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+				Attributes AlwaysFireWeapon
 			}
 		}
 	}
