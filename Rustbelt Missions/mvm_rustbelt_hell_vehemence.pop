@@ -1,0 +1,83 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 0
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 2000
+    AddSentryBusterWhenKillCountExceeds 8
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	// Robot PTs
+	SentryBuster_Sound_PT
+	{
+		OnSpawnOutput
+		{
+			Target tf_gamerules
+			Action PlayVO
+			Param "mvm/mvm_tele_deliver.wav"
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// EXTRA TANK PATHS ////
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 5
+		InitialCooldown 20
+		CooldownTime 20
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+			Attributes TeleportToHint
+
+			SpawnTemplate "SentryBuster_Sound_PT"
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+}
