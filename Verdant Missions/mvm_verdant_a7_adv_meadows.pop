@@ -14,8 +14,8 @@ WaveSchedule
 
 	CanBotsAttackWhileInSpawnRoom No
 
-	AddSentryBusterWhenDamageDealtExceeds 3000
-    AddSentryBusterWhenKillCountExceeds 10
+	AddSentryBusterWhenDamageDealtExceeds 6000
+    AddSentryBusterWhenKillCountExceeds 20
 
 	WaveStartCountdown 5
 
@@ -37,7 +37,53 @@ WaveSchedule
 
 	//// POINT TEMPLATES ////
 
+	PointTemplates
+	{
+		MissionIntro_PTs
+		{
+			logic_relay
+			{
+				"targetname" "Intro_Relay"
+
+				"OnTrigger" "Intro_Annotation1,Show,,0,-1"
+				"OnTrigger" "Intro_Annotation2,Show,,1.5,-1"
+				"OnTrigger" "Intro_Annotation3,Show,,5.5,-1"
+				"OnTrigger" "Intro_Annotation4,Show,,9.5,-1"
+			}
+			training_annotation
+			{
+				"targetname" "Intro_Annotation1"
+				"origin" "0 4478 1280"
+				"display_text" "hi :)"
+				"lifetime" "1.5"
+			}
+			training_annotation
+			{
+				"targetname" "Intro_Annotation2"
+				"origin" "0 4478 1280"
+				"display_text" "I wanted to let you know that there's a LOT of robots active this mission."
+				"lifetime" "4"
+			}
+			training_annotation
+			{
+				"targetname" "Intro_Annotation3"
+				"origin" "0 4478 1280"
+				"display_text" "So, I made all non-giants Marked for Death!"
+				"lifetime" "4"
+			}
+			training_annotation
+			{
+				"targetname" "Intro_Annotation4"
+				"origin" "0 4478 1280"
+				"display_text" "Have fun! :D"
+				"lifetime" "2.5"
+			}
+		}
+	}
+
 	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "MissionIntro_PTs"
 
 	//// ROBOT TEMPLATES ////
 
@@ -107,6 +153,10 @@ WaveSchedule
 
 	//// WAVES ////
 
+	// General Notes
+	// ALL COMMONS MARKED FOR DEATH, NO EXCEPTION
+	// Tank worm = funny
+
 	Wave
 	{
 		InitWaveOutput
@@ -142,16 +192,22 @@ WaveSchedule
 			Name "Wave1_Subwave1_Them"
 			Where spawnbot
 			TotalCount 40
-			MaxActive 20
+			MaxActive 15
 			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.1
-			TotalCurrency 100
+			WaitBeforeStarting 11
+			WaitBetweenSpawns 0.2
+			TotalCurrency 60
 
 			TFBot
 			{
 				Template T_TFBot_Scout_Sandman_Spammer
+				Attributes DisableDodge
 				Attributes AlwaysCrit
+
+				Addcond
+				{
+					Index 30
+				}
 			}
 		}
 		WaveSpawn // 30 Sandman Scouts
@@ -159,16 +215,22 @@ WaveSchedule
 			Name "Wave1_Subwave1_Them"
 			Where spawnbot_left
 			TotalCount 30
-			MaxActive 20
+			MaxActive 15
 			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.1
-			TotalCurrency 100
+			WaitBeforeStarting 11
+			WaitBetweenSpawns 0.2
+			TotalCurrency 60
 
 			TFBot
 			{
 				Template T_TFBot_Scout_Sandman_Spammer
+				Attributes DisableDodge
 				Attributes AlwaysCrit
+
+				Addcond
+				{
+					Index 30
+				}
 			}
 		}
 		WaveSpawn // 30 Sandman Scouts
@@ -176,1124 +238,22 @@ WaveSchedule
 			Name "Wave1_Subwave1_Them"
 			Where spawnbot_right
 			TotalCount 30
-			MaxActive 20
+			MaxActive 15
 			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.1
-			TotalCurrency 100
+			WaitBeforeStarting 11
+			WaitBetweenSpawns 0.2
+			TotalCurrency 60
 
 			TFBot
 			{
 				Template T_TFBot_Scout_Sandman_Spammer
+				Attributes DisableDodge
 				Attributes AlwaysCrit
-			}
-		}
 
-		WaveSpawn // 1 GLaser Heavy and 5 Rocketeer Heavies
-		{
-			Name "Wave1_Subwave1_GLaserHeavy"
-			WaitForAllSpawned "Wave1_Subwave1_Them"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_Laser
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 10 Demomen
-		{
-			Name "Wave1_Subwave1_Demomen"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 0.1
-			TotalCurrency 40
-
-			TFBot
-			{
-				Class Demoman
-				Skill Normal
-				MaxVisionRange 1600
-			}
-		}
-		WaveSpawn // 50 Demomen
-		{
-			Name "Wave1_Subwave1_Demomen"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy"
-			Where spawnbot
-			TotalCount 50
-			MaxActive 20
-			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 1
-			TotalCurrency 100
-
-			TFBot
-			{
-				Class Demoman
-				Skill Normal
-				MaxVisionRange 1600
-			}
-		}
-
-		WaveSpawn // 1 GLaser Heavy and 5 Rocketeer Heavies
-		{
-			Name "Wave1_Subwave1_GLaserHeavy2"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_Laser
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 6 Claymore Knights
-		{
-			Name "Wave1_Subwave1_ClaymoreKnights"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy2"
-			Where spawnbot_left
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 6
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Knight_Claymore
-			}
-		}
-		WaveSpawn // 6 Claymore Knights
-		{
-			Name "Wave1_Subwave1_ClaymoreKnights"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy2"
-			Where spawnbot_right
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 6
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Knight_Claymore
-			}
-		}
-
-		WaveSpawn // 1 GLaser Heavy and 5 Rocketeer Heavies
-		{
-			Name "Wave1_Subwave1_GLaserHeavy3"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy2"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_Laser
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 20 Demomen
-		{
-			Name "Wave1_Subwave1_Demomen2"
-			WaitForAllSpawned "Wave1_Subwave1_GLaserHeavy3"
-			Where spawnbot
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 0.1
-			TotalCurrency 80
-
-			TFBot
-			{
-				Class Demoman
-				Skill Normal
-			}
-		}
-	}
-	Wave
-	{
-		InitWaveOutput
-		{
-			Target BigNet
-			Action RunScriptCode
-			Param "
-					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
-					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
-					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
-				  "
-		}
-		StartWaveOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_start_relay`, `Trigger`)
-                  "
-        }
-        DoneOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_finished_relay`, `Trigger`)
-                  "
-        }
-
-		// Subwave 1
-		WaveSpawn // 6 Mini Tanks
-		{
-			Name "Wave2_Subwave1_Tanks"
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
-			TotalCurrency 100
-
-			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
-
-			Tank
-			{
-				Template Tank_Tiny
-				Health 5000
-				Speed 100
-				MaxTurnRate 75
-				StartingPathTrackNode "boss_path_1"
-			}
-		}
-
-		WaveSpawn // 60 Widowmaker Engineers
-		{
-			Name "Wave2_Subwave1_Widowmakers"
-			WaitForAllSpawned "Wave2_Subwave1_Tanks"
-			Where spawnbot_invasion
-			TotalCount 60
-			MaxActive 20
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 1
-			TotalCurrency 100
-
-			FirstSpawnWarningSound "vo/mvm/norm/engineer_mvm_gunslingertriplepunchfinal01.mp3"
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Widowmaker
-				Skill Normal
-				MaxVisionRange 1200
-			}
-		}
-		WaveSpawn // 15 Gunslingers
-		{
-			Name "Wave2_Subwave1_Gunslingers"
-			WaitForAllSpawned "Wave2_Subwave1_Tanks"
-			Where spawnbot
-			Support Limited
-			TotalCount 15
-			MaxActive 15
-			SpawnCount 1
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0.05
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
-
-				VoiceCommand
-				{
-					Delay 0
-					Cooldown 3
-					Repeats 0
-					Type "Battle Cry"
-				}
-			}
-		}
-
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave2_Subwave1_GRapidSoldiers"
-			WaitForAllSpawned "Wave2_Subwave1_Tanks"
-			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-				MaxVisionRange 1600
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave2_Subwave1_GRapidSoldiers"
-			WaitForAllSpawned "Wave2_Subwave1_Tanks"
-			Where spawnbot_left
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-				MaxVisionRange 1600
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier
-		{
-			Name "Wave2_Subwave1_GRapidSoldiers"
-			WaitForAllSpawned "Wave2_Subwave1_Tanks"
-			Where spawnbot_right
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-				MaxVisionRange 1600
-			}
-		}
-
-		WaveSpawn // 1 GBarrage, 1 Shield Medic, 2 Kritz Medics, 2 Full-Uber Medics, 2 Bigheal Medics and 4 Rocket Shotgun Soldiers
-		{
-			Name "Wave2_Subwave1_GBarrage"
-			WaitForAllSpawned "Wave2_Subwave1_GRapidSoldiers"
-			Where spawnbot
-			TotalCount 12
-			MaxActive 12
-			SpawnCount 12
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Barrage
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Shield
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 9 Flare Burst Pyros
-		{
-			Name "Wave2_Subwave1_FlareBurstPyros"
-			WaitForAllSpawned "Wave2_Subwave1_GBarrage"
-			Where spawnbot
-			TotalCount 9
-			MaxActive 9
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 4
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Pyro_Flaregun_Burst
-				MaxVisionRange 1600
-			}
-		}
-
-		// Subwave 2
-		WaveSpawn // 6 Mini Tanks
-		{
-			Name "Wave2_Subwave2_Tanks"
-			WaitForAllSpawned "Wave2_Subwave1_GBarrage"
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 1
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 2
-			TotalCurrency 100
-
-			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
-
-			Tank
-			{
-				Template Tank_Tiny
-				Health 5000
-				Speed 100
-				MaxTurnRate 75
-				StartingPathTrackNode "boss_path_1"
-			}
-		}
-		WaveSpawn // 10 Rocket Shotgun Soldiers and 20 Widowmaker Engineers
-		{
-			Name "Wave2_Subwave2_RocketShotgunSquads"
-			WaitForAllSpawned "Wave2_Subwave2_Tanks"
-			Where spawnbot_invasion
-			TotalCount 30
-			MaxActive 20
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 2
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Engineer_Widowmaker
-					Skill Normal
-					MaxVisionRange 1200
-				}
-				TFBot
-				{
-					Template T_TFBot_Engineer_Widowmaker
-					Skill Normal
-					MaxVisionRange 1200
-				}
-			}
-		}
-		WaveSpawn // 15 Gunslingers
-		{
-			Name "Wave2_Subwave2_Gunslingers"
-			WaitForAllSpawned "Wave2_Subwave2_Tanks"
-			Where spawnbot
-			Support Limited
-			TotalCount 15
-			MaxActive 15
-			SpawnCount 1
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0.05
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
-
-				VoiceCommand
-				{
-					Delay 0
-					Cooldown 3
-					Repeats 0
-					Type "Battle Cry"
-				}
-			}
-		}
-
-		WaveSpawn // 1 GRapid Soldier and 2 Flare Burst Pyros
-		{
-			Name "Wave2_Subwave2_GRapidSoldiers"
-			WaitForAllSpawned "Wave2_Subwave2_Tanks"
-			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Spammer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun_Burst
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun_Burst
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier and 2 Flare Burst Pyros
-		{
-			Name "Wave2_Subwave2_GRapidSoldiers"
-			WaitForAllSpawned "Wave2_Subwave2_Tanks"
-			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Spammer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun_Burst
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun_Burst
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 1 GRapid Soldier and 2 Flare Burst Pyros
-		{
-			Name "Wave2_Subwave2_GRapidSoldiers"
-			WaitForAllSpawned "Wave2_Subwave2_Tanks"
-			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Spammer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun_Burst
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Pyro_Flaregun_Burst
-					MaxVisionRange 1600
-				}
-			}
-		}
-
-		WaveSpawn // 1 Giga Burst, 1 Shield Medic, 2 Kritz Medics, 2 Full-Uber Medics, 2 Bigheal Medics and 4 Rocket Shotgun Soldiers
-		{
-			Name "Wave2_Subwave2_GigaBurst"
-			WaitForAllSpawned "Wave2_Subwave2_GRapidSoldiers"
-			Where spawnbot
-			TotalCount 12
-			MaxActive 12
-			SpawnCount 12
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Name "Giga Burst Fire Soldier"
-					Template T_TFBot_Giant_Soldier_Burst
-					ClassIcon soldier_burstfire_hyper_lite
-
-					ItemAttributes
-					{
-						ItemName "TF_WEAPON_ROCKETLAUNCHER"
-
-						"damage bonus" 2
-						"fire rate bonus" 0.2
-						"faster reload rate" 0.4
-						"clip size upgrade atomic" 5.0
-						"projectile speed decreased" 0.9
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Shield
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Kritzkrieg
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-				TFBot
+				Addcond
 				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
+					Index 30
 				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgun
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 15 Gunslingers
-		{
-			Name "Wave2_Subwave2_Gunslingers2"
-			WaitForAllSpawned "Wave2_Subwave2_GigaBurst"
-			Where spawnbot
-			Support Limited
-			TotalCount 15
-			MaxActive 15
-			SpawnCount 1
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0.05
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
-
-				VoiceCommand
-				{
-					Delay 0
-					Cooldown 3
-					Repeats 0
-					Type "Battle Cry"
-				}
-			}
-		}
-	}
-	Wave
-	{
-		InitWaveOutput
-		{
-			Target BigNet
-			Action RunScriptCode
-			Param "
-					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
-					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
-					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
-				  "
-		}
-		StartWaveOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_start_relay`, `Trigger`)
-                  "
-        }
-        DoneOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_finished_relay`, `Trigger`)
-                  "
-        }
-
-		// Subwave 1
-		WaveSpawn // 10 Super Scouts
-		{
-			Name "Wave3_Subwave1_SuperScouts"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			TFBot
-			{
-				Name "hi :)"
-				Template T_TFBot_Giant_Scout_Fast
-				Attributes AlwaysCrit
-				Action Mobber
-			}
-		}
-		WaveSpawn // 1 Fat Super Scout
-		{
-			Name "Wave3_Subwave1_FatSuperScout"
-			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 10
-
-			TFBot
-			{
-				Name "Wait for me guys!"
-				Template T_TFBot_Heavy_SuperScout
-				Attributes AlwaysCrit
-				Action Mobber
-			}
-		}
-
-		WaveSpawn // 10 Soldiers and 10 Full-Uber Medics
-		{
-			Name "Wave3_Subwave1_Soldiers"
-			WaitForAllDead "Wave3_Subwave1_FatSuperScout"
-			Where spawnbot_invasion
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 2
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 2
-			TotalCurrency 60
-
-			Squad
-			{
-				TFBot
-				{
-					Class Soldier
-					Skill Expert
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 3 GShotgun Demos
-		{
-			Name "Wave3_Subwave1_GShotgunDemo"
-			WaitForAllDead "Wave3_Subwave1_FatSuperScout"
-			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Demoman_GrenadeShotgun
-				MaxVisionRange 1600
-			}
-		}
-
-		WaveSpawn // 10 Bowmen and 10 Full-Uber Medics
-		{
-			Name "Wave3_Subwave1_Bowmen"
-			WaitForAllSpawned "Wave3_Subwave1_Soldiers"
-			Where spawnbot_invasion
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 2
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 2
-			TotalCurrency 60
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Sniper_Huntsman
-					Attributes AlwaysCrit
-					MaxVisionRange 2400
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 3 Elite GDirect Hit Soldiers and 6 Rocketeer Heavies
-		{
-			Name "Wave3_Subwave1_GDirectHit"
-			WaitForAllSpawned "Wave3_Subwave1_Soldiers"
-			Where spawnbot
-			TotalCount 9
-			MaxActive 9
-			SpawnCount 3
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_DirectHit_Elite
-					MaxVisionRange 2400
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-			}
-		}
-
-		// Subwave 2
-		WaveSpawn // 10 Super Scouts
-		{
-			Name "Wave3_Subwave2_SuperScouts"
-			WaitForAllSpawned "Wave3_Subwave1_Bowmen"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			TFBot
-			{
-				Name "hi again :)"
-				Template T_TFBot_Giant_Scout_Fast
-				Attributes AlwaysCrit
-				Action Mobber
-			}
-		}
-		WaveSpawn // 1 Fat Super Scout
-		{
-			Name "Wave3_Subwave2_FatSuperScout"
-			WaitForAllDead "Wave3_Subwave2_SuperScouts"
-			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 10
-
-			TFBot
-			{
-				Name "I brought friends!"
-				Template T_TFBot_Heavy_SuperScout
-				Attributes AlwaysCrit
-				Action Mobber
-			}
-		}
-		WaveSpawn // 68 Fat Super Scouts
-		{
-			Name "Wave3_Subwave2_FatSuperScouts2"
-			WaitForAllSpawned "Wave3_Subwave2_FatSuperScout"
-			Where spawnbot
-			TotalCount 68
-			MaxActive 30
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0.1
-			TotalCurrency 100
-
-			TFBot
-			{
-				Name "The friends in question"
-				Template T_TFBot_Heavy_SuperScout
-				Attributes AlwaysCrit
-				Action Mobber
-			}
-		}
-
-		WaveSpawn // 2 Elite GDirect Hit Soldiers and 8 Rocketeer Heavies 
-		{
-			Name "Wave3_Subwave2_GDirectHits"
-			WaitForAllSpawned "Wave3_Subwave2_FatSuperScout"
-			Where spawnbot
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 5
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 10
-			TotalCurrency 60
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-				
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_DirectHit_Elite
-					MaxVisionRange 2400
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-				TFBot
-				{
-					Template T_TFBot_Heavy_Rocketeer
-					MaxVisionRange 1600
-				}
-			}
-		}
-		WaveSpawn // 30 Soldiers
-		{
-			Name "Wave3_Subwave2_Soldiers"
-			WaitForAllSpawned "Wave3_Subwave2_FatSuperScout"
-			Where spawnbot_invasion
-			TotalCount 30
-			MaxActive 20
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 2
-			TotalCurrency 60
-
-			TFBot
-			{
-				Class Soldier
-				Skill Expert
-			}
-		}
-		WaveSpawn // 30 Bowmen
-		{
-			Name "Wave3_Subwave2_Bowmen"
-			WaitForAllSpawned "Wave3_Subwave2_FatSuperScout"
-			Where spawnbot_invasion
-			TotalCount 30
-			MaxActive 20
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 2
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Sniper_Huntsman
-				Attributes AlwaysCrit
-			}
-		}
-
-		WaveSpawn // 3 GShotgun Demos
-		{
-			Name "Wave3_Subwave2_GShotgunDemo"
-			WaitForAllDead "Wave3_Subwave2_GDirectHits"
-			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 10
-			TotalCurrency 80
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Demoman_GrenadeShotgun
-				MaxVisionRange 1600
 			}
 		}
 	}
