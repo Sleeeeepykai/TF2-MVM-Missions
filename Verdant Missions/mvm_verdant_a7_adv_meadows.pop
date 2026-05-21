@@ -27,6 +27,10 @@ WaveSchedule
 
 	//// PRECACHES ////
 
+	// Precached Models
+
+	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
 	//// DISABLED VOICELINES ////
 	DisableSound "Announcer.MVM_Tank_Alert_Another"
 	DisableSound "Announcer.MVM_Tank_Alert_Multiple"
@@ -39,6 +43,8 @@ WaveSchedule
 
 	PointTemplates
 	{
+		//// Core PTs ////
+
 		MissionIntro_PTs
 		{
 			logic_relay
@@ -77,6 +83,107 @@ WaveSchedule
 				"origin" "0 4478 1280"
 				"display_text" "Have fun! :D"
 				"lifetime" "2"
+			}
+		}
+
+		//// Robot PTs ////
+
+		PlasmaSniper_BeamPT
+		{
+			RemoveIfKilled "PlasmaAimBeam"
+
+			OnSpawnOutput
+			{
+				Target "PlasmaAimStart"
+				Action ClearParent
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "PlasmaAimEnd"
+				Action ClearParent
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "PlasmaAimBeam"
+				Action TurnOn
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "PlasmaAimBeam"
+				Action Kill
+				Delay 2.5
+			}
+
+			env_beam
+			{
+				"targetname" "PlasmaAimBeam"
+				"origin" "0 0 0"
+				"LightningStart" "PlasmaAimStart"
+				"LightningEnd" "PlasmaAimEnd"
+				"life" "0"
+				"BoltWidth" "5"
+				"TextureScroll" "-20"
+				"texture" "sprites/laserbeam.vmt"
+				"rendermode" "1"
+				"renderamt" "144"
+				"rendercolor" "192 0 255"
+			}
+			prop_dynamic
+			{
+				"targetname" "PlasmaAimStart"
+				"origin" "0 0 0"
+				"model" "models/empty.mdl"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "PlasmaAimEnd"
+				"origin" "5000 0 0"
+				"model" "models/empty.mdl"
+				"disableshadows" "1"
+			}
+		}
+		PlasmaSniper_ExplosionPT
+		{
+			RemoveIfKilled "PlasmaBeamExplosionEffect"
+
+			OnSpawnOutput
+			{
+				Target PlasmaBeamExplosionSound
+				Action PlaySound
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target PlasmaBeamExplosionEffect
+				Action Start
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target PlasmaBeamExplosionEffect
+				Action Kill
+				Delay 1
+			}
+
+			info_particle_system
+			{
+				"targetname" "PlasmaBeamExplosionEffect"
+				"origin" "0 0 0"
+				"effect_name" "drg_cow_explosioncore_charged_blue"
+				"start_active" 0
+			}
+			ambient_generic
+			{
+				"targetname" "PlasmaBeamExplosionSound"
+				"origin" "0 0 0"
+				"message" "weapons/cow_mangler_explosion_charge_01.wav"
+				"health" "10"
+				"radius" "4096"
+				"spawnflags" "48"
 			}
 		}
 	}
@@ -158,12 +265,19 @@ WaveSchedule
 			Skill Expert
 			Health 3000
 			Attributes MiniBoss
+			Attributes AlwaysCrit
 			WeaponRestrictions PrimaryOnly
+			Action Sniper
 
-			Item "The AWPer Hand"
+			AimAt Body
+
+			UseCustomModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+			Item "Shooting Star"
 
 			CharacterAttributes
 			{
+				"move speed penalty" 0.5
 				"damage force reduction" 0.7
 				"airblast vulnerability multiplier" 0.7
 				"override footstep sound set" 5
@@ -171,9 +285,29 @@ WaveSchedule
 
 			ItemAttributes
 			{
-				ItemName "The AWPer Hand"
+				ItemName "Shooting Star"
 
-				"override projectile type" 2
+				"dmg penalty vs players" 10
+				"faster reload rate" 2.5
+
+				"override projectile type" 13
+				"energy weapon penetration" 1
+				"projectile speed increased" 0.1
+				"projectile acceleration" 2500
+				"projectile acceleration start time" 2.5
+
+				"projectile trail particle" "drg_pomson_projectile"
+				"particle color rgb" 16760832
+
+				"fire input on attack" "tf_gamerules^playvo^weapons/physcannon/energy_sing_explosion2.wav"
+				"fire input on hit" "PlasmaSniper_ExplosionPT^ForceSpawnAtEntityOrigin^!self"
+			}
+
+			ShootTemplate
+			{
+				Name "PlasmaSniper_BeamPT"
+				AttachToProjectile 1
+				ItemName "Shooting Star"
 			}
 		}
 	}
@@ -926,13 +1060,6 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					local ent = Entities.FindByClassname(null, `item_teamflag`)
-					ent.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
-					if (!(`SetParams` in ent.GetScriptScope())) return
-					ent.GetScriptScope().SetParams(
-						[`hoptime_max`, 20]
-					)
 				  "
 		}
 		StartWaveOutput
@@ -1718,13 +1845,6 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
-
-					local ent = Entities.FindByClassname(null, `item_teamflag`)
-					ent.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
-					if (!(`SetParams` in ent.GetScriptScope())) return
-					ent.GetScriptScope().SetParams(
-						[`hoptime_max`, 20]
-					)
 				  "
 		}
 		StartWaveOutput
@@ -1761,7 +1881,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_SpreadShot
+					Template T_TFBot_Giant_Sniper_Plasma
 					Health 7500
 					Attributes UseBossHealthBar
 				}
