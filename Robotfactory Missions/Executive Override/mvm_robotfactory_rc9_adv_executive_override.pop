@@ -48,6 +48,11 @@ WaveSchedule
 	PrecacheSound "mvm/executive_override/butler_spiesdestroyed2.mp3"
 	PrecacheSound "mvm/executive_override/butler_spiesdestroyed3.mp3"
 
+	// Precached Tank Voicelines
+	PrecacheSound "mvm/executive_override/butler_tankinbound2.mp3"
+
+	PrecacheSound "mvm/executive_override/butler_tankdestroyed.mp3"
+
 	// Precached Wave Announcer Voicelines
 	PrecacheSound "mvm/executive_override/butler_firstwavebegin.mp3"
 	PrecacheSound "mvm/executive_override/butler_genericwavebegin.mp3"
@@ -1188,6 +1193,42 @@ WaveSchedule
 				"origin" "676 648 0"
 				"effect_name" "fireSmoke_Collumn_mvmAcres"
 				"start_active" "0"
+			}
+		}
+
+		// Wave 5
+		Wave5_PTs
+		{
+			logic_relay // Wave 5 Setup
+			{
+				"targetname" "Wave5_SetupRelay"
+
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_wall_fix_relay,Trigger,,0.2,-1"
+				"OnTrigger" "C1_wall_fix_relay,Trigger,,0.2,-1"
+
+				"OnTrigger" "A_route_wall_4_fix_relay,Trigger,,0,-1"
+
+				"OnTrigger" "A1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "A2_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "B1_door_lock_relay,Trigger,,1,-1"
+
+				"OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_C_lock_relay,Trigger,,0,-1"
+
+				"OnTrigger" "carrier_lift_raise_relay,Trigger,,0,-1"
+				"OnTrigger" "carrier_door_front_close_relay,Trigger,,0,-1"
+				"OnTrigger" "container_lift_raise_relay,Trigger,,0,-1"
+
+				"OnTrigger" "door_front_l,Unlock,,0,-1"
+				"OnTrigger" "door_front_r,Unlock,,0,-1"
+				"OnTrigger" "door_front_l,Open,,0.1,-1"
+				"OnTrigger" "door_front_r,Open,,0.1,-1"
+
+				"OnTrigger" "cylindrical_upgrades_deploy_relay,Trigger,,0,-1"
 			}
 		}
 
@@ -2920,10 +2961,10 @@ WaveSchedule
 			Param "
 					EntFire(`Stage2_StartRelay`, `Trigger`)
 					EntFire(`wave_start_relay`, `Trigger`)
-					EntFire(`Wave4_ExplosionRelay`, `Trigger`, null, 2)
+					EntFire(`Wave4_ExplosionRelay`, `Trigger`, null, 3)
 
-					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
-					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted2.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wave4start.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wave4start.mp3`)
 					EntFire(`Wave4_StartSubtitlesRelay`, `Trigger`)
 				  "
 		}
@@ -2948,13 +2989,14 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 8
+			WaitBeforeStarting 9
 			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout
+				Skill Normal
 			}
 		}
 		WaveSpawn // 4 Soldiers
@@ -3298,6 +3340,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout
+				Skill Normal
 			}
 		}
 		WaveSpawn // 10 Soldiers
@@ -3393,7 +3436,128 @@ WaveSchedule
 	// Wave 5 Notes
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Wave5_PTs`, `ForceSpawn`)
+					EntFire(`Wave5_SetupRelay`, `Trigger`)
+					EntFire(`Relay_A`, `Trigger`)
+					EntFire(`holograms`, `Disable`, null, 0.2)
+					EntFire(`A_B_C_holograms`, `Disable`, null, 0.2)
 
+					EntFire(`Voiceline_WaveCounter`, `SetValue`, 4)
+					EntFire(`VoiceDefaultInitRelay*`, `Trigger`, null, 5)
+
+					::CountdownCallbacks <- {
+						function OnGameEvent_player_say(params)
+						{
+							local Player = GetPlayerFromUserID(params.userid)
+
+							if(params.text.tolower() == `!subtitles`)
+							{
+								EntFire(`SubtitlesMenuRelay`, `Trigger`, null, 0, Player)
+							}
+						}
+
+						function OnGameEvent_recalculate_holidays(_) 
+						{ 
+							if(GetRoundState() == 3)
+							{
+								if(ThinkEnt && ThinkEnt.IsValid())
+									ThinkEnt.Kill()
+								delete ::CountdownCallbacks
+							}
+						}
+						ThinkEnt = Entities.CreateByClassname(`logic_relay`)
+						iCountdownLast = -1
+						hGameRules = Entities.FindByClassname(null, `tf_gamerules`)
+						Think = function()
+						{
+							local flRestartRoundTime = GetPropFloat(hGameRules, `m_flRestartRoundTime`)
+							if(flRestartRoundTime != -1)
+							{
+								local iCountdown = ceil(flRestartRoundTime - Time()).tointeger()
+								if(iCountdown != iCountdownLast && iCountdown in Callbacks)
+									Callbacks[iCountdown]()
+								iCountdownLast = iCountdown
+							}
+							else iCountdownLast = -1
+						}
+						Callbacks = {
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wave4start.mp3`) },
+							[7] = function() { EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wave4start.mp3`) },
+						}
+					}
+
+					CountdownCallbacks.ThinkEnt.ValidateScriptScope()
+					CountdownCallbacks.ThinkEnt.GetScriptScope().Think <- function()
+					{
+						CountdownCallbacks.Think()
+						return -1
+					}
+					AddThinkToEnt(CountdownCallbacks.ThinkEnt, `Think`)
+
+					__CollectGameEventCallbacks(CountdownCallbacks)
+			  	  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage2_StartRelay`, `Trigger`)
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Stage2_FinishRelay`, `Trigger`)
+					EntFire(`wave_finished_relay`, `Trigger`)
+
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted3.mp3`)
+					EntFire(`tf_gamerules`, `PlayVO`, `mvm/executive_override/butler_wavecompleted3.mp3`)
+				  "
+		}
+
+		// Subwave 1
+		WaveSpawn // 4 Ricochet Blaster Scouts
+		{
+			Name "Wave5_Subwave1_BlasterScouts"
+			Where spawnbot_stage2 [$SIGSEGV]
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Laser_Ricochet
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave5_Subwave1_Heavies"
+			Where spawnbot_A_route_giant
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
 	}
 
 	//// Stage 3 ////
