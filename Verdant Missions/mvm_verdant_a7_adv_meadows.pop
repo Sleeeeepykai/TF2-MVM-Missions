@@ -23,6 +23,7 @@ WaveSchedule
 	AllowBotExtraSlots 1
 	RobotLimit 75
 
+	MaxEntitySpeed 20000
 	BodyPartScaleSpeed 10
 
 	//// PRECACHES ////
@@ -114,7 +115,7 @@ WaveSchedule
 			{
 				Target "PlasmaAimBeam"
 				Action Kill
-				Delay 2.5
+				Delay 3.5
 			}
 
 			env_beam
@@ -172,14 +173,12 @@ WaveSchedule
 			info_particle_system
 			{
 				"targetname" "PlasmaBeamExplosionEffect"
-				"origin" "0 0 0"
 				"effect_name" "drg_cow_explosioncore_charged_blue"
 				"start_active" 0
 			}
 			ambient_generic
 			{
 				"targetname" "PlasmaBeamExplosionSound"
-				"origin" "0 0 0"
 				"message" "weapons/cow_mangler_explosion_charge_01.wav"
 				"health" "10"
 				"radius" "4096"
@@ -224,6 +223,19 @@ WaveSchedule
 			}
 		}
 
+		T_TFBot_Demo_Burst_Accurate
+		{
+			Name "Biblically Accurate Burst Demo"
+			Template T_TFBot_Demoman_Burst
+			Attributes HoldFireUntilFullReload
+			Attributes AlwaysFireWeapon
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+				"clip size upgrade atomic" 2
+			}
+		}
+
 		T_TFBot_Giant_Soldier_SpreadShot
 		{
 			Name "Giant Spread-Shot Soldier"
@@ -257,15 +269,16 @@ WaveSchedule
 			}
 		}
 
-		T_TFBot_Giant_Sniper_Plasma
+		T_TFBot_Giant_Sniper_Atomizer
 		{
-			Name "Giant Plasma Sniper"
+			Name "Giant Atomizer Sniper"
 			Class Sniper
-			ClassIcon sniper_explosion_hyper
+			ClassIcon sniper_atomic_hyper
 			Skill Expert
 			Health 3000
 			Attributes MiniBoss
 			Attributes AlwaysCrit
+			Attributes SuppressFire
 			WeaponRestrictions PrimaryOnly
 			Action Sniper
 
@@ -293,14 +306,15 @@ WaveSchedule
 				"override projectile type" 13
 				"energy weapon penetration" 1
 				"projectile speed increased" 0.1
-				"projectile acceleration" 2500
+				"projectile acceleration" 20000
 				"projectile acceleration start time" 2.5
+				"projectile acceleration time" 1
 
 				"projectile trail particle" "drg_pomson_projectile"
 				"particle color rgb" 16760832
 
 				"fire input on attack" "tf_gamerules^playvo^weapons/physcannon/energy_sing_explosion2.wav"
-				"fire input on hit" "PlasmaSniper_ExplosionPT^ForceSpawnAtEntityOrigin^!self"
+				//"fire input on hit" "PlasmaSniper_ExplosionPT^ForceSpawnAtEntityOrigin^!self"
 			}
 
 			ShootTemplate
@@ -308,6 +322,36 @@ WaveSchedule
 				Name "PlasmaSniper_BeamPT"
 				AttachToProjectile 1
 				ItemName "Shooting Star"
+			}
+
+			FireWeapon
+			{
+				Type Primary
+				Delay 0.5
+				Cooldown 2.25
+				Duration 0.1
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $AddCond
+				Param 1
+				Delay 0.1
+				Cooldown 0.1
+				IfSeeTarget 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $RemoveCond
+				Param 1
+				Delay 2
+				Cooldown 1
+				IfNoTarget 1
 			}
 		}
 	}
@@ -743,7 +787,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GHeavy, 1 Shield Medic and 4 Bigheal Medics
+		WaveSpawn // 1 GHeavy, 1 Shield Medic and 4 Big-Heal Medics
 		{
 			Name "Wave2_Subwave1_GHeavy"
 			WaitForAllSpawned "Wave2_Subwave1_GRapidSoldier"
@@ -865,7 +909,7 @@ WaveSchedule
 				StartingPathTrackNode "boss_path_1"
 			}
 		}
-		WaveSpawn // 7 Flare Burst Pyros, 7 Quick-Uber Medics and 7 Rocketeer Heavies
+		WaveSpawn // 7 Flare Burst Pyros, 7 Big-Heal Medics and 7 Rocketeer Heavies
 		{
 			Name "Wave2_Subwave2_FlareBurstPyros"
 			WaitForAllDead "Wave2_Subwave1_GHeavy"
@@ -938,7 +982,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GHeavy, 2 GRapid Soldiers, 1 Shield Medic and 4 Bigheal Medics
+		WaveSpawn // 1 GHeavy, 2 GRapid Soldiers, 1 Shield Medic and 4 Big-Heal Medics
 		{
 			Name "Wave2_Subwave2_GHeavy"
 			WaitForAllSpawned "Wave2_Subwave2_FlareBurstPyros"
@@ -1423,7 +1467,6 @@ WaveSchedule
 					"force distribute currency on death" 1
 				}
 
-
 				Addcond
 				{
 					Index 30
@@ -1711,6 +1754,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout
+				Skill Easy
 			}
 		}
 
@@ -1769,22 +1813,21 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 20 Demomen
+		WaveSpawn // 30 Biblically Accurate Burst Demos
 		{
 			Name "Wave3_Subwave2_Demomen"
-			WaitForAllSpawned "Wave3_Subwave2_ClaymoreKnights"
+			WaitForAllSpawned "Wave3_Subwave2_ConchHorde"
 			Where spawnbot
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 10
-			WaitBeforeStarting 16
-			WaitBetweenSpawns 8
+			TotalCount 30
+			MaxActive 30
+			SpawnCount 30
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
 			TotalCurrency 20
 
 			TFBot
 			{
-				Class Demoman
-				Skill Normal
+				Template T_TFBot_Demo_Burst_Accurate
 
 				CharacterAttributes
 				{
@@ -1831,6 +1874,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout
+				Skill Easy
 			}
 		}
 	}
@@ -1864,6 +1908,7 @@ WaveSchedule
                   "
         }
 
+		// Subwave 1
 		WaveSpawn // 1 Spread Shot Soldier and 2 GRegen Medics
 		{
 			Name "Wave4_Subwave1_GSpreadShotSoldier"
@@ -1873,7 +1918,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 160
 
 			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
 
@@ -1881,8 +1926,8 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Sniper_Plasma
-					Health 7500
+					Template T_TFBot_Giant_Soldier_SpreadShot
+					Health 10000
 					Attributes UseBossHealthBar
 				}
 				TFBot
@@ -1895,5 +1940,811 @@ WaveSchedule
 				}
 			}
 		}
+		WaveSpawn // 30 Spies
+		{
+			Name "Wave4_Subwave1_Spies"
+			WaitForAllSpawned "Wave4_Subwave1_GSpreadShotSoldier"
+			Where spawnbot_mission_spy
+			Support Limited
+			TotalCount 30
+			MaxActive 30
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0.1
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes IgnoreFlag
+
+				FireInput
+				{
+					Target !self
+					Action $Suicide
+					Delay  30
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+		WaveSpawn // 30 Soda Scouts
+		{
+			Name "Wave4_Subwave1_SodaScouts"
+			WaitForAllSpawned "Wave4_Subwave1_GSpreadShotSoldier"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Popper
+				Skill Normal
+
+				CharacterAttributes
+				{
+					"force distribute currency on death" 1
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GLaserHeavy and 4 Soldiers
+		{
+			Name "Wave4_Subwave2_GLaserHeavy"
+			WaitForAllDead "Wave4_Subwave1_GSpreadShotSoldier"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Laser
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 10 Pyros and 10 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_Pyros"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy"
+			Where spawnbot_invasion
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Class Pyro
+					Skill Normal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 6 Rocket Shotgun Soldiers
+		{
+			Name "Wave4_Subwave2_RocketShotgunSoldiers"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+
+				CharacterAttributes
+				{
+					"airblast disabled" 1
+					"force distribute currency on death" 1
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+
+		WaveSpawn // 1 GLaserHeavy and 4 Soldiers
+		{
+			Name "Wave4_Subwave2_GLaserHeavy2"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Laser
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 10 Bowmen and 10 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_Bowmen"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy2"
+			Where spawnbot_invasion
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 6 Rocket Shotgun Soldiers
+		{
+			Name "Wave4_Subwave2_RocketShotgunSoldiers2"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy2"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+
+				CharacterAttributes
+				{
+					"airblast disabled" 1
+					"force distribute currency on death" 1
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+
+		WaveSpawn // 1 GLaserHeavy and 4 Soldiers
+		{
+			Name "Wave4_Subwave2_GLaserHeavy3"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy2"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Laser
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Expert
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 3 Rocket Shotgun Soldiers and 6 Uber Medics
+		{
+			Name "Wave4_Subwave2_RocketShotgunSoldiers3"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy3"
+			Where spawnbot_left
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 3 Rocket Shotgun Soldiers and 6 Uber Medics
+		{
+			Name "Wave4_Subwave2_RocketShotgunSoldiers3"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy3"
+			Where spawnbot_right
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"airblast disabled" 1
+						"force distribute currency on death" 1
+					}
+
+					Addcond
+					{
+						Index 30
+					}
+				}
+			}
+		}
+		WaveSpawn // 30 Pyros
+		{
+			Name "Wave4_Subwave2_Pyros2"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy3"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 20
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Pyro
+				Skill Normal
+
+				CharacterAttributes
+				{
+					"airblast disabled" 1
+					"force distribute currency on death" 1
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+		WaveSpawn // 20 Bowmen
+		{
+			Name "Wave4_Subwave2_Bowmen2"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy3"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 10
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Huntsman
+
+				CharacterAttributes
+				{
+					"airblast disabled" 1
+					"force distribute currency on death" 1
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 30 Soda Scouts
+		{
+			Name "Wave4_Subwave3_SodaScouts"
+			WaitForAllSpawned "Wave4_Subwave2_GLaserHeavy3"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 30
+			SpawnCount 1
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0.2
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Popper
+				Skill Normal
+
+				CharacterAttributes
+				{
+					"force distribute currency on death" 1
+				}
+
+				Addcond
+				{
+					Index 30
+				}
+			}
+		}
+		WaveSpawn // 1 GLaserHeavy and 4 GRapid Soldiers
+		{
+			Name "Wave4_Subwave2_GLaserHeavy4"
+			WaitForAllSpawned "Wave4_Subwave3_SodaScouts"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 140
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				FormationSize 200
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Laser
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+			}
+		}
+	}
+	// Wave 5 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 25 GJumper Sandmen
+		{
+			Name "Wave5_Subwave1_GSandmen"
+			Where spawnbot_invasion
+			TotalCount 25
+			MaxActive 25
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.5
+			TotalCurrency 200
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Jumping_Sandman
+				Attributes AlwaysCrit
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // Support GSniper Squads
+		{
+			Name "Wave5_Subwave2_GSniper"
+			WaitForAllDead "Wave5_Subwave1_GSandmen"
+			Where spawnbot_mission_sniper
+			Support 1
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawnsAfterDeath 30
+			TotalCurrency 0
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Sniper_Atomizer
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Expert
+					Attributes AlwaysCrit
+					MaxVisionRange 300
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Expert
+					Attributes AlwaysCrit
+					MaxVisionRange 300
+				}
+			}
+		}
+
+		
 	}
 }
