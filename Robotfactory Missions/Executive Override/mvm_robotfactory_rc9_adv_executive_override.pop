@@ -29,6 +29,7 @@ WaveSchedule
 	PrecacheSound "mvm/executive_override/butler_wave2setup.mp3"
 	PrecacheSound "mvm/executive_override/butler_wave3setup.mp3"
 	PrecacheSound "mvm/executive_override/butler_wave4setup.mp3"
+	PrecacheSound "mvm/executive_override/butler_wave5setup.mp3"
 
 	PrecacheSound "mvm/executive_override/butler_wave3_secondbomb.mp3"
 	PrecacheSound "mvm/executive_override/butler_wave3_secondbombpickedup.mp3"
@@ -1203,6 +1204,8 @@ WaveSchedule
 			{
 				"targetname" "Wave5_SetupRelay"
 
+				"OnTrigger" "Stage1_StartRelay,Kill,0,-1"
+
 				"OnTrigger" "B1_wall_fix_relay,Trigger,,0,-1"
 				"OnTrigger" "C1_wall_fix_relay,Trigger,,0,-1"
 				"OnTrigger" "B1_wall_fix_relay,Trigger,,0.2,-1"
@@ -1229,6 +1232,19 @@ WaveSchedule
 				"OnTrigger" "door_front_r,Open,,0.1,-1"
 
 				"OnTrigger" "cylindrical_upgrades_deploy_relay,Trigger,,0,-1"
+
+				"OnTrigger" "Stage2RespawnBarrier,Enable,,0,-1"
+
+				"OnTrigger" "bridge_flank_door_C_unlock_relay,Trigger,,2,-1"
+				"OnTrigger" "A1_door_unlock_relay,Trigger,,2,-1"
+				"OnTrigger" "Wave5_NewArea,Show,,2,-1" 
+			}
+			training_annotation // Wave 5 Annotation
+			{
+				"targetname" "Wave5_NewArea"
+				"origin" "0 -64 428"
+				"display_text" "New area unlocked!"
+				"lifetime" "5"
 			}
 		}
 
@@ -1322,6 +1338,10 @@ WaveSchedule
 			logic_relay // Wave 5 Setup Relay
 			{
 				"targetname" "Wave5_VoiceSetupRelay"
+
+				"OnTrigger" "Wave5_VoiceSubtitlesRelay,Trigger,,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/executive_override/butler_wave5setup.mp3,0,-1"
+				"OnTrigger" "!parent,$PlaySoundToSelf,mvm/executive_override/butler_wave5setup.mp3,0,-1"
 			}
 			logic_relay // Wave 6 Setup Relay
 			{
@@ -1391,6 +1411,12 @@ WaveSchedule
 			{
 				"targetname" "Wave4_StartSubtitlesRelay"
 				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: An explosive charge has been detected.,0,-1"
+			}
+
+			logic_relay // Wave 5 Setup Subtitles Relay
+			{
+				"targetname" "Wave5_VoiceSubtitlesRelay"
+				"OnTrigger" "!parent,$DisplayTextChat,{7F7F7F}The Butler{reset}: Our control is halfway restored. New areas are unlocked for your convenience.s,0,-1"
 			}
 		}
 
@@ -3447,7 +3473,7 @@ WaveSchedule
 					EntFire(`holograms`, `Disable`, null, 0.2)
 					EntFire(`A_B_C_holograms`, `Disable`, null, 0.2)
 
-					EntFire(`Voiceline_WaveCounter`, `SetValue`, 4)
+					EntFire(`Voiceline_WaveCounter`, `SetValue`, 5)
 					EntFire(`VoiceDefaultInitRelay*`, `Trigger`, null, 5)
 
 					::CountdownCallbacks <- {
@@ -3525,15 +3551,15 @@ WaveSchedule
 		}
 
 		// Subwave 1
-		WaveSpawn // 4 Ricochet Blaster Scouts
+		WaveSpawn // 8 Ricochet Blaster Scouts
 		{
 			Name "Wave5_Subwave1_BlasterScouts"
 			Where spawnbot_stage2 [$SIGSEGV]
-			TotalCount 4
-			MaxActive 4
+			TotalCount 8
+			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 5
 			TotalCurrency 40
 
 			TFBot
@@ -3541,15 +3567,15 @@ WaveSchedule
 				Template T_TFBot_Scout_Laser_Ricochet
 			}
 		}
-		WaveSpawn // 10 Heavies
+		WaveSpawn // 12 Heavies
 		{
 			Name "Wave5_Subwave1_Heavies"
 			Where spawnbot_A_route_giant
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 2
 			TotalCurrency 40
 
 			TFBot
