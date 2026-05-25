@@ -28,6 +28,11 @@ WaveSchedule
 					Soundscape.KeyValueFromString(`soundscape`, `CactusV.Outside`)
 					Soundscape.DispatchSpawn()
 				}
+
+				EntFire(`fog_controller`, `SetColor`, `181 175 170`)
+				EntFire(`fog_controller`, `SetMaxDensity`, 1)
+				EntFire(`fog_controller`, `SetStartDist`, 1000)
+				EntFire(`fog_controller`, `SetEndDist`, 12000) 
 			  "
 		Delay -1
 	}
@@ -36,18 +41,22 @@ WaveSchedule
 
 	// Precached Skybox //
 
-    PrecacheGeneric "sky_aresup.vmt"
-    PrecacheGeneric "sky_aresup.vtf"
-    PrecacheGeneric "sky_aresdn.vmt"
-    PrecacheGeneric "sky_aresdn.vtf"
-    PrecacheGeneric "sky_aresft.vmt"
-    PrecacheGeneric "sky_areslf.vmt"
-    PrecacheGeneric "sky_aresrt.vmt"
-    PrecacheGeneric "sky_aresbk.vmt"
-    PrecacheGeneric "sky_aresside.vtf"
-	PrecacheGeneric "sky_areshdrup.vtf"
-	PrecacheGeneric "sky_areshdrdown.vtf"
-	PrecacheGeneric "sky_areshdrside.vtf"
+    PrecacheGeneric "mars_01up.vmt"
+    PrecacheGeneric "mars_01up.vtf"
+    PrecacheGeneric "mars_01dn.vmt"
+    PrecacheGeneric "mars_01dn.vtf"
+    PrecacheGeneric "mars_01ft.vmt"
+	PrecacheGeneric "mars_01ft.vtf"
+    PrecacheGeneric "mars_01lf.vmt"
+	PrecacheGeneric "mars_01lf.vtf"
+    PrecacheGeneric "mars_01rt.vmt"
+	PrecacheGeneric "mars_01rt.vtf"
+	PrecacheGeneric "mars_01bk.vmt"
+    PrecacheGeneric "mars_01bk.vtf"
+
+	// Precached Colour Correction //
+
+	PrecacheGeneric "materials/colorcorrection/inthewakeofignis.raw"
 
 	//// CUSTOM WEAPONS ////
 
@@ -55,6 +64,20 @@ WaveSchedule
 
 	PointTemplates
 	{
+		Core_PTs
+		{
+			logic_auto
+			{
+				"targetname" "theauto"
+
+				"OnMapSpawn" "tank_path_right_flank_20,AddOutput,OnPass !activator:SetSpeed:0:0:-1"
+				"OnMapSpawn" "tank_path_right_flank_20,AddOutput,OnPass tf_gamerules:PlayVO:doors/heavy_metal_stop1.wav:0:-1"
+				"OnMapSpawn" "tank_path_right_flank_20,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
+				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass !activator:SetSpeed:0:0:-1"
+				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass tf_gamerules:PlayVO:doors/heavy_metal_stop1.wav:0:-1"
+				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
+			}
+		}
 		TheAura
 		{
 			OnSpawnOutput
@@ -64,21 +87,32 @@ WaveSchedule
 			}
 			OnSpawnOutput
 			{
+				Target colorcorrectionaura
+				Action Enable
+			}
+			OnSpawnOutput
+			{
 				Target fog_controller
 				Action SetColor
-				Param "205 149 83"
+				Param "168 129 88"
+			}
+			OnSpawnOutput
+			{
+				Target fog_controller
+				Action SetStartDist
+				Param "200"
 			}
 			OnSpawnOutput
 			{
 				Target fog_controller
 				Action SetEndDist
-				Param "2500"
+				Param "2000"
 			}
 			OnSpawnOutput
 			{
 				Target fog_controller
 				Action SetMaxDensity
-				Param "0.75"
+				Param "0.9"
 			}
 			sky_camera
 			{
@@ -88,19 +122,32 @@ WaveSchedule
 				"scale" "16"
 				"fogenable" "1"
 				"use_angles" "1"
-				"fogstart" "1000"
-				"fogend" "2500"
+				"fogstart" "200"
+				"fogend" "2000"
 				"fogmaxdensity" "1"
-				"fogcolor" "205 149 83"
+				"fogcolor" "168 129 88"
 				"fogblend" "0"
 				"fogdir" "0 1 0"
 				"fogRadial" "1"
 			}
+			color_correction
+            {
+                "targetname" "colorcorrectionaura"
+                "origin" "0 0 0"
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" 0
+                "fadeOutDuration" 5
+                "StartDisabled" 1
+                "filename" "materials/colorcorrection/inthewakeofignis.raw"
+                "maxweight" "1"
+            }
 		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
+	SpawnTemplate "Core_PTs"
 	SpawnTemplate "TheAura"
 
 	//// EXTRA TANK PATHS ////
@@ -127,7 +174,7 @@ WaveSchedule
 		Node "416 820 796"
 		Node "400 780 796"
 		Node "360 750 796"
-		Node "336 692 796" // First Pitstop
+		Node "336 692 796" // First Pitstop (20)
 		Node "344 652 796"
 		Node "376 632 796"
 		Node "648 632 796"
@@ -141,7 +188,7 @@ WaveSchedule
 		Node "1072 -608 796"
 		Node "1056 -656 796"
 		Node "1024 -704 796"
-		Node "1008 -768 796" // Second Pitstop
+		Node "1008 -768 796" // Second Pitstop (34)
 		Node "1008 -864 796"
 	}
 
@@ -183,6 +230,11 @@ WaveSchedule
 
 	//// WAVES ////
 
+	// General Notes
+	// Slightly dark colour correction
+	// Make a skybox asset pack
+
+	// Wave 1 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -194,7 +246,7 @@ WaveSchedule
 					EntFire(`bombpath_arrows_clear_relay`, `trigger`, null, 6)
 					EntFire(`bombpath_left_relay`,`trigger`, null, 7)
 
-					SetSkyboxTexture(`sky_ares`)
+					SetSkyboxTexture(`sky_sandstorm`)
 
 					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
 					{
@@ -239,6 +291,7 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
 					WeaponRestrictions SecondaryOnly
 
 					CharacterAttributes
@@ -297,13 +350,13 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Loch Demos
+		WaveSpawn // 16 Loch Demos
 		{
 			Name "Wave1_Subwave1_LochDemos"
 			Where spawnbot
-			TotalCount 8
-			MaxActive 3
-			SpawnCount 1
+			TotalCount 16
+			MaxActive 6
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 2
 			TotalCurrency 60
@@ -396,16 +449,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Loch Demos
+		WaveSpawn // 10 Loch Demos
 		{
 			Name "Wave1_Subwave2_LochDemos"
 			WaitForAllSpawned "Wave1_Subwave1_GRapidSoldier"
 			Where spawnbot
-			TotalCount 8
-			MaxActive 3
-			SpawnCount 1
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
 			WaitBeforeStarting 16
-			WaitBetweenSpawns 2
+			WaitBetweenSpawns 3
 			TotalCurrency 60
 
 			TFBot
@@ -452,6 +505,10 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 2 Notes
+	// Rocket shotguns and battalions made for a whatever subwave
+	// Not as tanky as hoped; bonk scouts are not effective on Decoy
+	// GPyros are not effective choke pushers either, needs giga obliteration power
 	Wave
 	{
 		InitWaveOutput
@@ -462,6 +519,8 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `trigger`, null, 6)
 					EntFire(`bombpath_right_relay`,`trigger`, null, 7)
+
+					SetSkyboxTexture(`mars_01`)
 
 					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
 					{
@@ -749,6 +808,7 @@ WaveSchedule
 			}
 		} 
 	}
+	// Wave 3 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -760,13 +820,13 @@ WaveSchedule
 					EntFire(`bombpath_arrows_clear_relay`, `trigger`, null, 6)
 					EntFire(`bombpath_left_relay`,`trigger`, null, 7)
 
+					SetSkyboxTexture(`mars_01`)
+
 					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
 					{
 						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
 						Soundscape.DispatchSpawn()
 					}
-
-					IncludeScript(`arrow_crit_fix`, getroottable())
             	  "
         }
 		StartWaveOutput
@@ -830,7 +890,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Engineer_Ranger_Crit
-					Tag crit_fix
 				}
 				TFBot
 				{
@@ -874,7 +933,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Engineer_Ranger_Crit
-					Tag crit_fix
 				}
 				TFBot
 				{
@@ -931,7 +989,7 @@ WaveSchedule
 			MaxActive 4
 			SpawnCount 2
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 6
+			WaitBetweenSpawns 5
 			TotalCurrency 60
 
 			Squad
@@ -955,7 +1013,7 @@ WaveSchedule
 			MaxActive 6
 			SpawnCount 3
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 6
+			WaitBetweenSpawns 4
 			TotalCurrency 60
 
 			Squad
@@ -979,16 +1037,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Pyros
+		WaveSpawn // 10 Pyros
 		{
 			Name "Wave3_Subwave2_Pyros"
 			WaitForAllSpawned "Wave3_Subwave1_Demomen2"
 			Where spawnbot_invasion
-			TotalCount 8
-			MaxActive 4
+			TotalCount 10
+			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 18
-			WaitBetweenSpawns 6
+			WaitBetweenSpawns 3
 			TotalCurrency 40
 
 			TFBot
@@ -1015,7 +1073,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Engineer_Ranger_Crit
-					Tag crit_fix
 				}
 				TFBot
 				{
@@ -1031,14 +1088,14 @@ WaveSchedule
 				}
 			} 
 		}
-		WaveSpawn // 8 Soldiers
+		WaveSpawn // 6 Soldiers
 		{
 			Name "Wave3_Subwave2_Soldiers2"
 			WaitForAllSpawned "Wave3_Subwave2_ChargedEngineer"
 			Where spawnbot
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -1050,6 +1107,8 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 4 Notes
+	// Fix tank perching
 	Wave
 	{
 		InitWaveOutput
@@ -1061,7 +1120,7 @@ WaveSchedule
 					EntFire(`bombpath_arrows_clear_relay`, `trigger`, null, 6)
 					EntFire(`bombpath_left_relay`,`trigger`, null, 7)
 
-					SetSkyboxTexture(`sky_ares`)
+					SetSkyboxTexture(`mars_01`)
 
 					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
 					{
@@ -1099,20 +1158,20 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 4 GSoldiers
+		WaveSpawn // 4 GRapid Soldiers
 		{
-			Name "Wave4_Subwave1_GSoldier"
+			Name "Wave4_Subwave1_GRapidSoldier"
 			Where spawnbot
 			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			MaxActive 2
+			SpawnCount 1
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 20
 			TotalCurrency 120
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Soldier
+				Template T_TFBot_Giant_Soldier_Spammer
 			}
 		}
 		WaveSpawn // 80 Persian Demoknights
@@ -1136,7 +1195,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave1_Check"
-			WaitForAllSpawned "Wave4_Subwave1_GSoldier"
+			WaitForAllSpawned "Wave4_Subwave1_GRapidSoldier"
 		}
 		WaveSpawn
 		{
@@ -1249,14 +1308,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 12 Burst Demos
+		WaveSpawn // 9 Burst Demos
 		{
 			Name "Wave4_Subwave2_BurstDemos"
 			WaitForAllSpawned "Wave4_Subwave2_GPyro2"
 			Where spawnbot
-			TotalCount 12
-			MaxActive 8
-			SpawnCount 4
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 5
 			TotalCurrency 40
@@ -1299,14 +1358,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 8 Burst Demos
+		WaveSpawn // 5 Burst Demos
 		{
 			Name "Wave4_Subwave2_BurstDemos2"
 			WaitForAllSpawned "Wave4_Subwave2_GPyro3"
 			Where spawnbot
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 8
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -1332,6 +1391,75 @@ WaveSchedule
 			{
 				Class Heavy
 				Skill Easy
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `trigger`, null, 6)
+					EntFire(`bombpath_left_relay`,`trigger`, null, 7)
+
+					SetSkyboxTexture(`mars_01`)
+
+					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
+					{
+						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
+						Soundscape.DispatchSpawn()
+					}
+
+					IncludeScript(`tankextensions_main`, getroottable())
+                    IncludeScript(`tankextensions/combattank`, getroottable())
+                    IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
+						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
+						COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
+					})
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+		WaveSpawn // 1 Mini Rocket Tank
+		{
+			Name "Wave4_Subwave2_MiniRocketTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Name "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5"
+				Template Tank_Combat_Rocket_Tiny
+				Health 15000
+				StartingPathTrackNode "tank_path_right_flank_1"
 			}
 		}
 	}
