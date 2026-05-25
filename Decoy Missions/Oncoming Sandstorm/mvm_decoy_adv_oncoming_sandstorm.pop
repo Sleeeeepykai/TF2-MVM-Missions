@@ -147,6 +147,22 @@ WaveSchedule
 
 	//// ROBOT TEMPLATES ////
 
+	Templates
+	{
+		T_TFBot_Demo_Burst_Accurate
+		{
+			Name "Biblically Accurate Burst Demo"
+			Template T_TFBot_Demoman_Burst
+			Attributes HoldFireUntilFullReload
+			Attributes AlwaysFireWeapon
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+				"clip size upgrade atomic" 2
+			}
+		}
+	}
+
 	//// MISSION BOTS ////
 
 	Mission // Sentry Buster
@@ -1083,19 +1099,59 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn
+		WaveSpawn // 4 GSoldiers
+		{
+			Name "Wave4_Subwave1_GSoldier"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 20
+			TotalCurrency 120
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+			}
+		}
+		WaveSpawn // 80 Persian Demoknights
 		{
 			Name "Wave4_Subwave1_Demoknights"
 			Where spawnbot
-			TotalCount 100
+			TotalCount 80
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 120
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Persian
+			}
 		}
+
+		// Subwave 1 Check
+		WaveSpawn
+		{
+			Name "Wave1_Check"
+			WaitForAllSpawned "Wave4_Subwave1_GSoldier"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Check"
+			WaitForAllSpawned "Wave4_Subwave1_Demoknights"
+		}
+
 		WaveSpawn // 1 Mini Rocket Tank
 		{
 			Name "Wave4_Subwave2_MiniRocketTank"
+			WaitForAllSpawned "Wave1_Check"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 14
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -1108,6 +1164,174 @@ WaveSchedule
 				Template Tank_Combat_Rocket_Tiny
 				Health 15000
 				StartingPathTrackNode "tank_path_right_flank_1"
+			}
+		}
+		WaveSpawn // 1 GFury Pyro and 3 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_GPyro"
+			WaitForAllSpawned "Wave4_Subwave2_MiniRocketTank"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave4_Subwave2_Heavies"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GFury Pyro and 3 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_GPyro2"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+		WaveSpawn // 12 Burst Demos
+		{
+			Name "Wave4_Subwave2_BurstDemos"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro2"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demo_Burst_Accurate
+			}
+		}
+
+		WaveSpawn // 1 GFury Pyro and 3 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_GPyro3"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro2"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+		WaveSpawn // 8 Burst Demos
+		{
+			Name "Wave4_Subwave2_BurstDemos2"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro3"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demo_Burst_Accurate
+			}
+		}
+		WaveSpawn // 8 Heavies
+		{
+			Name "Wave4_Subwave2_Heavies2"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro3"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 7
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
 			}
 		}
 	}
