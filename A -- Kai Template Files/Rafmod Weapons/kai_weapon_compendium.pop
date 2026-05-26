@@ -5,10 +5,11 @@ WaveSchedule
 	// Precached Sounds
 	PrecacheSound "polishcannon.wav"
 
-	//// WEAPONS ////
+	//// CUSTOM WEAPONS ////
 
 	CustomWeapon
 	{
+		//// SOLDIER WEAPONS ////
 		"The Dumpster Fire"
 		{
 			OriginalItemName "The Beggar's Bazooka"
@@ -25,6 +26,41 @@ WaveSchedule
 			"crit mod disabled" 1
 			"custom weapon fire sound" "DumpsterFire.Fire"
 		}
+
+		//// HEAVY WEAPONS ////
+		"Soul of Dave"
+		{
+			OriginalItemName "The Killing Gloves of Boxing"
+
+			"max health additive bonus" 600
+			"model scale" 1.5
+			"maxammo primary reduced" 0
+			"maxammo secondary reduced" 0
+
+			"special item description" "You have been imbued with the soul of Overclocked Dave."
+			"special item description 2" "You now gain powerful rocket gloves, at the cost of your other weapons."
+		}
+		"SoulOfDave_Weapon"
+        {
+            OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+			"damage bonus" 0.65
+			"no damage falloff" 1
+			"custom item model" "models/weapons/c_models/c_boxing_gloves/c_boxing_gloves.mdl"
+			"custom projectile model" "models/props_halloween/hwn_spell_boxing_glove.mdl"
+			"custom weapon fire sound" "Weapon_BoxingGloves.Miss"
+			"custom impact sound" "Weapon_BoxingGloves.HitWorld"
+			"explosion particle" "mvm_soldier_shockwave"
+			"custom kill icon" "gloves"
+			"mult projectile scale" 1.5
+			"projectile speed decreased" 0.9
+			"blast radius decreased" 0.2
+			"projectile detonate time" 1
+			"mod projectile heat seek power" 10000
+			"mod projectile heat aim time" 0.05
+			"mod projectile heat follow crosshair" 1
+        }
+
+		//// ALL CLASS WEAPONS ////
 		"The Goog"
 		{
 			OriginalItemName "The Conscientious Objector"
@@ -36,6 +72,9 @@ WaveSchedule
   			"custom texture lo" "x518f832b"
 		}
 	}
+
+	//// SOUNDSCRIPTS ////
+
 	CustomScriptSounds
 	{
 		"DumpsterFire.Fire"
@@ -46,6 +85,58 @@ WaveSchedule
 			"wave"		")polishcannon.wav"
 		}
 	}
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		SoulOfDave_PT
+		{
+			OnSpawnOutput
+			{
+				Target "SoulOfDaveMimic"
+				Action "$SetOwner"
+				Param  "!activator"
+				Delay  0
+			}
+			OnSpawnOutput
+			{
+				Target "SoulOfDaveMimic"
+				Action "firemultiple"
+				Param 1
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SoulOfDaveMimic"
+				Action Kill
+				Delay 0.2
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname"       "SoulOfDaveMimic"
+				"origin"           "0 20 100"
+				"angles"           "0 0 0"
+				"teamnum"          "3"
+				"$weaponname"    "SoulOfDave_Weapon"
+				"$firetime"      "1.0"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//PlayerItemEquipSpawnTemplate
+	PlayerShootTemplate
+	{
+		Name "SoulOfDave_PT"
+		ItemName "Soul of Dave"
+		Offset "0 0 -100"
+		//Bone bip_spine_2
+	}
+
+	//// EXTRA PLAYER WEAPONS ////
+
 	ExtraLoadoutItems
 	{
 		Soldier
@@ -53,6 +144,16 @@ WaveSchedule
 			Primary
 			{
 				Item "The Dumpster Fire"
+				Cost 0
+				AllowedMinWave 1
+				AllowRefund 1
+			}
+		}
+		Heavyweapons
+		{
+			Melee
+			{
+				Item "Soul of Dave"
 				Cost 0
 				AllowedMinWave 1
 				AllowRefund 1
