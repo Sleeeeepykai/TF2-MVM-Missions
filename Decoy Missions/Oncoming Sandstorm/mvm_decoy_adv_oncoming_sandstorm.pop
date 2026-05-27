@@ -66,6 +66,8 @@ WaveSchedule
 
 	PointTemplates
 	{
+		//// Core PTs ////
+
 		Core_PTs
 		{
 			logic_auto
@@ -86,9 +88,14 @@ WaveSchedule
 				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
 
 				"OnMapSpawn" "func_flagdetectionzone,AddOutput,OnStartTouchFlag combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5:SetSpeed:75:0:-1"
+
+				"OnMapSpawn" "func_flagdetectionzone,AddOutput,OnStartTouchFlag PatrolTransitionRelay:Trigger::0:-1"
 			}
 		}
-		TheAura
+
+		//// Map PTs ////
+
+		Sandstorm_PT
 		{
 			OnSpawnOutput
 			{
@@ -153,12 +160,27 @@ WaveSchedule
                 "maxweight" "1"
             }
 		}
+
+		//// Robot PTs ////
+
+		SniperPatrol_PT
+		{
+			NoFixUp 1
+			RemoveIfKilled "PatrolTransitionRelay"
+
+			logic_relay
+			{
+				"targetname" "PatrolTransitionRelay"
+				"OnTrigger" "!parent,$ChangeAttributes,HatchPatrol_Stage1_Dormant,0,-1"
+				"OnTrigger" "PatrolTransitionRelay,Kill,0.1,-1"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "Core_PTs"
-	SpawnTemplate "TheAura"
+	SpawnTemplate "Sandstorm_PT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -287,7 +309,7 @@ WaveSchedule
 			Skill Expert
 			Health 3000
 			Attributes MiniBoss
-			Attributes IgnoreFlag
+			Attributes SuppressFire
 			WeaponRestrictions PrimaryOnly
 
 			MaxVisionRange 1000
@@ -1628,7 +1650,9 @@ WaveSchedule
 			{
 				Name "Dune Hunter"
 				Template T_TFBot_Giant_Sniper
-				Action FollowPath
+				Action Mobber
+
+				IgnoreNavAvoid 1
 
 				Item "The AWPer Hand"
 				Item "Desert Marauder"
@@ -1639,82 +1663,328 @@ WaveSchedule
 				{
 					Target "!self"
 					Action "$ChangeAttributes"
-					Param Dormant
+					Param FrontPatrol_Stage1_Dormant
 					Delay 0.1
-				}
-
-				Path
-				{
-					Node
-					{
-						Target "328 584 584"
-						Wait 5
-
-						Output
-						{
-							Target !activator
-							Action $ChangeAttributes
-							Param "Active"
-						}
-					}
-					Node
-					{
-						Target "1024 -768 564"
-						Wait 5
-
-						Output
-						{
-							Target !activator
-							Action $ChangeAttributes
-							Param "Active"
-						}
-					}
+					Repeats 1
+					Cooldown -1
 				}
 
 				EventChangeAttributes
 				{
-					Dormant [$SIGSEGV]
+					// Front Patrol
+					FrontPatrol_Stage1_Dormant [$SIGSEGV]
 					{
 						WeaponRestrictions SecondaryOnly
 
-						MaxVisionRange 500
+						MaxVisionRange 400
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.1
+							Cooldown 0.1
+							Duration 1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+
+						InterruptAction
+						{
+							Target "32 1284 665"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 0.1
+							WaitUntilDone 1
+							OnDoneChangeAttributes "FrontPatrol_Stage1_Active"
+						}
 					}
-					Active [$SIGSEGV]
+					FrontPatrol_Stage1_Active [$SIGSEGV]
 					{
 						WeaponRestrictions PrimaryOnly
 
-						MaxVisionRange 1000
+						MaxVisionRange 1250
 
-						WeaponSwitch
+						FireWeapon
 						{
-							Type "Primary"
-							MaxTargetRange 9999
-							MinTargetRange 501
-							Delay 0.1
-							Repeats 0
-							Cooldown 0
+							Type Primary
+							Delay 0.5
+							Cooldown 2.25
+							Duration 0.1
 							IfSeeTarget 1
+							IfLeftSpawn 1
 						}
-						WeaponSwitch
-						{
-							Type "Secondary"
-							MaxTargetRange 500
-							MinTargetRange 1
-							Delay 0.1
-							Repeats 1
-							Cooldown 0
-							IfSeeTarget 1
-						}
-
 						FireInput
 						{
-							Target "!self"
-							Action "$ChangeAttributes"
-							Param Dormant
-							Delay 5
+							Target !self
+							Action $AddCond
+							Param 1
+							Delay 0.1
+							Cooldown 0.1
+							IfSeeTarget 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $RemoveCond
+							Param 1
+							Delay 2
+							Cooldown 1
+							IfNoTarget 1
+						}
+
+						InterruptAction
+						{
+							Target "32 1284 665"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 8
+							WaitUntilDone 1
+							OnDoneChangeAttributes "FrontPatrol_Stage2_Dormant"
+						}
+					}
+
+					FrontPatrol_Stage2_Dormant [$SIGSEGV]
+					{
+						WeaponRestrictions SecondaryOnly
+
+						MaxVisionRange 400
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.1
+							Cooldown 0.1
+							Duration 1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+
+						InterruptAction
+						{
+							Target "328 584 584"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 0.1
+							WaitUntilDone 1
+							OnDoneChangeAttributes "FrontPatrol_Stage2_Active"
+						}
+					}
+					FrontPatrol_Stage2_Active [$SIGSEGV]
+					{
+						WeaponRestrictions PrimaryOnly
+
+						MaxVisionRange 1250
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.5
+							Cooldown 2.25
+							Duration 0.1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $AddCond
+							Param 1
+							Delay 0.1
+							Cooldown 0.1
+							IfSeeTarget 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $RemoveCond
+							Param 1
+							Delay 2
+							Cooldown 1
+							IfNoTarget 1
+						}
+
+						InterruptAction
+						{
+							Target "328 584 584"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 8
+							WaitUntilDone 1
+							OnDoneChangeAttributes "FrontPatrol_Stage1_Dormant"
+						}
+					}
+
+					// Hatch Patrol
+					HatchPatrol_Stage1_Dormant [$SIGSEGV]
+					{
+						WeaponRestrictions SecondaryOnly
+
+						MaxVisionRange 400
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.1
+							Cooldown 0.1
+							Duration 1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+
+						InterruptAction
+						{
+							Target "1024 -768 564"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 0.1
+							WaitUntilDone 1
+							OnDoneChangeAttributes "HatchPatrol_Stage1_Active"
+						}
+					}
+					HatchPatrol_Stage1_Active [$SIGSEGV]
+					{
+						WeaponRestrictions PrimaryOnly
+
+						MaxVisionRange 1250
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.5
+							Cooldown 2.25
+							Duration 0.1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $AddCond
+							Param 1
+							Delay 0.1
+							Cooldown 0.1
+							IfSeeTarget 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $RemoveCond
+							Param 1
+							Delay 2
+							Cooldown 1
+							IfNoTarget 1
+						}
+
+						InterruptAction
+						{
+							Target "1024 -768 564"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 8
+							WaitUntilDone 1
+							OnDoneChangeAttributes "HatchPatrol_Stage2_Dormant"
+						}
+					}
+					HatchPatrol_Stage2_Dormant [$SIGSEGV]
+					{
+						WeaponRestrictions SecondaryOnly
+
+						MaxVisionRange 400
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.1
+							Cooldown 0.1
+							Duration 1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+
+						InterruptAction
+						{
+							Target "328 584 584"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 0.1
+							WaitUntilDone 1
+							OnDoneChangeAttributes "HatchPatrol_Stage2_Active"
+						}
+					}
+					HatchPatrol_Stage2_Active [$SIGSEGV]
+					{
+						WeaponRestrictions PrimaryOnly
+
+						MaxVisionRange 1250
+
+						FireWeapon
+						{
+							Type Primary
+							Delay 0.5
+							Cooldown 2.25
+							Duration 0.1
+							IfSeeTarget 1
+							IfLeftSpawn 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $AddCond
+							Param 1
+							Delay 0.1
+							Cooldown 0.1
+							IfSeeTarget 1
+						}
+						FireInput
+						{
+							Target !self
+							Action $RemoveCond
+							Param 1
+							Delay 2
+							Cooldown 1
+							IfNoTarget 1
+						}
+
+						InterruptAction
+						{
+							Target "328 584 584"
+							Delay 0.5
+							Repeats 1
+							Cooldown -1
+							Distance 50
+							Duration 8
+							WaitUntilDone 1
+							OnDoneChangeAttributes "HatchPatrol_Stage1_Dormant"
 						}
 					}
 				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave5_Subwave1_GDemo"
+			Where spawnbot
+			TotalCount 1
+			WaitBeforeStarting 999
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Burst
 			}
 		}
 	}
