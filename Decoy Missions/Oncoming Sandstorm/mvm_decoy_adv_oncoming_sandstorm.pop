@@ -91,6 +91,10 @@ WaveSchedule
 
 				"OnMapSpawn" "func_flagdetectionzone,AddOutput,OnStartTouchFlag PatrolTransitionRelay:Trigger::0:-1"
 			}
+			point_populator_interface
+			{
+				"targetname" "pop_interface"
+			}
 		}
 
 		//// Map PTs ////
@@ -166,13 +170,14 @@ WaveSchedule
 		SniperPatrol_PT
 		{
 			NoFixUp 1
+
 			RemoveIfKilled "PatrolTransitionRelay"
 
 			logic_relay
 			{
 				"targetname" "PatrolTransitionRelay"
-				"OnTrigger" "!parent,$ChangeAttributes,HatchPatrol_Stage1_Dormant,0,-1"
-				"OnTrigger" "PatrolTransitionRelay,Kill,0.1,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,HatchPatrol_Stage1_Dormant,0,-1"
+				"OnTrigger" "!self,Kill,1,-1"
 			}
 		}
 	}
@@ -1653,8 +1658,12 @@ WaveSchedule
 				Action Mobber
 
 				IgnoreNavAvoid 1
+				AlwaysGlow 1
+
+				SpawnTemplate "SniperPatrol_PT"
 
 				Item "The AWPer Hand"
+				Item "The Razorback"
 				Item "Desert Marauder"
 				Item "The Conspicuous Camouflage"
 				Item "The Cammy Jammies"
@@ -1975,16 +1984,139 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn // 1 GBurst Sticky Demo and 3 Dragon Fury Pyros
+		{
+			Name "Wave5_Subwave1_GBurstStickyDemo"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Stickybomb_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+			}
+		}
+		WaveSpawn // 18 Pyros
+		{
+			Name "Wave5_Subwave1_Pyros"
+			WaitForAllSpawned "Wave5_Subwave1_GBurstStickyDemo"
+			Where spawnbot
+			TotalCount 18
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Class Pyro
+					Skill Normal
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Normal
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"airblast disabled" 1
+					}
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Normal
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"airblast disabled" 1
+					}
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Sticky Demo and 4 Dragon Fury Pyros
+		{
+			Name "Wave5_Subwave1_GBurstStickyDemo2"
+			WaitForAllSpawned "Wave5_Subwave1_GBurstStickyDemo"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Stickybomb_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+			}
+		}
 		WaveSpawn
 		{
-			Name "Wave5_Subwave1_GDemo"
+			Name "Wave5_Subwave1_ChargedSoldiers"
+			WaitForAllSpawned "Wave5_Subwave1_GBurstStickyDemo2"
 			Where spawnbot
-			TotalCount 1
-			WaitBeforeStarting 999
+			TotalCount 14
+			MaxActive 10
+			SpawnCount 7
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 60
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Demoman_Burst
+				
 			}
 		}
 	}
