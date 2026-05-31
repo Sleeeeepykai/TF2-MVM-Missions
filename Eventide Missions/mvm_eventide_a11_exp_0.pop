@@ -43,25 +43,28 @@ WaveSchedule
 
 	PointTemplates
     {
-		Ubertank //Yoinked from Hell-Met
+		Core_PTs
 		{
-			NoFixup 1
-			logic_relay //relay that disables damage to tanks named "ubertank1"
+			logic_relay
 			{
-				"targetname" "tank_uber_on"
-				"OnTrigger" "ubertank,SetDamageFilter,filter_yes,0,-1"
+				"targetname" "Wave1_TimerSet"
+
+				"OnTrigger" "robot_bomb,SetReturnTime,45,0,-1"
+				"OnTrigger" "robot_bomb,ShowTimer,1,0,-1"
 			}
-			logic_relay // relay that enables damage to tanks named "ubertank1"
+			logic_relay
 			{
-				"targetname" "tank_uber_off"
-				"OnTrigger" "ubertank,SetDamageFilter,filter_red,0,-1"
-				"OnTrigger" "ubertank,Skin,0,0,-1"
+				"targetname" "Wave2_TimerSet"
+
+				"OnTrigger" "robot_bomb,SetReturnTime,70,0,-1"
+				"OnTrigger" "robot_bomb,ShowTimer,1,0,-1"
 			}
-			filter_activator_name
+			logic_relay
 			{
-				"filtername" "absolutely"
-				"Negated" "0"
-				"targetname" "filter_yes"
+				"targetname" "Wave3_TimerSet"
+
+				"OnTrigger" "robot_bomb,SetReturnTime,100,0,-1"
+				"OnTrigger" "robot_bomb,ShowTimer,1,0,-1"
 			}
 		}
 		distort //Yoinked from Yoovy
@@ -464,10 +467,9 @@ WaveSchedule
 			training_annotation
 			{
 			  "targetname"   "tankwarning"
-			  "parentname" 	 "ubertank"
 			  "display_text" "Destroy The Transmitters To Deactivate The Uber!"
 			  "lifetime"     "6"
-			  "origin" "-4000 -3000 135"
+			  "origin" "-3065 1900 -300"
 			}
 		}
 	}
@@ -775,8 +777,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
 					EntFire(`bombpath_right_relay`, `Trigger`)
-					EntFire(`robot_bomb`, `SetReturnTime`, `45`)
-					EntFire(`robot_bomb`, `ShowTimer`, `1`)
+					EntFire(`Wave1_TimerSet`, `Trigger`)
                   "
         }
 		StartWaveOutput
@@ -1388,8 +1389,11 @@ WaveSchedule
             Action RunScriptCode
             Param "
 					EntFire(`bombpath_left_relay`, `Trigger`)
-					EntFire(`robot_bomb`, `SetReturnTime`, `70`)
-					EntFire(`robot_bomb`, `ShowTimer`, `1`)
+					EntFire(`Wave2_TimerSet`, `Trigger`)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+					IncludeScript(`tankextensions/ubertank`, getroottable())
+					IncludeScript(`tankextensions/stickytank`, getroottable())
                   "
         }
 		StartWaveOutput
@@ -1430,15 +1434,12 @@ WaveSchedule
 			MaxActive	1
 			SpawnCount	1
 			WaitBeforeStarting	0
-			FirstSpawnWarningSound player\invulnerable_on.wav
 			
 			Tank
 			{
 				Health	25000
-				Name "ubertank"
-				Skin 2 [$SIGSEGV]
+				Name "ubertank|0|-1"
 				Classicon tank_uber_lite
-				Model "models/bots/boss_bot/boss_tank_ubered.mdl" [$SIGSEGV]
 				Speed	75 
 				StartingPathTrackNode "tank_path_leftpath_1"
 				OnBombDroppedOutput
@@ -1455,15 +1456,6 @@ WaveSchedule
 				Param "
 				ClientPrint(null,3,`\x0799CCFFUbertank deployed with 25k (25000) HP!`)
 				"
-			}
-		}
-		WaveSpawn // Uber Tank Enable
-		{
-			WaitBeforeStarting	0
-			FirstSpawnOutput
-			{
-				Target tank_uber_on
-				Action Trigger 
 			}
 		}
 		WaveSpawn // Uber Tank Warning
@@ -1537,8 +1529,11 @@ WaveSchedule
 
 			DoneOutput
 			{
-				Target tank_uber_off
-				Action Trigger 
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`ubertank|0|-1`,`CallScriptFunction`,`ToggleUber`)
+					  "
 			}
 		}
 
@@ -1656,7 +1651,7 @@ WaveSchedule
 		{
 			Name 2ba
 			WaitForAllDead 2aa
-			Where spawnbot_rightpath_invasion
+			Where spawnbot_leftpath_invasion
 			TotalCount 27
 			SpawnCount 3
 			MaxActive 10
@@ -1881,15 +1876,12 @@ WaveSchedule
 			MaxActive	1
 			SpawnCount	1
 			WaitBeforeStarting	2
-			FirstSpawnWarningSound player\invulnerable_on.wav
 			
 			Tank
 			{
 				Health	25000
-				Name "ubertank"
-				Skin 2 [$SIGSEGV]
+				Name "ubertank|0|-1"
 				Classicon tank_uber_lite
-				Model "models/bots/boss_bot/boss_tank_ubered.mdl" [$SIGSEGV]
 				Speed	75 
 				StartingPathTrackNode "tank_path_leftpath_1"
 				OnBombDroppedOutput
@@ -1908,15 +1900,7 @@ WaveSchedule
 				"
 			}
 		}
-		WaveSpawn
-		{
-			WaitForAllSpawned wave2tank2
-			FirstSpawnOutput
-			{
-				Target tank_uber_on
-				Action Trigger 
-			}
-		}
+
 		WaveSpawn // 1 GDeflector and 2 GRegen Medics
 		{
 			Name 2ea
@@ -1965,8 +1949,11 @@ WaveSchedule
 
 			DoneOutput
 			{
-				Target tank_uber_off
-				Action Trigger 
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`ubertank|0|-1`,`CallScriptFunction`,`ToggleUber`)
+					  "
 			}
 		}
 		WaveSpawn // 20 Dragon's Fury Pyros
@@ -2093,34 +2080,20 @@ WaveSchedule
 			MaxActive	1
 			SpawnCount	1
 			WaitBeforeStarting	5
-			FirstSpawnOutput                                                                                                                                                            
-			{
-				Target ST_maker_relay   
-				Action Trigger                         
-			}
+
 			Tank
 			{
 				Health	25000
-				Name	"sticky_tank"
+				Name	"stickytank"
 				Classicon tank_sticky_hellmet
 				Speed	75
-				StartingPathTrackNode tank_path_leftpath_1
-				OnKilledOutput                                  
-				{
-					Target ST_kill_relay
-					Action Trigger                         
-				}
+				StartingPathTrackNode "tank_path_leftpath_1"
 				OnBombDroppedOutput
 				{
 					Target	boss_deploy_relay
 					Action	Trigger
 				}
 			}
-		}
-		WaveSpawn
-		{
-			WaitForAllDead 2fa
-			WaitBeforeStarting 5
 			FirstSpawnOutput
 			{
 				Target wave_start_relay
@@ -2400,8 +2373,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
 					EntFire(`bombpath_right_relay`, `Trigger`)
-					EntFire(`robot_bomb`, `SetReturnTime`, `100`)
-					EntFire(`robot_bomb`, `ShowTimer`, `1`)
+					EntFire(`Wave3_TimerSet`, `Trigger`)
 
 					IncludeScript(`tankextensions_main`, getroottable())
 					IncludeScript(`tankextensions/vactank`, getroottable())
