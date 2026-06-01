@@ -5,9 +5,15 @@ printl("Robot Transformer Initialised")
 
 // Classes Folding
 foreach( _class in [ "NetProps", "Entities", "EntityOutputs", "NavMesh", "Convars" ] )
+{
 	foreach( k, v in ROOT[_class].getclass() )
+	{
 		if ( !( k in ROOT ) && k != "IsValid" )
+		{
 			ROOT[k] <- ROOT[_class][k].bindenv( ROOT[_class] )
+		}
+	}
+}
 
 // Constants Folding
 if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done once
@@ -215,9 +221,9 @@ const MAX_WEAPONS = 8
 
 	//// TRANSFORMER MAIN FUNCTIONS ////
 
-	// SCOUT TRANSFORMS //
+	// SCOUT TEMPLATES //
 
-	// SOLDIER TRANSFORMS //
+	// SOLDIER TEMPLATES //
 	function BigrockBurst(Target)
 	{
 		// Finding the Player to Transform
@@ -247,7 +253,7 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire")
+		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "soldier_burstfire_hyper_lite")
 
 		// Stripping Cosmetics and Weapons
 		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
@@ -283,9 +289,9 @@ const MAX_WEAPONS = 8
 		Primary.AddAttribute("clip size upgrade atomic", 5.0, 0)
 	}
 
-	// PYRO TRANSFORMS //
+	// PYRO TEMPLATES //
 
-	// DEMOMAN TRANSFORMS //
+	// DEMOMAN TEMPLATES //
 	function HammerKnight(Target)
 	{
 		local TransformerTarget
@@ -314,7 +320,7 @@ const MAX_WEAPONS = 8
 		TransformerTarget.AddCondEx(66, 0.25, null)
 		TransformerTarget.AddCondEx(51, 1, null)
 
-		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "demoknight_giant")
+		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "mallet_lite")
 
 		// Stripping Cosmetics and Weapons
 		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
@@ -327,18 +333,15 @@ const MAX_WEAPONS = 8
 		}
 
 		GivePlayerWeapon(TransformerTarget, "tf_weapon_sword", 172)
-		GivePlayerCosmetic(TransformerTarget, 405, "models/workshop/player/items/demo/demo_booties/demo_booties.mdl")
-		CTFBot.GenerateAndWearItem.call(TransformerTarget, "The Chargin' Targe")
 
 		// Setting Character Attributes
-		TransformerTarget.AddCustomAttribute("max health additive bonus", 3800, 0)
+		TransformerTarget.AddCustomAttribute("max health additive bonus", 3825, 0)
 		TransformerTarget.SetHealth(4000)
 		TransformerTarget.AddCustomAttribute("move speed penalty", 0.5, 0)
 		TransformerTarget.AddCustomAttribute("damage force reduction", 0.4, 0)
 		TransformerTarget.AddCustomAttribute("airblast vulnerability multiplier", 0.4, 0)
 		TransformerTarget.AddCustomAttribute("override footstep sound set", 4, 0)
 		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
-		TransformerTarget.AddCustomAttribute("mult charge turn control", 6, 0)
 
 		// Setting Item Attributes
 		local Melee = GetItemInSlot(TransformerTarget, 2 )
@@ -498,13 +501,13 @@ const MAX_WEAPONS = 8
 		Primary.AddAttribute("attack projectiles", 1, 0)
 	}
 
-	// ENGINEER TRANSFORMS //
+	// ENGINEER TEMPLATES //
 
-	// MEDIC TRANSFORMS //
+	// MEDIC TEMPLATES //
 
-	// SNIPER TRANSFORMS //
+	// SNIPER TEMPLATES //
 
-	// SPY TRANSFORMS //
+	// SPY TEMPLATES //
 };
 
 __CollectGameEventCallbacks(RobotTransformer)
