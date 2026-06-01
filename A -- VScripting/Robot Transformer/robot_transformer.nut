@@ -222,6 +222,65 @@ const MAX_WEAPONS = 8
 	//// TRANSFORMER MAIN FUNCTIONS ////
 
 	// SCOUT TEMPLATES //
+	function MajorLeague(Target)
+	{
+		// Finding the Player to Transform
+		local TransformerTarget
+		for (local i = 1; i <= MaxPlayers; i++)
+		{
+			local Player = PlayerInstanceFromIndex(i)
+			if (Player == null)
+				continue
+			if (GetPlayerName(Player) == Target)
+			{
+				TransformerTarget = Player;
+				break;
+			}
+		}
+
+		// Executing Transformation
+		TransformerTarget.SetPlayerClass(Constants.ETFClass.TF_CLASS_SCOUT)
+		SetPropInt(TransformerTarget, "m_Shared.m_iDesiredPlayerClass", Constants.ETFClass.TF_CLASS_SCOUT)
+
+		TransformerTarget.SetCustomModelWithClassAnimations("models/bots/scout_boss/bot_scout_boss.mdl")
+
+		TransformerTarget.SetUseBossHealthBar(true)
+		TransformerTarget.SetIsMiniBoss(true)
+		TransformerTarget.SetModelScale(1.75, 0)
+		TransformerTarget.AddCondEx(56, -1, null)
+		TransformerTarget.AddCondEx(66, 0.25, null)
+		TransformerTarget.AddCondEx(51, 1, null)
+
+		SetPropString(TransformerTarget, "m_PlayerClass.m_iszClassIcon", "scout_stun_giant")
+
+		// Stripping Cosmetics and Weapons
+		for (local Next, Current = TransformerTarget.FirstMoveChild(); Current != null; Current = Next)
+		{
+			SetPropBool(Current, "m_bForcePurgeFixedupStrings", true)
+
+			Next = Current.NextMovePeer()
+			if (Current instanceof CEconEntity)
+				Current.Destroy()
+		}
+		
+		GivePlayerWeapon(TransformerTarget, "tf_weapon_bat_wood", 44)
+		GivePlayerCosmetic(TransformerTarget, 707, "models/player/items/scout/boombox.mdl")
+		GivePlayerCosmetic(TransformerTarget, 486, "models/player/items/scout/summer_shades.mdl")
+
+		// Setting Character Attributes
+		TransformerTarget.AddCustomAttribute("max health additive bonus", 2875, 0)
+		TransformerTarget.SetHealth(3000)
+		TransformerTarget.AddCustomAttribute("ammo regen", 100.0, 0)
+		TransformerTarget.AddCustomAttribute("move speed bonus", 8, 0)
+		TransformerTarget.AddCustomAttribute("damage force reduction", 0.7, 0)
+		TransformerTarget.AddCustomAttribute("airblast vulnerability multiplier", 0.7, 0)
+		TransformerTarget.AddCustomAttribute("override footstep sound set", 5, 0)
+		TransformerTarget.AddCustomAttribute("voice pitch scale", 0, 0)
+
+		// Setting Item Attributes
+		local Melee = GetItemInSlot(TransformerTarget, 2)
+		Melee.AddAttribute("effect bar recharge rate increased", 0.001, 0)
+	}
 
 	// SOLDIER TEMPLATES //
 	function BigrockBurst(Target)
