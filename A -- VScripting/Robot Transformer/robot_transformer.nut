@@ -436,7 +436,7 @@ const MAX_WEAPONS = 8
 				DispatchParticleEffect(`hammer_impact_button`, HitPos + Vector(0,0,25), Vector(0, 0, 0))
 				local Bomb = Entities.CreateByClassname(`tf_generic_bomb`)
 
-				Bomb.KeyValueFromInt(`damage`, 200)
+				Bomb.KeyValueFromInt(`damage`, 1000)
 				Bomb.KeyValueFromInt(`radius`, 300)
 				Bomb.KeyValueFromInt(`friendlyfire`, 0)
 				Bomb.KeyValueFromString(`classname`, `necro_smasher`)
