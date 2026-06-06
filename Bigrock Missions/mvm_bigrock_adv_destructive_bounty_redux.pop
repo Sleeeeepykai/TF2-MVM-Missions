@@ -1,0 +1,373 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency	500
+	RespawnWaveTime	2
+	CanBotsAttackWhileInSpawnRoom	No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	//// PRECACHES ////
+
+	// Precached Models
+	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_chassis.mdl" [$SIGSEGV]
+    PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_minigun.mdl" [$SIGSEGV]
+    PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_rocket_dumbfire.mdl" [$SIGSEGV]
+    PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_rocket_pod.mdl" [$SIGSEGV]
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+
+	}
+
+	//// MISSION BOTS ////
+	
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 8
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	// General Notes
+
+	// Wave 1 Notes
+	// Whip soldiers & loch demos probably taken out
+	// Heavies turned into projectile bots to make better gameplay in the outside
+	// Take out engies
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_holograms_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 5 Steel Gauntlets, 5 Full-Uber Medics and 5 Pyros
+		{
+			Name "Wave1_Subwave1_SteelGauntlets"
+			Where spawnbot
+			TotalCount 15
+			MaxActive 7
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 6
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 30 Scatter-Bonk Scouts
+		{
+			Name "Wave1_Subwave1_Scatterbonks"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 12
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+			}
+		}
+		WaveSpawn // 7 Pyros
+		{
+			Name "Wave1_Subwave1_Pyros"
+			Where spawnbot
+			TotalCount 7
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 3
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn
+		{
+			Name "Wave1_Subwave2_"
+		}
+	}
+	// Wave 2 Notes
+	// Focus first subwave around the tank
+	// Remove GHeavies and Sniper support
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 3 GRapid Soldiers
+		{
+			Name "Wave2_Subwave1_GRapidSoldier"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 16
+			TotalCurrency 200
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // 36 Soda Popper Scouts
+		{
+			Name "Wave2_Subwave1_SodaScouts"
+			Where spawnbot
+			TotalCount 36
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 150
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Popper
+			}
+		}
+
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave2_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			Tank
+			{
+				Name "tankboss"
+				Health 22000
+				Speed 75
+				StartingPathTrackNode "boss_path_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+			FirstSpawnOutput
+			{
+				Target "player"
+				Action "$DisplayTextHint"
+				Param "Tank inbound with 22,000 HP"
+			}
+		}
+	}
+	// Wave 3 Notes
+	// Full wave rewrite, needs a new concept
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+	// Wave 4 Notes
+	// Revisit the concept of this wave
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+	// Wave 5 Notes
+	// Take out tanks, increase GSoldier count to 20
+	// Rework the common support, change uber medics so they will prefer the GSoldiers
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+	// Wave 6 Notes
+	// Full wave rewrite, needs a new concept
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+	// Wave 7 Notes
+	// Full wave rewrite, needs a new concept
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+	// Wave 8 Notes
+	// Full wave rewrite, needs a new concept
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+}
