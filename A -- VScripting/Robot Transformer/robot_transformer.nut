@@ -75,6 +75,7 @@ const MAX_WEAPONS = 8
 						Wearable.Kill()
 					}
 				}
+				PlayerScope.Wearables = []
 				if( ("TPWearables" in PlayerScope) )
 				{
 					foreach(TPWearable in PlayerScope.TPWearables)
@@ -82,6 +83,7 @@ const MAX_WEAPONS = 8
 						TPWearable.Kill()
 					}
 				}
+				PlayerScope.TPWearables = []
 			}
 		}
 
@@ -108,6 +110,7 @@ const MAX_WEAPONS = 8
 				{
 					Wearable.Kill()
 				}
+				PlayerScope.Wearables = []
 			}
 			if( ("TPWearables" in PlayerScope) )
 			{
@@ -115,6 +118,7 @@ const MAX_WEAPONS = 8
 				{
 					TPWearable.Kill()
 				}
+				PlayerScope.TPWearables = []
 			}
 		}
 	}
