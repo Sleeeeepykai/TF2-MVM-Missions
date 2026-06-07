@@ -481,7 +481,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 200
 
 			TFBot
 			{
@@ -536,7 +536,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 200
 
 			TFBot
 			{
@@ -582,6 +582,7 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 2 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -618,5 +619,235 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 1 Veteran Soldier and 2 Charged Big-Heal Medics
+		{
+			Name "Wave2_Subwave1_VeteranSoldier"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_Veteran
+
+					AlwaysGlow 1
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
+			}
+		}
+		WaveSpawn // Support Bat Scouts
+		{
+			Name "Wave2_Subwave1_BatScouts"
+			Where spawnbot_invasion
+			Support 1
+			TotalCount 50
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 3 Soldiers
+		{
+			Name "Wave2_Subwave1_GPyro"
+			WaitForAllDead "Wave2_Subwave1_VeteranSoldier"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave2_Subwave1_Heavies"
+			WaitForAllSpawned "Wave2_Subwave1_GPyro"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 3 Soldiers
+		{
+			Name "Wave2_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave2_Subwave1_GPyro"
+			Where spawnbot_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 3 Soldiers
+		{
+			Name "Wave2_Subwave1_GPyro2"
+			WaitForAllSpawned "Wave2_Subwave1_GPyro"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Soldier
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave2_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave2_Subwave1_GPyro2"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 3 Soldiers
+		{
+			Name "Wave2_Subwave1_Soldiers2"
+			WaitForAllSpawned "Wave2_Subwave1_GPyro2"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 2 Veteran Soldiers
+		{
+			Name "Wave2_Subwave2_VeteranSoldiers"
+			WaitForAllSpawned "Wave2_Subwave1_GPyro2"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Veteran
+			}
+		}
+		WaveSpawn // 14 Soda Popper Scouts
+		{
+			Name "Wave2_Subwave2_SodaScouts"
+			WaitForAllSpawned "Wave2_Subwave2_VeteranSoldiers"
+			Where spawnbot
+			TotalCount 14
+			MaxActive 10
+			SpawnCount 7
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Popper
+			}
+		}
 	}
 }
