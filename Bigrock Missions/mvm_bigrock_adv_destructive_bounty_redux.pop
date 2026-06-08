@@ -437,6 +437,7 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
+
 	Mission	// Engineer (Wave 3)
 	{
 		Objective	Engineer
@@ -454,6 +455,7 @@ WaveSchedule
 			TeleportWhere spawnbot_giant
 		}
 	}
+
 	Mission	// Engineer (Wave 4)
 	{
 		Objective	Engineer
@@ -467,9 +469,11 @@ WaveSchedule
 		{
 			Template	T_TFBot_Engineer_Sentry_Teleporter_TeleIn
 			ClassIcon	engineer_telein
-			TeleportWhere	spawnbot
+			TeleportWhere spawnbot
+			TeleportWhere spawnbot_giant
 		}
 	}
+
 	Mission	// Engineer (Wave 5)
 	{
 		Objective	Engineer
@@ -486,6 +490,7 @@ WaveSchedule
 			TeleportWhere	spawnbot
 		}
 	}
+
 	Mission	// Engineer (Wave 6)
 	{
 		Objective	Engineer
@@ -505,12 +510,45 @@ WaveSchedule
 	Mission // Spy (Wave 6)
 	{
 		Objective Spy
-		Where spawnbot
+		Where spawnbot_mission_spy
 		BeginAtWave 6
 		RunForThisManyWaves 1
 		InitialCooldown 30
 		CooldownTime 45
 		DesiredCount 4
+
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
+
+	Mission	// Engineer (Wave 7)
+	{
+		Objective	Engineer
+		Where	spawnbot
+		BeginAtWave	7
+		RunForThisManyWaves	1
+		InitialCooldown	30
+		CooldownTime	30
+		DesiredCount	1
+		TFBot
+		{
+			Template	T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+			ClassIcon	engineer_telein
+			TeleportWhere spawnbot
+			TeleportWhere spawnbot_giant
+		}
+	}
+	Mission // Spy (Wave 7)
+	{
+		Objective Spy
+		Where spawnbot_mission_spy
+		BeginAtWave 7
+		RunForThisManyWaves 1
+		InitialCooldown 50
+		CooldownTime 30
+		DesiredCount 2
 
 		TFBot
 		{
@@ -1055,7 +1093,7 @@ WaveSchedule
 			}
 			FirstSpawnOutput
 			{
-				Target "player"
+				Target "player*"
 				Action "$DisplayTextHint"
 				Param "Tank inbound with 18,000 HP"
 			}
@@ -1085,7 +1123,7 @@ WaveSchedule
 			}
 			FirstSpawnOutput
 			{
-				Target "player"
+				Target "player*"
 				Action "$DisplayTextHint"
 				Param "Tank inbound with 18,000 HP"
 			}
@@ -1634,6 +1672,140 @@ WaveSchedule
         }
 
 		// Subwave 1
+		WaveSpawn // 3 GRapid Burst Demos and 6 Backup Soldiers
+		{
+			Name "Wave7_Subwave1_GRapidBurstDemos"
+			Where spawnbot_giant
+			TotalCount 9
+			MaxActive 7
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 18
+			TotalCurrency 200
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+					Attributes AlwaysCrit
+				}
+			}
+		}
+		WaveSpawn // 14 Demomen and 14 Big-Heal Medics
+		{
+			Name "Wave7_Subwave1_Demomen"
+			Where spawnbot
+			TotalCount 28
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 6
+			TotalCurrency 200
+
+			Squad
+			{
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave7_Subwave2_Tank"
+			WaitForAllSpawned "Wave7_Subwave1_GRapidBurstDemos"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			Tank
+			{
+				Name "tankboss"
+				Health 35000
+				Speed 75
+				StartingPathTrackNode "boss_path_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+			FirstSpawnOutput
+			{
+				Target "player*"
+				Action "$DisplayTextHint"
+				Param "Tank inbound with 35,000 HP"
+			}
+		}
+
+		WaveSpawn // 6 GHeavies and 6 Full-Uber Medics
+		{
+			Name "Wave7_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave7_Subwave2_Tank"
+			Where spawnbot_giant
+			TotalCount 12
+			MaxActive 7
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 12
+			TotalCurrency 200
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 48 Demomen
+		{
+			Name "Wave7_Subwave2_Demomen"
+			WaitForAllSpawned "Wave7_Subwave2_Tank"
+			Where spawnbot
+			TotalCount 48
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 4
+			TotalCurrency 200
+
+			TFBot
+			{
+				Class Demoman
+				Skill Expert
+			}
+		}
 	}
 	// Wave 8 Notes
 	// Giants - Crit Spreadshot Soldiers & GPopper Medics
