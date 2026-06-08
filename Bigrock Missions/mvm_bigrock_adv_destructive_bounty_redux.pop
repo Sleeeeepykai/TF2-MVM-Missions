@@ -486,6 +486,22 @@ WaveSchedule
 			TeleportWhere	spawnbot
 		}
 	}
+	Mission	// Engineer (Wave 6)
+	{
+		Objective	Engineer
+		Where	spawnbot
+		BeginAtWave	6
+		RunForThisManyWaves	1
+		InitialCooldown	30
+		CooldownTime	30
+		DesiredCount	1
+		TFBot
+		{
+			Template	T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+			ClassIcon	engineer_telein
+			TeleportWhere	spawnbot
+		}
+	}
 	Mission // Spy (Wave 6)
 	{
 		Objective Spy
@@ -809,8 +825,6 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// Condense blast soldiers into rapid fire bowmen and use a different common
-	// Turn GRapid Demos into GBlast Soldiers
 	Wave
 	{
 		InitWaveOutput
@@ -885,9 +899,9 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GRapid Demo and 5 Charged Bigheal Medics
+		WaveSpawn // 1 GBlast Soldier and 5 Charged Bigheal Medics
 		{
-			Name "Wave3_Subwave2_GRapidDemo"
+			Name "Wave3_Subwave2_GBlastSoldier"
 			WaitForAllSpawned "Wave3_Subwave1_GBurstDemo"
 			Where spawnbot_giant
 			TotalCount 6
@@ -901,7 +915,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Spammer
+					Template T_TFBot_Giant_Soldier_Blast
 				}
 				TFBot
 				{
@@ -928,7 +942,7 @@ WaveSchedule
 		WaveSpawn // Support Dragon Fury Pyros
 		{
 			Name "Wave3_Subwave2_FuryPyros"
-			WaitForAllSpawned "Wave3_Subwave2_GRapidDemo"
+			WaitForAllSpawned "Wave3_Subwave2_GBlastSoldier"
 			Where spawnbot
 			Support 1
 			TotalCount 20
@@ -944,10 +958,10 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo and 5 Charged Bigheal Medics
+		WaveSpawn // 1 GBlast Soldier and 5 Charged Bigheal Medics
 		{
-			Name "Wave3_Subwave2_GRapidDemo2"
-			WaitForAllSpawned "Wave3_Subwave2_GRapidDemo"
+			Name "Wave3_Subwave2_GBlastSoldier2"
+			WaitForAllSpawned "Wave3_Subwave2_GBlastSoldier"
 			Where spawnbot_giant
 			TotalCount 6
 			MaxActive 6
@@ -960,7 +974,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Spammer
+					Template T_TFBot_Giant_Soldier_Blast
 				}
 				TFBot
 				{
@@ -1183,7 +1197,6 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
-	// Introduce common soldiers during subwaves 2 and 3
 	Wave
 	{
 		InitWaveOutput
@@ -1262,6 +1275,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Normal
 			}
 		}
 		WaveSpawn // 12 Pyros
@@ -1279,10 +1293,8 @@ WaveSchedule
 			TFBot
 			{
 				Class Pyro
-				ClassIcon pyro_reflect_daan
 				Skill Expert
-
-				Item "Traffic Cone"
+				Attributes AlwaysFireWeapon
 			}
 		}
 
@@ -1340,22 +1352,22 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 21 Bowmen
+		WaveSpawn // Support Soldiers
 		{
-			Name "Wave5_Subwave2_Bowmen"
+			Name "Wave5_Subwave2_Soldiers"
 			WaitForAllSpawned "Wave5_Subwave1_GRapidSoldier2"
 			Where spawnbot
-			Support Limited
-			TotalCount 21
+			Support 1
+			TotalCount 25
 			MaxActive 6
-			SpawnCount 3
+			SpawnCount 2
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 5
 			TotalCurrency 50
 
 			TFBot
 			{
-				Template T_TFBot_Sniper_Huntsman
+				Class Soldier
 				Skill Expert
 			}
 		}
@@ -1402,10 +1414,10 @@ WaveSchedule
 			Where spawnbot
 			Support 1
 			TotalCount 20
-			MaxActive 8
+			MaxActive 5
 			SpawnCount 1
 			WaitBeforeStarting 15
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 7
 			TotalCurrency 50
 
 			TFBot
@@ -1421,7 +1433,7 @@ WaveSchedule
 			Where spawnbot
 			Support 1
 			TotalCount 20
-			MaxActive 3
+			MaxActive 2
 			SpawnCount 1
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 10
@@ -1434,9 +1446,6 @@ WaveSchedule
 		}
 	}
 	// Wave 6 Notes
-	// Demo stragglers (bruh)
-	// Turn demos into sticky demos for area denial
-	// Probably tele engies here as well for the commons
 	Wave
 	{
 		InitWaveOutput
@@ -1571,21 +1580,21 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 27 Demomen
+		WaveSpawn // 28 Sticky Demos
 		{
-			Name "Wave6_Subwave3_Demomen"
+			Name "Wave6_Subwave3_StickyDemos"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
 			Where spawnbot
-			TotalCount 27
+			TotalCount 28
 			MaxActive 12
-			SpawnCount 9
+			SpawnCount 4
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 10
+			WaitBetweenSpawns 4
 			TotalCurrency 100
 
 			TFBot
 			{
-				Class Demoman
+				Template T_TFBot_Demoman_Stickybomb
 				Skill Expert
 			}
 		}
