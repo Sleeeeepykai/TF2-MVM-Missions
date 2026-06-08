@@ -914,4 +914,107 @@ WaveSchedule
 			}
 		}
 	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+
+					SetSkyboxTexture(`sky_sandstorm`)
+
+					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
+					{
+						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
+						Soundscape.DispatchSpawn()
+					}
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave3_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Name "tankboss"
+				Health 28746
+				Speed 43
+				StartingPathTrackNode "boss_path_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+			FirstSpawnOutput
+			{
+				Target "player"
+				Action "$DisplayTextHint"
+				Param "Big Tank inbound with 28,746 HP. It is slow."
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave1_GScout"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Name "sand"
+				Template T_TFBot_Giant_Scout_Baseball
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave1_Heavies"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+	}
 }
