@@ -367,6 +367,21 @@ WaveSchedule
 			Template T_TFBot_Sniper
 		}
 	}
+	Mission // Spy (Wave 5)
+	{
+		Objective Spy
+		Where spawnbot_mission_spy
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
 
 	//// WAVES ////
 
@@ -1367,7 +1382,7 @@ WaveSchedule
 			{
 				Name "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Template Tank_Combat_Rocket_Tiny
-				Health 15000
+				Health 12500
 				StartingPathTrackNode "tank_path_left_flank_1"
 			}
 		}
@@ -1396,9 +1411,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 20 Soda Scouts
+		WaveSpawn // 20 Scouts
 		{
-			Name "Wave4_Subwave2_SodaScouts"
+			Name "Wave4_Subwave2_Scouts"
 			WaitForAllSpawned "Wave4_Subwave2_GFuryPyro"
 			Where spawnbot
 			TotalCount 20
@@ -1410,7 +1425,8 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Scout_Popper
+				Class Scout
+				Skill Easy
 			}
 		}
 
@@ -1442,9 +1458,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 10 Soda Scouts
+		WaveSpawn // 10 Scouts
 		{
-			Name "Wave4_Subwave2_SodaScouts2"
+			Name "Wave4_Subwave2_Scouts2"
 			WaitForAllSpawned "Wave4_Subwave2_GFuryPyro2"
 			Where spawnbot
 			TotalCount 10
@@ -1456,7 +1472,8 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Scout_Popper
+				Class Scout
+				Skill Easy
 			}
 		}
 		WaveSpawn // 10 Soldiers
@@ -1510,9 +1527,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 10 Soda Scouts
+		WaveSpawn // 10 Scouts
 		{
-			Name "Wave4_Subwave2_SodaScouts3"
+			Name "Wave4_Subwave2_Scouts3"
 			WaitForAllSpawned "Wave4_Subwave2_GFuryPyro3"
 			Where spawnbot
 			TotalCount 10
@@ -1524,7 +1541,8 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Scout_Popper
+				Class Scout
+				Skill Easy
 			}
 		}
 		WaveSpawn // 10 Soldiers
@@ -1568,6 +1586,115 @@ WaveSchedule
 					Class Soldier
 					Skill Expert
 				}
+			}
+		}
+	}
+	// Wave 5 Notes
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+
+					SetSkyboxTexture(`sky_sandstorm`)
+
+					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
+					{
+						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
+						Soundscape.DispatchSpawn()
+					}
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Mini Cannon Tank
+		{
+			Name "Wave5_Subwave1_MiniCannonTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Name "combattank|cannon$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
+				Template Tank_Combat_Cannon_Tiny
+				Health 16000
+				StartingPathTrackNode "tank_path_right_flank_1"
+			}
+		}
+
+		WaveSpawn // 1 GHeavy and 3 Quick-Uber Medics
+		{
+			Name "Wave5_Subwave1_GHeavy"
+			WaitForAllSpawned "Wave5_Subwave1_MiniCannonTank"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 14 Sticky Demos
+		{
+			Name "Wave5_Subwave1_StickyDemos"
+			WaitForAllSpawned "Wave5_Subwave1_GHeavy"
+			Where spawnbot
+			TotalCount 14
+			MaxActive 14
+			SpawnCount 7
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+				Skill Expert
 			}
 		}
 	}
