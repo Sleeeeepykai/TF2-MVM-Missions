@@ -1,5 +1,103 @@
 WaveSchedule
 {
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		"Hammer_Weapon"
+        {
+            OriginalItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+			"damage bonus" 10
+			"blast radius increased" 2.5
+			"use large smoke explosion" 1
+			"custom projectile model" "models/empty.mdl"
+			"custom kill icon" "necro_smasher"
+        }
+	}
+
+		//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		TheHammerLogic
+		{
+			OnSpawnOutput
+			{
+				Target "HammerSlamDamage"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0
+			}
+			logic_relay
+			{
+				"targetname" "TheHammerAttack"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_deploy_giant.wav,0,-1"
+				"OnTrigger" "HammerSlamIndicator,Enable,,0,-1"
+				"OnTrigger" "HammerSlamIndicator,SetAnimation,start,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/demo_sword_swing1.wav,3.0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,3.4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,3.4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/strongman_fast_impact_01.wav,3.4,-1"
+				"OnTrigger" "HammerSlamIndicator,Disable,,3.4,-1"
+
+				"OnTrigger" "HammerSlamShake,StartShake,,3.4,-1"
+                "OnTrigger" "HammerSlamDamage,FireOnce,,3.4,-1"
+				"OnTrigger" "HammerSlamFling,ApplyImpulse,,3.4,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "HammerSlamIndicator"
+                "origin" "600 0 40"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "8"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+
+			env_shake
+			{
+                "spawnflags" "4"
+				"amplitude" "3000"
+				"duration" "3"
+				"frequency" "100"
+				"targetname" "HammerSlamShake"
+			}
+
+			trigger_apply_impulse 
+            {
+                "targetname" "HammerSlamFling"
+                "origin" "600 0 20"
+                "maxs" "375 375 40"
+                "mins" "-375 -375 -40"
+                "spawnflags" "1"
+                "force" "750"
+                "impulse_dir" "262 10 0"
+            }
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "HammerSlamDamage"
+
+				"spawnflags" "1"
+				"angles" "0 0 0"
+				"origin" "400 0 20"
+				"Crits" "1"
+				"teamnum" "3"
+				"$weaponname" "Hammer_Weapon"
+				"$firetime" "1.0"
+
+				"OnUser4" "!self,DetonateStickies,,0.1,-1"
+			}
+		}
+	}
+
 	Templates
 	{
 		//// SOLDIER BOSSES ////
@@ -49,6 +147,146 @@ WaveSchedule
 			Tag HealthPerWave_2500
 
 			Tag Cost_3000
+		}
+
+		//// DEMOMAN BOSSES ////
+
+		T_TFBot_Boss_Demoman_THEHAMMER
+		{
+			Name "THE HAMMER"
+			Class Demoman
+			ClassIcon mallet_lite
+			Health 25000
+			Scale 2.5
+			Attributes MiniBoss
+			Attributes AlwaysCrit
+			Attributes UseBossHealthBar
+			WeaponRestrictions MeleeOnly
+
+			SpawnTemplate "TheHammerLogic"
+
+			Item "The Scotsman's Skullcutter"
+
+			Item "The Shaman's Skull"
+			Item "Forgotten King's Pauldrons"
+			Item "The Bonedolier"
+			Item "Potato of Labor"
+
+			Tag BaseHealth_20000
+			Tag HealthPerWave_2500
+
+			Tag Cost_5000
+
+			Tag PrecacheModel_models/props_mvm/indicator/indicator_circle.mdl
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+				"fire rate bonus with reduced health" 0.0001
+			}
+			ItemAttributes
+			{
+				ItemName "The Scotsman's Skullcutter"
+				"damage bonus" 1.5
+				"melee range multiplier" 0.0001
+				"custom item model" "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"
+				"custom kill icon" "necro_smasher"
+			}
+			ItemAttributes
+			{
+				ItemName "Potato of Labor"
+				"custom item model" "models\workshop\player\items\all_class\hw2013_ethereal_hood\hw2013_ethereal_hood_demo.mdl"
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $ChangeAttributes
+				Param HammerDefault
+				Delay 0
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				HammerDefault [$SIGSEGV]
+				{
+					Item "The Scotsman's Skullcutter"
+					Attributes SuppressFire
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.5
+						"airblast vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+						"hand scale" 1
+					}
+					ItemAttributes
+					{
+						ItemName "The Scotsman's Skullcutter"
+						"custom item model" "models/weapons/c_models/c_big_mallet/c_big_mallet.mdl"
+						"custom kill icon" "necro_smasher"
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "HammerSlam"
+						Delay 7
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				HammerSlam [$SIGSEGV]
+				{
+					Item "The Scotsman's Skullcutter"
+					Attributes SuppressFire
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.25
+						"damage force reduction" 0.5
+						"airblast vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+						"hand scale" 3.5
+					}
+
+					FireWeapon
+                    {
+                        Type "Primary"
+                        Delay 3
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target "TheHammerAttack"
+                        Action "Trigger"
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target !self
+                        Action $ChangeAttributes
+                        Param HammerDefault
+                        Delay 5
+                        Repeats 1
+                        Cooldown -1
+                    }
+				}
+			}
 		}
 	}
 }
