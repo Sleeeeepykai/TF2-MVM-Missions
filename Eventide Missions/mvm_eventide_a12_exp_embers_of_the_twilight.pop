@@ -1,0 +1,161 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 400
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	SniperAllowHeadshots 1
+	BodyPartScaleSpeed 8
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+
+	}
+	
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		Core_PTs
+		{
+			OnSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+						::DispatchParticleEffectOn <- function(hEntity, sName)
+						{
+							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = Entities.CreateByClassname(`trigger_particle`)
+							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromString(`particle_name`, sName)
+							hParticle.KeyValueFromInt(`attachment_type`, 1)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
+							hParticle.Kill()
+						}
+					  "
+            }
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "Core_PTs"
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Boss_Demoman_EmberChampion
+		{
+			Name "The Ember Champion"
+			Class Demoman
+			ClassIcon demoknight_golden_lite_giant
+			Skill Expert
+			Health 12500
+			Scale 2
+			Attributes MiniBoss
+			WeaponRestrictions MeleeOnly
+
+			Item "The Splendid Screen"
+			Item "The Eyelander"
+
+			Item "Spiral Sallet"
+			Item "The Dark Age Defender"
+			Item "The Sole Saviors"
+
+			CustomEyeGlowColor "255 0 255"
+			UseHumanAnimations 1
+
+			FOV 346
+
+			PreferClass Spy
+            Preferclass Heavyweapons
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Eyelander"
+				"Set DamageType Ignite" 1
+				"critboost on kill" 5
+
+				"attach particle effect" 1
+			}
+		}
+	}
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster (Waves 1-2)
+	{
+		Objective DestroySentries
+		Where spawnbot_leftpath_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 2
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	// General Notes
+	
+	// Wave 1 Notes
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_left_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+}
