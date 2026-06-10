@@ -6,6 +6,42 @@ WaveSchedule
 
 		//// SOLDIER TEMPLATES ////
 
+		T_TFBot_Giant_Soldier_SpreadShot
+		{
+			Name "Giant Spread-Shot Soldier"
+			Class Soldier
+			ClassIcon soldier_burstfire_spammer
+			Health 4000
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			AimAt Body
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+				"fire rate bonus" 0.5
+				"faster reload rate" 0.001
+				"projectile speed decreased" 0.65
+				"mult projectile count" 3
+				"ignores other projectiles" 1
+				"spread angle pattern" "5 -5 0|5 5 0|-5 0 0|0 -3 0|0 0 0|0 3 0|-5 -5 0|-5 5 0|5 0 0|0 -3 0|0 0 0|0 3 0"
+				"shoot pattern reset time" 5
+			}
+
+			Tag RestrictUntilWave_3
+			
+			Tag Cost_600
+		}
+
 		//// PYRO TEMPLATES ////
 
 		T_TFBot_Giant_Pyro_Phlogistinator
@@ -162,6 +198,42 @@ WaveSchedule
 
 		//// MEDIC TEMPLATES ////
 
+		T_TFBot_Giant_Medic_UberHit
+		{
+			Name "Giant Uber-On-Hit Medic"
+			Class Medic
+			ClassIcon medic_uber_giant
+			Skill Expert
+			Health 3300
+			Attributes AlwaysFireWeapon
+			Attributes MiniBoss
+			WeaponRestrictions MeleeOnly
+			Action FetchFlag
+
+			FastUpdate 1
+
+			Item "The Ubersaw"
+
+			Item "Medic Mask"
+
+			CharacterAttributes
+			{
+				"move speed bonus"	0.75
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"dmg pierces resists absorbs" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Ubersaw"
+				"self add cond on hit" 52
+				"self add cond on hit duration" 1
+			}
+
+			Tag Cost_350
+		}
+
 		T_TFBot_Giant_Medic_Shield
         {
             Name "Giant Shield Medic"
@@ -214,6 +286,79 @@ WaveSchedule
         }
 
 		//// SNIPER TEMPLATES ////
+
+		T_TFBot_Giant_Sniper_Burst
+		{
+			Name "Giant Burst Fire Sniper"
+			Class Sniper
+			Skill Expert
+			Health 3000
+			Attributes MiniBoss
+			Attributes SuppressFire
+
+			AimAt Body
+			PreferClass Sniper
+			FOV 120
+
+			UseCustomModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+			Item "The AWPer Hand"
+
+			Item "The Aimframe"
+			Item "The Triggerman's Tacticals"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.35
+				"airblast vulnerability multiplier" 0.35
+				"airblast vertical vulnerability multiplier" 0.5
+				"override footstep sound set" 7
+			}
+
+			ItemAttributes
+			{
+				ItemName "The AWPer Hand"
+				"damage penalty" 0.5
+				"faster reload rate" 0.04
+				"sniper fires tracer hidden" 1
+				"lunchbox adds minicrits" 3
+				"killstreak tier" 2
+				"killstreak idleeffect" 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $AddCond
+				Param 1
+				Delay 0.05
+				Cooldown 1
+				IfSeeTarget 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $RemoveCond
+				Param 1
+				Delay 0.5
+				Cooldown 0.5
+				IfNoTarget 1
+			}
+
+			FireWeapon
+			{
+				Type Primary
+				Duration 0.35
+				Delay 1
+				Cooldown 2.5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+
+			Tag Cost_400
+		}
 
 		//// SPY TEMPLATES ////
 	}
