@@ -194,7 +194,7 @@ WaveSchedule
 		Objective DestroySentries
 		Where spawnbot
 		BeginAtWave 1
-		RunForThisManyWaves 5
+		RunForThisManyWaves 6
 		InitialCooldown 30
 		CooldownTime 30
 		DesiredCount 1
@@ -219,7 +219,7 @@ WaveSchedule
             Param "
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 1.5)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 1.5)
-					EntFire(`bombpath_right`, `Trigger`, null, 2.5)
+					EntFire(`bombpath_left`, `Trigger`, null, 2.5)
                   "
 		}
 		StartWaveOutput
@@ -238,5 +238,249 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 1 Veteran Soldier and 2 Veteran Medics
+		{
+			Name "Wave1_Subwave1_VeteranSoldier"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_Veteran
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Veteran
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Veteran
+				}
+			}
+		}
+
+		WaveSpawn // 8 Heavies
+		{
+			Name "Wave1_Subwave1_Heavies"
+			WaitForAllDead "Wave1_Subwave1_VeteranSoldier"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 12 Pyros
+		{
+			Name "Wave1_Subwave1_Pyros"
+			WaitForAllDead "Wave1_Subwave1_VeteranSoldier"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 1
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+			}
+		}
+		WaveSpawn // 7 Black Box Soldiers
+		{
+			Name "Wave1_Subwave1_BlackBox"
+			WaitForAllDead "Wave1_Subwave1_VeteranSoldier"
+			Where spawnbot_flank
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_BlackBox
+			}
+		}
+
+		WaveSpawn // 2 Veteran Soldiers
+		{
+			Name "Wave1_Subwave1_VeteranSoldier2"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Veteran
+			}
+		}
+		WaveSpawn // 6 Heavies and 6 Pyros
+		{
+			Name "Wave1_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 7 Black Box Soldiers
+		{
+			Name "Wave1_Subwave1_BlackBox2"
+			WaitForAllSpawned "Wave1_Subwave1_Heavies"
+			Where spawnbot_flank
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_BlackBox
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 2 Veteran Soldiers and 2 Veteran Medics
+		{
+			Name "Wave1_Subwave2_VeteranSoldiers"
+			WaitForAllSpawned "Wave1_Subwave1_VeteranSoldier2"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_Veteran
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Veteran
+				}
+			}
+		}
+		WaveSpawn // 12 Heavies
+		{
+			Name "Wave1_Subwave2_Heavies"
+			WaitForAllSpawned "Wave1_Subwave1_VeteranSoldier2"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 2 Veteran Soldiers and 4 Black Box Soldiers
+		{
+			Name "Wave1_Subwave2_VeteranSoldiers2"
+			WaitForAllSpawned "Wave1_Subwave2_VeteranSoldiers"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Veteran
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_BlackBox
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_BlackBox
+				}
+			}
+		}
+		WaveSpawn // 8 Pyros
+		{
+			Name "Wave1_Subwave2_Pyros"
+			WaitForAllSpawned "Wave1_Subwave2_VeteranSoldiers"
+			Where spawnbot_flank
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+			}
+		}
 	}
 }
