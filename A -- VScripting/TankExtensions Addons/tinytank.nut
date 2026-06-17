@@ -6,4 +6,5 @@ TankExt.NewTankType("tinytank", {
 	MaxTurnRate = 50
 	NoScreenShake = 1
 	NoDestructionModel = 1
+	PingSound = "misc/null.wav"
 })
