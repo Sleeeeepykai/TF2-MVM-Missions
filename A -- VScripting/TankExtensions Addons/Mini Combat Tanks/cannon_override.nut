@@ -1,0 +1,3 @@
+TankExt.SetValueOverrides({
+	COMBATTANK_CANNON_ROCKET_DAMAGE = 400
+})
