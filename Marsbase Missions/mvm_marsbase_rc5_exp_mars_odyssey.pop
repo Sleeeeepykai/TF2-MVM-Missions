@@ -19,6 +19,9 @@ WaveSchedule
 
 	//// PRECACHES ////
 
+	// Precached Models
+	PrecacheModel "models/mvm/bots/bot_medic.mdl"
+
 	//// CUSTOM WEAPONS ////
 
 	//// POINT TEMPLATES ////
@@ -29,6 +32,44 @@ WaveSchedule
 
 	Templates
 	{
+		// Boss concept:
+		// Charge-up attack using defibrillators
+		// Tether ability using chestburster to attach to specifically Giant Bots with an env_beam
+		// Tether empowers the target with a buff (resistances, mini-crits, firing speed, etc.)
+		// Tether can change buff depending on dmg done to the boss
+		// Tether can be disabled with player counterplay of some kind
+		T_TFBot_Boss_Medic_Part1
+		{
+			Name "Medic"
+			Class Medic
+			ClassIcon medic
+			Skill Expert
+			Health 25000
+			Scale 2
+			Attributes MiniBoss
+			WeaponRestrictions SecondaryOnly
+			Action FetchFlag
+
+			UseCustomModel "models/mvm/bots/bot_medic.mdl"
+
+			Item "The Quick-Fix"
+
+			Item "Ghostly Gibus"
+			Item "The Surgeon's Space Suit"
+			Item "Emerald Jarate"
+			Item "The Quadwrangler"
+			Item "The Lo-Grav Loafers"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 4
+				"mod weapon blocks healing" 1
+			}
+		}
+
 		T_TFBot_Medic_BigHeal_Charged // Bigheal Medic (Popper)
         {
             Name "Charged Big-Heal Medic"
@@ -95,27 +136,6 @@ WaveSchedule
 				Cooldown 0.5
 			}
         }
-		T_TFBot_Soldier_RocketShotgunBig
-        {
-            Name "Rocket Shotgun Soldier"
-            Class Soldier
-            ClassIcon soldier_rocketshotgun_lite
-            Skill Expert
-            Health 600
-            Scale 1.4
-            Attributes HoldFireUntilFullReload
-
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_ROCKETLAUNCHER"
-                "fire rate bonus" 0.001
-				"faster reload rate" 0.9
-                "clip size penalty" 0.75
-                "projectile spread angle penalty" 2
-                "projectile speed decreased" 0.9
-            }
-        }
-
 		T_TFBot_Soldier_Shotgun
         {
             Name "Shotgun Soldier"
@@ -195,26 +215,24 @@ WaveSchedule
                 "projectile spread angle penalty" 5
             }
 		}
-		T_TFBot_Pyro_Flaregun_Burst
+		T_TFBot_Soldier_RocketShotgunBig
         {
-            Name "Flare Burst Pyro"
-            Class Pyro
-            ClassIcon pyro_flare_burst_nys
-            Skill Hard
-            Health 525
+            Name "Rocket Shotgun Soldier"
+            Class Soldier
+            ClassIcon soldier_rocketshotgun_lite
+            Skill Expert
+            Health 600
             Scale 1.4
-            WeaponRestrictions SecondaryOnly
-            
-            Item "The Flare Gun"
+            Attributes HoldFireUntilFullReload
 
             ItemAttributes
             {
-                ItemName "The Flare Gun"
-
-				"fire rate penalty" 1.25
-                "mult projectile count" 3
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.001
+				"faster reload rate" 0.9
+                "clip size penalty" 0.75
                 "projectile spread angle penalty" 2
-				"projectile speed decreased" 0.75
+                "projectile speed decreased" 0.9
             }
         }
 
@@ -304,7 +322,7 @@ WaveSchedule
 			Template T_TFBot_Sniper
 		}
 	}
-	Mission
+	Mission // Engineer (Wave 2)
 	{
 		Objective Engineer
 		Where spawnbot_right
@@ -320,6 +338,22 @@ WaveSchedule
 			ClassIcon engineer_telein
 			TeleportWhere spawnbot
 			TeleportWhere spawnbot_right
+		}
+	}
+
+	Mission // Spy (Wave 3)
+	{
+		Objective Spy
+		Where spawnbot_right
+		BeginAtWave 3
+		RunForThisManyWaves 1
+		InitialCooldown 8
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -548,6 +582,7 @@ WaveSchedule
 			}
 		}
 	}
+	// Wave 2 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -664,13 +699,13 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 5 Super Scouts
+		WaveSpawn // 3 Super Scouts
 		{
 			Name "Wave2_Subwave2_SuperScout"
 			WaitForAllSpawned "Wave2_Subwave1_GLaserHeavy"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
+			TotalCount 3
+			MaxActive 3
 			SpawnCount 1
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 2
@@ -749,5 +784,64 @@ WaveSchedule
 				Skill Normal
 			}
 		}
+	}
+	// Wave 3 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Mars Odyssey (EXP) `)
+
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+
+					local bomb = Entities.FindByName(null, `bomb`)
+					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
+					if (!(`SetParams` in bomb.GetScriptScope())) return
+					bomb.GetScriptScope().SetParams(
+						[`spawndistance_multiplier_max`, 0.25],
+						[`hoptime_max`, 20],
+						[`considerburiedareas`, `true`],
+						[`hopheight`, 150.0],
+						[`hoprange`, 625.0]
+					)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Boss Subwave:
+		// Medic Boss
+		// Giant Soldier Support
+		// Some commons
+
+		// Subwave 1 Bot Types:
+		// 1 Tank (Main Path)
+		// GPhlog Pyro
+		// Normal Skill Common Soldiers
+		// Normal Skill Crit Rangers
+
+		// Subwave 2 Bot Types:
+		// 1 Tank (Bridge Path)
+		// GRocket Shotgun & GKritz Medic
+		// Soda Scouts
 	}
 }
