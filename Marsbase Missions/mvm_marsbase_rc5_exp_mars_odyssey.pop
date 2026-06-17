@@ -2,12 +2,452 @@
 #base robot_giant.pop
 #base robot_moonlight_nai.pop
 
+//Collab Mission by SleepyKai & Nai
+
 WaveSchedule
 {
-	StartingCurrency 600
+	StartingCurrency 400
 	RespawnWaveTime 1
 	CanBotsAttackWhileInSpawnRoom No
 
 	AddSentryBusterWhenDamageDealtExceeds 3000
     AddSentryBusterWhenKillCountExceeds 10
+
+	MaxRedPlayers 6
+	AllowBotExtraSlots 1
+	RobotLimit 28
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Medic_BigHeal_Charged // Bigheal Medic (Popper)
+        {
+            Name "Charged Big-Heal Medic"
+            Class Medic
+            ClassIcon medic_pop
+            Skill Normal
+            Attributes SpawnWithFullCharge
+
+			Item "The Quick-Fix"
+
+			CharacterAttributes
+			{
+				"mod weapon blocks healing" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_SYRINGEGUN_MEDIC"
+				"damage penalty" 0.1
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Quick-Fix"
+				"ubercharge rate bonus" 0.1
+				"heal rate bonus" 10
+			}
+        }
+		T_TFBot_Medic_Shield
+        {
+            Name "Shield Medic"
+            Class Medic
+            ClassIcon medic_shield_lite
+            Skill Normal
+            Attributes SpawnWithFullCharge
+            Attributes ProjectileShield
+
+            CharacterAttributes
+            {
+                "bot medic uber deploy delay duration" 900
+                "bot medic uber health threshold" 225
+                "mod weapon blocks healing" 1
+            }
+
+            ItemAttributes
+			{
+				ItemName "TF_WEAPON_SYRINGEGUN_MEDIC"
+				"damage penalty" 0.1
+			}
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_MEDIGUN"
+                "generate rage on heal" 1
+                "increase buff duration" 100
+            }
+
+			FireWeapon
+			{
+				Type "Special"
+				Duration 0.5
+				Delay 0.5
+				Repeats 0
+				Cooldown 0.5
+			}
+        }
+		T_TFBot_Soldier_RocketShotgunBig
+        {
+            Name "Rocket Shotgun Soldier"
+            Class Soldier
+            ClassIcon soldier_rocketshotgun_lite
+            Skill Expert
+            Health 600
+            Scale 1.4
+            Attributes HoldFireUntilFullReload
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.001
+				"faster reload rate" 0.9
+                "clip size penalty" 0.75
+                "projectile spread angle penalty" 2
+                "projectile speed decreased" 0.9
+            }
+        }
+
+		T_TFBot_Soldier_Shotgun
+        {
+            Name "Shotgun Soldier"
+            Class Soldier
+            ClassIcon heavy_shotgun
+            Skill Easy
+            WeaponRestrictions SecondaryOnly
+        }
+		T_TFBot_Pyro_Shotgun
+        {
+            Name "Shotgun Pyro"
+            Class Pyro
+            ClassIcon heavy_shotgun
+            Skill Easy
+            WeaponRestrictions SecondaryOnly
+        }
+		T_TFBot_Heavy_ShotgunStatless
+        {
+            Name "Shotgun Heavy"
+            Class Heavy
+            ClassIcon heavy_shotgun
+            Skill Easy
+            WeaponRestrictions SecondaryOnly
+        }
+		T_TFBot_Engineer_Shotgun
+        {
+            Name "I Forgor my Shotgun"
+            Class Engineer
+            ClassIcon heavy_shotgun
+            Skill Easy
+            WeaponRestrictions SecondaryOnly
+			Action FetchFlag
+
+			CharacterAttributes
+			{
+				"voice pitch scale" 0
+			}
+        }
+
+		T_TFBot_Demoman_Stickybomb_Burst
+		{
+			Name "Burst Stickybomb Demoman"
+			Class Demoman
+            ClassIcon demo_stickybomb_burstfire_kai
+            Skill Expert
+            Health 525
+			Scale 1.4
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions SecondaryOnly
+
+			ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+                "is_passive_weapon" 1
+                "override projectile type" 27
+            }
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+				"fire rate bonus" 0.01
+				"faster reload rate" 0.6
+                "stickybomb charge rate" 0.001
+				"sticky arm time penalty" 1.25
+                "projectile range increased" 0.35
+                "projectile spread angle penalty" 5
+            }
+		}
+		T_TFBot_Pyro_Flaregun_Burst
+        {
+            Name "Flare Burst Pyro"
+            Class Pyro
+            ClassIcon pyro_flare_burst_nys
+            Skill Hard
+            Health 525
+            Scale 1.4
+            WeaponRestrictions SecondaryOnly
+            
+            Item "The Flare Gun"
+
+            ItemAttributes
+            {
+                ItemName "The Flare Gun"
+
+				"fire rate penalty" 1.25
+                "mult projectile count" 3
+                "projectile spread angle penalty" 2
+				"projectile speed decreased" 0.75
+            }
+        }
+	}
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 6
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	// General Notes
+
+	// Wave 1 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Mars Odyssey (EXP) `)
+
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+
+					local bomb = Entities.FindByName(null, `bomb`)
+					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
+					if (!(`SetParams` in bomb.GetScriptScope())) return
+					bomb.GetScriptScope().SetParams(
+						[`spawndistance_multiplier_max`, 0.25],
+						[`hoptime_max`, 20],
+						[`considerburiedareas`, `true`],
+						[`hopheight`, 150.0],
+						[`hoprange`, 625.0]
+					)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 6 Rocket Shotgun Soldiers and 6 Charged Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_RocketShotgunSoldiers"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 7
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgunBig
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
+			}
+		}
+		WaveSpawn // 32 Shotgun Bros
+		{
+			Name "Wave1_Subwave1_ShotgunCrew"
+			Where spawnbot
+			Where spawnbot_right
+			TotalCount 32
+			MaxActive 12
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 100
+
+			RandomChoice
+            {
+				Shuffle 1 [$SIGSEGV]
+
+                TFBot
+                {
+					Template T_TFBot_Heavy_ShotgunStatless
+				}
+				TFBot
+                {
+					Template T_TFBot_Engineer_Shotgun
+                }
+                TFBot
+                {
+					Template T_TFBot_Soldier_Shotgun
+                }
+                TFBot
+                {
+					Template T_TFBot_Pyro_Shotgun
+                }
+            }
+		}
+		WaveSpawn // Support GRU Heavies
+		{
+			Name "Wave1_Subwave1_GRUHeavies"
+			Where spawnbot_left
+			Support 1
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 100
+			
+			TFBot
+			{
+				Name "Lightweight Champ"
+				Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
+				Skill Hard
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 3 Sticky Burst Demos and 6 Pyros
+		{
+			Name "Wave1_Subwave2_StickyBurstDemoSquads"
+			WaitForAllSpawned "Wave1_Subwave1_RocketShotgunSoldiers"
+			Where spawnbot
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 6
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb_Burst
+					
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 2 Sticky Burst Demos, 2 Shield Medics and 4 Pyros
+		{
+			Name "Wave1_Subwave2_StickyBurstDemoSquads2"
+			WaitForAllSpawned "Wave1_Subwave2_StickyBurstDemoSquads"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 6
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb_Burst
+					
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+				}
+			}
+		}
+
+		WaveSpawn // 14 Demomen
+		{
+			Name "Wave1_Subwave2_Demomen"
+			WaitForAllSpawned "Wave1_Subwave1_RocketShotgunSoldiers"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 14
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 4
+			TotalCurrency 100
+			
+			TFBot
+			{
+				Class Demoman
+				Skill Easy
+			}
+		}
+	}
 }
