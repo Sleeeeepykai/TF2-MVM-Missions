@@ -42,6 +42,19 @@ WaveSchedule
 
 		LimitBreaker_CoreLogic
 		{
+			OnSpawnOutput
+            {
+                Target bosstarget
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			info_target
+            {
+                "TargetName" "bosstarget"
+                "origin" "0 0 0"
+            }
+
 			// Limitbreaker Main Relays
 
 			logic_relay
@@ -50,6 +63,7 @@ WaveSchedule
 
 				"OnTrigger" "!activator,$Taunt,,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,Limitbreaker_Tether_Ability,5,-1"
 			}
 
@@ -57,12 +71,20 @@ WaveSchedule
 			logic_relay // Limitbreaker Tether Beam Attach Relay
 			{
 				"targetname" "LimitBreaker_Tether_Attach_Relay"
-				"OnTrigger" "Limitbreaker_Tether,ForceSpawnAtEntityOrigin,!activator,0,-1"
-				"OnTrigger" "LimitBreaker_Tether,StrikeOnce,,0,-1"
-				"OnTrigger" "!activator,$TauntFromItem,Taunt: Chestburster,0,-1"
+				"OnTrigger" "Limitbreaker_Tether_Spawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+				"OnTrigger" "LimitBreaker_Tether_Sustain_Relay,Trigger,,0,-1"
+				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Burstchester,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldier_LimitBreak,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,0,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)0-1"
+
+				"spawnflags" "2"
+			}
+			logic_relay // Limitbreaker Tether Sustain Relay
+			{
+				"targetname" "LimitBreaker_Tether_Sustain_Relay"
+				"OnTrigger" "LimitBreaker_Tether,StrikeOnce,,0,-1"
+				"OnTrigger" "LimitBreaker_Tether_Sustain_Relay,Trigger,,0.15,-1"
 
 				"spawnflags" "2"
 			}
@@ -74,13 +96,20 @@ WaveSchedule
 				"spawnflags" "2"
 			}
 
+			env_entity_maker // Limitbreaker Tether Spawner
+			{
+				"targetname" "LimitBreaker_Tether_Spawner"
+				"entitytemplate" "Limitbreaker_Tether"
+				"$autoparent" "1"
+				"$Parambone" "bip_spine_2"
+			}
 			env_beam // Limitbreaker Tether Beam
             {
                 "targetname" "LimitBreaker_Tether"
                 "BoltWidth" "10"
                 "LightningStart" "LimitBreaker_Tether_Start"
                 "LightningEnd" "LimitBreaker_Tether_End"
-                "origin" "0 0 140"
+                "origin" "0 0 0"
                 "renderamt" "200"
                 "rendercolor" "200 200 255"
                 "damage" "0"
@@ -96,12 +125,14 @@ WaveSchedule
                 "targetname" "LimitBreaker_Tether_Start"
                 "model" "models/empty.mdl"
                 "solid" "0"
-                "origin" "0 0 120"                
+                "origin" "0 0 100"                
             }
 		}
 
 		Limitbreaker_Tether
 		{
+			RemoveIfKilled "Limitbreaker_TetherBuilding"
+
 			OnSpawnOutput
 			{
 				Target LimitBreaker_TetherBuilding
@@ -137,7 +168,7 @@ WaveSchedule
                 "targetname" "LimitBreaker_Tether_End"
                 "model" "models/empty.mdl"
                 "solid" "0"
-                "origin" "0 0 120"                
+                "origin" "0 0 100"                
             }
 		}
 	}
@@ -145,6 +176,25 @@ WaveSchedule
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "Core_PTs"
+
+	//// EXTRA SPAWNPOINTS ////
+
+	ExtraSpawnPoint
+	{
+		Name "spawnbot_boss_1"
+		TeamNum 3
+		X 4986 
+		Y 3789
+		Z 685
+	}
+	ExtraSpawnPoint
+	{
+		Name "spawnbot_boss_2"
+		TeamNum 3
+		X 4665
+		Y 3738
+		Z 681
+	}
 
 	//// ROBOT TEMPLATES ////
 
@@ -172,6 +222,8 @@ WaveSchedule
 			UseCustomModel "models/mvm/bots/bot_medic.mdl"
 			UseHumanAnimations 1
 
+			SpawnTemplate "LimitBreaker_CoreLogic"
+
 			Item "The Quick-Fix"
 
 			Item "Ghostly Gibus"
@@ -197,7 +249,7 @@ WaveSchedule
 				Target !self
 				Action $ChangeAttributes
 				Param Limitbreaker_Intro
-				Delay 5
+				Delay 0.1
 				Repeats 1
 				Cooldown -1
 			}
@@ -265,6 +317,8 @@ WaveSchedule
 			Attributes HoldFireUntilFullReload
 			WeaponRestrictions PrimaryOnly
 
+			SpawnTemplate "LimitBreaker_Tether_Patient"
+
 			CharacterAttributes
 			{
 				"move speed penalty" 0.5
@@ -297,9 +351,8 @@ WaveSchedule
 
 					FireInput
 					{
-						Target !self
-						Action $TauntFromItem
-						Param "TF_WEAPON_ROCKETLAUNCHER"
+						Target !activator
+						Action $Taunt
 						Delay 0
 						Repeats 1
 						Cooldown -1
@@ -1079,7 +1132,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave3_Subwave1_LimitbreakerBoss"
-			Where spawnbot
+			Where spawnbot_boss_1 [$SIGSEGV]
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1096,12 +1149,12 @@ WaveSchedule
 		{
 			Name "Wave3_Subwave1_GSoldiers"
 			WaitForAllSpawned "Wave3_Subwave1_LimitbreakerBoss"
-			Where spawnbot_right
+			Where spawnbot_boss_2 [$SIGSEGV]
 			Support 1
 			TotalCount 20
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 3.9
 			WaitBetweenSpawnsAfterDeath 10
 			TotalCurrency 100
 
