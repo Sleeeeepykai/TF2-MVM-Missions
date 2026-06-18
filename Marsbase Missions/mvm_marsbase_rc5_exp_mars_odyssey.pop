@@ -38,9 +38,9 @@ WaveSchedule
 			}
 		}
 
-		//// Limitbreaker PTs ////
+		//// Limitbreaker Part 1 PTs ////
 
-		LimitBreaker_CoreLogic
+		LimitBreakerPart1_CoreLogic
 		{
 			OnSpawnOutput
             {
@@ -70,9 +70,9 @@ WaveSchedule
 			// Limitbreaker Tether Ability
 			logic_relay // Limitbreaker Tether Beam Attach Relay
 			{
-				"targetname" "LimitBreaker_Tether_Attach_Relay"
+				"targetname" "Limitbreaker_Tether_Attach_Relay"
 				"OnTrigger" "Limitbreaker_Tether_Spawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
-				"OnTrigger" "LimitBreaker_Tether_Sustain_Relay,Trigger,,0,-1"
+				"OnTrigger" "Limitbreaker_Tether_Sustain_Relay,Trigger,,0,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Burstchester,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldier_LimitBreak,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,0,-1"
@@ -82,15 +82,15 @@ WaveSchedule
 			}
 			logic_relay // Limitbreaker Tether Sustain Relay
 			{
-				"targetname" "LimitBreaker_Tether_Sustain_Relay"
-				"OnTrigger" "LimitBreaker_Tether,StrikeOnce,,0,-1"
-				"OnTrigger" "LimitBreaker_Tether_Sustain_Relay,Trigger,,0.15,-1"
+				"targetname" "Limitbreaker_Tether_Sustain_Relay"
+				"OnTrigger" "Limitbreaker_Tether,StrikeOnce,,0,-1"
+				"OnTrigger" "Limitbreaker_Tether_Sustain_Relay,Trigger,,0.15,-1"
 
 				"spawnflags" "2"
 			}
-			logic_relay // Limitbreaker Tether Beam Stun Relay
+			logic_relay // Limitbreaker Tether Beam Break Relay
 			{
-				"targetname" "LimitBreaker_Tether_Stun"
+				"targetname" "Limitbreaker_Tether_Break"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
 
 				"spawnflags" "2"
@@ -98,14 +98,14 @@ WaveSchedule
 
 			env_entity_maker // Limitbreaker Tether Spawner
 			{
-				"targetname" "LimitBreaker_Tether_Spawner"
+				"targetname" "Limitbreaker_Tether_Spawner"
 				"entitytemplate" "Limitbreaker_Tether"
 				"$autoparent" "1"
 				"$Parambone" "bip_spine_2"
 			}
 			env_beam // Limitbreaker Tether Beam
             {
-                "targetname" "LimitBreaker_Tether"
+                "targetname" "Limitbreaker_Tether"
                 "BoltWidth" "10"
                 "LightningStart" "LimitBreaker_Tether_Start"
                 "LightningEnd" "LimitBreaker_Tether_End"
@@ -122,34 +122,34 @@ WaveSchedule
             }
 			prop_dynamic // Limitbreaker Tether Beam Start Point
             {
-                "targetname" "LimitBreaker_Tether_Start"
+                "targetname" "Limitbreaker_Tether_Start"
                 "model" "models/empty.mdl"
                 "solid" "0"
                 "origin" "0 0 100"                
             }
 		}
 
-		Limitbreaker_Tether
+		Limitbreaker_Tether // Limitbreaker Tether
 		{
 			RemoveIfKilled "Limitbreaker_TetherBuilding"
 
 			OnSpawnOutput
 			{
-				Target LimitBreaker_TetherBuilding
+				Target Limitbreaker_TetherBuilding
 				Action SetBuilder
 				Param !parent
 				Delay 0.01
 			}
 			OnSpawnOutput
 			{
-				Target "LimitBreaker_TetherBuilding"
+				Target "Limitbreaker_TetherBuilding"
 				Action "SetHealth"
 				Param 864
                 Delay 0.1
 			}
 			obj_dispenser
 			{
-				"targetname" "LimitBreaker_TetherBuilding"
+				"targetname" "Limitbreaker_TetherBuilding"
 				"angles" "0 0 0"
 				"origin" "0 0 0"
 				"teamnum" "3"
@@ -165,7 +165,7 @@ WaveSchedule
 		{
 			prop_dynamic // Limitbreaker Tether Beam End Point
             {
-                "targetname" "LimitBreaker_Tether_End"
+                "targetname" "Limitbreaker_Tether_End"
                 "model" "models/empty.mdl"
                 "solid" "0"
                 "origin" "0 0 100"                
@@ -203,7 +203,7 @@ WaveSchedule
 		// Boss concept:
 		// Tether ability using chestburster to attach to specifically Giant Bots with an env_beam
 		// Tether empowers the target with a buff (resistances, mini-crits, firing speed, etc.)
-		// Tether can change buff depending on dmg done to the boss
+		// Tether buff increases the longer it is maintained
 		// Object spawned on the boss that powers the tether
 		// When the object is destroyed, both the boss and the pocket are stunned, and the tether is broken
 		T_TFBot_Boss_Medic_Limitbreaker_Part1
@@ -236,7 +236,7 @@ WaveSchedule
 
 			CharacterAttributes
 			{
-				"move speed penalty" 0.5
+				"move speed penalty" 0.4
 				"damage force reduction" 0.1
 				"airblast vulnerability multiplier" 0.1
 				"override footstep sound set" 4
@@ -297,7 +297,7 @@ WaveSchedule
 				{
 					FireInput
 					{
-						Target LimitBreaker_Tether_Attach_Relay
+						Target Limitbreaker_Tether_Attach_Relay
 						Action Trigger
 						Delay 0
 						Repeats 1
