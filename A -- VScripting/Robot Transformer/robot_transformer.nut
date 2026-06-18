@@ -90,38 +90,7 @@ const MAX_WEAPONS = 8
         delete ::RobotTransformer
     }
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
-
-	function OnGameEvent_player_spawn(params)
-	{
-		local Player = GetPlayerFromUserID(params.userid)
-
-		if(Player && (Player.GetTeam()) == 2)
-		{
-			SetPropString(Player, "m_iszScriptThinkFunction", "")
-
-			EntFireByHandle(Player, "RunScriptCode", "RobotTransformer.ClearPlayerModel(self)", 1, null, null)
-
-			Player.ValidateScriptScope()
-			local PlayerScope = Player.GetScriptScope()
-
-			if( ("Wearables" in PlayerScope) )
-			{
-				foreach(Wearable in PlayerScope.Wearables)
-				{
-					Wearable.Kill()
-				}
-				PlayerScope.Wearables = []
-			}
-			if( ("TPWearables" in PlayerScope) )
-			{
-				foreach(TPWearable in PlayerScope.TPWearables)
-				{
-					TPWearable.Kill()
-				}
-				PlayerScope.TPWearables = []
-			}
-		}
-	}
+	
 	function ClearPlayerModel(Player)
 	{
 		local PlayerClass = Player.GetPlayerClass()
