@@ -111,14 +111,16 @@ WaveSchedule
 				"targetname" "LimitbreakerIntroRelay"
 
 				"OnTrigger" "!activator,$Taunt,,0,-1"
+				"OnTrigger" "!activator,$Taunt,,0.1,-1"
 				"OnTrigger" "!activator,$Taunt,,0.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreakIntro,3.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4,-1"
+				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.1,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
-				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreakIntro,7.33,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,7.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.33,-1"
@@ -127,8 +129,9 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "TetherIntroNote1,Show,,10,-1"
+				"OnTrigger" "Soldier_LimitBreakVoiceline,PickRandom,,11.33,-1"
 				"OnTrigger" "TetherIntroNote2,Show,,15,-1"
-				"OnTrigger" "!activator,$ChangeAttributes,Limitbreaker_Default_Tether,20,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,LimitbreakerDefaultTether,20,-1"
 			}
 
 			// Limitbreaker Tether Ability
@@ -137,6 +140,7 @@ WaveSchedule
 				"targetname" "LimitbreakerTetherAttachRelay"
 				"OnTrigger" "LimitbreakerDetector,Disable,,0,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0,-1"
+				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0.1,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0.2,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
@@ -144,6 +148,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
+				"OnTrigger" "Soldier_LimitBreakVoiceline,PickRandom,,7.33,-1"
 
 				"spawnflags" "2"
 			}
@@ -160,6 +165,8 @@ WaveSchedule
 				"targetname" "LimitbreakerTetherBreakRelay"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerStun,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierStun,0,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Enable,,10,-1"
 				"OnTrigger" "LimitbreakerDetector,Enable,,10,-1"
 
@@ -245,14 +252,14 @@ WaveSchedule
 			training_annotation
 			{
 				"targetname" "TetherIntroNote1"
-				"origin" "0 0 100"
+				"origin" "0 0 200"
 				"display_text" "This giant has been Reforged!"
 				"lifetime" "5"
 			}
 			training_annotation
 			{
 				"targetname" "TetherIntroNote2"
-				"origin" "0 0 100"
+				"origin" "0 0 200"
 				"display_text" "He will become stronger over time, but you can break the tether powering his strength!"
 				"lifetime" "5"
 			}
@@ -366,6 +373,10 @@ WaveSchedule
 
 				LimitbreakerDefault [$SIGSEGV]
 				{
+					WeaponRestrictions PrimaryOnly
+
+					Item "The Crusader's Crossbow"
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.5
@@ -414,8 +425,52 @@ WaveSchedule
 					}
 				}
 
+				LimitbreakerStun [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.01
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 4
+						"mod weapon blocks healing" 1
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
+					}
+					Addcond
+					{
+						Index 71
+						Duration 10
+					}
+
+					FireInput
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "vo/mvm/norm/medic_mvm_painsevere01.mp3"
+						Delay 0
+						Repeats 2
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param LimitbreakerDefaultTether
+						Delay 10
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
 				LimitbreakerDefaultTether [$SIGSEGV]
 				{
+					WeaponRestrictions PrimaryOnly
+
+					Item "The Crusader's Crossbow"
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.5
@@ -430,7 +485,7 @@ WaveSchedule
 
 					InterruptAction
 					{
-						Target "Limitbreaker_Tether_End"
+						Target "LimitbreakerTetherEnd"
 						Delay 0
 						Repeats 99999
 						Distance 80
@@ -451,6 +506,8 @@ WaveSchedule
 			WeaponRestrictions PrimaryOnly
 
 			SpawnTemplate "LimitbreakerTetherPatient"
+
+			Tag LimitbreakerGiant
 
 			CharacterAttributes
 			{
@@ -517,6 +574,7 @@ WaveSchedule
 					Addcond
 					{
 						Index 16
+						Delay 4.33
 					}
 					Addcond
 					{
@@ -544,6 +602,45 @@ WaveSchedule
 					}
 				}
 
+				GSoldierStun [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 3
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					Addcond
+					{
+						Index 71
+						Duration 10
+					}
+
+					FireInput
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "vo/mvm/mght/soldier_mvm_m_painsharp04.mp3"
+						Delay 0
+						Repeats 2
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param GSoldierDefault
+						Delay 10
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
 				GSoldierLimitBreak [$SIGSEGV]
 				{
 					CharacterAttributes
@@ -558,7 +655,22 @@ WaveSchedule
 
 					Addcond
 					{
+						Index 51
+						Duration 2
+					}
+
+					Addcond
+					{
 						Index 16
+					}
+
+					FireInput
+					{
+						Target !activator
+						Action $Taunt
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
 					}
 				}
 			}
@@ -841,7 +953,7 @@ WaveSchedule
 		Where spawnbot_right
 		BeginAtWave 3
 		RunForThisManyWaves 1
-		InitialCooldown 8
+		InitialCooldown 60
 		CooldownTime 30
 		DesiredCount 2
 
