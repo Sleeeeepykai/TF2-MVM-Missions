@@ -118,7 +118,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
-				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,7.33,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreakIntro,7.33,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,7.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.33,-1"
@@ -246,14 +246,14 @@ WaveSchedule
 			{
 				"targetname" "TetherIntroNote1"
 				"origin" "0 0 100"
-				"display_text" "This giant has just been Reforged!"
+				"display_text" "This giant has been Reforged!"
 				"lifetime" "5"
 			}
 			training_annotation
 			{
 				"targetname" "TetherIntroNote2"
 				"origin" "0 0 100"
-				"display_text" "He will become stronger, but you can break the tether powering his strength!"
+				"display_text" "He will become stronger over time, but you can break the tether powering his strength!"
 				"lifetime" "5"
 			}
 		}
@@ -300,7 +300,7 @@ WaveSchedule
 
 			CharacterAttributes
 			{
-				"move speed penalty" 0.4
+				"move speed penalty" 0.5
 				"damage force reduction" 0.01
 				"airblast vulnerability multiplier" 0.01
 				"override footstep sound set" 4
@@ -368,7 +368,7 @@ WaveSchedule
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0.4
+						"move speed penalty" 0.5
 						"damage force reduction" 0.01
 						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
@@ -418,7 +418,7 @@ WaveSchedule
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0.4
+						"move speed penalty" 0.5
 						"damage force reduction" 0.01
 						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
@@ -436,6 +436,129 @@ WaveSchedule
 						Distance 80
 						Duration 5
 						Cooldown 6
+					}
+				}
+			}
+		}
+		T_TFBot_Giant_Soldier_Spammer_Limitbreaker
+		{
+			Name "Giant Rapid Fire Soldier"
+			Class Soldier
+			ClassIcon soldier_spammer_giant
+			Skill Expert
+			Health 3800
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			SpawnTemplate "LimitbreakerTetherPatient"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 3
+				"no_attack" 0
+				"no_jump" 0
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+				"fire rate bonus" 0.5
+				"faster reload rate" 0.001
+				"projectile speed decreased" 0.65
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $TeleportToEntity
+				Param spawnbot_boss2
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				GSoldierDefault [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 3
+						"no_attack" 0
+						"no_jump" 0
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+						"fire rate bonus" 0.5
+						"faster reload rate" 0.001
+						"projectile speed decreased" 0.65
+					}
+				}
+				GSoldierLimitBreakIntro [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.01
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 3
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					Addcond
+					{
+						Index 16
+					}
+					Addcond
+					{
+						Index 51
+						Duration 17
+					}
+
+					FireInput
+					{
+						Target !activator
+						Action $Taunt
+						Delay 4.33
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target !activator
+						Action $ChangeAttributes
+						Param GSoldierLimitBreak
+						Delay 17
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				GSoldierLimitBreak [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 3
+						"no_attack" 0
+						"no_jump" 0
+					}
+
+					Addcond
+					{
+						Index 16
 					}
 				}
 			}
