@@ -51,11 +51,24 @@ WaveSchedule
 				"OnCase03" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/soldier_mvm_m_taunts05.mp3,0,-1"
 				"OnCase03" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/soldier_mvm_m_taunts05.mp3,0,-1"
 			}
+
+			info_target
+			{
+				"targetname" "spawnbot_boss1"
+				"origin" "5000 3575 730"
+				"angles" "0 90 0"
+			}
+			info_target
+			{
+				"targetname" "spawnbot_boss2"
+				"origin" "4715 3575 730"
+				"angles" "0 90 0"
+			}
 		}
 
 		//// Limitbreaker Part 1 PTs ////
 
-		LimitbreakerPart1_CoreLogic
+		LimitbreakerPart1CoreLogic
 		{
 			OnSpawnOutput
             {
@@ -70,30 +83,65 @@ WaveSchedule
                 "origin" "0 0 0"
             }
 
+			trigger_multiple
+			{
+				"targetname" "LimitbreakerDetector"
+				"origin" "0 0 100"
+				"mins" "-384 -384 -256"
+				"maxs" "384 384 256"
+
+				"wait" "0.5"
+				"filtername" "LimitbreakerGiantFilter"
+				"spawnflags" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "!parent,$ChangeAttributes,LimitbreakerTetherAbility,0,-1"
+			}
+			filter_tf_bot_has_tag
+			{
+				"targetname" "LimitbreakerGiantFilter"
+				"tags" "LimitbreakerGiant"
+				"require_all_tags" "1"
+			}
+
 			// Limitbreaker Main Relays
 
-			logic_relay
+			logic_relay // Limitbreaker Intro Relay
 			{
 				"targetname" "LimitbreakerIntroRelay"
 
 				"OnTrigger" "!activator,$Taunt,,0,-1"
+				"OnTrigger" "!activator,$Taunt,,0.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
-				"OnTrigger" "!activator,$ChangeAttributes,Limitbreaker_Tether_Ability,4,-1"
+				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4,-1"
+				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,7.33,-1"
+				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,7.33,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,7.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,7.33,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)7.33-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
+				"OnTrigger" "TetherIntroNote1,Show,,10,-1"
+				"OnTrigger" "TetherIntroNote2,Show,,15,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,Limitbreaker_Default_Tether,20,-1"
 			}
 
 			// Limitbreaker Tether Ability
 			logic_relay // Limitbreaker Tether Beam Attach Relay
 			{
-				"targetname" "Limitbreaker_Tether_Attach_Relay"
+				"targetname" "LimitbreakerTetherAttachRelay"
+				"OnTrigger" "LimitbreakerDetector,Disable,,0,-1"
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0,-1"
-				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldier_LimitBreak,3.33,-1"
-				"OnTrigger" "Limitbreaker_Tether_Spawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
-				"OnTrigger" "Limitbreaker_Tether_Sustain_Relay,Trigger,,3.33,-1"
+				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0.2,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,3.33,-1"
+				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,3.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
 
@@ -101,33 +149,35 @@ WaveSchedule
 			}
 			logic_relay // Limitbreaker Tether Sustain Relay
 			{
-				"targetname" "Limitbreaker_Tether_Sustain_Relay"
-				"OnTrigger" "Limitbreaker_Tether,StrikeOnce,,0,-1"
-				"OnTrigger" "Limitbreaker_Tether_Sustain_Relay,Trigger,,0.15,-1"
+				"targetname" "LimitbreakerTetherSustainRelay"
+				"OnTrigger" "LimitbreakerTether,StrikeOnce,,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,0.15,-1"
 
 				"spawnflags" "2"
 			}
 			logic_relay // Limitbreaker Tether Beam Break Relay
 			{
-				"targetname" "Limitbreaker_Tether_Break"
+				"targetname" "LimitbreakerTetherBreakRelay"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Enable,,10,-1"
+				"OnTrigger" "LimitbreakerDetector,Enable,,10,-1"
 
 				"spawnflags" "2"
 			}
 
 			env_entity_maker // Limitbreaker Tether Spawner
 			{
-				"targetname" "Limitbreaker_Tether_Spawner"
-				"entitytemplate" "Limitbreaker_Tether"
+				"targetname" "LimitbreakerTetherSpawner"
+				"entitytemplate" "LimitbreakerTether"
 				"$autoparent" "1"
-				"$Parambone" "bip_spine_2"
 			}
 			env_beam // Limitbreaker Tether Beam
             {
-                "targetname" "Limitbreaker_Tether"
-                "BoltWidth" "10"
-                "LightningStart" "LimitBreaker_Tether_Start"
-                "LightningEnd" "LimitBreaker_Tether_End"
+                "targetname" "LimitbreakerTether"
+                "BoltWidth" "8"
+                "LightningStart" "LimitBreakerTetherStart"
+                "LightningEnd" "LimitBreakerTetherEnd"
                 "origin" "0 0 0"
                 "renderamt" "200"
                 "rendercolor" "200 200 255"
@@ -141,54 +191,71 @@ WaveSchedule
             }
 			prop_dynamic // Limitbreaker Tether Beam Start Point
             {
-                "targetname" "Limitbreaker_Tether_Start"
+                "targetname" "LimitbreakerTetherStart"
                 "model" "models/empty.mdl"
                 "solid" "0"
                 "origin" "0 0 100"                
             }
 		}
 
-		Limitbreaker_Tether // Limitbreaker Tether
+		LimitbreakerTether // Limitbreaker Tether
 		{
-			RemoveIfKilled "Limitbreaker_TetherBuilding"
+			RemoveIfKilled "LimitbreakerTetherBuilding"
 
 			OnSpawnOutput
 			{
-				Target Limitbreaker_TetherBuilding
+				Target LimitbreakerTetherBuilding
 				Action SetBuilder
 				Param !parent
 				Delay 0.01
 			}
 			OnSpawnOutput
 			{
-				Target "Limitbreaker_TetherBuilding"
+				Target "LimitbreakerTetherBuilding"
 				Action "SetHealth"
-				Param 864
+				Param 1000
                 Delay 0.1
 			}
 			obj_dispenser
 			{
-				"targetname" "Limitbreaker_TetherBuilding"
-				"angles" "0 0 0"
-				"origin" "0 0 0"
+				"targetname" "LimitbreakerTetherBuilding"
+				"angles" "-60 0 0"
+				"origin" "-20 0 120"
 				"teamnum" "3"
 				"defaultupgrade" "2"
 				"solid" "0"
 				"$radiusmult" "0.01"
                 "$cannotbesapped" "1"
                 "$dispensermodelprefix" "models/buildables/amplifier_test/amplifier.mdl"
+
+				"OnDestroyed" "LimitbreakerTetherBreakRelay,Trigger,,0,-1"
 			}
 		}
 
-		LimitBreaker_Tether_Patient
+		LimitBreakerTetherPatient
 		{
 			prop_dynamic // Limitbreaker Tether Beam End Point
             {
-                "targetname" "Limitbreaker_Tether_End"
+                "targetname" "LimitbreakerTetherEnd"
                 "model" "models/empty.mdl"
                 "solid" "0"
                 "origin" "0 0 100"                
             }
+
+			training_annotation
+			{
+				"targetname" "TetherIntroNote1"
+				"origin" "0 0 100"
+				"display_text" "This giant has just been Reforged!"
+				"lifetime" "5"
+			}
+			training_annotation
+			{
+				"targetname" "TetherIntroNote2"
+				"origin" "0 0 100"
+				"display_text" "He will become stronger, but you can break the tether powering his strength!"
+				"lifetime" "5"
+			}
 		}
 	}
 
@@ -199,31 +266,10 @@ WaveSchedule
 
 	//// EXTRA SPAWNPOINTS ////
 
-	ExtraSpawnPoint
-	{
-		Name "spawnbot_boss_1"
-		TeamNum 3
-		X 5056
-		Y 3616
-		Z 760
-	}
-	ExtraSpawnPoint
-	{
-		Name "spawnbot_boss_2"
-		TeamNum 3
-		X 4704
-		Y 3616
-		Z 760
-	}
-
 	//// ROBOT TEMPLATES ////
 
 	Templates
 	{
-		// Tether empowers the target with a buff (resistances, mini-crits, firing speed, etc.)
-		// Tether buff increases the longer it is maintained
-		// Object spawned on the boss that powers the tether
-		// When the object is destroyed, both the boss and the pocket are stunned, and the tether is broken
 		T_TFBot_Boss_Medic_Limitbreaker_Part1
 		{
 			Name "The Limitbreaker"
@@ -231,17 +277,17 @@ WaveSchedule
 			ClassIcon medic_hyper
 			Skill Expert
 			Health 15000
-			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
-			WeaponRestrictions SecondaryOnly
+			WeaponRestrictions PrimaryOnly
 			Action Mobber
 
 			UseCustomModel "models/mvm/bots/bot_medic.mdl"
 			UseHumanAnimations 1
 
-			SpawnTemplate "LimitbreakerPart1_CoreLogic"
+			SpawnTemplate "LimitbreakerPart1CoreLogic"
 
+			Item "The Crusader's Crossbow"
 			Item "The Quick-Fix"
 
 			Item "Ghostly Gibus"
@@ -255,42 +301,57 @@ WaveSchedule
 			CharacterAttributes
 			{
 				"move speed penalty" 0.4
-				"damage force reduction" 0.1
-				"airblast vulnerability multiplier" 0.1
+				"damage force reduction" 0.01
+				"airblast vulnerability multiplier" 0.01
 				"override footstep sound set" 4
-				"voice pitch scale" 0
 				"mod weapon blocks healing" 1
-				"always allow taunt" 1
+				"voice pitch scale" 0
+				"no_attack" 0
+				"no_jump" 0
 			}
 
 			FireInput
 			{
-				Target !self
+				Target !activator
+				Action $TeleportToEntity
+				Param spawnbot_boss1
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !activator
 				Action $ChangeAttributes
-				Param Limitbreaker_Intro
-				Delay 0
+				Param LimitbreakerIntro
+				Delay 0.5
 				Repeats 1
 				Cooldown -1
 			}
 
 			EventChangeAttributes
 			{
-				Limitbreaker_Intro [$SIGSEGV]
+				LimitbreakerIntro [$SIGSEGV]
 				{
+					Item "Taunt: Doctor's Defibrillators"
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.01
-						"damage force reduction" 0.1
-						"airblast vulnerability multiplier" 0.1
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
-						"voice pitch scale" 0
 						"mod weapon blocks healing" 1
-						"always allow taunt" 1
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
 					}
+
 					Addcond
 					{
 						Index 51
-						Duration 10
+						Duration 20
 					}
 
 					FireInput
@@ -302,35 +363,41 @@ WaveSchedule
 						Cooldown -1
 					}
 				}
-				Limitbreaker_Default [$SIGSEGV]
+
+				LimitbreakerDefault [$SIGSEGV]
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0.5
-						"damage force reduction" 0.6
-						"airblast vulnerability multiplier" 0.6
+						"move speed penalty" 0.4
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
 						"mod weapon blocks healing" 1
 						"voice pitch scale" 0
-						"always allow taunt" 1
+						"no_attack" 0
+						"no_jump" 0
 					}
 				}
-				Limitbreaker_Tether_Ability [$SIGSEGV]
+
+				LimitbreakerTetherAbility [$SIGSEGV]
 				{
+					Item "Taunt: Doctor's Defibrillators"
+
 					CharacterAttributes
 					{
-						"move speed penalty" 0.5
-						"damage force reduction" 0.6
-						"airblast vulnerability multiplier" 0.6
+						"move speed penalty" 0.01
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
 						"mod weapon blocks healing" 1
 						"voice pitch scale" 0
-						"always allow taunt" 1
+						"no_attack" 1
+						"no_jump" 1
 					}
 
 					FireInput
 					{
-						Target Limitbreaker_Tether_Attach_Relay
+						Target LimitbreakerTetherAttachRelay
 						Action Trigger
 						Delay 0
 						Repeats 1
@@ -340,123 +407,35 @@ WaveSchedule
 					{
 						Target !self
 						Action $ChangeAttributes
-						Param Limitbreaker_Default
+						Param LimitbreakerDefaultTether
 						Delay 4.7
 						Repeats 1
 						Cooldown -1
 					}
 				}
-			}
-		}
-		T_TFBot_Giant_Soldier_Spammer_Limitbreaker
-		{
-			Name "Giant Rapid Fire Soldier"
-			Class Soldier
-			ClassIcon soldier_spammer
-			Skill Expert
-			Health 3800
-			Attributes MiniBoss
-			Attributes HoldFireUntilFullReload
-			WeaponRestrictions PrimaryOnly
 
-			UseHumanAnimations 1
-
-			SpawnTemplate "LimitBreaker_Tether_Patient"
-
-			Item "Taunt: Unleashed Rage"
-
-			CharacterAttributes
-			{
-				"move speed penalty" 0.5
-				"damage force reduction" 0.4
-				"airblast vulnerability multiplier" 0.4
-				"override footstep sound set" 3
-				"voice pitch scale" 0
-				"no_attack" 0
-				"no_jump" 0
-			}
-
-			ItemAttributes
-			{
-				ItemName "TF_WEAPON_ROCKETLAUNCHER"
-				"fire rate bonus" 0.5
-				"faster reload rate" 0.001
-				"projectile speed decreased" 0.65
-			}
-
-			FireInput
-			{
-				Target !self
-				Action $ChangeAttributes
-				Param GSoldier_Default
-				Delay 0.1
-				Repeats 1
-				Cooldown -1
-			}
-
-			EventChangeAttributes
-			{
-				GSoldier_Default [$SIGSEGV]
+				LimitbreakerDefaultTether [$SIGSEGV]
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0.01
-						"damage force reduction" 0.4
-						"airblast vulnerability multiplier" 0.4
-						"override footstep sound set" 3
-						"no_attack" 1
-						"no_jump" 1
+						"move speed penalty" 0.4
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 4
+						"mod weapon blocks healing" 1
 						"voice pitch scale" 0
-					}
-					Addcond
-					{
-						Index 51
-						Duration 10
-					}
-				}
-				GSoldier_LimitBreak [$SIGSEGV]
-				{
-					CharacterAttributes
-					{
-						"move speed penalty" 0.5
-						"damage force reduction" 0.4
-						"airblast vulnerability multiplier" 0.4
-						"override footstep sound set" 3
 						"no_attack" 0
 						"no_jump" 0
-						"voice pitch scale" 0
 					}
 
-					FireInput
+					InterruptAction
 					{
-						Target !activator
-						Action $TauntFromItem
-						Param "Taunt: Unleashed Rage"
+						Target "Limitbreaker_Tether_End"
 						Delay 0
-						Repeats 1
-						Cooldown -1
-					}
-					FireInput
-					{
-						Target tf_gamerules
-						Action PlayVO
-						Param "vo/mvm/mght/soldier_mvm_m_paincrticialdeath02.mp3"
-						Delay 0
-						Repeats 2
-						Cooldown -1
-					}
-					FireInput
-					{
-						Target Soldier_LimitBreakVoiceline
-						Action PickRandom
-						Delay 4
-						Repeats 1
-						Cooldown -1
-					}
-
-					AddCond
-					{
-						Index 16
+						Repeats 99999
+						Distance 80
+						Duration 5
+						Cooldown 6
 					}
 				}
 			}
@@ -1221,14 +1200,12 @@ WaveSchedule
         }
 
 		// Boss Subwave:
-		// Medic Boss
-		// Giant Soldier Support
 		// Some commons
 
 		WaveSpawn
 		{
 			Name "Wave3_Subwave1_LimitbreakerBoss"
-			Where spawnbot_boss_1 [$SIGSEGV]
+			Where spawnbot
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1245,18 +1222,36 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "Wave3_Subwave1_GSoldiers"
+			Name "Wave3_Subwave1_GRapidSoldierIntro"
 			WaitForAllSpawned "Wave3_Subwave1_LimitbreakerBoss"
-			Where spawnbot_boss_2 [$SIGSEGV]
-			Support 1
-			TotalCount 20
+			Where spawnbot_right
+			Support Limited
+			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 3
 			WaitBetweenSpawnsAfterDeath 10
-			TotalCurrency 100
+			TotalCurrency 10
 
 			FirstSpawnWarningSound "mvm/mvm_tele_deliver.wav"
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer_Limitbreaker
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave1_GRapidSoldiers"
+			WaitForAllDead "Wave3_Subwave1_GRapidSoldierIntro"
+			Where spawnbot_right
+			Support 1
+			TotalCount 20
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawnsAfterDeath 10
+			TotalCurrency 100
 
 			TFBot
 			{
