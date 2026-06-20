@@ -126,6 +126,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,7.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)7.33-1"
+				"OnTrigger" "LimitbreakerTetherBuilding,SetBuilder,,7.4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "TetherIntroNote1,Show,,10,-1"
@@ -148,6 +149,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
+				"OnTrigger" "LimitbreakerTetherBuilding,SetBuilder,,3.4,-1"
 				"OnTrigger" "Soldier_LimitBreakVoiceline,PickRandom,,7.33,-1"
 
 				"spawnflags" "2"
@@ -167,6 +169,17 @@ WaveSchedule
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerStun,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierStun,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Enable,,10,-1"
+				"OnTrigger" "LimitbreakerDetector,Enable,,10,-1"
+
+				"spawnflags" "2"
+			}
+			logic_relay // Limitbreaker Tether Patient Break Relay
+			{
+				"targetname" "LimitbreakerTetherPatientBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerDefault,0,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Enable,,10,-1"
 				"OnTrigger" "LimitbreakerDetector,Enable,,10,-1"
 
@@ -207,14 +220,12 @@ WaveSchedule
 
 		LimitbreakerTether // Limitbreaker Tether
 		{
-			RemoveIfKilled "LimitbreakerTetherBuilding"
-
 			OnSpawnOutput
 			{
-				Target LimitbreakerTetherBuilding
-				Action SetBuilder
+				Target LimitBreakerTetherBuilding
+				Action $SetOwner
 				Param !parent
-				Delay 0.01
+				Delay 0.1
 			}
 			OnSpawnOutput
 			{
@@ -226,8 +237,8 @@ WaveSchedule
 			obj_dispenser
 			{
 				"targetname" "LimitbreakerTetherBuilding"
-				"angles" "-60 0 0"
-				"origin" "-20 0 120"
+				"angles" "-70 0 0"
+				"origin" "-25 0 90"
 				"teamnum" "3"
 				"defaultupgrade" "2"
 				"solid" "0"
@@ -241,6 +252,13 @@ WaveSchedule
 
 		LimitBreakerTetherPatient
 		{
+			OnParentKilledOutput
+			{
+				Target LimitBreakerPatientBreakRelay
+				Action Trigger
+				Delay -1
+			}
+
 			prop_dynamic // Limitbreaker Tether Beam End Point
             {
                 "targetname" "LimitbreakerTetherEnd"
@@ -345,7 +363,7 @@ WaveSchedule
 
 					CharacterAttributes
 					{
-						"move speed penalty" 0
+						"move speed penalty" 0.001
 						"damage force reduction" 0.01
 						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
@@ -396,7 +414,7 @@ WaveSchedule
 
 					CharacterAttributes
 					{
-						"move speed penalty" 0
+						"move speed penalty" 0.001
 						"damage force reduction" 0.01
 						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
@@ -429,7 +447,7 @@ WaveSchedule
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0
+						"move speed penalty" 0.001
 						"damage force reduction" 0.01
 						"airblast vulnerability multiplier" 0.01
 						"override footstep sound set" 4
@@ -459,7 +477,7 @@ WaveSchedule
 						Target !self
 						Action $ChangeAttributes
 						Param LimitbreakerDefaultTether
-						Delay 10
+						Delay 5
 						Repeats 1
 						Cooldown -1
 					}
@@ -571,7 +589,7 @@ WaveSchedule
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0
+						"move speed penalty" 0.001
 						"damage force reduction" 0.4
 						"airblast vulnerability multiplier" 0.4
 						"override footstep sound set" 3
@@ -614,7 +632,7 @@ WaveSchedule
 				{
 					CharacterAttributes
 					{
-						"move speed penalty" 0
+						"move speed penalty" 0.001
 						"damage force reduction" 0.4
 						"airblast vulnerability multiplier" 0.4
 						"override footstep sound set" 3
@@ -637,13 +655,22 @@ WaveSchedule
 						Repeats 2
 						Cooldown -1
 					}
+					FireInput
+					{
+						Target !self
+						Action $RemoveCond
+						Param 16
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
 
 					FireInput
 					{
 						Target !self
 						Action $ChangeAttributes
 						Param GSoldierDefault
-						Delay 10
+						Delay 5
 						Repeats 1
 						Cooldown -1
 					}
