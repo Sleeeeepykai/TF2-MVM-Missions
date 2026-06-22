@@ -123,6 +123,7 @@ WaveSchedule
 				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,7.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,7.33,-1"
+				"OnTrigger" "@p@patienttarget,$Taunt,,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,7.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)7.33-1"
@@ -146,6 +147,7 @@ WaveSchedule
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,3.33,-1"
+				"OnTrigger" "@p@patienttarget,$Taunt,,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
@@ -165,6 +167,7 @@ WaveSchedule
 			logic_relay // Limitbreaker Tether Beam Break Relay
 			{
 				"targetname" "LimitbreakerTetherBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerStun,0,-1"
@@ -177,6 +180,7 @@ WaveSchedule
 			logic_relay // Limitbreaker Tether Patient Break Relay
 			{
 				"targetname" "LimitbreakerTetherPatientBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerDefault,0,-1"
@@ -218,7 +222,7 @@ WaveSchedule
             }
 		}
 
-		LimitbreakerTether // Limitbreaker Tether
+		LimitbreakerTether
 		{
 			OnSpawnOutput
 			{
@@ -252,6 +256,19 @@ WaveSchedule
 
 		LimitBreakerTetherPatient
 		{
+			OnSpawnOutput
+            {
+                Target patienttarget
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			info_target
+            {
+                "TargetName" "patienttarget"
+                "origin" "0 0 0"
+            }
+
 			OnParentKilledOutput
 			{
 				Target LimitBreakerPatientBreakRelay
@@ -693,25 +710,11 @@ WaveSchedule
 						Index 51
 						Duration 2
 					}
-
-					Addcond
-					{
-						Index 16
-					}
-
-					FireInput
-					{
-						Target !activator
-						Action $Taunt
-						Delay 0.1
-						Repeats 1
-						Cooldown -1
-					}
 				}
 			}
 		}
 
-		T_TFBot_Medic_BigHeal_Charged // Bigheal Medic (Popper)
+		T_TFBot_Medic_BigHeal_Charged
         {
             Name "Charged Big-Heal Medic"
             Class Medic
