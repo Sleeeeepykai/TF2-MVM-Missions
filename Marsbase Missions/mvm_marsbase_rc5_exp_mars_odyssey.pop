@@ -313,6 +313,7 @@ WaveSchedule
 
 	Templates
 	{
+		//// Bosses ////
 		T_TFBot_Boss_Medic_Limitbreaker_Part1
 		{
 			Name "The Limitbreaker"
@@ -860,6 +861,23 @@ WaveSchedule
 			}
 		}
 
+		T_TFBot_Engineer_Name	
+		{
+			Name "The Limitbreaker"
+			Class Engineer
+			ClassIcon engineer_hyper
+			Skill Expert
+			Health 20000
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			WeaponRestrictions PrimaryOnly
+			Action FetchFlag
+
+			UseHumanAnimations 1
+
+			Item ""
+		}
+
 		T_TFBot_Medic_BigHeal_Charged
         {
             Name "Charged Big-Heal Medic"
@@ -1121,6 +1139,28 @@ WaveSchedule
 				IfLeftSpawn 1
             }
 		}
+
+		Tank_Tiny
+		{
+			Name "tankboss$scale|0.5^maxstepheight|50"
+			Speed 75
+			IsMiniBoss 0
+			DisableSmokeStack 1
+			NoScreenShake 1
+			PingSound "misc/null.wav"
+
+			Model
+			{
+				Destruction "models/empty.mdl"
+			}
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+		
 	}
 
 	//// MISSION BOTS ////
@@ -2085,9 +2125,9 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // Support Tanks
+		WaveSpawn // Support Mini Tanks
 		{
-			Name "Wave4_Subwave1_TankHorde"
+			Name "Wave4_Subwave1_MiniTankHorde"
 			Support 1
 			TotalCount 10
 			MaxActive 3
@@ -2098,9 +2138,9 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss"
-				Health 12500
-				Speed 75
+				Template Tank_Tiny
+				Health 7500
+				Speed 85
 				StartingPathTrackNode "boss_path_1"
 
 				OnBombDroppedOutput
@@ -2111,9 +2151,262 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn
+		// Subwave 1
+		WaveSpawn // 4 Rocket Shotgun Soldiers and 8 Battalion Soldiers
 		{
-			Name "Wave4_Subwave1_"
+			Name "Wave4_Subwave1_RocketShotgunSoldiers"
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgunBig
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+				}
+			}
 		}
+		WaveSpawn // 20 Bonk Scouts
+		{
+			Name "Wave4_Subwave1_BonkScouts"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn // 16 Heavies
+		{
+			Name "Wave4_Subwave1_Heavies"
+			WaitForAllSpawned "Wave4_Subwave1_RocketShotgunSoldiers"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 8
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+		WaveSpawn // 16 Demomen
+		{
+			Name "Wave4_Subwave1_Demomen"
+			WaitForAllSpawned "Wave4_Subwave1_RocketShotgunSoldiers"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 8
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 4 Rocket Shotgun Soldiers and 8 Battalion Soldiers
+		{
+			Name "Wave4_Subwave1_RocketShotgunSoldiers2"
+			WaitForAllSpawned "Wave4_Subwave1_Demomen"
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgunBig
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+				}
+			}
+		}
+		WaveSpawn // 20 Bonk Scouts
+		{
+			Name "Wave4_Subwave1_BonkScouts2"
+			WaitForAllSpawned "Wave4_Subwave1_Demomen"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk
+				Attributes AlwaysCrit
+			}
+		}
+		
+		// Subwave 2
+		WaveSpawn // 9 Rapid Fire Demos
+		{
+			Name "Wave4_Subwave2_RapidDemos"
+			WaitForAllSpawned "Wave4_Subwave1_RocketShotgunSoldiers2"
+			Where spawnbot
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 8
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Health 525
+				Scale 1.4
+			}
+		}
+		WaveSpawn // 18 Heavies
+		{
+			Name "Wave4_Subwave2_Heavies"
+			WaitForAllSpawned "Wave4_Subwave1_RocketShotgunSoldiers2"
+			Where spawnbot_left
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 9 Rapid Fire Demos
+		{
+			Name "Wave4_Subwave2_RocketShotgunSoldiers"
+			WaitForAllSpawned "Wave4_Subwave2_RapidDemos"
+			Where spawnbot
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 8
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgunBig
+			}
+		}
+		WaveSpawn // 18 Demomen
+		{
+			Name "Wave4_Subwave2_Demomen"
+			WaitForAllSpawned "Wave4_Subwave2_RapidDemos"
+			Where spawnbot_right
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
+				Skill Easy
+			}
+		}
+	}
+	// Wave 5 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`tf_objective_resource`, `$SetClientProp$m_iszMvMPopfileName`, `Mars Odyssey (EXP) `)
+
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+
+					local bomb = Entities.FindByName(null, `bomb`)
+					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
+					if (!(`SetParams` in bomb.GetScriptScope())) return
+					bomb.GetScriptScope().SetParams(
+						[`spawndistance_multiplier_max`, 0.25],
+						[`hoptime_max`, 20],
+						[`considerburiedareas`, `true`],
+						[`hopheight`, 150.0],
+						[`hoprange`, 625.0]
+					)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+		
+		// Subwave 1
 	}
 }
