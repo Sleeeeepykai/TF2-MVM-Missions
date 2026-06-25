@@ -21,6 +21,15 @@ WaveSchedule
 
 	// Precached Models
 	PrecacheModel "models/mvm/bots/bot_medic.mdl"
+	PrecacheModel "models/buildables/amplifier_test/amplifier.mdl"
+    PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib1.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib2.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib3.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib4.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib5.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib6.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib7.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib8.mdl"
 
 	//// CUSTOM WEAPONS ////
 
@@ -110,11 +119,12 @@ WaveSchedule
 			{
 				"targetname" "LimitbreakerIntroRelay"
 
-				"OnTrigger" "!activator,$Taunt,,0,-1"
-				"OnTrigger" "!activator,$Taunt,,0.1,-1"
-				"OnTrigger" "!activator,$Taunt,,0.2,-1"
+				"OnTrigger" "@p@bosstarget,$Taunt,,0,-1"
+				"OnTrigger" "@p@bosstarget,$Taunt,,0.1,-1"
+				"OnTrigger" "@p@bosstarget,$Taunt,,0.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
+				"OnTrigger" "@p@patienttarget,$TeleportToEntity,spawnbot_boss2,3.1,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreakIntro,3.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
@@ -148,7 +158,8 @@ WaveSchedule
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,3.33,-1"
 				"OnTrigger" "@p@patienttarget,$Taunt,,3.33,-1"
-				"OnTrigger" "@p@patienttarget,$AddCond,51 2,3.33,-1"
+				"OnTrigger" "@p@patienttarget,$Taunt,,3.34,-1"
+				"OnTrigger" "@p@patienttarget,$AddCond,51 3,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
@@ -323,6 +334,7 @@ WaveSchedule
 			Health 15000
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
 			WeaponRestrictions PrimaryOnly
 			Action Mobber
 
@@ -350,6 +362,7 @@ WaveSchedule
 				"override footstep sound set" 4
 				"mod weapon blocks healing" 1
 				"voice pitch scale" 0
+				"always allow taunt" 1
 				"no_attack" 0
 				"no_jump" 0
 			}
@@ -500,7 +513,7 @@ WaveSchedule
 					Addcond
 					{
 						Index 71
-						Duration 10
+						Duration 5
 					}
 
 					FireInput
@@ -517,7 +530,7 @@ WaveSchedule
 					{
 						Target !self
 						Action $ChangeAttributes
-						Param LimitbreakerDefaultTether
+						Param LimitbreakerDefault
 						Delay 5
 						Repeats 1
 						Cooldown -1
@@ -593,6 +606,7 @@ WaveSchedule
 				"damage force reduction" 0.4
 				"airblast vulnerability multiplier" 0.4
 				"override footstep sound set" 3
+				"always allow taunt" 1
 				"no_attack" 0
 				"no_jump" 0
 			}
@@ -603,16 +617,6 @@ WaveSchedule
 				"fire rate bonus" 0.5
 				"faster reload rate" 0.001
 				"projectile speed decreased" 0.65
-			}
-
-			FireInput
-			{
-				Target !activator
-				Action $TeleportToEntity
-				Param spawnbot_boss2
-				Delay 0.1
-				Repeats 1
-				Cooldown -1
 			}
 
 			EventChangeAttributes
@@ -650,12 +654,6 @@ WaveSchedule
 						"override footstep sound set" 3
 						"no_attack" 1
 						"no_jump" 1
-					}
-
-					Addcond
-					{
-						Index 16
-						Delay 4.33
 					}
 					Addcond
 					{
@@ -701,7 +699,7 @@ WaveSchedule
 					Addcond
 					{
 						Index 71
-						Duration 10
+						Duration 5
 					}
 
 					FireInput
@@ -1444,7 +1442,7 @@ WaveSchedule
 			Where spawnbot_left
 			Where spawnbot_right
 			TotalCount 14
-			MaxActive 6
+			MaxActive 8
 			SpawnCount 2
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 4
@@ -1458,6 +1456,7 @@ WaveSchedule
 		}
 	}
 	// Wave 2 Notes
+	// Stragglers because of no engineer
 	Wave
 	{
 		InitWaveOutput
