@@ -1832,4 +1832,62 @@ WaveSchedule
 			}
 		}
 	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+
+					SetSkyboxTexture(`sky_sandstorm`)
+
+					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
+					{
+						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
+						Soundscape.DispatchSpawn()
+					}
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave5_Subwave1_Djinn"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Templat 
+				}
+			}
+		}
+	}
 }
