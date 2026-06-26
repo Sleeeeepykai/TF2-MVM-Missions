@@ -47,16 +47,16 @@ WaveSchedule
 
 	// Precached Skybox //
 
-    PrecacheGeneric "sky_sandstormup.vmt"
-    PrecacheGeneric "sky_sandstormup.vtf"
-    PrecacheGeneric "sky_sandstormdn.vmt"
-    PrecacheGeneric "sky_sandstormdn.vtf"
+    PrecacheGeneric "materials/skybox/sky_sandstormup.vmt"
+    PrecacheGeneric "materials/skybox/sky_sandstormup.vtf"
+    PrecacheGeneric "materials/skybox/sky_sandstormdn.vmt"
+    PrecacheGeneric "materials/skybox/sky_sandstormdn.vtf"
 
-	PrecacheGeneric "sky_sandstormside.vtf"
-    PrecacheGeneric "sky_sandstormft.vmt"
-    PrecacheGeneric "sky_sandstormbk.vmt"
-    PrecacheGeneric "sky_sandstormlf.vmt"
-	PrecacheGeneric "sky_sandstormsrt.vmt"
+	PrecacheGeneric "materials/skybox/sky_sandstormside.vtf"
+    PrecacheGeneric "materials/skybox/sky_sandstormft.vmt"
+    PrecacheGeneric "materials/skybox/sky_sandstormbk.vmt"
+    PrecacheGeneric "materials/skybox/sky_sandstormlf.vmt"
+	PrecacheGeneric "materials/skybox/sky_sandstormrt.vmt"
 
 	// Precached Colour Correction //
 
@@ -107,8 +107,13 @@ WaveSchedule
 							Target.SetCustomModelWithClassAnimations(`models/bots/demo/bot_demo_gibby.mdl`)
 
 							Target.AddWeaponRestriction(2)
+							Target.AddBotAttribute(32)
 
 							Target.AddCustomAttribute(`cannot pick up intelligence`, 1, -1)
+							Target.AddCustomAttribute(`max health additive bonus`, 125, -1)
+
+							Target.SetHealth(300)
+							Target.SetModelScale(1.3, 0.0)
 						}
 					  "
 			}
@@ -252,6 +257,7 @@ WaveSchedule
 				"OnTrigger" "DjinnSummonIndicator,SetAnimation,Start,,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "DjinnSpawn_PT,ForceSpawn,,2.3,-1"
 				"OnTrigger" "DjinnSummonGenerator,SpawnBot,,2.33,-1"
 				"OnTrigger" "DjinnSummonCounter,Add,4,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
@@ -399,6 +405,23 @@ WaveSchedule
 				"stay_time" "9999"
 			}
 		}
+		
+		DjinnSpawn_PT
+		{
+			RemoveIfKilled "DjinnNode"
+
+			OnSpawnOutput
+			{
+				Target "DjinnNode"
+				Action Kill
+				Delay 1
+			}
+
+			point_commentary_node
+			{
+				"targetname" "DjinnNode"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -517,7 +540,7 @@ WaveSchedule
 		{
 			Name "Djinn of the Sandstorm"
 			Class Pyro
-			ClassIcon pyro
+			ClassIcon pyro_dragon_fury_summoner
 			Skill Expert
 			Health 3500
 			Attributes MiniBoss
@@ -527,8 +550,6 @@ WaveSchedule
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
 			SpawnTemplate "Djinn_PT"
-
-			Item "The Freedom Staff"
 
 			Item "Pyromancer's Mask"
 			Item "Apparition's Aspect"
@@ -557,10 +578,10 @@ WaveSchedule
 
 			ItemAttributes
 			{
-				ItemName "The Freedom Staff"
+				ItemName "TF_WEAPON_FIREAXE"
 
 				"fire input on attack" "DjinnFireball^FireMultiple^1"
-				"custom item model" "models/workshop/player/items/all_class/secondrate_sorcery/secondrate_sorcery_pyro.mdl"
+				"custom item model" "models/weapons/c_models/c_merasmus_staff/c_merasmus_staff.mdl"
 				"custom kill icon" "merasmus_decap"
 			}
 			ItemAttributes
@@ -880,6 +901,7 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
 				}
 			}
 		}
@@ -987,7 +1009,7 @@ WaveSchedule
 					Item "Player"
 					Name "move speed penalty"
 					Value 0.35
-					Delay 5
+					Delay 6
 				}
 			}
 		}
@@ -999,8 +1021,8 @@ WaveSchedule
 			Where spawnbot_right
 			Support 1
 			TotalCount 40
-			MaxActive 6
-			SpawnCount 4
+			MaxActive 5
+			SpawnCount 3
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 8
 			TotalCurrency 80
@@ -1035,14 +1057,14 @@ WaveSchedule
 				Template T_TFBot_Giant_Soldier_Spammer
 			}
 		}
-		WaveSpawn // 10 Soldiers
+		WaveSpawn // 8 Soldiers
 		{
 			Name "Wave2_Subwave2_Soldiers"
 			WaitForAllSpawned "Wave2_Subwave2_GRapidSoldier"
 			Where spawnbot
-			TotalCount 10
-			MaxActive 8
-			SpawnCount 5
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 8
 			TotalCurrency 40
@@ -1053,12 +1075,12 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 14 Soda Scouts
+		WaveSpawn // 12 Soda Scouts
 		{
 			Name "Wave2_Subwave2_SodaScouts"
 			WaitForAllSpawned "Wave2_Subwave2_GRapidSoldier"
 			Where spawnbot
-			TotalCount 14
+			TotalCount 12
 			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 2
@@ -1097,7 +1119,7 @@ WaveSchedule
 			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 2
 			TotalCurrency 40
 
 			TFBot
@@ -1106,12 +1128,12 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 14 Soda Scouts
+		WaveSpawn // 12 Soda Scouts
 		{
 			Name "Wave2_Subwave2_SodaScouts2"
 			WaitForAllSpawned "Wave2_Subwave2_GRapidSoldier2"
 			Where spawnbot
-			TotalCount 14
+			TotalCount 12
 			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 2
@@ -1132,7 +1154,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 0
+			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
@@ -1160,16 +1182,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 5 Soldiers
+		WaveSpawn // 6 Soldiers
 		{
 			Name "Wave2_Subwave2_Soldiers3"
 			WaitForAllSpawned "Wave2_Subwave2_GRapidSoldier3"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 0
 			TotalCurrency 60
 
 			TFBot
@@ -1446,7 +1468,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 5
-			TotalCurrency 60
+			TotalCurrency 40
 
 			Squad
 			{
@@ -1479,7 +1501,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 5
-			TotalCurrency 60
+			TotalCurrency 40
 
 			Squad
 			{
@@ -1499,6 +1521,77 @@ WaveSchedule
 				{
 					Class Heavy
 					Skill Easy
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier and 2 Banner Soldiers
+		{
+			Name "Wave3_Subwave2_GBurstSoldier3"
+			WaitForAllSpawned "Wave3_Subwave2_GBurstSoldier2"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Buff_Banner
+					Skill Expert
+				}
+			}
+		}
+		WaveSpawn // 8 Demomen
+		{
+			Name "Wave3_Subwave2_Demomen3"
+			WaitForAllSpawned "Wave3_Subwave2_GBurstSoldier3"
+			Where spawnbot_invasion
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0.1
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Class Demoman
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Normal
 				}
 			}
 		}
@@ -1568,7 +1661,7 @@ WaveSchedule
 			{
 				Name "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Template Tank_Combat_Rocket_Tiny
-				Health 12500
+				Health 15000
 				StartingPathTrackNode "tank_path_left_flank_1"
 			}
 		}
@@ -1597,9 +1690,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 9 Fury Pyros
+		WaveSpawn // 9 Pyros
 		{
-			Name "Wave4_Subwave1_DFuries"
+			Name "Wave4_Subwave1_Pyros"
 			WaitForAllSpawned "Wave4_Subwave1_RocketTank"
 			Where spawnbot
 			TotalCount 9
@@ -1611,19 +1704,27 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Pyro_Dragon_Fury
+				Class Pyro
+				Skill Normal
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
 			}
 		}
 
-		WaveSpawn // 6 Fury Pyros and 6 Big-Heal Medics
+		WaveSpawn // 6 Pyros and 6 Big-Heal Medics
 		{
-			Name "Wave4_Subwave1_DFuries2"
+			Name "Wave4_Subwave1_Pyros2"
 			WaitForAllSpawned "Wave4_Subwave1_RocketShotgunSoldiers"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 8
 			SpawnCount 4
-			WaitBeforeStarting 8
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 6
 			TotalCurrency 40
 
@@ -1631,7 +1732,15 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Pyro_Dragon_Fury
+					Class Pyro
+					Skill Normal
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
 				}
 				TFBot
 				{
@@ -1647,7 +1756,7 @@ WaveSchedule
 			TotalCount 4
 			MaxActive 4
 			SpawnCount 2
-			WaitBeforeStarting 8
+			WaitBeforeStarting 10
 			WaitBetweenSpawns 8
 			TotalCurrency 40
 
@@ -1658,14 +1767,14 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GRapid Demo and 2 Big-Heal Medics
+		WaveSpawn // 1 GRapid Demo, 1 Rocket Shotgun Soldier and 2 Big-Heal Medics
 		{
 			Name "Wave4_Subwave2_GRapidDemo"
-			WaitForAllSpawned "Wave4_Subwave1_DFuries2"
+			WaitForAllSpawned "Wave4_Subwave1_Pyros2"
 			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
 			TotalCurrency 100
@@ -1675,6 +1784,10 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
 				}
 				TFBot
 				{
@@ -1705,7 +1818,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo and 2 Big-Heal Medics
+		WaveSpawn // 1 GRapid Demo, 1 Rocket Shotgun Soldier and 2 Big-Heal Medics
 		{
 			Name "Wave4_Subwave2_GRapidDemo2"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
@@ -1722,6 +1835,10 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
 				}
 				TFBot
 				{
@@ -1751,9 +1868,9 @@ WaveSchedule
 				Skill Easy
 			}
 		}
-		WaveSpawn // 5 Fury Pyros
+		WaveSpawn // 5 Pyros
 		{
-			Name "Wave4_Subwave2_DFuries"
+			Name "Wave4_Subwave2_Pyros"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
 			Where spawnbot
 			TotalCount 5
@@ -1765,7 +1882,15 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Pyro_Dragon_Fury
+				Class Pyro
+				Skill Normal
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
 			}
 		}
 
@@ -1801,7 +1926,7 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 2 Rocket Shotgun Soldiers and 4 Fury Pyros
+		WaveSpawn // 2 Rocket Shotgun Soldiers and 4 Pyros
 		{
 			Name "Wave4_Subwave2_RocketShotgunSoldiers"
 			WaitForAllSpawned "Wave4_Subwave2_GHeavy"
@@ -1809,7 +1934,7 @@ WaveSchedule
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 3
-			WaitBeforeStarting 2
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 0.5
 			TotalCurrency 40
 
@@ -1823,15 +1948,32 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Pyro_Dragon_Fury
+					Class Pyro
+					Skill Normal
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
 				}
 				TFBot
 				{
-					Template T_TFBot_Pyro_Dragon_Fury
+					Class Pyro
+					Skill Normal
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
 				}
 			}
 		}
 	}
+	// Wave 5 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -1870,7 +2012,7 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn
+		WaveSpawn // 1 Djinn and 1 Shield Medic
 		{
 			Name "Wave5_Subwave1_Djinn"
 			Where spawnbot
@@ -1885,9 +2027,18 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Templat 
+					Template T_TFBot_Giant_Pyro_Djinn
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
 				}
 			}
+		}
+		WaveSpawn
+		{
+			Name "Wave5_Subwave1_"
 		}
 	}
 }
