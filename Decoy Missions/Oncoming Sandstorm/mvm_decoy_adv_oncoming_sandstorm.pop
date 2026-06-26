@@ -39,7 +39,11 @@ WaveSchedule
 
 	// Precached Models //
 
+	PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
+	PrecacheModel "models/bots/demo/bot_demo_gibby.mdl"
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
 	// Precached Skybox //
 
@@ -60,6 +64,23 @@ WaveSchedule
 
 	//// CUSTOM WEAPONS ////
 
+	CustomWeapon
+	{
+		"DjinnFireballWeapon"
+		{
+			OriginalItemName "The Iron Bomber"
+			"grenade explode on impact" 1
+			"Set DamageType Ignite" 1
+			"custom kill icon" "firedeath"
+			"custom weapon fire sound" "misc/halloween/spell_fireball_cast.wav"
+			"custom impact sound" "misc/halloween/spell_fireball_impact.wav"
+			"custom projectile model" "models/empty.mdl"
+			"projectile trail particle" "~spell_fireball_small_red"
+			"projectile speed decreased" 0.6
+			"projectile gravity" -1
+		}
+	}
+
 	//// POINT TEMPLATES ////
 
 	PointTemplates
@@ -68,6 +89,29 @@ WaveSchedule
 
 		Core_PTs
 		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						::DjinnSummonInit <- function(Target)
+						{
+							Target.RemoveWeaponRestriction(7)
+							Target.ClearAllBotAttributes()
+							Target.ClearAllBotTags()
+							Target.SetCustomModelWithClassAnimations(null)
+							Target.SetDifficulty(1)
+							Target.SetMaxVisionRangeOverride(9999)
+
+							SetFakeClientConVarValue(Target, `name`, `Resurrected Demoman`)
+							Target.SetCustomModelWithClassAnimations(`models/bots/demo/bot_demo_gibby.mdl`)
+
+							Target.AddWeaponRestriction(2)
+
+							Target.AddCustomAttribute(`cannot pick up intelligence`, 1, -1)
+						}
+					  "
+			}
 			logic_auto
 			{
 				"targetname" "theauto"
@@ -166,18 +210,85 @@ WaveSchedule
 
 		Djinn_PT
 		{
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "DjinnFireball"
+				"origin" "40 0 80"
+				"teamnum" "3"
+				"$weaponname" "DjinnFireballWeapon"
+				"$preventshootparent" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+
 			logic_relay
 			{
 				"targetname" "DjinnSummonRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry01.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry01.mp3,0,-1"
+				"OnTrigger" "DjinnSummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "DjinnSummonGenerator,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonCounter,Add,4,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "DjinnSummonGenerator,CommandGoToActionPoint,DjinnActionPoint,2.4,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry01.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry01.mp3,3,-1"
+				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
+			}
+
+			math_counter
+			{
+				"targetname" "DjinnSummonCounter"
+				"startvalue" "0"
+				"min" "0"
+				"max" "8"
+
+				"OutValue" "DjinnCounterCompare,SetValueCompare,,0,-1"
+			}
+			logic_compare
+			{
+				"targetname" "DjinnCounterCompare"
+				"CompareValue" "4"
+
+				"OnLessThan" "DjinnSummonRelay,Enable,,0,-1"
+				"OnEqualTo" "DjinnSummonRelay,Enable,,0,-1"
+				"OnGreaterThan" "DjinnSummonRelay,Disable,,0,-1"
 			}
 
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-                "origin" "100 0 0"
+                "origin" "100 0 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
-                "modelscale" "2"
+                "modelscale" "1.5"
                 "skin" "1"
                 "defaultanim" "start"
                 "solid" "0"
@@ -188,10 +299,10 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-                "origin" "-100 0 0"
+                "origin" "-100 0 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
-                "modelscale" "2"
+                "modelscale" "1.5"
                 "skin" "1"
                 "defaultanim" "start"
                 "solid" "0"
@@ -202,10 +313,10 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-                "origin" "0 100 0"
+                "origin" "0 100 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
-                "modelscale" "2"
+                "modelscale" "1.5"
                 "skin" "1"
                 "defaultanim" "start"
                 "solid" "0"
@@ -216,10 +327,10 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-                "origin" "0 -100 0"
+                "origin" "0 -100 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
-                "modelscale" "2"
+                "modelscale" "1.5"
                 "skin" "1"
                 "defaultanim" "start"
                 "solid" "0"
@@ -227,6 +338,65 @@ WaveSchedule
                 "disablebonefollowers" "1"
                 "disableshadows" "1"
             }
+
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "100 0 50"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "-100 0 50"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 100 50"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 -100 50"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_action_point
+			{
+				"targetname" "DjinnActionPoint"
+				"desired_distance" "75"
+				"stay_time" "9999"
+			}
 		}
 	}
 
@@ -342,6 +512,109 @@ WaveSchedule
 
 	Templates
 	{
+		T_TFBot_Giant_Pyro_Djinn
+		{
+			Name "Djinn of the Sandstorm"
+			Class Pyro
+			ClassIcon pyro
+			Skill Expert
+			Health 3500
+			Attributes MiniBoss
+			Attributes SuppressFire
+			WeaponRestrictions MeleeOnly
+
+			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
+
+			SpawnTemplate "Djinn_PT"
+
+			Item "The Freedom Staff"
+
+			Item "Pyromancer's Mask"
+			Item "Apparition's Aspect"
+			Item "Potato of Labor"
+
+			Item "Taunt: Second Rate Sorcery"
+
+			FireWeapon  
+			{
+				Delay 0
+				Type "Primary"
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				Duration 0.5
+				Cooldown 1.6
+			}
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+				"voice pitch scale" 0
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Freedom Staff"
+
+				"fire input on attack" "DjinnFireball^FireMultiple^1"
+				"custom item model" "models/workshop/player/items/all_class/secondrate_sorcery/secondrate_sorcery_pyro.mdl"
+				"custom kill icon" "merasmus_decap"
+			}
+			ItemAttributes
+			{
+				ItemName "Potato of Labor"
+
+				"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $ChangeAttributes
+				Param "DjinnDefault"
+				Delay 5
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				DjinnDefault [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "DjinnSummon"
+						Delay 7.5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				DjinnSummon [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "DjinnSummonRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "DjinnDefault"
+						Delay 3.6
+						Repeats 1
+						Cooldown -1
+					}
+				}
+			}
+		}
 		T_TFBot_Demo_Burst_Biblical
 		{
 			Name "Biblically Accurate Burst Demo"
@@ -697,6 +970,23 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		WaveSpawn
+		{
+			Name "Wave2_Subwave1_Djinn"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Djinn
+			}
+		}
 	}
 	// Wave 3 Notes
 	Wave
