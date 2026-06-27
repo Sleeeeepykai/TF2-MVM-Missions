@@ -405,6 +405,582 @@ WaveSchedule
 				"stay_time" "9999"
 			}
 		}
+		Djinn_PT2
+		{
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "DjinnFireball"
+				"origin" "40 0 80"
+				"teamnum" "3"
+				"$weaponname" "DjinnFireballWeapon"
+				"$preventshootparent" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+
+			logic_relay
+			{
+				"targetname" "DjinnSummonRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
+				"OnTrigger" "DjinnSummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "DjinnSpawn_PT,ForceSpawn,,2.3,-1"
+				"OnTrigger" "DjinnSummonGenerator,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonCounter,Add,4,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "DjinnSummonGenerator,CommandGoToActionPoint,DjinnActionPoint,2.4,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
+			}
+
+			math_counter
+			{
+				"targetname" "DjinnSummonCounter"
+				"startvalue" "0"
+				"min" "0"
+				"max" "8"
+
+				"OutValue" "DjinnCounterCompare,SetValueCompare,,0,-1"
+			}
+			logic_compare
+			{
+				"targetname" "DjinnCounterCompare"
+				"CompareValue" "4"
+
+				"OnLessThan" "DjinnSummonRelay,Enable,,0,-1"
+				"OnEqualTo" "DjinnSummonRelay,Enable,,0,-1"
+				"OnGreaterThan" "DjinnSummonRelay,Disable,,0,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "100 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "-100 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "0 100 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "0 -100 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "100 0 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "-100 0 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 100 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 -100 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_action_point
+			{
+				"targetname" "DjinnActionPoint"
+				"desired_distance" "75"
+				"stay_time" "9999"
+			}
+		}
+		Djinn_PT3
+		{
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "DjinnFireball"
+				"origin" "40 0 80"
+				"teamnum" "3"
+				"$weaponname" "DjinnFireballWeapon"
+				"$preventshootparent" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+
+			logic_relay
+			{
+				"targetname" "DjinnSummonRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
+				"OnTrigger" "DjinnSummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "DjinnSpawn_PT,ForceSpawn,,2.3,-1"
+				"OnTrigger" "DjinnSummonGenerator,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonCounter,Add,4,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "DjinnSummonGenerator,CommandGoToActionPoint,DjinnActionPoint,2.4,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
+			}
+
+			math_counter
+			{
+				"targetname" "DjinnSummonCounter"
+				"startvalue" "0"
+				"min" "0"
+				"max" "8"
+
+				"OutValue" "DjinnCounterCompare,SetValueCompare,,0,-1"
+			}
+			logic_compare
+			{
+				"targetname" "DjinnCounterCompare"
+				"CompareValue" "4"
+
+				"OnLessThan" "DjinnSummonRelay,Enable,,0,-1"
+				"OnEqualTo" "DjinnSummonRelay,Enable,,0,-1"
+				"OnGreaterThan" "DjinnSummonRelay,Disable,,0,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "100 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "-100 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "0 100 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "0 -100 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "100 0 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "-100 0 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 100 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 -100 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_action_point
+			{
+				"targetname" "DjinnActionPoint"
+				"desired_distance" "75"
+				"stay_time" "9999"
+			}
+		}
+		Djinn_PT4
+		{
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "DjinnFireball"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "DjinnFireball"
+				"origin" "40 0 80"
+				"teamnum" "3"
+				"$weaponname" "DjinnFireballWeapon"
+				"$preventshootparent" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+
+			logic_relay
+			{
+				"targetname" "DjinnSummonRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
+				"OnTrigger" "DjinnSummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "DjinnSpawn_PT,ForceSpawn,,2.3,-1"
+				"OnTrigger" "DjinnSummonGenerator,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonCounter,Add,4,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "DjinnSummonGenerator,CommandGoToActionPoint,DjinnActionPoint,2.4,-1"
+				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
+			}
+
+			math_counter
+			{
+				"targetname" "DjinnSummonCounter"
+				"startvalue" "0"
+				"min" "0"
+				"max" "8"
+
+				"OutValue" "DjinnCounterCompare,SetValueCompare,,0,-1"
+			}
+			logic_compare
+			{
+				"targetname" "DjinnCounterCompare"
+				"CompareValue" "4"
+
+				"OnLessThan" "DjinnSummonRelay,Enable,,0,-1"
+				"OnEqualTo" "DjinnSummonRelay,Enable,,0,-1"
+				"OnGreaterThan" "DjinnSummonRelay,Disable,,0,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "100 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "-100 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "0 100 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "DjinnSummonIndicator"
+                "origin" "0 -100 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "100 0 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "-100 0 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 100 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "DjinnSummonGenerator"
+				"origin" "0 -100 75"
+				"team" "blue"
+				"class" "demoman"
+				"count" "1"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
+				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_action_point
+			{
+				"targetname" "DjinnActionPoint"
+				"desired_distance" "75"
+				"stay_time" "9999"
+			}
+		}
 		
 		DjinnSpawn_PT
 		{
@@ -549,8 +1125,6 @@ WaveSchedule
 
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
-			SpawnTemplate "Djinn_PT"
-
 			Item "Sharpened Volcano Fragment"
 
 			Item "Pyromancer's Mask"
@@ -597,7 +1171,7 @@ WaveSchedule
 				Target !self
 				Action $ChangeAttributes
 				Param "DjinnDefault"
-				Delay 6
+				Delay 5
 				Repeats 1
 				Cooldown -1
 			}
@@ -995,6 +1569,8 @@ WaveSchedule
 				Scale 2
 				Attributes UseBossHealthBar
 
+				SpawnTemplate Djinn_PT
+
 				AddAttribute
 				{
 					Item "Player"
@@ -1004,9 +1580,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // Support Axtinguisher Pyros
+		WaveSpawn // Support Punchies
 		{
-			Name "Wave2_Subwave1_AxtinguisherPyros"
+			Name "Wave2_Subwave1_Punchies"
 			WaitForAllSpawned "Wave2_Subwave1_Djinn"
 			Where spawnbot_left
 			Where spawnbot_right
@@ -1020,13 +1596,7 @@ WaveSchedule
 
 			TFBot
 			{
-				Name "Axtinguisher Pyro"
-				Class Pyro
-				ClassIcon pyro_jug_axtinguisher
-				Skill Hard
-				WeaponRestrictions MeleeOnly
-
-				Item "The Axtinguisher"
+				Template T_TFBot_Heavy_Heavyweight_Champ
 			}
 		}
 
@@ -1772,6 +2342,8 @@ WaveSchedule
 			
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
@@ -1823,6 +2395,8 @@ WaveSchedule
 			
 			Squad
 			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
@@ -2019,6 +2593,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Pyro_Djinn
+
+					SpawnTemplate Djinn_PT2
 				}
 				TFBot
 				{
@@ -2042,7 +2618,7 @@ WaveSchedule
 			TFBot
 			{
 				Class Soldier
-				Skill Expert
+				Skill Hard
 			}
 		}
 		WaveSpawn // 3 Heavies and 3 Quick-Uber Medics
@@ -2062,7 +2638,7 @@ WaveSchedule
 				TFBot
 				{
 					Class Heavy
-					Skill Normal
+					Skill Easy
 				}
 				TFBot
 				{
@@ -2088,6 +2664,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Pyro_Djinn
+
+					SpawnTemplate Djinn_PT3
 				}
 				TFBot
 				{
@@ -2111,7 +2689,7 @@ WaveSchedule
 			TFBot
 			{
 				Class Soldier
-				Skill Expert
+				Skill Hard
 			}
 		}
 		WaveSpawn // 3 Heavies and 3 Quick-Uber Medics
@@ -2131,7 +2709,7 @@ WaveSchedule
 				TFBot
 				{
 					Class Heavy
-					Skill Normal
+					Skill Easy
 				}
 				TFBot
 				{
@@ -2158,6 +2736,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Pyro_Djinn
+
+					SpawnTemplate Djinn_PT4
 				}
 				TFBot
 				{
@@ -2200,7 +2780,7 @@ WaveSchedule
 				TFBot
 				{
 					Class Heavy
-					Skill Normal
+					Skill Easy
 				}
 				TFBot
 				{
