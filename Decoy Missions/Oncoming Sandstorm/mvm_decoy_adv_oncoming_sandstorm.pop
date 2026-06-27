@@ -1474,6 +1474,33 @@ WaveSchedule
 						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
 						COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
 					})
+
+					TankExt.CreateLoopPaths({
+						tank_patrol = [
+							Vector(0, 2976, 388)
+							Vector(0, 2520, 388)
+							Vector(0, 356, 388)
+							Vector(-28, 284, 388)
+							Vector(-100, 256, 388)
+							Vector(-636, 256, 388)
+							Vector(-708, 228, 388)
+							Vector(-736, 168, 388)
+							Vector(-736, -448, 388)
+							Vector(-704, -512, 388)
+							Vector(-624, -608, 388)
+							Vector(-512, -688, 388)
+							Vector(416, -688, 388)
+							Vector(496, -656, 388)
+							Vector(528, -608, 388)
+							Vector(544, -560, 388)
+							Vector(544, -48, 388)
+							Vector(512, 32, 388)
+							Vector(448, 112, 388)
+							Vector(368, 192, 388)
+							Vector(256, 256, 388)
+							Vector(-100, 256, 388)
+						]
+					})
             	  "
         }
 		StartWaveOutput
@@ -1482,6 +1509,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`tank_bust_relay`, `Trigger`)
                   "
         }
         DoneOutput
@@ -1510,7 +1538,7 @@ WaveSchedule
 				Name "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Template Tank_Combat_Rocket_Tiny
 				Health 15000
-				StartingPathTrackNode "tank_path_left_flank_1"
+				StartingPathTrackNode "tank_patrol_1"
 			}
 		}
 
@@ -2098,6 +2126,33 @@ WaveSchedule
 						COMBATTANK_CANNON_ROCKET_SPEED = 2000
 						COMBATTANK_CANNON_ROCKET_DAMAGE = 200
 					})
+
+					TankExt.CreateLoopPaths({
+						tank_patrol = [
+							Vector(0, 2976, 388)
+							Vector(0, 2520, 388)
+							Vector(0, 356, 388)
+							Vector(-28, 284, 388)
+							Vector(-100, 256, 388)
+							Vector(-636, 256, 388)
+							Vector(-708, 228, 388)
+							Vector(-736, 168, 388)
+							Vector(-736, -448, 388)
+							Vector(-704, -512, 388)
+							Vector(-624, -608, 388)
+							Vector(-512, -688, 388)
+							Vector(416, -688, 388)
+							Vector(496, -656, 388)
+							Vector(528, -608, 388)
+							Vector(544, -560, 388)
+							Vector(544, -48, 388)
+							Vector(512, 32, 388)
+							Vector(448, 112, 388)
+							Vector(368, 192, 388)
+							Vector(256, 256, 388)
+							Vector(-100, 256, 388)
+						]
+					})
             	  "
         }
 		StartWaveOutput
@@ -2106,6 +2161,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`tank_bust_relay`, `Trigger`)
                   "
         }
         DoneOutput
@@ -2116,5 +2172,56 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 1 Mini Cannon Tank
+		{
+			Name "Wave6_Subwave1_CannonTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Template Tank_Combat_Cannon_Tiny
+			}
+		}
+
+		WaveSpawn // 1 GBarrage Soldier and 2 Pyros
+		{
+			Name "Wave6_Subwave1_GBarrage"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+			
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Expert
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Expert
+					Attributes AlwaysFireWeapon
+				}
+			}
+		}
 	}
 }
