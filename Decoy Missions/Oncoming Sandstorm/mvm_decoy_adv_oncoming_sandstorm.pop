@@ -1445,8 +1445,6 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// Put in the kill input for the combat tank on wave end
-	// Potentially nerf the pacing of the first subwave?
 	Wave
 	{
 		InitWaveOutput
@@ -1734,7 +1732,7 @@ WaveSchedule
 		}
 		WaveSpawn // 8 Heavies
 		{
-			Name "Wave4_Subwave2_Heavies"
+			Name "Wave4_Subwave2_Heavies2"
 			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
 			Where spawnbot
 			TotalCount 8
@@ -1852,6 +1850,46 @@ WaveSchedule
 						"airblast disabled" 1
 					}
 				}
+			}
+		}
+
+		// Wave End Check
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_GRapidDemo2"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_Heavies2"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_Pyros"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_GHeavy"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_RocketShotgunSoldiers"
+		}
+
+		WaveSpawn
+		{
+			Name "Wave4_End"
+			WaitForAllSpawned "Wave4_EndCheck"
+
+			FirstSpawnOutput
+			{
+				Target tank_boss*
+				Action RemoveHealth
+				Param 100000
 			}
 		}
 	}
