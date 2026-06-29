@@ -545,6 +545,11 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
+	// Rework the summoning mechanic for the Djinn to stop bots getting spawned in walls
+	// Make the Djinn launch projectiles that summon the minions
+	// Remove the interrupt action for the spawned minions
+	// Put in the spawn sound for the other tanks
+	// Kill the decoy shuffle
 
 	// Wave 1 Notes
 	Wave
@@ -1536,11 +1541,13 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 80
 
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
 			Tank
 			{
 				Name "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Template Tank_Combat_Rocket_Tiny
-				Health 17500
+				Health 20000
 				StartingPathTrackNode "tank_patrol_1"
 			}
 		}
@@ -1890,7 +1897,7 @@ WaveSchedule
 
 			FirstSpawnOutput
 			{
-				Target tank_boss*
+				Target "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Action RemoveHealth
 				Param 100000
 			}
@@ -2300,6 +2307,8 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
 			Tank
 			{
 				Name "combattank|cannon$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
@@ -2460,15 +2469,106 @@ WaveSchedule
 		}
 		
 		// Subwave 2
-		WaveSpawn // 1 GBarrage Soldier and 2 Conch Soldiers
+		WaveSpawn // 1 GBarrage Soldier and 2 Battalion Soldiers
 		{
-			Name "Wave6_Subwave2_GBarrage"
+			Name "Wave6_Subwave1_GBarrage3"
 			WaitForAllSpawned "Wave6_Subwave1_GBarrage2"
 			Where spawnbot
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
 			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+			
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion
+					Skill Expert
+					Attributes AlwaysCrit
+				}
+			}
+		}
+		WaveSpawn // 10 Fury Pyros
+		{
+			Name "Wave6_Subwave1_FuryPyros"
+			WaitForAllSpawned "Wave6_Subwave1_GBarrage3"
+			Where spawnbot
+			TotalCount 10
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury
+				Skill Expert
+			}
+		}
+		WaveSpawn // 1 Rapid Fire Demo
+		{
+			Name "Wave6_Subwave2_RapidDemo"
+			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_left
+			}
+		}
+		WaveSpawn // 1 Rapid Fire Demo
+		{
+			Name "Wave6_Subwave2_RapidDemo"
+			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
+			Where spawnbot_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_right
+			}
+		}
+
+		WaveSpawn // 1 GBarrage Soldier and 2 Conch Soldiers
+		{
+			Name "Wave6_Subwave2_GBarrage"
+			WaitForAllSpawned "Wave6_Subwave1_GBarrage3"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 			
@@ -2494,16 +2594,16 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 12 Fury Pyros
+		WaveSpawn // 4 Fury Pyros
 		{
 			Name "Wave6_Subwave2_FuryPyros"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
 			Where spawnbot
-			TotalCount 12
-			MaxActive 6
-			SpawnCount 2
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 2
+			WaitBetweenSpawns 0
 			TotalCurrency 60
 
 			TFBot
@@ -2512,16 +2612,16 @@ WaveSchedule
 				Skill Expert
 			}
 		}
-		WaveSpawn // 2 Rapid Fire Demos
+		WaveSpawn // 1 Rapid Fire Demo
 		{
-			Name "Wave6_Subwave2_RapidDemos"
+			Name "Wave6_Subwave2_RapidDemo"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
 			Where spawnbot_left
-			TotalCount 2
-			MaxActive 2
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 12
 			TotalCurrency 40
 
 			TFBot
@@ -2531,16 +2631,16 @@ WaveSchedule
 				Tag nav_prefer_flank_left
 			}
 		}
-		WaveSpawn // 2 Rapid Fire Demos
+		WaveSpawn // 1 Rapid Fire Demo
 		{
-			Name "Wave6_Subwave2_RapidDemos"
+			Name "Wave6_Subwave2_RapidDemo"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
 			Where spawnbot_right
-			TotalCount 2
-			MaxActive 2
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 12
 			TotalCurrency 40
 
 			TFBot
@@ -2559,7 +2659,7 @@ WaveSchedule
 			TotalCount 3
 			MaxActive 3
 			SpawnCount 3
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 			
@@ -2603,105 +2703,14 @@ WaveSchedule
 				Skill Expert
 			}
 		}
-		WaveSpawn // 2 Rapid Fire Demos
+		WaveSpawn // 1 Rapid Fire Demo
 		{
-			Name "Wave6_Subwave2_RapidDemos2"
+			Name "Wave6_Subwave2_RapidDemo2"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage2"
 			Where spawnbot_left
-			TotalCount 2
-			MaxActive 2
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Spammer
-				BehaviorModifiers Push
-				Tag nav_prefer_flank_left
-			}
-		}
-		WaveSpawn // 2 Rapid Fire Demos
-		{
-			Name "Wave6_Subwave2_RapidDemos2"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage2"
-			Where spawnbot_right
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Spammer
-				BehaviorModifiers Push
-				Tag nav_prefer_flank_right
-			}
-		}
-
-		WaveSpawn // 1 GBarrage Soldier and 2 Conch Soldiers
-		{
-			Name "Wave6_Subwave2_GBarrage3"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage2"
-			Where spawnbot
-			TotalCount 3
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 60
-			
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Barrage
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Concheror
-					Skill Expert
-					Attributes AlwaysCrit
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Concheror
-					Skill Expert
-					Attributes AlwaysCrit
-				}
-			}
-		}
-		WaveSpawn // 6 Fury Pyros
-		{
-			Name "Wave6_Subwave2_FuryPyros3"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage3"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 0
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Pyro_Dragon_Fury
-				Skill Expert
-			}
-		}
-		WaveSpawn // 2 Rapid Fire Demos
-		{
-			Name "Wave6_Subwave2_RapidDemos3"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage3"
-			Where spawnbot_left
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -2713,14 +2722,14 @@ WaveSchedule
 				Tag nav_prefer_flank_left
 			}
 		}
-		WaveSpawn // 2 Rapid Fire Demos
+		WaveSpawn // 1 Rapid Fire Demos
 		{
-			Name "Wave6_Subwave2_RapidDemos3"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage3"
+			Name "Wave6_Subwave2_RapidDemo2"
+			WaitForAllSpawned "Wave6_Subwave2_GBarrage2"
 			Where spawnbot_right
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -2737,6 +2746,21 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave6_EndCheck"
+			WaitForAllDead "Wave6_Subwave2_GBarrage"
+		}
+		WaveSpawn
+		{
+			Name "Wave6_EndCheck"
+			WaitForAllDead "Wave6_Subwave2_FuryPyros"
+		}
+		WaveSpawn
+		{
+			Name "Wave6_EndCheck"
+			WaitForAllDead "Wave6_Subwave2_RapidDemo"
+		}
+		WaveSpawn
+		{
+			Name "Wave6_EndCheck"
 			WaitForAllDead "Wave6_Subwave2_GBarrage2"
 		}
 		WaveSpawn
@@ -2747,22 +2771,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave6_EndCheck"
-			WaitForAllDead "Wave6_Subwave2_RapidDemos2"
-		}
-		WaveSpawn
-		{
-			Name "Wave6_EndCheck"
-			WaitForAllDead "Wave6_Subwave2_GBarrage3"
-		}
-		WaveSpawn
-		{
-			Name "Wave6_EndCheck"
-			WaitForAllDead "Wave6_Subwave2_FuryPyros3"
-		}
-		WaveSpawn
-		{
-			Name "Wave6_EndCheck"
-			WaitForAllDead "Wave6_Subwave2_RapidDemos3"
+			WaitForAllDead "Wave6_Subwave2_RapidDemo2"
 		}
 
 		WaveSpawn
@@ -2772,7 +2781,7 @@ WaveSchedule
 
 			FirstSpawnOutput
 			{
-				Target tank_boss*
+				Target "combattank|cannon$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Action RemoveHealth
 				Param 100000
 			}
