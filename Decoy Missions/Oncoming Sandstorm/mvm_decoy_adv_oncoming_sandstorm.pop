@@ -92,8 +92,8 @@ WaveSchedule
 							Target.AddWeaponRestriction(2)
 							Target.AddBotAttribute(32)
 
-							Target.AddCustomAttribute(`cannot pick up intelligence`, 1, -1)
-							Target.AddCustomAttribute(`max health additive bonus`, 125, -1)
+							Target.AddCustomAttribute(`cannot pick up intelligence`, 1, 0)
+							Target.AddCustomAttribute(`max health additive bonus`, 125, 0)
 
 							Target.SetHealth(300)
 							Target.SetModelScale(1.3, 0.0)
@@ -239,6 +239,8 @@ WaveSchedule
 			{
 				"targetname" "DjinnSummonRelay"
 
+				"OnTrigger" "@p@DjinnTarget,$AddPlayerAttribute,dmg from ranged reduced|0.5,0,-1"
+				"OnTrigger" "@p@DjinnTarget,$AddPlayerAttribute,dmg from melee increased|0.5,0,-1"
 				"OnTrigger" "@p@DjinnTarget,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "@p@DjinnTarget,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
@@ -256,6 +258,8 @@ WaveSchedule
 				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "@p@DjinnTarget,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
+				"OnTrigger" "@p@DjinnTarget,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
 				"OnTrigger" "@p@DjinnTarget,$RemoveCond,7,3.5,-1"
 			}
@@ -541,8 +545,6 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
-	// Djinn feels very underwhelming with its summon mechanic, something needs to be done to make this ability more threatening
-	// Wave 4 feels very unengaging on its challenge factor, potentially too slow? Or the patrolling combat tank is not that impactful
 	// Potential issue of the mission giving too much cash for what the waves are presenting?
 	// Wave 6 has an issue of "Entire wavebar at once"; first subwave presents colonels with conches, flanking rapid fire demos, soda scouts, and the patrolling combat tank
 
@@ -857,7 +859,7 @@ WaveSchedule
 			{
 				Name "Greater Djinn of the Sandstorm"
 				Template T_TFBot_Giant_Pyro_Djinn
-				Health 12500
+				Health 10000
 				Scale 2
 				Attributes UseBossHealthBar
 
@@ -1540,7 +1542,7 @@ WaveSchedule
 			{
 				Name "combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Template Tank_Combat_Rocket_Tiny
-				Health 15000
+				Health 17500
 				StartingPathTrackNode "tank_patrol_1"
 			}
 		}
@@ -1604,7 +1606,7 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 4
 			WaitBeforeStarting 10
-			WaitBetweenSpawns 10
+			WaitBetweenSpawns 8
 			TotalCurrency 40
 
 			Squad
@@ -1646,9 +1648,9 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GRapid Demo, 1 Rocket Shotgun Soldier and 2 Big-Heal Medics
+		WaveSpawn // 1 GBurst Demo, 1 Rocket Shotgun Soldier and 2 Big-Heal Medics
 		{
-			Name "Wave4_Subwave2_GRapidDemo"
+			Name "Wave4_Subwave2_GBurstDemo"
 			WaitForAllSpawned "Wave4_Subwave1_Pyros2"
 			Where spawnbot
 			TotalCount 4
@@ -1664,7 +1666,7 @@ WaveSchedule
 
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Spammer
+					Template T_TFBot_Giant_Demoman_Burst
 				}
 				TFBot
 				{
@@ -1683,7 +1685,7 @@ WaveSchedule
 		WaveSpawn // 10 Heavies
 		{
 			Name "Wave4_Subwave2_Heavies"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo"
 			Where spawnbot
 			TotalCount 10
 			MaxActive 7
@@ -1699,10 +1701,10 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GRapid Demo, 1 Rocket Shotgun Soldier and 2 Big-Heal Medics
+		WaveSpawn // 1 GBurst Demo, 1 Rocket Shotgun Soldier and 2 Big-Heal Medics
 		{
-			Name "Wave4_Subwave2_GRapidDemo2"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo"
+			Name "Wave4_Subwave2_GBurstDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -1717,7 +1719,7 @@ WaveSchedule
 
 				TFBot
 				{
-					Template T_TFBot_Giant_Demoman_Spammer
+					Template T_TFBot_Giant_Demoman_Burst
 				}
 				TFBot
 				{
@@ -1736,7 +1738,7 @@ WaveSchedule
 		WaveSpawn // 8 Heavies
 		{
 			Name "Wave4_Subwave2_Heavies2"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
 			Where spawnbot
 			TotalCount 8
 			MaxActive 6
@@ -1754,7 +1756,7 @@ WaveSchedule
 		WaveSpawn // 5 Pyros
 		{
 			Name "Wave4_Subwave2_Pyros"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
 			Where spawnbot
 			TotalCount 5
 			MaxActive 5
@@ -1780,7 +1782,7 @@ WaveSchedule
 		WaveSpawn // 1 GHeavy and 3 Quick-Uber Medics
 		{
 			Name "Wave4_Subwave2_GHeavy"
-			WaitForAllSpawned "Wave4_Subwave2_GRapidDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
 			Where spawnbot
 			TotalCount 4
 			MaxActive 4
@@ -1860,7 +1862,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave4_EndCheck"
-			WaitForAllDead "Wave4_Subwave2_GRapidDemo2"
+			WaitForAllDead "Wave4_Subwave2_GBurstDemo2"
 		}
 		WaveSpawn
 		{
@@ -2220,6 +2222,7 @@ WaveSchedule
 		WaveSpawn // 1 Mini Cannon Tank
 		{
 			Name "Wave6_Subwave1_CannonTank"
+			Support Limited
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -2231,7 +2234,7 @@ WaveSchedule
 			{
 				Name "combattank|cannon$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50"
 				Template Tank_Combat_Cannon_Tiny
-				Health 17500
+				Health 20000
 				StartingPathTrackNode "tank_patrol_1"
 			}
 		}
@@ -2277,7 +2280,7 @@ WaveSchedule
 			TotalCount 8
 			MaxActive 6
 			SpawnCount 4
-			WaitBeforeStarting 5
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 8
 			TotalCurrency 40
 
@@ -2318,7 +2321,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 18
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 80
 			
 			Squad
 			{
@@ -2350,7 +2353,7 @@ WaveSchedule
 			TotalCount 10
 			MaxActive 8
 			SpawnCount 5
-			WaitBeforeStarting 5
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 8
 			TotalCurrency 40
 
@@ -2397,7 +2400,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 100
 			
 			Squad
 			{
@@ -2439,6 +2442,44 @@ WaveSchedule
 				Skill Expert
 			}
 		}
+		WaveSpawn // 2 Rapid Fire Demos
+		{
+			Name "Wave6_Subwave2_RapidDemos"
+			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
+			Where spawnbot_left
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_left
+			}
+		}
+		WaveSpawn // 2 Rapid Fire Demos
+		{
+			Name "Wave6_Subwave2_RapidDemos"
+			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
+			Where spawnbot_right
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_right
+			}
+		}
 
 		WaveSpawn // 1 GBarrage Soldier and 2 Conch Soldiers
 		{
@@ -2450,7 +2491,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 100
 			
 			Squad
 			{
@@ -2492,16 +2533,16 @@ WaveSchedule
 				Skill Expert
 			}
 		}
-		WaveSpawn // 1 Rapid Fire Demo
+		WaveSpawn // 2 Rapid Fire Demos
 		{
 			Name "Wave6_Subwave2_RapidDemos2"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage2"
 			Where spawnbot_left
-			TotalCount 1
-			MaxActive 1
+			TotalCount 2
+			MaxActive 2
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 8
 			TotalCurrency 40
 
 			TFBot
@@ -2511,16 +2552,16 @@ WaveSchedule
 				Tag nav_prefer_flank_left
 			}
 		}
-		WaveSpawn // 1 Rapid Fire Demo
+		WaveSpawn // 2 Rapid Fire Demos
 		{
 			Name "Wave6_Subwave2_RapidDemos2"
 			WaitForAllSpawned "Wave6_Subwave2_GBarrage2"
 			Where spawnbot_right
-			TotalCount 1
-			MaxActive 1
+			TotalCount 2
+			MaxActive 2
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 0
+			WaitBetweenSpawns 8
 			TotalCurrency 40
 
 			TFBot
