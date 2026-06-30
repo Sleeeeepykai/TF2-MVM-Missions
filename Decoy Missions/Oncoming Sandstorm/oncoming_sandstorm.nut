@@ -83,13 +83,14 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	{
 		for(local Child = Target.FirstMoveChild(); Child != null; Child = Child.NextMovePeer())
 		{
+			printl("starting search")
 			if (Child.GetClassname() == "bot_generator")
 			{
 				printl("generator found")
 				local TraceParams = 
 				{
-					start = Target
-					end = Child
+					start = Target.GetOrigin()
+					end = Child.GetOrigin()
 					ignore = Target
 				}
 
