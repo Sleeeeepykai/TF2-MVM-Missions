@@ -77,51 +77,10 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
-						::DjinnSummonInit <- function(Target)
-						{
-							Target.RemoveWeaponRestriction(7)
-							Target.ClearAllBotAttributes()
-							Target.ClearAllBotTags()
-							Target.SetCustomModelWithClassAnimations(null)
-							Target.SetDifficulty(3)
-							Target.SetMaxVisionRangeOverride(9999)
+						IncludeScript(`oncoming_sandstorm`, getroottable())
 
-							SetFakeClientConVarValue(Target, `name`, `Resurrected Soldier`)
-							Target.SetCustomModelWithClassAnimations(`models/bots/soldier/bot_soldier_gibby.mdl`)
-							NetProps.SetPropString(Target, `m_iszClassIcon`, `soldier_crit`)
-
-							Target.AddWeaponRestriction(2)
-							Target.AddBotAttribute(16)
-							Target.AddBotAttribute(32)
-							Target.AddBotAttribute(2048)
-
-							Target.AddCustomAttribute(`cannot pick up intelligence`, 1, 0)
-							Target.AddCustomAttribute(`max health additive bonus`, 125, 0)
-
-							Target.SetHealth(300)
-							Target.SetModelScale(1.3, 0.0)
-						}
+						OncomingSandstorm.SandstormInit()
 					  "
-			}
-			logic_auto
-			{
-				"targetname" "theauto"
-
-				"OnMapSpawn" "tank_path_left_flank_41,AddOutput,OnPass !activator:SetSpeed:0:0:-1"
-				"OnMapSpawn" "tank_path_left_flank_41,AddOutput,OnPass tf_gamerules:PlayVO:doors/heavy_metal_stop1.wav:0:-1"
-				"OnMapSpawn" "tank_path_left_flank_41,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
-				"OnMapSpawn" "tank_path_left_flank_56,AddOutput,OnPass !activator:SetSpeed:0:0:-1"
-				"OnMapSpawn" "tank_path_left_flank_56,AddOutput,OnPass tf_gamerules:PlayVO:doors/heavy_metal_stop1.wav:0:-1"
-				"OnMapSpawn" "tank_path_left_flank_56,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
-				"OnMapSpawn" "tank_path_right_flank_20,AddOutput,OnPass !activator:SetSpeed:0:0:-1"
-				"OnMapSpawn" "tank_path_right_flank_20,AddOutput,OnPass tf_gamerules:PlayVO:doors/heavy_metal_stop1.wav:0:-1"
-				"OnMapSpawn" "tank_path_right_flank_20,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
-				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass !activator:SetSpeed:0:0:-1"
-				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass tf_gamerules:PlayVO:doors/heavy_metal_stop1.wav:0:-1"
-				"OnMapSpawn" "tank_path_right_flank_34,AddOutput,OnPass tf_gamerules:PlayVO:hl1/ambience/steamburst1.wav:0:-1"
-
-				"OnMapSpawn" "func_flagdetectionzone,AddOutput,OnStartTouchFlag combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50:SetSpeed:75:0:-1"
-				"OnMapSpawn" "func_flagdetectionzone,AddOutput,OnPickedUpFlag combattank|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav^scale|0.5^maxstepheight|50:SetSpeed:75:0:-1"
 			}
 			point_populator_interface
 			{
@@ -203,49 +162,6 @@ WaveSchedule
 		{
 			OnSpawnOutput
 			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						::DjinnSummonTrace <- function(Target)
-						{
-							local DjinnStartPoint = Entities.FindByNameWithin(null, `DjinnTarget*`, Target.GetOrigin(), 192)
-							local DjinnEndPoint1 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorBodyGuard1*`, Target.GetOrigin(), 192)
-							local DjinnEndPoint2 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorBodyGuard2*`, Target.GetOrigin(), 192)
-							local DjinnEndPoint3 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorMobber1*`, Target.GetOrigin(), 192)
-							local DjinnEndPoint4 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorMobber2*`, Target.GetOrigin(), 192)
-
-						}
-					  "
-			}
-			OnSpawnOutput
-            {
-                Target "DjinnFakeParent"
-                Action $SetOwner
-                Param "!activator"
-                Delay -1
-                Repeats 1
-                Cooldown -1
-            }
-            OnSpawnOutput
-            {
-                Target "DjinnFakeParent"
-                Action $SetFakeParent
-                Param "!activator"
-                Delay -1
-                Repeats 1
-                Cooldown -1
-            }
-            OnSpawnOutput
-            {
-                Target "DjinnFakeParent"
-                Action "SetParent"
-                Param ""
-                Delay -1
-                Repeats 1
-                Cooldown -1
-            }
-			OnSpawnOutput
-			{
 				Target "DjinnTarget"
 				Action SetParent
 				Param "!activator"
@@ -266,14 +182,6 @@ WaveSchedule
 				Delay 15
 				Repeats 1
 				Cooldown -1
-			}
-
-			info_target
-			{
-				"targetname" "DjinnFakeParent"
-				"origin" "0 0 0"
-				"$modules" "fakeparent"
-				"$positiononly" "1"
 			}
 			info_target
 			{
@@ -304,6 +212,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "DjinnSpawn_PT,ForceSpawn,,2.3,-1"
+				"OnTrigger" "@p@DjinnTarget,RunScriptCode,DjinnSummonTrace(self),2.3,-1"
 				"OnTrigger" "DjinnSummonGeneratorBodyGuard1,SpawnBot,,2.33,-1"
 				"OnTrigger" "DjinnSummonGeneratorBodyGuard2,SpawnBot,,2.33,-1"
 				"OnTrigger" "DjinnSummonGeneratorMobber1,SpawnBot,,2.33,-1"
@@ -342,7 +251,6 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-				"parentname" "DjinnFakeParent"
                 "origin" "100 0 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -357,7 +265,6 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-				"parentname" "DjinnFakeParent"
                 "origin" "-100 0 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -372,7 +279,6 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-				"parentname" "DjinnFakeParent"
                 "origin" "0 100 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -387,7 +293,6 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
-				"parentname" "DjinnFakeParent"
                 "origin" "0 -100 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -403,73 +308,65 @@ WaveSchedule
 			bot_generator
 			{
 				"targetname" "DjinnSummonGeneratorBodyGuard1"
-				"parentname" "DjinnFakeParent"
-				"origin" "100 0 75"
+				"origin" "100 0 10"
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonTrace(self),0,-1"
-				"OnSpawned" "!activator,$BotCommand,interrupt_action -posent DjinnSummonPoint1 -distance 1 -duration 9999,0.5,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
+				"OnSpawned" "!activator,$BotCommand,interrupt_action -posent DjinnBodyguardPoint1 -distance 1 -duration 9999,0.5,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
 			bot_generator
 			{
 				"targetname" "DjinnSummonGeneratorBodyGuard2"
-				"parentname" "DjinnFakeParent"
-				"origin" "-100 0 75"
+				"origin" "-100 0 10"
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonTrace(self),0,-1"
-				"OnSpawned" "!activator,$BotCommand,interrupt_action -posent DjinnSummonPoint2 -distance 1 -duration 9999,0.5,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
+				"OnSpawned" "!activator,$BotCommand,interrupt_action -posent DjinnBodyguardPoint2 -distance 1 -duration 9999,0.5,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
 			bot_generator
 			{
 				"targetname" "DjinnSummonGeneratorMobber1"
-				"parentname" "DjinnFakeParent"
-				"origin" "0 100 75"
+				"origin" "0 100 10"
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonTrace(self),0,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
 			bot_generator
 			{
 				"targetname" "DjinnSummonGeneratorMobber2"
-				"parentname" "DjinnFakeParent"
-				"origin" "0 -100 75"
+				"origin" "0 -100 10"
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
-				"OnSpawned" "!activator,RunScriptCode,DjinnSummonTrace(self),0,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
 			info_target
 			{
-				"targetname" "DjinnSummonPoint1"
+				"targetname" "DjinnBodyguardPoint1"
 				"origin" "100 40 25"
 			}
 			info_target
 			{
-				"targetname" "DjinnSummonPoint2"
+				"targetname" "DjinnBodyguardPoint2"
 				"origin" "100 -40 25"
 			}
 		}
@@ -628,19 +525,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
             	  "
         }
 		StartWaveOutput
@@ -885,19 +772,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
             	  "
         }
 		StartWaveOutput
@@ -1138,19 +1015,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
             	  "
         }
 		StartWaveOutput
@@ -1536,19 +1403,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
@@ -1989,19 +1846,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
             	  "
         }
 		StartWaveOutput
@@ -2308,19 +2155,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
 
 					IncludeScript(`tankextensions_main`, getroottable())
                     IncludeScript(`tankextensions/combattank`, getroottable())
@@ -2877,19 +2714,9 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-					EntFire(`nav_avoid_intel_bridges_timer`, `Kill`)
-
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					SetSkyboxTexture(`sky_sandstorm`)
-
-					for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, `sndscp_outside`);)
-					{
-						Soundscape.KeyValueFromString(`soundscape`, `stormfront.outside`)
-						Soundscape.DispatchSpawn()
-					}
             	  "
         }
 		StartWaveOutput
