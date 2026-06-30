@@ -40,7 +40,7 @@ WaveSchedule
 	// Precached Models //
 
 	PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
-	PrecacheModel "models/bots/demo/bot_demo_gibby.mdl"
+	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
@@ -88,6 +88,7 @@ WaveSchedule
 
 							SetFakeClientConVarValue(Target, `name`, `Resurrected Soldier`)
 							Target.SetCustomModelWithClassAnimations(`models/bots/soldier/bot_soldier_gibby.mdl`)
+							NetProps.SetPropString(Target, `m_iszClassIcon`, `soldier_crit`)
 
 							Target.AddWeaponRestriction(2)
 							Target.AddBotAttribute(16)
@@ -207,64 +208,12 @@ WaveSchedule
 				Param "
 						::DjinnSummonTrace <- function(Target)
 						{
-							local DjinnStartPoint = Entities.FindByName(null, `DjinnTarget`)
-							local DjinnEndPoint1 = Entities.FindByName(null, `DjinnSummonGeneratorBodyGuard1`)
-							local DjinnEndPoint2 = Entities.FindByName(null, `DjinnSummonGeneratorBodyGuard2`)
-							local DjinnEndPoint3 = Entities.FindByName(null, `DjinnSummonGeneratorMobber1`)
-							local DjinnEndPoint4 = Entities.FindByName(null, `DjinnSummonGeneratorMobber2`)
+							local DjinnStartPoint = Entities.FindByNameWithin(null, `DjinnTarget*`, Target.GetOrigin(), 192)
+							local DjinnEndPoint1 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorBodyGuard1*`, Target.GetOrigin(), 192)
+							local DjinnEndPoint2 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorBodyGuard2*`, Target.GetOrigin(), 192)
+							local DjinnEndPoint3 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorMobber1*`, Target.GetOrigin(), 192)
+							local DjinnEndPoint4 = Entities.FindByNameWithin(null, `DjinnSummonGeneratorMobber2*`, Target.GetOrigin(), 192)
 
-							local TraceParams1 =
-							{
-								start = DjinnStartPoint.GetOrigin()
-								end = DjinnEndPoint1.GetOrigin()
-								mask = 16395
-							}
-							local TraceParams2 =
-							{
-								start = DjinnStartPoint.GetOrigin()
-								end = DjinnEndPoint2.GetOrigin()
-								mask = 16395
-							}
-							local TraceParams3 =
-							{
-								start = DjinnStartPoint.GetOrigin()
-								end = DjinnEndPoint3.GetOrigin()
-								mask = 16395
-							}
-							local TraceParams4 =
-							{
-								start = DjinnStartPoint.GetOrigin()
-								end = DjinnEndPoint4.GetOrigin()
-								mask = 16395
-							}
-
-							TraceLineEx(TraceParams1)
-							if(TraceParams1.hit)
-							{
-								Target.SetLocalOrigin(DjinnStartPoint.GetOrigin())
-								EntFireByHandle(Target, `$GiveItem`, `TF_WEAPON_ROCKETLAUNCHER`, 0.0, Target, null)
-							}
-
-							TraceLineEx(TraceParams2)
-							if(TraceParams2.hit)
-							{
-								Target.SetLocalOrigin(DjinnStartPoint.GetOrigin())
-								EntFireByHandle(Target, `$GiveItem`, `TF_WEAPON_ROCKETLAUNCHER`, 0.0, Target, null)
-							}
-
-							TraceLineEx(TraceParams3)
-							if(TraceParams3.hit)
-							{
-								Target.SetLocalOrigin(DjinnStartPoint.GetOrigin())
-								EntFireByHandle(Target, `$GiveItem`, `TF_WEAPON_ROCKETLAUNCHER`, 0.0, Target, null)
-							}
-
-							TraceLineEx(TraceParams4)
-							if(TraceParams4.hit)
-							{
-								Target.SetLocalOrigin(DjinnStartPoint.GetOrigin())
-								EntFireByHandle(Target, `$GiveItem`, `TF_WEAPON_ROCKETLAUNCHER`, 0.0, Target, null)
-							}
 						}
 					  "
 			}
@@ -989,7 +938,6 @@ WaveSchedule
 				Health 10000
 				Scale 2
 				Attributes UseBossHealthBar
-				Attributes IgnoreFlag
 
 				AddAttribute
 				{
@@ -1017,7 +965,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Heavy_Heavyweight_Champ
-				Attributes IgnoreFlag
 			}
 		}
 
@@ -1581,6 +1528,7 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
+	// Can probably salvage the giant config
 	Wave
 	{
 		InitWaveOutput
