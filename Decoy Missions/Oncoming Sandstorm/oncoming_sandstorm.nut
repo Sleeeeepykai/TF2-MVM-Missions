@@ -85,6 +85,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		{
 			if (Child.GetClassname() == "bot_generator")
 			{
+				printl("generator found")
 				local TraceParams = 
 				{
 					start = Target
@@ -92,10 +93,12 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 					ignore = Target
 				}
 
+				printl("performing trace")
 				TraceLineEx(TraceParams)
 
 				if(TraceParams.hit)
 				{
+					printl("bot stuck in wall")
 					local OriginalPosition = Child.GetLocalOrigin()
 
 					Child.SetLocalOrigin(Target)
