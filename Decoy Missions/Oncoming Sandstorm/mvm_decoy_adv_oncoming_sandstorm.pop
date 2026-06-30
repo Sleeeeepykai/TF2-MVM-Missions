@@ -199,6 +199,33 @@ WaveSchedule
 		Djinn_PT
 		{
 			OnSpawnOutput
+            {
+                Target "DjinnFakeParent"
+                Action $SetOwner
+                Param "!activator"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+            OnSpawnOutput
+            {
+                Target "DjinnFakeParent"
+                Action $SetFakeParent
+                Param "!activator"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+            OnSpawnOutput
+            {
+                Target "DjinnFakeParent"
+                Action "SetParent"
+                Param ""
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+			OnSpawnOutput
 			{
 				Target "DjinnTarget"
 				Action SetParent
@@ -222,6 +249,13 @@ WaveSchedule
 				Cooldown -1
 			}
 
+			info_target
+			{
+				"targetname" "DjinnFakeParent"
+				"origin" "0 0 0"
+				"$modules" "fakeparent"
+				"$positiononly" "1"
+			}
 			info_target
 			{
 				"targetname" "DjinnTarget"
@@ -250,13 +284,18 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "DjinnSpawn_PT,ForceSpawn,,2.3,-1"
-				"OnTrigger" "DjinnSummonGenerator,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard1,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard2,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonGeneratorMobber1,SpawnBot,,2.33,-1"
+				"OnTrigger" "DjinnSummonGeneratorMobber2,SpawnBot,,2.33,-1"
 				"OnTrigger" "DjinnSummonCounter,Add,4,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard1,CommandGoToActionPoint,DjinnSummonPoint1,2.4,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard2,CommandGoToActionPoint,DjinnSummonPoint2,2.4,-1"
 				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
 				"OnTrigger" "@p@DjinnTarget,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
 				"OnTrigger" "@p@DjinnTarget,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
@@ -285,6 +324,7 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
+				"parentname" "DjinnFakeParent"
                 "origin" "100 0 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -299,6 +339,7 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
+				"parentname" "DjinnFakeParent"
                 "origin" "-100 0 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -313,6 +354,7 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
+				"parentname" "DjinnFakeParent"
                 "origin" "0 100 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -327,6 +369,7 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "DjinnSummonIndicator"
+				"parentname" "DjinnFakeParent"
                 "origin" "0 -100 10"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
@@ -341,7 +384,8 @@ WaveSchedule
 
 			bot_generator
 			{
-				"targetname" "DjinnSummonGenerator"
+				"targetname" "DjinnSummonGeneratorBodyGuard1"
+				"parentname" "DjinnFakeParent"
 				"origin" "100 0 75"
 				"team" "blue"
 				"class" "demoman"
@@ -354,7 +398,8 @@ WaveSchedule
 			}
 			bot_generator
 			{
-				"targetname" "DjinnSummonGenerator"
+				"targetname" "DjinnSummonGeneratorBodyGuard2"
+				"parentname" "DjinnFakeParent"
 				"origin" "-100 0 75"
 				"team" "blue"
 				"class" "demoman"
@@ -367,7 +412,8 @@ WaveSchedule
 			}
 			bot_generator
 			{
-				"targetname" "DjinnSummonGenerator"
+				"targetname" "DjinnSummonGeneratorMobber1"
+				"parentname" "DjinnFakeParent"
 				"origin" "0 100 75"
 				"team" "blue"
 				"class" "demoman"
@@ -380,7 +426,8 @@ WaveSchedule
 			}
 			bot_generator
 			{
-				"targetname" "DjinnSummonGenerator"
+				"targetname" "DjinnSummonGeneratorMobber2"
+				"parentname" "DjinnFakeParent"
 				"origin" "0 -100 75"
 				"team" "blue"
 				"class" "demoman"
@@ -390,6 +437,20 @@ WaveSchedule
 
 				"OnSpawned" "!activator,RunScriptCode,DjinnSummonInit(self),0,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
+			}
+			bot_action_point
+			{
+				"targetname" "DjinnSummonPoint1"
+				"parentname" "DjinnFakeParent"
+				"origin" "40 20 0"
+				"stay_time" "9999"
+			}
+			bot_action_point
+			{
+				"targetname" "DjinnSummonPoint2"
+				"parentname" "DjinnFakeParent"
+				"origin" "40 -20 0"
+				"stay_time" "9999"
 			}
 		}
 		

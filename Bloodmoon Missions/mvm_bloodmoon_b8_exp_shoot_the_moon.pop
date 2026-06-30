@@ -1,0 +1,114 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 4
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	BodyPartScaleSpeed 10
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Heavy_SuperScout
+		{
+			Name "Super Fat Scout"
+			Class Heavy
+			ClassIcon scout_fish_nys
+			Skill Easy
+			Health 600
+			Scale 1.4
+			WeaponRestrictions MeleeOnly
+
+			Item "Prinny Machete"
+			Item "Batter's Helmet"
+
+			CharacterAttributes
+			{
+				"move speed bonus" 3
+			}
+			ItemAttributes
+			{
+				ItemName "Prinny Machete"
+				"fire rate bonus" 0.5
+				"damage penalty" 0.54
+				"custom item model" "models/workshop/weapons/c_models/c_holymackerel/c_holymackerel.mdl"
+				"custom hit sound" "Weapon_HolyMackerel.HitFlesh"
+				"custom kill icon" "holymackerel"
+			}
+		}
+	}
+
+	//// MISSION BOTS ////
+
+	//// WAVES ////
+
+	// General Notes
+
+	// Wave 1 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`init_wave_relay_main`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_Fish"
+			Where spawnbot_boss
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_SuperScout
+				Attributes AlwaysCrit
+			}
+		}
+	}
+}
