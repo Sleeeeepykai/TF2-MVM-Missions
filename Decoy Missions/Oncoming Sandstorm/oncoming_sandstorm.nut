@@ -1,3 +1,6 @@
+::CONST <- getconsttable()
+::ROOT <- getroottable()
+
 // Classes Folding
 foreach( _class in [ "NetProps", "Entities", "EntityOutputs", "NavMesh", "Convars" ] )
 {
@@ -35,7 +38,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		delete ::OncomingSandstorm
 	}
 
-	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
+	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) CleanUp() }
 
 	//// MAP FUNCTIONS ////
 
