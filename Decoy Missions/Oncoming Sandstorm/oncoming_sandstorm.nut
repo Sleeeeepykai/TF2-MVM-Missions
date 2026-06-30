@@ -116,9 +116,9 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetDifficulty(3)
 		Target.SetMaxVisionRangeOverride(9999)
 
-		SetFakeClientConVarValue(Target, "name", "Resurrected Soldier")
-		Target.SetCustomModelWithClassAnimations("models/bots/soldier/bot_soldier_gibby.mdl")
-		SetPropString(Target, "m_iszClassIcon", "soldier_crit")
+		SetFakeClientConVarValue(Target, "name", "Resurrected Demoman")
+		Target.SetCustomModelWithClassAnimations("models/bots/demo/bot_demo_gibby.mdl")
+		SetPropString(Target, "m_iszClassIcon", "demo_crit")
 
 		Target.AddWeaponRestriction(2)
 		Target.AddBotAttribute(16)

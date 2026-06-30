@@ -40,7 +40,7 @@ WaveSchedule
 	// Precached Models //
 
 	PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
-	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
+	PrecacheModel "models/bots/demo/bot_demo_gibby.mdl"
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
@@ -80,6 +80,47 @@ WaveSchedule
 						IncludeScript(`oncoming_sandstorm`, getroottable())
 
 						OncomingSandstorm.SandstormInit()
+
+						IncludeScript(`tankextensions_main`, getroottable())
+						IncludeScript(`tankextensions/combattank`, getroottable())
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+						IncludeScript(`tankextensions/combattank_weapons/cannon`, getroottable())
+
+						TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
+						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
+						COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
+						COMBATTANK_CANNON_ROCKET_SPEED = 2000
+						COMBATTANK_CANNON_ROCKET_DAMAGE = 200
+						})
+
+						TankExt.CreateLoopPaths({
+							tank_patrol = [
+								Vector(0, 2976, 388)
+								Vector(0, 2520, 388)
+								Vector(0, 356, 388)
+								Vector(-28, 284, 388)
+								Vector(-100, 256, 388)
+								Vector(-636, 256, 388)
+								Vector(-708, 228, 388)
+								Vector(-736, 168, 388)
+								Vector(-736, -448, 388)
+								Vector(-704, -512, 388)
+								Vector(-624, -608, 388)
+								Vector(-512, -688, 388)
+								Vector(416, -688, 388)
+								Vector(496, -656, 388)
+								Vector(528, -608, 388)
+								Vector(544, -560, 388)
+								Vector(544, -48, 388)
+								Vector(512, 32, 388)
+								Vector(448, 112, 388)
+								Vector(368, 192, 388)
+								Vector(256, 256, 388)
+								Vector(-100, 256, 388)
+							]
+						})
 					  "
 			}
 			point_populator_interface
@@ -160,6 +201,10 @@ WaveSchedule
 
 		Djinn_PT
 		{
+			RemoveIfKilled "DjinnTarget"
+
+			KeepAlive 1
+			
 			OnSpawnOutput
 			{
 				Target "DjinnTarget"
@@ -211,6 +256,48 @@ WaveSchedule
 				Repeats 1
 				Cooldown -1
 			}
+
+			OnParentKilledOutput
+			{
+				Target "DjinnSummonGeneratorBodyGuard1"
+				Action "RemoveBots"
+				Delay 0.1
+				Repeats 3
+				Cooldown -1
+			}
+			OnParentKilledOutput
+			{
+				Target "DjinnSummonGeneratorBodyGuard2"
+				Action "RemoveBots"
+				Delay 0.1
+				Repeats 3
+				Cooldown -1
+			}
+			OnParentKilledOutput
+			{
+				Target "DjinnSummonGeneratorMobber1"
+				Action "RemoveBots"
+				Delay 0.1
+				Repeats 3
+				Cooldown -1
+			}
+			OnParentKilledOutput
+			{
+				Target "DjinnSummonGeneratorMobber2"
+				Action "RemoveBots"
+				Delay 0.1
+				Repeats 3
+				Cooldown -1
+			}
+			OnParentKilledOutput
+			{
+				Target "DjinnTarget"
+				Action "Kill"
+				Delay 1
+				Repeats 1
+				Cooldown -1
+			}
+
 			info_target
 			{
 				"targetname" "DjinnTarget"
@@ -338,7 +425,7 @@ WaveSchedule
 				"targetname" "DjinnSummonGeneratorBodyGuard1"
 				"origin" "100 0 10"
 				"team" "blue"
-				"class" "soldier"
+				"class" "demoman"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
@@ -352,7 +439,7 @@ WaveSchedule
 				"targetname" "DjinnSummonGeneratorBodyGuard2"
 				"origin" "-100 0 10"
 				"team" "blue"
-				"class" "soldier"
+				"class" "demoman"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
@@ -366,7 +453,7 @@ WaveSchedule
 				"targetname" "DjinnSummonGeneratorMobber1"
 				"origin" "0 100 10"
 				"team" "blue"
-				"class" "soldier"
+				"class" "demoman"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
@@ -379,7 +466,7 @@ WaveSchedule
 				"targetname" "DjinnSummonGeneratorMobber2"
 				"origin" "0 -100 10"
 				"team" "blue"
-				"class" "soldier"
+				"class" "demoman"
 				"count" "0"
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
@@ -1402,7 +1489,6 @@ WaveSchedule
 		}
 	}
 	// Wave 4 Notes
-	// Can probably salvage the giant config
 	Wave
 	{
 		InitWaveOutput
@@ -1413,44 +1499,6 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					IncludeScript(`tankextensions_main`, getroottable())
-                    IncludeScript(`tankextensions/combattank`, getroottable())
-                    IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
-
-					TankExt.SetValueOverrides({
-						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
-						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
-						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
-						COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
-					})
-
-					TankExt.CreateLoopPaths({
-						tank_patrol = [
-							Vector(0, 2976, 388)
-							Vector(0, 2520, 388)
-							Vector(0, 356, 388)
-							Vector(-28, 284, 388)
-							Vector(-100, 256, 388)
-							Vector(-636, 256, 388)
-							Vector(-708, 228, 388)
-							Vector(-736, 168, 388)
-							Vector(-736, -448, 388)
-							Vector(-704, -512, 388)
-							Vector(-624, -608, 388)
-							Vector(-512, -688, 388)
-							Vector(416, -688, 388)
-							Vector(496, -656, 388)
-							Vector(528, -608, 388)
-							Vector(544, -560, 388)
-							Vector(544, -48, 388)
-							Vector(512, 32, 388)
-							Vector(448, 112, 388)
-							Vector(368, 192, 388)
-							Vector(256, 256, 388)
-							Vector(-100, 256, 388)
-						]
-					})
             	  "
         }
 		StartWaveOutput
@@ -1474,7 +1522,7 @@ WaveSchedule
 		// Subwave 1
 		WaveSpawn // 2 GShield Medics and 10 Charged Soldiers
 		{
-			Name "Wave4_Subwave1_GShieldSquad"
+			Name "Wave4_Subwave1_GShieldSquads"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 9
@@ -1516,21 +1564,20 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn
+		WaveSpawn // 8 Bowmen
 		{
-			Name "Wave4_Subwave1_Scouts"
+			Name "Wave4_Subwave1_Bowmen"
 			Where spawnbot
 			TotalCount 8
-			MaxActive 4
+			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 5
+			WaitBetweenSpawns 3
 			TotalCurrency 60
 
 			TFBot
 			{
-				Class Scout
-				Skill Easy 
+				Template T_TFBot_Sniper_Huntsman
 			}
 		}
 
@@ -1553,6 +1600,194 @@ WaveSchedule
 				Template Tank_Combat_Rocket_Tiny
 				Health 20000
 				StartingPathTrackNode "tank_patrol_1"
+			}
+		}
+
+		WaveSpawn // 2 GShield Medics and 10 Charged Soldiers
+		{
+			Name "Wave4_Subwave1_GShieldSquads2"
+			WaitForAllSpawned "Wave4_Subwave1_GShieldSquads"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 6
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 10
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Shield
+					Attributes IgnoreEnemies
+					WeaponRestrictions SecondaryOnly
+					Action FetchFlag
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave4_Subwave1_Heavies"
+			WaitForAllSpawned "Wave4_Subwave1_GShieldSquads"
+			Where spawnbot
+			TotalCount 10
+			MaxActive 7
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GBurst Demo, 2 Rocket Shotgun Soldiers and 3 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_GBurstDemo"
+			WaitForAllSpawned "Wave4_Subwave1_GShieldSquads2"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+				}
+			}
+		}
+		WaveSpawn // 12 Bowmen
+		{
+			Name "Wave4_Subwave2_Bowmen"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Huntsman
+			}
+		}
+
+		WaveSpawn // 1 GBurst Demo, 2 Rocket Shotgun Soldiers and 3 Big-Heal Medics
+		{
+			Name "Wave4_Subwave2_GBurstDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+				}
+			}
+		}
+		WaveSpawn // 4 Heavies
+		{
+			Name "Wave4_Subwave2_Heavies"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
 			}
 		}
 
@@ -1606,21 +1841,27 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 1 Djinn
+		WaveSpawn // 1 Djinn and 1 Charged Medic
 		{
 			Name "Wave5_Subwave1_Djinn"
 			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Pyro_Djinn
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Djinn
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
 			}
 		}
 		WaveSpawn // 9 Soldiers
@@ -1667,21 +1908,28 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 Djinn
+		WaveSpawn // 1 Djinn and 1 Charged Medic
 		{
 			Name "Wave5_Subwave1_Djinn2"
 			WaitForAllSpawned "Wave5_Subwave1_Djinn"
 			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Pyro_Djinn
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Djinn
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
 			}
 		}
 		WaveSpawn // 9 Soldiers
@@ -1729,21 +1977,28 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 Djinn
+		WaveSpawn // 1 Djinn and 1 Charged Medic
 		{
 			Name "Wave5_Subwave2_Djinn"
 			WaitForAllSpawned "Wave5_Subwave1_Djinn2"
 			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Pyro_Djinn
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Djinn
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
 			}
 		}
 		WaveSpawn // 4 Soldiers
@@ -1791,21 +2046,28 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 Djinn
+		WaveSpawn // 1 Djinn and 1 GRegen Medic
 		{
 			Name "Wave5_Subwave2_Djinn2"
 			WaitForAllSpawned "Wave5_Subwave2_Djinn"
 			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Pyro_Djinn
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Djinn
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Regen
+				}
 			}
 		}
 		WaveSpawn // 6 Soldiers
@@ -1864,42 +2126,6 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
-
-					IncludeScript(`tankextensions_main`, getroottable())
-                    IncludeScript(`tankextensions/combattank`, getroottable())
-                    IncludeScript(`tankextensions/combattank_weapons/cannon`, getroottable())
-
-					TankExt.SetValueOverrides({
-						COMBATTANK_CANNON_ROCKET_SPEED = 2000
-						COMBATTANK_CANNON_ROCKET_DAMAGE = 200
-					})
-
-					TankExt.CreateLoopPaths({
-						tank_patrol = [
-							Vector(0, 2976, 388)
-							Vector(0, 2520, 388)
-							Vector(0, 356, 388)
-							Vector(-28, 284, 388)
-							Vector(-100, 256, 388)
-							Vector(-636, 256, 388)
-							Vector(-708, 228, 388)
-							Vector(-736, 168, 388)
-							Vector(-736, -448, 388)
-							Vector(-704, -512, 388)
-							Vector(-624, -608, 388)
-							Vector(-512, -688, 388)
-							Vector(416, -688, 388)
-							Vector(496, -656, 388)
-							Vector(528, -608, 388)
-							Vector(544, -560, 388)
-							Vector(544, -48, 388)
-							Vector(512, 32, 388)
-							Vector(448, 112, 388)
-							Vector(368, 192, 388)
-							Vector(256, 256, 388)
-							Vector(-100, 256, 388)
-						]
-					})
             	  "
         }
 		StartWaveOutput
@@ -2148,14 +2374,14 @@ WaveSchedule
 		}
 		WaveSpawn // 1 Rapid Fire Demo
 		{
-			Name "Wave6_Subwave2_RapidDemo"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
+			Name "Wave6_Subwave1_RapidDemo"
+			WaitForAllSpawned "Wave6_Subwave1_GBarrage3"
 			Where spawnbot_left
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			TFBot
@@ -2167,14 +2393,14 @@ WaveSchedule
 		}
 		WaveSpawn // 1 Rapid Fire Demo
 		{
-			Name "Wave6_Subwave2_RapidDemo"
-			WaitForAllSpawned "Wave6_Subwave2_GBarrage"
+			Name "Wave6_Subwave1_RapidDemo"
+			WaitForAllSpawned "Wave6_Subwave1_GBarrage3"
 			Where spawnbot_right
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
+			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			TFBot
@@ -2246,7 +2472,7 @@ WaveSchedule
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 12
+			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			TFBot
@@ -2265,7 +2491,7 @@ WaveSchedule
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 2
-			WaitBetweenSpawns 12
+			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			TFBot
