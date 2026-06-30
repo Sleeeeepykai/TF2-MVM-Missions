@@ -128,3 +128,5 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetModelScale(1.3, 0.0)
 	}
 }
+
+__CollectGameEventCallbacks(OncomingSandstorm)
