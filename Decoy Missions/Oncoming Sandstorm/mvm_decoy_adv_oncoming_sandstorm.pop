@@ -43,6 +43,7 @@ WaveSchedule
 	PrecacheModel "models/bots/demo/bot_demo_gibby.mdl"
 	PrecacheModel "models/bots/pyro/bot_pyro_gibby.mdl"
 	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
+	PrecacheModel "models/bots/demo_boss/bot_demo_boss_gibby.mdl"
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
@@ -151,6 +152,69 @@ WaveSchedule
 			{
 				"targetname" "pop_interface"
 			}
+
+			// Universal Filters
+            filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
 		}
 
 		//// Map PTs ////
@@ -595,6 +659,34 @@ WaveSchedule
 				Param "!activator"
 				Delay 0.1
 			}
+			OnSpawnOutput
+			{
+				Target "SultanSummonGeneratorBodyGuard1"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SultanSummonGeneratorBodyGuard2"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SultanSummonGeneratorMobber1"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SultanSummonGeneratorMobber2"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
 
 			info_target
 			{
@@ -700,9 +792,18 @@ WaveSchedule
 
 				"OnCase01" "pop_interface,ChangeBotAttributes,SultanFireballRain,0,-1"
 				"OnCase02" "pop_interface,ChangeBotAttributes,SultanSummon,0,-1"
+				"OnCase03" "pop_interface,ChangeBotAttributes,SultanSendThemToMarianaTrench,0,-1"
+			}
+			logic_case // Phase 2 Attack Pool
+			{
+				"targetname" "SultanPhase2AttackPool"
+
+				"OnCase01" "pop_interface,ChangeBotAttributes,SultanSummon,0,-1"
+				"OnCase02" "pop_interface,ChangeBotAttributes,SultanSendThemToMarianaTrench,0,-1"
 			}
 
 			// Phase 1 //
+
 			logic_relay // Phase 1 Minions Relay
 			{
 				"targetname" "SultanPhase1MinionsRelay"
@@ -711,15 +812,11 @@ WaveSchedule
 				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_FirstMinionWave,2.33,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
@@ -769,8 +866,6 @@ WaveSchedule
 				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
 				"OnTrigger" "SultanSummonIndicator,Enable,,0.5,-1"
 				"OnTrigger" "SultanSummonIndicator,SetAnimation,Start,,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
@@ -784,8 +879,6 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "SultanSummonIndicator,SetAnimation,end,2.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "SultanSummonIndicator,Disable,,3.5,-1"
@@ -910,6 +1003,118 @@ WaveSchedule
 			{
 				"targetname" "SultanBodyguardPoint2"
 				"origin" "100 -40 25"
+			}
+
+			// Launch Attack
+			logic_relay
+			{
+				"targetname" "SultanYeetRelay"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_yetipunch,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/loose_cannon_charge.wav,0,-1"
+				"OnTrigger" "SultanYeetCharge,Start,0,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,weapons/loose_cannon_charge.wav,3.95,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons\loose_cannon_explode.wav,3.95,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons\loose_cannon_explode.wav,3.95,-1"
+				"OnTrigger" "SultanYeetExplosion,Start,,3.95,-1"
+				"OnTrigger" "SultanYeetForce,ApplyImpulse,,3.95,-1"
+				"OnTrigger" "SultanYeetDamage,Enable,,3.95,-1"
+				"OnTrigger" "SultanYeetDamage,Disable,,4,-1"
+				"OnTrigger" "SultanYeetExplosion,Stop,,6.25,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,6.25,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,6.3,-1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "SultanYeetCharge"
+				"origin" "100 0 50"
+				"effect_name" "charge_up"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SultanYeetExplosion"
+				"origin" "100 0 50"
+				"effect_name" "hightower_explosion"
+				"start_active" "0"
+			}
+			trigger_hurt
+			{
+				"targetname" "SultanYeetDamage"
+				"origin" "100 0 50"
+				"mins" "-96 -96 -96"
+				"maxs" "96 96 96"
+
+				"damagetype" "64"
+				"damage" "300"
+				"filtername" "filter_redteam_nouber"
+                "spawnflags" "64"
+				"startdisabled" "1"
+			}
+			trigger_apply_impulse 
+            {
+                "targetname" "SultanYeetForce"
+                "origin" "100 0 50"
+				"mins" "-96 -96 -96"
+				"maxs" "96 96 96"
+                "spawnflags" "1"
+                "filtername" "filter_redteam"
+                "force" "750"
+                "impulse_dir" "0 0 0"
+            }
+
+			// Phase 2 //
+			logic_relay // Phase Transition Relay
+			{
+				"targetname" "SultanPhase2TransitionRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave7_Subwave3_FirstMinionWave,0,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_FirstMinionWave,0,-1"
+				"OnTrigger" "SultanSummonGeneratorBodyGuard1,RemoveBots,,0,-1"
+				"OnTrigger" "SultanSummonGeneratorBodyGuard2,RemoveBots,,0,-1"
+				"OnTrigger" "SultanSummonGeneratorMobber1,RemoveBots,,0,-1"
+				"OnTrigger" "SultanSummonGeneratorMobber2,RemoveBots,,0,-1"
+				"OnTrigger" "intel,ForceReset,,0,-1"
+				"OnTrigger" "SultanFireballRainRelay,CancelPending,,0,-1"
+				"OnTrigger" "SultanSummonRelay,CancelPending,,0,-1"
+				"OnTrigger" "SultanYeetRelay,CancelPending,,0,-1"
+				"OnTrigger" "SultanPhase1AttackPoolRelay,Disable,,0,-1"
+				"OnTrigger" "SultanPhase2AttackPoolRelay,Enable,,0,-1"
+				"OnTrigger" "!activator,$Addcond,51 5,0,-1"
+				"OnTrigger" "!activator,$AddCond,71 5,0,-1"
+				"OnTrigger" "!activator,$TeleportToEntity,SultanSpawnPoint,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,5,-1"
+				"OnTrigger" "intel,$TeleportToEntity,SultanSpawnPoint,5.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\strongman_fast_whoosh_01.wav,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\strongman_fast_whoosh_01.wav,6,-1"
+				"OnTrigger" "!activatorRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,-300,260))6-1"
+                "OnTrigger" "!activator,$PlaySequence,taunt_zoomin_broom_exit,6.2,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,7.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm\giant_common\giant_common_step_08.wav,7.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm\giant_common\giant_common_step_08.wav,7.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,7.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,7.2,-1"
+				"OnTrigger" "SultanPhase2MinionsRelay,Trigger,,7.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,7.5,-1"
+			}
+
+			logic_relay // Phase 2 Minions Relay
+			{
+				"targetname" "SultanPhase2MinionsRelay"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_SecondMinionWave,2.33,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,3.6,-1"
 			}
 		}
 	}
@@ -1106,6 +1311,17 @@ WaveSchedule
 				Cooldown -1
 			}
 
+			FireInput
+			{
+				Target !activator
+				Action $ChangeAttributes
+				Param "SultanPhase2Transition"
+				Delay 0.2
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 66667
+			}
+
 			EventChangeAttributes
 			{
 				SultanIntro [$SIGSEGV]
@@ -1242,6 +1458,53 @@ WaveSchedule
 					FireInput
 					{
 						Target "SultanSummonRelay"
+						Action "Trigger"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				SultanSendThemToMarianaTrench [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.001
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					FireInput
+					{
+						Target "SultanYeetRelay"
+						Action "Trigger"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				// Phase 2 //
+				SultanPhase2Transition [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.001
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					FireInput
+					{
+						Target "SultanPhase2TransitionRelay"
 						Action "Trigger"
 						Delay 0.1
 						Repeats 1
@@ -3711,7 +3974,7 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
-		
+
 		SpawnTemplate "SultanCutscene_PT"
 
 		WaveSpawn
@@ -3799,6 +4062,53 @@ WaveSchedule
 
 					"airblast disabled" 1
 				}
+			}
+		}
+
+		WaveSpawn // Support Rocket Shotgun Soldiers
+		{
+			Name "Wave7_Subwave3_SecondMinionWave"
+			Where spawnbot
+			Support 1
+			TotalCount 30
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+				Skill Expert
+				Action Mobber
+
+				UseCustomModel "models/bots/soldier/bot_soldier_gibby.mdl"
+			}
+		}
+		WaveSpawn // Support GBurst Demos
+		{
+			Name "Wave7_Subwave3_SecondMinionWave"
+			Where spawnbot
+			Support 1
+			TotalCount 10
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawnsAfterDeath 10
+			TotalCurrency 40
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Burst
+				Skill Expert
+				Action Mobber
+
+				UseCustomModel "models/bots/demo_boss/bot_demo_boss_gibby.mdl"
 			}
 		}
 	}
