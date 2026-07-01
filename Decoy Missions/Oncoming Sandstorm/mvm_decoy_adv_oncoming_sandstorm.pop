@@ -44,6 +44,7 @@ WaveSchedule
 	PrecacheModel "models/bots/pyro/bot_pyro_gibby.mdl"
 	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
 	PrecacheModel "models/bots/demo_boss/bot_demo_boss_gibby.mdl"
+	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
@@ -1012,7 +1013,7 @@ WaveSchedule
 
 				"OnTrigger" "!activator,$PlaySequence,taunt_yetipunch,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons/loose_cannon_charge.wav,0,-1"
-				"OnTrigger" "SultanYeetCharge,Start,0,-1"
+				"OnTrigger" "SultanYeetCharge,Start,,0,-1"
 				"OnTrigger" "tf_gamerules,$StopVO,weapons/loose_cannon_charge.wav,3.95,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons\loose_cannon_explode.wav,3.95,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons\loose_cannon_explode.wav,3.95,-1"
@@ -1020,6 +1021,7 @@ WaveSchedule
 				"OnTrigger" "SultanYeetForce,ApplyImpulse,,3.95,-1"
 				"OnTrigger" "SultanYeetDamage,Enable,,3.95,-1"
 				"OnTrigger" "SultanYeetDamage,Disable,,4,-1"
+				"OnTrigger" "SultanYeetCharge,Stop,,6.25,-1"
 				"OnTrigger" "SultanYeetExplosion,Stop,,6.25,-1"
 				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,6.25,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,6.3,-1"
@@ -1043,8 +1045,8 @@ WaveSchedule
 			{
 				"targetname" "SultanYeetDamage"
 				"origin" "100 0 50"
-				"mins" "-96 -96 -96"
-				"maxs" "96 96 96"
+				"mins" "-128 -128 -128"
+				"maxs" "128 128 128"
 
 				"damagetype" "64"
 				"damage" "300"
@@ -1056,8 +1058,8 @@ WaveSchedule
             {
                 "targetname" "SultanYeetForce"
                 "origin" "100 0 50"
-				"mins" "-96 -96 -96"
-				"maxs" "96 96 96"
+				"mins" "-128 -128 -128"
+				"maxs" "128 128 128"
                 "spawnflags" "1"
                 "filtername" "filter_redteam"
                 "force" "750"
@@ -1115,6 +1117,63 @@ WaveSchedule
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,3.6,-1"
+			}
+
+			// Summon Giant Attack
+			logic_relay
+			{
+				"targetname" "SultanSummonGiantRelay"
+
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
+				"OnTrigger" "SultanSummonGiantIndicator,Enable,,0.5,-1"
+				"OnTrigger" "SultanSummonGiantIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_GBurstSoldier1,2.33,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_GBurstSoldier2,2.33,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_GBurstSoldier1,2.33,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_GBurstSoldier2,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "SultanSummonGiantIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
+				"OnTrigger" "SultanSummonGiantIndicator,Disable,,3.5,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
+
+				"OnTrigger" "SultanSummonSiphonRelay,Trigger,,10,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "SultanSummonGiantIndicator"
+				"origin" "0 150 10"
+				"angles" "0 0 0"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "2.5"
+				"skin" "1"
+				"defaultanim" "start"
+				"solid" "0"
+				"startdisabled" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "SultanSummonGiantIndicator"
+				"origin" "0 -150 10"
+				"angles" "0 0 0"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "2.5"
+				"skin" "1"
+				"defaultanim" "start"
+				"solid" "0"
+				"startdisabled" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
 			}
 		}
 	}
@@ -1505,6 +1564,19 @@ WaveSchedule
 					FireInput
 					{
 						Target "SultanPhase2TransitionRelay"
+						Action "Trigger"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				// Phase 2 Attack Pool
+				SultanSummonGiant [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "SultanSummonGiantRelay"
 						Action "Trigger"
 						Delay 0.1
 						Repeats 1
@@ -4088,27 +4160,82 @@ WaveSchedule
 				UseCustomModel "models/bots/soldier/bot_soldier_gibby.mdl"
 			}
 		}
-		WaveSpawn // Support GBurst Demos
+		WaveSpawn // Support Pyros
 		{
 			Name "Wave7_Subwave3_SecondMinionWave"
+			Where spawnbot
+			Support 1
+			TotalCount 30
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+				Attributes AlwaysCrit
+				Action Mobber
+
+				UseCustomModel "models/bots/pyro/bot_pyro_gibby.mdl"
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		WaveSpawn // Support GBurst Soldiers
+		{
+			Name "Wave7_Subwave3_GBurstSoldier1"
 			Where spawnbot
 			Support 1
 			TotalCount 10
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 0
-			WaitBetweenSpawnsAfterDeath 10
-			TotalCurrency 40
+			WaitBetweenSpawns 0
+			TotalCurrency 60
 
 			StartDisabled 1
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Demoman_Burst
+				Template T_TFBot_Giant_Soldier_Burst
 				Skill Expert
 				Action Mobber
 
-				UseCustomModel "models/bots/demo_boss/bot_demo_boss_gibby.mdl"
+				UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+			}
+		}
+		WaveSpawn // Support GBurst Soldiers
+		{
+			Name "Wave7_Subwave3_GBurstSoldier2"
+			Where spawnbot
+			Support 1
+			TotalCount 10
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst
+				Skill Expert
+				Action Mobber
+
+				UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
 			}
 		}
 	}
