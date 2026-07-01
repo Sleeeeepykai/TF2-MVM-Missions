@@ -502,6 +502,116 @@ WaveSchedule
 				"targetname" "DjinnNode"
 			}
 		}
+
+		//// Boss PTs ////
+
+		SultanCutscene_PT
+		{
+			logic_relay
+			{
+				"targetname" "SultanCutsceneRelay"
+				
+				"OnTrigger" "intel,ForceResetSilent,,0,-1"
+				"OnTrigger" "SultanSand,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_09.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_12.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_12.wav,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_3.wav,9,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_FinalDjinn,9,-1"
+				"OnTrigger" "SultanSand,Stop,,9,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "SultanSand"
+				"origin" "0 1360 672"
+				"effect_name" "cauldron_smoke_lit_bottom"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SultanSand"
+				"origin" "0 1360 672"
+				"effect_name" "cauldron_smoke_lit"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SultanSand"
+				"origin" "128 1360 672"
+				"effect_name" "cauldron_smoke_lit"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SultanSand"
+				"origin" "-128 1360 672"
+				"effect_name" "cauldron_smoke_lit"
+				"start_active" "0"
+			}
+		}
+
+		SultanLogic_PT
+		{
+			OnSpawnOutput
+			{
+				Target "SultanTarget"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+
+			info_target
+			{
+				"targetname" "SultanTarget"
+				"origin" "0 0 50"
+			}
+
+			logic_relay
+			{
+				"targetname" "SultanIntroRelay"
+				
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\pyro_mvm_m_highfive_success01.mp3,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_lollichop,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,2.9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil01.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\freeze_cam.wav,5,-1"
+				"OnTrigger" "SultanIntroCardUpper,Display,,5,-1"
+				"OnTrigger" "SultanIntroCardLower,Display,,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,8,-1"
+				"OnTrigger" "@p@SultanTargetRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,-300,260))8-1"
+                "OnTrigger" "@p@SultanTarget,$PlaySequence,taunt_zoomin_broom_exit,8.2,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,10,-1"
+			}
+
+			game_text
+			{
+				"targetname" "SultanIntroCardUpper"
+				"spawnflags" "1"
+				"message" "SULTAN OF THE LOST LAND"
+				"x" "-1"
+				"y" "0.2"
+				"effect" "2"
+				"color" "255 255 255"
+				"fxtime" "1"
+				"holdtime" "4"
+				"fadeout" "1"
+				"channel" "1"
+			}
+			game_text
+			{
+				"targetname" "SultanIntroCardLower"
+				"spawnflags" "1"
+				"message" "RETURNING TO CLAIM HIS THRONE"
+				"x" "-1"
+				"y" "0.25"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "1"
+				"holdtime" "2"
+				"fadeout" "1"
+				"channel" "2"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -618,7 +728,7 @@ WaveSchedule
 			Attributes HoldFireUntilFullReload
 			WeaponRestrictions PrimaryOnly
 
-			ForceRomeVision 1
+			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
 			Item "The Dragon's Fury"
 			Item "Ali Baba's Wee Booties"
@@ -627,12 +737,98 @@ WaveSchedule
 			Item "Hard-Headed Hardware"
 			Item "Forgotten King's Pauldrons"
 			Item "The Maniac's Manacles"
+			Item "Potato of Labor"
+
+			Item "Taunt: Second Rate Sorcery"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+				"voice pitch scale" 0
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Dragon's Fury"
+
+				"paintkit_proto_def_index" 390
+				"set_item_texture_wear" 0
+			}
 
 			ItemAttributes
 			{
 				ItemName "Sear Seer"
 
 				"item style override" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "Potato of Labor"
+
+				"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $ChangeAttributes
+				Param "SultanIntro"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				SultanIntro [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.001
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					FireInput
+					{
+						Target "SultanIntroRelay"
+						Action "Trigger"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					InterruptAction
+					{
+						Target "0 1360 672"
+						AimTarget "cap_destroy_relay"
+						Duration 8
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				SultanDefault [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.25
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 0
+						"no_jump" 0
+					}
+				}
 			}
 		}
 	}
@@ -2710,6 +2906,8 @@ WaveSchedule
                   "
         }
 
+		SpawnTemplate "SultanCutscene_PT"
+
 		// Subwave 1
 		WaveSpawn // 1 Djinn
 		{
@@ -2826,7 +3024,6 @@ WaveSchedule
 			{
 				Template T_TFBot_Scout_Bonk_Scatter
 				Skill Expert
-				Attributes AlwaysCrit
 			}
 		}
 		WaveSpawn // 20 Burst Demos
@@ -2963,10 +3160,94 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn // 1 GDeflector and 3 Quick-Uber Medics
+		{
+			Name "Wave7_Subwave2_GDeflector3"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector2"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 20 Scatter-Bonk Scouts
+		{
+			Name "Wave7_Subwave2_Scatter-Bonks"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector3"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Expert
+			}
+		}
+
+		// Subwave Check
+		WaveSpawn
+		{
+			Name "Wave7_Subwave2_Check"
+			WaitForAllDead "Wave7_Subwave2_GDeflector2"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_Subwave2_Check"
+			WaitForAllDead "Wave7_Subwave2_GDeflector3"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_Subwave2_Check"
+			WaitForAllDead "Wave7_Subwave2_BurstDemoSquads2"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_Subwave2_Check"
+			WaitForAllDead "Wave7_Subwave2_Scatter-Bonks"
+		}
+
+		WaveSpawn
+		{
+			Name "Wave7_Subwave3_SultanCutscene"
+			WaitForAllSpawned "Wave7_Subwave2_Check"
+
+			FirstSpawnOutput
+			{
+				Target "SultanCutsceneRelay"
+				Action "Trigger"
+			}
+		}
+
 		WaveSpawn // The Boss
 		{
 			Name "Wave7_Subwave3_FinalDjinn"
-			WaitForAllDead "Wave7_Subwave2_GDeflector2"
 			Where spawnbot
 			TotalCount 1
 			MaxActive 1
@@ -2975,28 +3256,45 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 0
 
+			StartDisabled 1
+
 			TFBot
 			{
 				Template T_TFBot_Boss_Pyro_SultanofTheLostLand
 			}
 		}
+	}
+	Wave
+	{
+		SpawnTemplate "SultanCutscene_PT"
+
 		WaveSpawn
 		{
-			Name "Wave7_Subwave3_Scatter-Bonks2"
-			WaitForAllSpawned "Wave7_Subwave3_FinalDjinn"
+			Name "Wave7_Subwave3_SultanCutscene"
+
+			FirstSpawnOutput
+			{
+				Target "SultanCutsceneRelay"
+				Action "Trigger"
+			}
+		}
+
+		WaveSpawn // The Boss
+		{
+			Name "Wave7_Subwave3_FinalDjinn"
 			Where spawnbot
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 20
-			WaitBeforeStarting 5
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 160
+			TotalCurrency 0
+
+			StartDisabled 1
 
 			TFBot
 			{
-				Template T_TFBot_Scout_Bonk_Scatter
-				Skill Expert
-				Attributes AlwaysCrit
+				Template T_TFBot_Boss_Pyro_SultanofTheLostLand
 			}
 		}
 	}
