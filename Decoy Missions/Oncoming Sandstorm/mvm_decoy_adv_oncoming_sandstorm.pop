@@ -514,11 +514,16 @@ WaveSchedule
 				"OnTrigger" "intel,ForceResetSilent,,0,-1"
 				"OnTrigger" "SultanSand,Start,,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_09.wav,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_12.wav,3,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_12.wav,6,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_3.wav,9,-1"
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_FinalDjinn,9,-1"
-				"OnTrigger" "SultanSand,Stop,,9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_12.wav,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_03.wav,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/windgust_03.wav,8,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_FinalDjinn,8,-1"
+				"OnTrigger" "SultanSand,Stop,,8,-1"
+			}
+			info_target
+			{
+				"targetname" "SultanSpawnPoint"
+				"origin" "0 1360 672"
 			}
 			info_particle_system
 			{
@@ -571,16 +576,26 @@ WaveSchedule
 				"targetname" "SultanIntroRelay"
 				
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\pyro_mvm_m_highfive_success01.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\taunts\pyro_mvm_m_highfive_success01.mp3,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,taunt_lollichop,0,-1"
-				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,2.9,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_MELEE,2.9,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil01.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil01.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\freeze_cam.wav,5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\freeze_cam.wav,5,-1"
 				"OnTrigger" "SultanIntroCardUpper,Display,,5,-1"
 				"OnTrigger" "SultanIntroCardLower,Display,,6,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,8,-1"
-				"OnTrigger" "@p@SultanTargetRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,-300,260))8-1"
-                "OnTrigger" "@p@SultanTarget,$PlaySequence,taunt_zoomin_broom_exit,8.2,-1"
-				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\strongman_fast_whoosh_01.wav,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\strongman_fast_whoosh_01.wav,8,-1"
+				"OnTrigger" "!activatorRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,-300,260))8-1"
+                "OnTrigger" "!activator,$PlaySequence,taunt_zoomin_broom_exit,8.2,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,9.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm\giant_common\giant_common_step_08.wav,9.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm\giant_common\giant_common_step_08.wav,9.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,9.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,9.2,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,9.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,9.5,-1"
 			}
 
 			game_text
@@ -721,17 +736,21 @@ WaveSchedule
 			Name "Sultan of the Lost Land"
 			Class Pyro
 			ClassIcon pyro_dragon_crown
-			Health 59975
+			Health 99975
 			Scale 2
 			Attributes MiniBoss
+			Attributes UseBossHealthBar
 			Attributes AlwaysCrit
 			Attributes HoldFireUntilFullReload
-			WeaponRestrictions PrimaryOnly
+			WeaponRestrictions MeleeOnly
 
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
+			SpawnTemplate "SultanLogic_PT"
+
 			Item "The Dragon's Fury"
 			Item "Ali Baba's Wee Booties"
+			Item "Sharpened Volcano Fragment"
 
 			Item "Sear Seer"
 			Item "Hard-Headed Hardware"
@@ -747,6 +766,8 @@ WaveSchedule
 				"damage force reduction" 0.6
 				"airblast vulnerability multiplier" 0.6
 				"override footstep sound set" 6
+				"mod weapon blocks healing" 1
+				"cancel falling damage" 1
 				"voice pitch scale" 0
 			}
 
@@ -756,6 +777,12 @@ WaveSchedule
 
 				"paintkit_proto_def_index" 390
 				"set_item_texture_wear" 0
+			}
+			ItemAttributes
+			{
+				ItemName "Sharpened Volcano Fragment"
+
+				"attach particle effect" "2"
 			}
 
 			ItemAttributes
@@ -775,9 +802,19 @@ WaveSchedule
 			FireInput
 			{
 				Target !activator
+				Action $TeleportToEntity
+				Param "SultanSpawnPoint"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !activator
 				Action $ChangeAttributes
 				Param "SultanIntro"
-				Delay 0.1
+				Delay 0.2
 				Repeats 1
 				Cooldown -1
 			}
@@ -810,7 +847,7 @@ WaveSchedule
 					{
 						Target "0 1360 672"
 						AimTarget "cap_destroy_relay"
-						Duration 8
+						Duration 10
 						Delay 0
 						Repeats 1
 						Cooldown -1
@@ -818,6 +855,8 @@ WaveSchedule
 				}
 				SultanDefault [$SIGSEGV]
 				{
+					WeaponRestrictions PrimaryOnly
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.25
@@ -3295,6 +3334,32 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Boss_Pyro_SultanofTheLostLand
+			}
+		}
+
+		WaveSpawn // Support Loch Demos
+		{
+			Name "Wave7_Subwave3_FirstMinionWave"
+			Where spawnbot
+			Support 1
+			TotalCount 60
+			MaxActive 11
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			TFBot
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+
+					AimAt Head
+
+					UseCustomModel "models/bots/demo/bot_demo_gibby.mdl"
+				}
 			}
 		}
 	}
