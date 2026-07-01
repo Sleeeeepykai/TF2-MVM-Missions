@@ -131,6 +131,31 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
+
+	function SultanSummonInit(Target)
+	{
+		Target.RemoveWeaponRestriction(7)
+		Target.ClearAllBotAttributes()
+		Target.ClearAllBotTags()
+		Target.SetCustomModelWithClassAnimations(null)
+		Target.SetDifficulty(3)
+		Target.SetMaxVisionRangeOverride(9999)
+
+		SetFakeClientConVarValue(Target, "name", "Resurrected Rapid Fire Soldier")
+		Target.SetCustomModelWithClassAnimations("models/bots/soldier/bot_soldier_gibby.mdl")
+		SetPropString(Target, "m_iszClassIcon", "soldier_spammer")
+
+		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(16)
+		Target.AddBotAttribute(32)
+		Target.AddBotAttribute(2048)
+
+		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
+		Target.AddCustomAttribute("max health additive bonus", 400, 0)
+
+		Target.SetHealth(600)
+		Target.SetModelScale(1.4, 0.0)
+	}
 }
 
 __CollectGameEventCallbacks(OncomingSandstorm)
