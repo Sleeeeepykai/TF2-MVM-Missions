@@ -593,6 +593,48 @@ WaveSchedule
 				"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
 			}
 		}
+		T_TFBot_Demoman_Burst_Accurate
+		{
+			Name "Biblically Accurate Burst Demo"
+			Template T_TFBot_Demoman_Burst
+			Attributes HoldFireUntilFullReload
+			Attributes AlwaysFireWeapon
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+				"clip size penalty" 1
+			}
+		}
+		T_TFBot_Boss_Pyro_SultanofTheLostLand
+		{
+			Name "Sultan of the Lost Land"
+			Class Pyro
+			ClassIcon pyro_dragon_crown
+			Health 59975
+			Scale 2
+			Attributes MiniBoss
+			Attributes AlwaysCrit
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			ForceRomeVision 1
+
+			Item "The Dragon's Fury"
+			Item "Ali Baba's Wee Booties"
+
+			Item "Sear Seer"
+			Item "Hard-Headed Hardware"
+			Item "Forgotten King's Pauldrons"
+			Item "The Maniac's Manacles"
+
+			ItemAttributes
+			{
+				ItemName "Sear Seer"
+
+				"item style override" 1
+			}
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -2667,5 +2709,295 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 1 Djinn
+		{
+			Name "Wave7_Subwave1_ThreeDjinns"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Name "Djinn of the North"
+				Template T_TFBot_Giant_Pyro_Djinn
+				Health 15000
+				Scale 2
+				Attributes UseBossHealthBar
+
+				Item "Sultan's Ceremonial"
+			}
+		}
+		WaveSpawn // 1 Djinn
+		{
+			Name "Wave7_Subwave1_ThreeDjinns"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Name "Djinn of the West"
+				Template T_TFBot_Giant_Pyro_Djinn
+				Health 10000
+				Attributes UseBossHealthBar
+
+				Item "Sultan's Ceremonial"
+
+				FireInput
+				{
+					Target "DjinnSummonTimer"
+					Action "Enable"
+					Delay 4.9
+					Repeats 1
+					Cooldown -1
+				}
+				FireInput
+				{
+					Target "DjinnSummonTimer"
+					Action "FireTimer"
+					Delay 5
+					Repeats 1
+					Cooldown -1
+				}
+			}
+		}
+		WaveSpawn // 1 Djinn
+		{
+			Name "Wave7_Subwave1_ThreeDjinns"
+			Where spawnbot_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Name "Djinn of the East"
+				Template T_TFBot_Giant_Pyro_Djinn
+				Health 10000
+				Attributes UseBossHealthBar
+
+				Item "Sultan's Ceremonial"
+
+				FireInput
+				{
+					Target "DjinnSummonTimer"
+					Action "Enable"
+					Delay 4.9
+					Repeats 1
+					Cooldown -1
+				}
+				FireInput
+				{
+					Target "DjinnSummonTimer"
+					Action "FireTimer"
+					Delay 5
+					Repeats 1
+					Cooldown -1
+				}
+			}
+		}
+
+		WaveSpawn // 20 Scatter-Bonk Scouts
+		{
+			Name "Wave7_Subwave1_Scatter-Bonks"
+			WaitForAllSpawned "Wave7_Subwave1_ThreeDjinns"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Expert
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 20 Burst Demos
+		{
+			Name "Wave7_Subwave1_BurstDemos"
+			WaitForAllSpawned "Wave7_Subwave1_Scatter-Bonks"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst_Accurate
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GDeflector and 3 Quick-Uber Medics
+		{
+			Name "Wave7_Subwave2_GDeflector"
+			WaitForAllDead "Wave7_Subwave1_ThreeDjinns"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 8 Burst Demos and 8 Kritz Medics
+		{
+			Name "Wave7_Subwave2_BurstDemoSquads"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst_Accurate
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+
+		WaveSpawn // 1 GDeflector and 3 Quick-Uber Medics
+		{
+			Name "Wave7_Subwave2_GDeflector2"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 8 Burst Demos and 8 Kritz Medics
+		{
+			Name "Wave7_Subwave2_BurstDemoSquads2"
+			WaitForAllSpawned "Wave7_Subwave2_GDeflector2"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 16
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst_Accurate
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+
+		WaveSpawn // The Boss
+		{
+			Name "Wave7_Subwave3_FinalDjinn"
+			WaitForAllDead "Wave7_Subwave2_GDeflector2"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Boss_Pyro_SultanofTheLostLand
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave7_Subwave3_Scatter-Bonks2"
+			WaitForAllSpawned "Wave7_Subwave3_FinalDjinn"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 20
+			SpawnCount 20
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 160
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Expert
+				Attributes AlwaysCrit
+			}
+		}
 	}
 }
