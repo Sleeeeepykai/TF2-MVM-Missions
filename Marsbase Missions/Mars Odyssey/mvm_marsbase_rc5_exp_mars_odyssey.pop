@@ -1,7 +1,6 @@
 #base robot_standard.pop 
 #base robot_giant.pop
 #base robot_moonlight_nai.pop
-#base robot_marsbase_technician.pop
 
 //Collab Mission by SleepyKai & Nai
 
@@ -22,6 +21,7 @@ WaveSchedule
 
 	// Precached Models
 	PrecacheModel "models/mvm/bots/bot_medic.mdl"
+	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 	PrecacheModel "models/buildables/amplifier_test/amplifier.mdl"
     PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib1.mdl"
 	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib2.mdl"
@@ -31,8 +31,51 @@ WaveSchedule
 	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib6.mdl"
 	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib7.mdl"
 	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib8.mdl"
+	
 
 	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		//// Head Technician Part 1 Custom Weapons ////
+
+		Engie_Clawbomb
+		{
+			OriginalItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+			"custom item model" "models/empty.mdl"
+			"stickybomb stick to enemies" 1
+			"custom projectile model" "models/weapons/w_models/w_repair_claw.mdl"
+			"spread angle pattern" "0 0 0|0 45 0|0 90 0|0 135 0|0 180 0|0 225 0|0 270 0|0 315 0"
+			"projectile speed increased" 0.17
+			"projectile spread angle penalty" 5
+			"damage bonus" 1.5
+			"no self blast dmg" 1
+			"self dmg push force decreased" 0
+			"mod projectile heat no predict target speed" 1  
+			"projectile trail particle" "eyeboss_projectile"
+            "mod projectile heat seek power" 360
+            "mod projectile heat aim error" 300
+            "mod projectile heat aim time" 1
+			"mod projectile heat aim start time" 0.1
+			"penetrate teammates" 1
+			"max pipebombs increased" 24
+			"ignores other projectiles" 1
+			
+		}
+		Engie_DazeLightning
+		{
+			OriginalItemName "tf_weapon_rocketlauncher"
+			"damage bonus" "0"
+			"stun on hit" 1.5
+            "penetrate teammates" "1"
+            "projectile spread angle penalty" "90"
+            "projectile speed increased" "0.75"
+            "projectile gravity" "1500"
+            "no explosion particles" "1"
+			//"projectile trail particle" "~"
+			"custom projectile model" "models/empty.mdl"
+		}
+	}
 
 	//// POINT TEMPLATES ////
 
@@ -45,6 +88,10 @@ WaveSchedule
 			point_populator_interface
 			{
 				"targetname" "pop_interface"
+			}
+			point_clientcommand
+			{
+				"targetname" "client_command"
 			}
 		}
 
@@ -74,6 +121,52 @@ WaveSchedule
 				"origin" "4715 3575 730"
 				"angles" "0 90 0"
 			}
+			info_target
+			{
+				"targetname" "spawnbot_boss3"
+				"origin" "4848 3584 730"
+				"angles" "0 90 0"
+			}
+
+			info_particle_system
+			{
+				"targetname" "HeadTechnicianPortal1"
+				"effect_name" "eyeboss_death_vortex" 
+				"origin" "4848 3584 730"
+				"flag_as_weather" "0"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "HeadTechnicianPortal2"
+				"effect_name" "dxhr_lightningball_parent_blue" 
+				"origin" "4848 3584 730"
+				"flag_as_weather" "0"
+				"start_active" "0"
+			}
+
+			logic_relay
+			{
+				"targetname" "HeadTechnicianIntroRelay"
+				"OnTrigger" "HeadTechnicianPortal1,Start,,1,-1"
+				"OnTrigger" "HeadTechnicianPortal2,Start,,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\halloween\windgust_10.wav,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\halloween\windgust_10.wav,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\nucleus_electricity.wav,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\nucleus_electricity.wav,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\halloween\thunder_04.wav,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\halloween\thunder_04.wav,4,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient\nucleus_electricity.wav,4,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient\nucleus_electricity.wav,4,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient\halloween\windgust_10.wav,4,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient\halloween\windgust_10.wav,4,-1"
+				"OnTrigger" "HeadTechnicianPortal1,Stop,,4,-1"
+				"OnTrigger" "HeadTechnicianPortal2,Stop,,4,-1"
+				"OnTrigger" "@p@HeadTechnicianPart1Target,$AddCond,51,4.1"
+				"OnTrigger" "@p@HeadTechnicianPart1Target,$TauntFromItem,Taunt: Flying Colors,5.1,-1"
+				"OnTrigger" "@p@HeadTechnicianPart1Target,$RemoveCond,51,11.5"
+				"OnTrigger" "@p@HeadTechnicianPart1Target,$RemoveCond,7,11.5"
+			}
 		}
 
 		//// Limitbreaker Part 1 PTs ////
@@ -82,14 +175,14 @@ WaveSchedule
 		{
 			OnSpawnOutput
             {
-                Target bosstarget
+                Target LimitbreakerPart1Target
 				Action SetParent
 				Param "!activator"
 				Delay 0.05
             }
 			info_target
             {
-                "TargetName" "bosstarget"
+                "TargetName" "LimitbreakerPart1Target"
                 "origin" "0 0 0"
             }
 
@@ -120,18 +213,18 @@ WaveSchedule
 			{
 				"targetname" "LimitbreakerIntroRelay"
 
-				"OnTrigger" "@p@bosstarget,$Taunt,,0,-1"
-				"OnTrigger" "@p@bosstarget,$Taunt,,0.1,-1"
-				"OnTrigger" "@p@bosstarget,$Taunt,,0.2,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$Taunt,,0,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$Taunt,,0.1,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$Taunt,,0.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_laughhappy01.mp3,0,-1"
 				"OnTrigger" "@p@patienttarget,$TeleportToEntity,spawnbot_boss2,3.1,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreakIntro,3.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted02.mp3,4,-1"
-				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4,-1"
-				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.1,-1"
-				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,4,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,4.1,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,7.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,7.33,-1"
 				"OnTrigger" "@p@patienttarget,$Taunt,,7.33,-1"
@@ -152,9 +245,9 @@ WaveSchedule
 			{
 				"targetname" "LimitbreakerTetherAttachRelay"
 				"OnTrigger" "LimitbreakerDetector,Disable,,0,-1"
-				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0,-1"
-				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0.1,-1"
-				"OnTrigger" "@p@bosstarget,$TauntFromItem,Taunt: Doctor's Defibrillators,0.2,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,0,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,0.1,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,0.2,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,3.33,-1"
@@ -233,6 +326,29 @@ WaveSchedule
                 "solid" "0"
                 "origin" "0 0 100"                
             }
+
+			// Limitbreaker Leave
+
+			logic_relay // Limitbreaker Leave Relay
+			{
+				"targetname" "LimitbreakerLeaveRelay"
+				"OnTrigger" "LimitbreakerDetector,Disable,,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "LimitbreakerTetherAttachRelay,CancelPending,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierStun,0,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: The Critical Fail,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_SupportCrew,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_SupportCrew,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\medic_mvm_jeers04.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\medic_mvm_jeers04.mp3,0,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave3_Subwave1_SupportCrew,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\medic_mvm_jeers11.mp3,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\medic_mvm_jeers11.mp3,2.5,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$TeleportToEntity,spawnbot,4.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,4.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,4.5,-1"
+				"OnTrigger" "@p@LimitbreakerPart1Target,$BotCommand,despawn,5,-1"
+			}
 		}
 
 		LimitbreakerTether
@@ -312,6 +428,464 @@ WaveSchedule
 				"lifetime" "5"
 			}
 		}
+		
+		//// Head Technician Part 1 PTs ////
+
+		TechnicianPart1_Attacks
+		{
+			OnSpawnOutput
+            {
+                Target HeadTechnicianPart1Target
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			OnSpawnOutput
+            {
+                Target "ClawBomb"
+                Action "$SetOwner"
+                Param  "!activator"
+                Delay  0
+            }
+
+			info_target
+			{
+				"targetname" "HeadTechnicianPart1Target"
+			}
+
+			// Attack Pool
+
+			logic_case
+			{
+				"targetname" "attackphasesAll"
+				"OnCase01" "!activator,$ChangeAttributes,RapidPomson,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,BurstRanger,0,-1" 
+				"OnCase03" "!activator,$ChangeAttributes,Panicmode,0,-1" 
+				"OnCase04" "!activator,$ChangeAttributes,BallsofDoomAndDespair,0,-1"
+				"OnCase05" "!activator,$ChangeAttributes,OoohWhatsThis,0,-1" 
+				"OnCase06" "!activator,$ChangeAttributes,ThunderStorm,0,-1" 
+			}
+
+			// Claw Bomb Attack
+
+			logic_relay
+			{
+				"targetname" "HomingClaws"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Texan Trickshot,0,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_littlesentry01.mp3,0,-1"
+				"OnTrigger" "ClawBomb,firemultiple,5,0.1,-1"
+				"OnTrigger" "ClawBomb,firemultiple,5,1.2,-1"
+				"OnTrigger" "ClawBomb,firemultiple,5,2.1,-1"
+				"OnTrigger" "ClawBomb,DetonateStickies,,3.3,-1"
+				"OnTrigger" "ClawBomb,disable,,3.5,-1"
+			}
+			
+			tf_point_weapon_mimic
+			{
+				"targetname" "ClawBomb"
+				"origin"          "-15 0 150"
+                "angles"           "0 0 0"
+				"weapontype"		"0"
+                "teamnum"          "3"
+				"damage"			"0"
+                "$weaponname"    "Engie_Clawbomb"
+                "$firetime"      "1.0" 
+                "$weaponnosound" "1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" 	  "ClawBomb"
+				"origin"          "-15 0 150"
+                "angles"           "0 0 0"
+				"weapontype"		"0"
+                "teamnum"          "3"
+				"damage"			"0"
+                "$weaponname"    "Engie_Clawbomb"
+                "$firetime"      "1.0" 
+                "$weaponnosound" "1"
+			}
+
+			// Thunder Storm Attack
+			
+			logic_relay
+			{
+				"targetname" "SmiteThee"
+				"OnTrigger" "!activator,$PlaySequence,taunt_drg_melee,0,-1" //taunt_drg_melee
+				"OnTrigger"	"tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_laughlong01.mp3,0,-1"
+				"OnTrigger" "Engi_Lightning,firemultiple,3,1.3,-1"
+				"OnTrigger" "Engi_Lightning,firemultiple,3,2.3,-1"
+				"OnTrigger" "Engi_Lightning,firemultiple,3,3.3,-1"
+				"OnTrigger" "Engi_Lightning,firemultiple,3,4.3,-1"
+				"OnTrigger" "Engi_Lightning,disable,,4.6,-1"
+			}
+			tf_point_weapon_mimic
+            {
+                "targetname" "Engi_Lightning"
+                "origin" "-15 0 150"
+                "angles" "270 0 0"
+                "speedmin" "10"
+                "speedmax" "10"
+                "teamnum" "3"
+                "damage" "0"
+                "$weaponname" "Engie_DazeLightning"
+                "$firetime" "0.33"
+                "$weaponnosound" "1"
+                "$preventshootparent" "1"
+                "$OnFire" "LightningRainTargetSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+            }
+			env_entity_maker
+            {
+                "targetname" "LightningRainTargetSpawner"
+                "entitytemplate" "LightningRainTarget"
+                "$autoparent" "1"
+            }
+		}
+
+		LightningRainTarget
+        {
+            RemoveIfKilled "LightningTarget"
+            KeepAlive 1
+
+            info_target
+            {
+                "targetname" "LightningTarget"
+            }
+            OnParentKilledOutput
+            {
+                Target "LightningRainAttack"
+                Action "ForceSpawnAtEntityOrigin"
+                Param "LightningTarget"
+                Delay 0.1
+                Repeats 1
+                Cooldown -1
+            }
+            OnParentKilledOutput
+            {
+                Target "LightningTarget"
+                Action Kill
+                Delay 0.5
+                Repeats 1
+                Cooldown -1
+            }
+        }
+
+		LightningRainAttack
+		{
+			KeepAlive 1
+			RemoveIfKilled "LightningAttackPoint"
+
+			OnSpawnOutput
+			{
+				Target "LightningAttackPoint"
+				Action "$setkey$angles"
+                Param "180 0 0"
+                Delay 0.1
+			}
+			prop_dynamic
+            {
+                "targetname" "LightningAttackPoint"
+                "origin" "0 0 12"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "3"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+			{
+				"targetname" "LightningAttackStart"
+				"origin" "0 0 2500"
+				"model" "models/empty.mdl"
+				"solid" "0"
+			}
+			env_beam
+			{
+				"targetname" "LightningAttackBeam"
+				"origin" "0 0 0"
+				"life" "2"
+				"boltwidth" "25"
+				"LightningStart" "LightningAttackStart"
+				"LightningEnd" "LightningAttackPoint"
+				"renderamt" "255"
+				"rendercolor" "128 192 255"
+				"NoiseAmplitude" "2"
+				"texture" "sprites/laserbeam.vmt"
+			}
+			trigger_hurt
+			{
+				"targetname" "LightningAttackDamage"
+				"origin" "0 0 0"
+				"mins" "-64 -64 -64"
+				"maxs" "64 64 64"
+				"damagetype" "1048576"
+				"damage" "100"
+				"filtername" "filter_redteam_nouber"
+                "spawnflags" "64"
+				"startdisabled" "1"
+			}
+			ambient_generic
+			{
+				"targetname" "LightningAttackSound"
+				"origin" "0 0 0"
+				"message" "Halloween.spell_lightning_impact"
+				"radius" "3072"
+				"health" "10"
+				"spawnflags" "16"
+			}
+
+			OnSpawnOutput
+			{
+				Target "LightningAttackBeam"
+				Action "StrikeOnce"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "LightningAttackDamage"
+				Action "Enable"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "LightningAttackDamage"
+				Action "Disable"
+				Delay 4
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "LightningAttackSound"
+				Action "PlaySound"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "LightningAttackPoint"
+				Action "SetAnimation"
+				Param "end"
+				Delay 4
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "LightningAttackPoint"
+				Action "Kill"
+				Delay 4.5
+				Repeats 1
+				Cooldown -1
+			}
+		}
+
+		//// Reforger PTs ////
+		Reforger_PT
+		{
+			NoFixUp 1
+
+			OnSpawnOutput
+            {
+                Target ReforgerTarget
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			info_target
+            {
+                "TargetName" "ReforgerTarget"
+                "origin" "0 0 0"
+            }
+
+			trigger_multiple
+			{
+				"targetname" "ReforgerDetector"
+				"origin" "0 0 100"
+				"mins" "-384 -384 -256"
+				"maxs" "384 384 256"
+
+				"wait" "0.5"
+				"filtername" "ReforgerGiantFilter"
+				"spawnflags" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "ReforgerTetherAttachRelay,Trigger,,0,-1"
+			}
+			filter_tf_bot_has_tag
+			{
+				"targetname" "ReforgerGiantFilter"
+				"tags" "ReforgerGiant"
+				"require_all_tags" "1"
+			}
+
+			// Reforger Main Relays
+
+			// Reforger Tether Ability
+			logic_relay // Reforger Tether Beam Attach Relay
+			{
+				"targetname" "ReforgerTetherAttachRelay"
+				"OnTrigger" "ReforgerDetector,Disable,,0,-1"
+				"OnTrigger" "@p@ReforgerTarget,$Taunt,,0,-1"
+				"OnTrigger" "@p@ReforgerTarget,$Taunt,,0.1,-1"
+				"OnTrigger" "@p@ReforgerTarget,$Taunt,,0.2,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GDemoLimitBreak,3.33,-1"
+				"OnTrigger" "ReforgerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,3.33,-1"
+				"OnTrigger" "@p@ReforgerTarget,$Taunt,,3.33,-1"
+				"OnTrigger" "@p@ReforgerTarget,$Taunt,,3.34,-1"
+				"OnTrigger" "@p@ReforgerTarget,$AddCond,51 3,3.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
+				"OnTrigger" "ReforgerTetherBuilding,SetBuilder,,3.4,-1"
+				"OnTrigger" "Demoman_ReforgedVoiceline,PickRandom,,7.33,-1"
+
+				"spawnflags" "2"
+			}
+			logic_relay // Reforger Tether Sustain Relay
+			{
+				"targetname" "ReforgerTetherSustainRelay"
+				"OnTrigger" "ReforgerTether,StrikeOnce,,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,0.15,-1"
+
+				"spawnflags" "2"
+			}
+			logic_relay // Reforger Tether Beam Break Relay
+			{
+				"targetname" "ReforgerTetherBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,ReforgerStun,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierStun,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Enable,,10,-1"
+				"OnTrigger" "ReforgerDetector,Enable,,10,-1"
+
+				"spawnflags" "2"
+			}
+			logic_relay // Reforger Tether Patient Break Relay
+			{
+				"targetname" "ReforgerTetherPatientBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,ReforgerDefault,0,-1"
+				"OnTrigger" "ReforgerSustainRelay,Enable,,10,-1"
+				"OnTrigger" "ReforgerDetector,Enable,,10,-1"
+
+				"spawnflags" "2"
+			}
+
+			env_entity_maker // Reforger Tether Spawner
+			{
+				"targetname" "ReforgerTetherSpawner"
+				"entitytemplate" "ReforgerTether"
+				"$autoparent" "1"
+			}
+			env_beam // Reforger Tether Beam
+            {
+                "targetname" "ReforgerTether"
+                "BoltWidth" "8"
+                "LightningStart" "ReforgerTetherStart"
+                "LightningEnd" "ReforgerTetherEnd"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "200 200 255"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "0.16"
+				"spawnflags" "96"
+            }
+			prop_dynamic // Reforger Tether Beam Start Point
+            {
+                "targetname" "ReforgerTetherStart"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
+		}
+
+		ReforgerTether
+		{
+			OnSpawnOutput
+			{
+				Target ReforgerTetherBuilding
+				Action $SetOwner
+				Param !parent
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "ReforgerTetherBuilding"
+				Action "SetHealth"
+				Param 1000
+                Delay 0.1
+			}
+			obj_dispenser
+			{
+				"targetname" "ReforgerTetherBuilding"
+				"angles" "-70 0 0"
+				"origin" "-25 0 90"
+				"teamnum" "3"
+				"defaultupgrade" "2"
+				"solid" "0"
+				"$radiusmult" "0.01"
+                "$cannotbesapped" "1"
+                "$dispensermodelprefix" "models/buildables/amplifier_test/amplifier.mdl"
+
+				"OnDestroyed" "ReforgerTetherBreakRelay,Trigger,,0,-1"
+			}
+		}
+
+		ReforgerTetherPatient
+		{
+			OnSpawnOutput
+            {
+                Target ReforgerPatientTarget
+				Action SetParent
+				Param "!activator"
+				Delay 0.05
+            }
+			info_target
+            {
+                "TargetName" "ReforgerPatientTarget"
+                "origin" "0 0 0"
+            }
+
+			OnParentKilledOutput
+			{
+				Target ReforgerPatientBreakRelay
+				Action Trigger
+				Delay -1
+			}
+
+			prop_dynamic // Reforger Tether Beam End Point
+            {
+                "targetname" "ReforgerTetherEnd"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
+
+			training_annotation
+			{
+				"targetname" "ReforgerIntroNote1"
+				"origin" "0 0 200"
+				"display_text" "This giant has been Reforged!"
+				"lifetime" "5"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -354,6 +928,7 @@ WaveSchedule
 			Item "The Lo-Grav Loafers"
 
 			Item "Taunt: Doctor's Defibrillators"
+			Item "Taunt: The Critical Fail"
 
 			CharacterAttributes
 			{
@@ -397,6 +972,17 @@ WaveSchedule
 				Delay 0.5
 				Repeats 1
 				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $ChangeAttributes
+				Param LimitbreakerLeave
+				Delay 0.5
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 1500
 			}
 
 			EventChangeAttributes
@@ -583,6 +1169,35 @@ WaveSchedule
 						Distance 80
 						Duration 5
 						Cooldown 6
+					}
+				}
+
+				LimitbreakerLeave [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"override footstep sound set" 4
+						"mod weapon blocks healing" 1
+						"voice pitch scale" 0
+						"no_attack" 0
+						"no_jump" 0
+					}
+
+					AddCond
+					{
+						Index 51
+					}
+
+					FireInput
+					{
+						Target LimitbreakerLeaveRelay
+						Action Trigger
+						Delay 0
+						Repeats 1
+						Cooldown -1
 					}
 				}
 			}
@@ -860,22 +1475,453 @@ WaveSchedule
 			}
 		}
 
-		T_TFBot_Engineer_Name	
+		T_TFBot_Boss_Engineer_HeadTechnician_Part1
 		{
-			Name "The Limitbreaker"
+			Name "The Head Technician"
 			Class Engineer
 			ClassIcon engineer_hyper
 			Skill Expert
-			Health 20000
+			Health 25000
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
 			WeaponRestrictions PrimaryOnly
 			Action FetchFlag
 
 			UseHumanAnimations 1
+			UseMeleeThreatPrioritization 1
 
-			Item ""
+			SpawnTemplate "TechnicianPart1_Attacks"
+
+			Item "The Shred Alert"
+			Item "The Data Mining Light"
+			Item "Delldozer"
+			Item "Contaminated Carryall"
+			Item "Technician's Tunic"
+
+			Item "Replay Taunt"
+			Item "Taunt: Texan Trickshot"
+			
+			CharacterAttributes
+			{
+				"move speed bonus" 0.5
+				"airblast vulnerability multiplier" 0.0
+				"damage force reduction" 0.0
+				"no self blast dmg" 1
+				"cancel falling damage" 1
+				"override footstep sound set" 3
+				"always allow taunt" 1
+			}
+
+			InterruptAction
+			{
+				AimTarget "4848 4543 730"
+				Delay 0.1
+				Duration 2
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $TeleportToEntity
+				Param spawnbot_boss3
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $ChangeAttributes
+				Param HeadTechnicianIntro
+				Delay 0.5
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !activator
+				Action $ChangeAttributes
+				Param HeadTechnicianLeave
+				Delay 0.5
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 2500
+			}
+
+			EventChangeAttributes 
+			{
+				HeadTechnicianIntro [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_attack" 1
+						"no_jump" 1
+						"no_duck" 1
+					}
+
+					FireInput
+					{
+						Target player
+						Action $PlaySoundToSelf
+						Param "=45|vo/mvm/norm/engineer_mvm_meleedare01.mp3"
+						Delay 5.5
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 7.5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				HeadTechnicianLeave [$SIGSEGV]
+				{
+					Item "The Eureka Effect"
+					WeaponRestrictions MeleeOnly
+					Attributes SuppressFire
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.001
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_attack" 1
+						"no_jump" 1
+						"no_duck" 1
+					}
+
+					AddCond
+					{
+						Index 51
+					}
+
+					FireInput
+					{
+						Target "ClawBomb"
+						Action DetonateStickies
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "HomingClaws"
+						Action CancelPending
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "HomingClaws"
+						Action CancelPending
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "SmiteThee"
+						Action CancelPending
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "Engi_Lightning"
+						Action $StopFiring
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target player
+						Action $PlaySoundToSelf
+						Param "=45|vo/mvm/norm/engineer_mvm_negativevocalization08.mp3"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target player
+						Action $PlaySoundToSelf
+						Param "=45|vo/mvm/norm/engineer_mvm_negativevocalization12.mp3"
+						Delay 1.5
+						Repeats 1
+						Cooldown -1
+					}
+					ClientCommand   // Executes client commands
+                    {
+                        Name "eureka_teleport 1"
+                        Delay 2.5
+						Repeats 1
+                        Cooldown -1
+                    }
+					FireInput
+					{
+						Target !self
+						Action $BotCommand
+						Param Despawn
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+
+				}
+
+				PanicMode [$SIGSEGV]
+				{
+					Item "Panic Attack Shotgun"
+					Attributes HoldFireUntilFullReload
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"no self blast dmg" 1
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_jump" 0
+						"no_duck" 0
+					}
+					
+                    ItemAttributes
+                    {
+                        ItemName "Panic Attack Shotgun"
+						"damage bonus" 20
+						"fire rate bonus" 0.1
+						"faster reload rate" 0.5
+						"clip size upgrade atomic" 10.0
+						"projectile speed increased" 1500
+						"projectile spread angle penalty" 5
+						"override projectile type" 3
+						"custom weapon fire sound" "weapons/grenade_launcher_shoot.wav"
+					}
+
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 5
+					}
+				}
+				BurstRanger [$SIGSEGV]
+				{
+					Item "The Rescue Ranger"
+					Attributes HoldFireUntilFullReload
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"no self blast dmg" 1
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_jump" 0
+						"no_duck" 0
+					}
+                    ItemAttributes
+                    {
+                        ItemName "The Rescue Ranger"
+						"damage bonus" 1.33
+						"dmg bonus vs buildings" 2.5
+						"fire rate bonus" 0.1
+						"projectile spread angle penalty" 5
+						"faster reload rate" 0.20
+						"clip size bonus" 2
+					}
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 5
+					}
+				}
+				RapidPomson [$SIGSEGV]
+				{
+					Item "The Pomson 6000"
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"no self blast dmg" 1
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_jump" 0
+						"no_duck" 0
+					}
+                    ItemAttributes
+                    {
+                        ItemName "The Pomson 6000"
+						"disable buildings on hit" 4
+						"damage bonus" 1.5
+						"fire rate bonus" 0.75
+						"faster reload rate" 0.001
+						"attach particle effect" 3097
+					}
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 5
+					}
+				}
+				BallsofDoomAndDespair [$SIGSEGV]
+				{
+					Item "The C.A.P.P.E.R"
+					Attributes SuppressFire
+					WeaponRestrictions SecondaryOnly
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"no self blast dmg" 1
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_jump" 0
+						"no_duck" 0
+					}
+                    ItemAttributes
+                    {
+                        ItemName "The C.A.P.P.E.R"
+						"damage bonus" 1.25
+						"clip size bonus" 50
+						"mult projectile count" 8
+						"override projectile type extra" "mechanicalarmorb"
+                        "custom item model" "models/weapons/c_models/c_dex_arm/c_dex_arm.mdl"
+                        "custom weapon fire sound" "Weapon_BarretsArm.Shot"
+                        "spread angle pattern" "0 0 0|0 45 0|0 90 0|0 135 0|0 180 0|0 225 0|0 270 0|0 315 0"
+                    }
+					FireWeapon
+					{
+						Type Primary
+						Duration 0.1
+						Cooldown 1
+						Repeats 4
+						Delay 0.1
+					}
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 5
+					}
+				}
+				OoohWhatsThis [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed bonus" 0.5
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"blast dmg to self increased" 10
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_jump" 0
+						"no_duck" 0
+					}
+					FireInput
+					{
+						Target "Homingclaws"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 5
+					}
+				}
+				ThunderStorm [$SIGSEGV]
+				{
+					Item "The Eureka Effect"
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.001
+						"airblast vulnerability multiplier" 0.0
+						"damage force reduction" 0.0
+						"no self blast dmg" 1
+						"cancel falling damage" 1
+						"override footstep sound set" 3
+						"always allow taunt" 1
+						"no_jump" 1
+						"no_duck" 1
+					}
+					ItemAttributes
+					{
+						ItemName "The Eureka Effect"
+						"damage bonus" 999
+						"ragdolls plasma effect" 1
+					}
+
+					AddAttribute
+                    {
+                        Item "Player"
+                        Name "move speed bonus"
+                        Value "0.001"
+                        Delay 0
+                    }
+					AddAttribute
+                    {
+                        Item "Player"
+                        Name "move speed bonus"
+                        Value "0.5"
+                        Delay 3
+                    }
+
+					FireInput
+					{
+						Target "SmiteThee"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+					FireInput
+					{
+						Target "attackphasesAll"
+						Action PickRandomShuffle
+						Delay 5
+					}
+				}
+			}
 		}
+
+		//// Commons ////
 
 		T_TFBot_Medic_BigHeal_Charged
         {
@@ -1046,6 +2092,8 @@ WaveSchedule
             }
         }
 
+		//// Giants ////
+
 		T_TFBot_Giant_Heavy_Laser
 		{
 			Name "Giant Laser Heavy"
@@ -1141,6 +2189,122 @@ WaveSchedule
             }
 		}
 
+		T_TFBot_Giant_Engineer_Reforger
+		{
+			Name "Giant Reforger Engineer"
+			Class Engineer
+			ClassIcon engineer_upgraded
+			Skill Expert
+			Health 4500
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			Item "The Widowmaker"
+
+			UseHumanAnimations 1
+
+			SpawnTemplate "ReforgerLogic"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+                "damage force reduction" 0.6
+                "airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 7
+				"voice pitch scale" 0
+				"head scale" 0.7
+				"hand scale" 1.1
+			}
+
+			EventChangeAttributes
+			{
+				ReforgerDefault [$SIGSEGV]
+				{
+					WeaponRestrictions PrimaryOnly
+
+					Item "The Widowmaker"
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 7
+						"voice pitch scale" 0
+						"head scale" 0.7
+						"hand scale" 1.1
+						"no_attack" 0
+						"no_jump" 0
+					}
+				}
+
+				ReforgerTetherAbility [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 7
+						"voice pitch scale" 0
+						"head scale" 0.7
+						"hand scale" 1.1
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					FireInput
+					{
+						Target ReforgerTetherAttachRelay
+						Action Trigger
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param ReforgerDefaultTether
+						Delay 4.7
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				ReforgerStun [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 7
+						"voice pitch scale" 0
+						"head scale" 0.7
+						"hand scale" 1.1
+						"no_attack" 1
+						"no_jump" 1
+					}
+					Addcond
+					{
+						Index 71
+						Duration 5
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param ReforgerDefault
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+			}
+		}
+
 		Tank_Tiny
 		{
 			Name "tankboss$scale|0.5^maxstepheight|50"
@@ -1161,7 +2325,6 @@ WaveSchedule
 				Action Trigger
 			}
 		}
-		
 	}
 
 	//// MISSION BOTS ////
@@ -1232,10 +2395,25 @@ WaveSchedule
 		}
 	}
 
+	Mission // Sniper (Wave 4)
+	{
+		Objective Sniper
+		Where spawnbot_right
+		BeginAtWave 4
+		RunForThisManyWaves 1
+		InitialCooldown 8
+		CooldownTime 40
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Sniper
+		}
+	}
+
 	//// WAVES ////
 
 	// General Notes
-	// Make Boss Teleport-Out Animation for Part 1
 
 	// Wave 1 Notes
 	Wave
@@ -1663,7 +2841,6 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// Need to properly pause the boss support
 	Wave
 	{
 		InitWaveOutput
@@ -1723,16 +2900,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Boss_Medic_Limitbreaker_Part1
-			}
-
-			DoneOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`pop_interface`, `$KillWaveSpawn`, `Wave3_Subwave1_SupportCrew`)
-						EntFire(`pop_interface`, `$FinishWaveSpawn`, `Wave3_Subwave1_SupportCrew`)
-					  "
 			}
 		}
 		WaveSpawn // Support GRapid Soldiers
@@ -2201,24 +3368,6 @@ WaveSchedule
 				ClassIcon demo_spammer_package
 			}
 		}
-		WaveSpawn // 20 Heavies
-		{
-			Name "Wave4_Subwave1_Heavies"
-			WaitForAllSpawned "Wave4_Subwave1_GDemo"
-			Where spawnbot
-			TotalCount 20
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 5
-			TotalCurrency 60
-
-			TFBot
-			{
-				Class Heavy
-				Skill Easy
-			}
-		}
 		WaveSpawn // 30 Scatter-Bonk Scouts
 		{
 			Name "Wave4_Subwave1_Scatterbonks"
@@ -2240,12 +3389,12 @@ WaveSchedule
 		WaveSpawn // 1 GDemo and 1 Battalion Soldier
 		{
 			Name "Wave4_Subwave1_GDemo2"
-			WaitForAllSpawned "Wave4_Subwave1_Heavies"
+			WaitForAllSpawned "Wave4_Subwave1_GDemo"
 			Where spawnbot
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 0
+			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -2267,12 +3416,12 @@ WaveSchedule
 		WaveSpawn // 2 GDemos
 		{
 			Name "Wave4_Subwave1_GDemo2"
-			WaitForAllSpawned "Wave4_Subwave1_Heavies"
+			WaitForAllSpawned "Wave4_Subwave1_GDemo"
 			Where spawnbot
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 1
-			WaitBeforeStarting 1
+			WaitBeforeStarting 26
 			WaitBetweenSpawns 1
 			TotalCurrency 40
 
@@ -2280,6 +3429,60 @@ WaveSchedule
 			{
 				Template T_TFBot_Giant_Demoman
 				ClassIcon demo_spammer_package
+			}
+		}
+		WaveSpawn // 15 Pyros
+		{
+			Name "Wave4_Subwave1_Pyros"
+			WaitForAllSpawned "Wave4_Subwave1_GDemo2"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn
+		{
+			Name "Wave4_Subwave2_Reforger"
+			WaitForAllSpawned "Wave4_Subwave1_GDemo2"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demo_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Engineer_Reforger
+				}
 			}
 		}
 	}
@@ -2315,6 +3518,7 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`HeadTechnicianIntroRelay`, `Trigger`)
                   "
         }
         DoneOutput
@@ -2327,5 +3531,23 @@ WaveSchedule
         }
 		
 		// Subwave 1
+		WaveSpawn // Head Technician Boss
+		{
+			Name "Wave3_Subwave1_HeadTechnicianBoss"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tele_deliver.wav"
+
+			TFBot
+			{
+				Template T_TFBot_Boss_Engineer_HeadTechnician_Part1
+			}
+		}
 	}
 }

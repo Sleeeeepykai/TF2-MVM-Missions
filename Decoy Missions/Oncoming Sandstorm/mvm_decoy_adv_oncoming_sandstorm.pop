@@ -127,47 +127,6 @@ WaveSchedule
 						IncludeScript(`oncoming_sandstorm`, getroottable())
 
 						OncomingSandstorm.SandstormInit()
-
-						IncludeScript(`tankextensions_main`, getroottable())
-						IncludeScript(`tankextensions/combattank`, getroottable())
-						IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
-						IncludeScript(`tankextensions/combattank_weapons/cannon`, getroottable())
-
-						TankExt.SetValueOverrides({
-						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
-						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
-						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
-						COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
-						COMBATTANK_CANNON_ROCKET_SPEED = 2000
-						COMBATTANK_CANNON_ROCKET_DAMAGE = 200
-						})
-
-						TankExt.CreateLoopPaths({
-							tank_patrol = [
-								Vector(0, 2976, 388)
-								Vector(0, 2520, 388)
-								Vector(0, 356, 388)
-								Vector(-28, 284, 388)
-								Vector(-100, 256, 388)
-								Vector(-636, 256, 388)
-								Vector(-708, 228, 388)
-								Vector(-736, 168, 388)
-								Vector(-736, -448, 388)
-								Vector(-704, -512, 388)
-								Vector(-624, -608, 388)
-								Vector(-512, -688, 388)
-								Vector(416, -688, 388)
-								Vector(496, -656, 388)
-								Vector(528, -608, 388)
-								Vector(544, -560, 388)
-								Vector(544, -48, 388)
-								Vector(512, 32, 388)
-								Vector(448, 112, 388)
-								Vector(368, 192, 388)
-								Vector(256, 256, 388)
-								Vector(-100, 256, 388)
-							]
-						})
 					  "
 			}
 			point_populator_interface
@@ -699,6 +658,12 @@ WaveSchedule
 				Delay 0.02
 			}
 			OnSpawnOutput
+            {
+                Target "Sultan_Shield"
+                Action "SetAttached"
+                Param !activator
+            }
+			OnSpawnOutput
 			{
 				Target "SultanSummonGeneratorBodyGuard1"
 				Action SetParent
@@ -845,7 +810,6 @@ WaveSchedule
 				"targetname" "SultanPhase3AttackPool"
 
 				"OnCase01" "pop_interface,ChangeBotAttributes,SultanFireballRain,0,-1"
-				"OnCase02" "pop_interface,ChangeBotAttributes,SultanFireballRain,0,-1"
 				"OnCase03" "pop_interface,ChangeBotAttributes,SultanSummonGiantEvolved,0,-1"
 				"OnCase04" "pop_interface,ChangeBotAttributes,SultanSendThemToMarianaTrench,0,-1"
 			}
@@ -1156,7 +1120,6 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,5.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,5.2,-1"
 				"OnTrigger" "SultanPhase2MinionsRelay,Trigger,,5.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,5.5,-1"
 			}
 
 			logic_relay // Phase 2 Minions Relay
@@ -1382,7 +1345,6 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,5.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,5.2,-1"
 				"OnTrigger" "SultanPhase3MinionsRelay,Trigger,,5.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,5.5,-1"
 			}
 
 			logic_relay // Phase 3 Minions Relay
@@ -1399,11 +1361,72 @@ WaveSchedule
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_ThirdMinionWave,2.33,-1"
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_LeftHand,2.33,-1"
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_RightHand,2.33,-1"
-				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
-				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
-				"OnTrigger" "!activator,$ChangeAttributes,SultanDefault,3.6,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,SultanHands,3.6,-1"
 			}
+
+			logic_relay
+			{
+				"targetname" "SultanPhase3HandsRelay"
+				"OnTrigger" "SultanHandsSustainRelay,Trigger,,0,-1"
+				"OnTrigger" "SultanShield,Enable,,0,-1"
+
+			}
+			logic_relay
+			{
+				"targetname" "SultanHandsSustainRelay"
+				"OnTrigger" "SultanHandBeam1,StrikeOnce,,0,-1"
+				"OnTrigger" "SultanHandBeam2,StrikeOnce,,0,-1"
+				"OnTrigger" "SultanHandsSustainRelay,Trigger,,0.15,-1"
+
+				"spawnflags" "2"
+			}
+
+			env_beam
+            {
+                "targetname" "SultanHandBeam1"
+                "BoltWidth" "8"
+                "LightningStart" "SultanSiphonBeamStart1"
+                "LightningEnd" "SultanHandBeamEnd1"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "128 128 255"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "0.16"
+				"spawnflags" "96"
+            }
+			env_beam
+            {
+                "targetname" "SultanHandBeam2"
+                "BoltWidth" "8"
+                "LightningStart" "SultanSiphonBeamStart2"
+                "LightningEnd" "SultanHandBeamEnd2"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "128 128 255"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "0.16"
+				"spawnflags" "96"
+            }
+
+            prop_dynamic_ornament
+            {
+                "targetname" "SultanShield"
+                "model" "models/effects/resist_shield/resist_shield.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "solid" "0"
+
+                "startdisabled" "1"
+            }
 
 			// Summon Giant Evolved Attack
 			logic_relay
@@ -1452,6 +1475,26 @@ WaveSchedule
 			prop_dynamic
             {
                 "targetname" "SultanSiphonBeamEnd2"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
+		}
+		SultanHand1_PT
+		{
+			prop_dynamic
+            {
+                "targetname" "SultanHandBeamEnd1"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
+		}
+		SultanHand2_PT
+		{
+			prop_dynamic
+            {
+                "targetname" "SultanHandBeamEnd2"
                 "model" "models/empty.mdl"
                 "solid" "0"
                 "origin" "0 0 100"                
@@ -2018,7 +2061,42 @@ WaveSchedule
 					}
 				}
 
+				SultanHands [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.25
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 0
+						"no_jump" 0
+					}
+
+					FireInput
+					{
+						Target "SultanPhase3HandsRelay"
+						Action "Trigger"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
 				// Phase 3 Attack Pool
+
+				SultanSummonGiantEvolved [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "SultanSummonGiantEvolvedRelay"
+						Action "Trigger"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
 			}
 		}
 		T_TFBot_Giant_Demoman_LeftHand
@@ -2034,6 +2112,8 @@ WaveSchedule
 			WeaponRestrictions PrimaryOnly
 
 			AlwaysGlow 1
+
+			SpawnTemplate "SultanHand1_PT"
 
 			CharacterAttributes
 			{
@@ -2077,6 +2157,8 @@ WaveSchedule
 			WeaponRestrictions PrimaryOnly
 
 			AlwaysGlow 1
+
+			SpawnTemplate "SultanHand2_PT"
 
 			CharacterAttributes
 			{
@@ -2147,12 +2229,8 @@ WaveSchedule
 	// General Notes
 	// Look into reducing the projectile spam of Waves 2 and 3
 	// Look into varying what the Djinns summon on Waves 5 and 7
-	// Null Instance from loading tankext in Core_PTs
-	// Can delete the final 20 scatter-bonks on Wave 7
-	// Fix boss attacks on Phase 3
 	// Make the Hands of the Sultan give a damage res to the boss
 	// Make it so you can stun the boss by killing them
-
 	// Wave 1 Notes
 	Wave
 	{
@@ -3020,6 +3098,47 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+					IncludeScript(`tankextensions/combattank`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/cannon`, getroottable())
+
+					TankExt.SetValueOverrides({
+					COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+					COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
+					COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
+					COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
+					COMBATTANK_CANNON_ROCKET_SPEED = 2000
+					COMBATTANK_CANNON_ROCKET_DAMAGE = 200
+					})
+
+					TankExt.CreateLoopPaths({
+						tank_patrol = [
+							Vector(0, 2976, 388)
+							Vector(0, 2520, 388)
+							Vector(0, 356, 388)
+							Vector(-28, 284, 388)
+							Vector(-100, 256, 388)
+							Vector(-636, 256, 388)
+							Vector(-708, 228, 388)
+							Vector(-736, 168, 388)
+							Vector(-736, -448, 388)
+							Vector(-704, -512, 388)
+							Vector(-624, -608, 388)
+							Vector(-512, -688, 388)
+							Vector(416, -688, 388)
+							Vector(496, -656, 388)
+							Vector(528, -608, 388)
+							Vector(544, -560, 388)
+							Vector(544, -48, 388)
+							Vector(512, 32, 388)
+							Vector(448, 112, 388)
+							Vector(368, 192, 388)
+							Vector(256, 256, 388)
+							Vector(-100, 256, 388)
+						]
+					})
             	  "
         }
 		StartWaveOutput
@@ -3647,6 +3766,47 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+
+					IncludeScript(`tankextensions_main`, getroottable())
+					IncludeScript(`tankextensions/combattank`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+					IncludeScript(`tankextensions/combattank_weapons/cannon`, getroottable())
+
+					TankExt.SetValueOverrides({
+					COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+					COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
+					COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
+					COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
+					COMBATTANK_CANNON_ROCKET_SPEED = 2000
+					COMBATTANK_CANNON_ROCKET_DAMAGE = 200
+					})
+
+					TankExt.CreateLoopPaths({
+						tank_patrol = [
+							Vector(0, 2976, 388)
+							Vector(0, 2520, 388)
+							Vector(0, 356, 388)
+							Vector(-28, 284, 388)
+							Vector(-100, 256, 388)
+							Vector(-636, 256, 388)
+							Vector(-708, 228, 388)
+							Vector(-736, 168, 388)
+							Vector(-736, -448, 388)
+							Vector(-704, -512, 388)
+							Vector(-624, -608, 388)
+							Vector(-512, -688, 388)
+							Vector(416, -688, 388)
+							Vector(496, -656, 388)
+							Vector(528, -608, 388)
+							Vector(544, -560, 388)
+							Vector(544, -48, 388)
+							Vector(512, 32, 388)
+							Vector(448, 112, 388)
+							Vector(368, 192, 388)
+							Vector(256, 256, 388)
+							Vector(-100, 256, 388)
+						]
+					})
             	  "
         }
 		StartWaveOutput
@@ -4289,14 +4449,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 20 Scatter-Bonk Scouts
+		WaveSpawn // 12 Scatter-Bonk Scouts
 		{
 			Name "Wave7_Subwave1_Scatter-Bonks"
 			WaitForAllSpawned "Wave7_Subwave1_ThreeDjinns"
 			Where spawnbot
-			TotalCount 20
-			MaxActive 15
-			SpawnCount 10
+			TotalCount 12
+			MaxActive 10
+			SpawnCount 6
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 10
 			TotalCurrency 60
@@ -4307,16 +4467,16 @@ WaveSchedule
 				Skill Expert
 			}
 		}
-		WaveSpawn // 20 Burst Demos
+		WaveSpawn // 12 Burst Demos
 		{
 			Name "Wave7_Subwave1_BurstDemos"
 			WaitForAllSpawned "Wave7_Subwave1_Scatter-Bonks"
 			Where spawnbot
-			TotalCount 20
-			MaxActive 15
-			SpawnCount 10
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 12
 			WaitBeforeStarting 12
-			WaitBetweenSpawns 10
+			WaitBetweenSpawns 0
 			TotalCurrency 60
 
 			TFBot
@@ -4471,24 +4631,6 @@ WaveSchedule
 				{
 					Template T_TFBot_Medic_QuickUber
 				}
-			}
-		}
-		WaveSpawn // 20 Scatter-Bonk Scouts
-		{
-			Name "Wave7_Subwave2_Scatter-Bonks"
-			WaitForAllSpawned "Wave7_Subwave2_GDeflector3"
-			Where spawnbot
-			TotalCount 20
-			MaxActive 15
-			SpawnCount 10
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Bonk_Scatter
-				Skill Expert
 			}
 		}
 	}
