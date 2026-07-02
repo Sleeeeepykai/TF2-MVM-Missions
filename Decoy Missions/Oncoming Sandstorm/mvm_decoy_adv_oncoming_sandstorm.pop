@@ -69,6 +69,25 @@ WaveSchedule
 
 	CustomWeapon
 	{
+		"SultanTurban"
+		{
+			OriginalItemName "Sear Seer"
+
+			"item style override" 1
+		}
+		"SultanArmour"
+		{
+			OriginalItemName "Potato of Labor"
+
+			"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
+		}
+		"SultanBoots"
+		{
+			OriginalItemName "The Coffin Kit"
+
+			"custom item model" "models/player/items/demo/demo_booties.mdl"
+		}
+
 		"SultanFireballRainAttack"
 		{
 			OriginalItemName "TF_WEAPON_GRENADELAUNCHER"
@@ -662,6 +681,13 @@ WaveSchedule
 			}
 			OnSpawnOutput
 			{
+				Target "SultanYeetForce"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
 				Target "SultanSummonGeneratorBodyGuard1"
 				Action SetParent
 				Param "!activator"
@@ -720,7 +746,6 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,9.2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,physics\concrete\boulder_impact_hard4.wav,9.2,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,SultanPhase1Minions,9.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,9.5,-1"
 			}
 
 			game_text
@@ -799,7 +824,7 @@ WaveSchedule
 			{
 				"targetname" "SultanPhase2AttackPool"
 
-				"OnCase01" "pop_interface,ChangeBotAttributes,SultanSummon,0,-1"
+				"OnCase01" "pop_interface,ChangeBotAttributes,SultanSummonGiant,0,-1"
 				"OnCase02" "pop_interface,ChangeBotAttributes,SultanSendThemToMarianaTrench,0,-1"
 			}
 
@@ -1062,8 +1087,15 @@ WaveSchedule
 				"maxs" "128 128 128"
                 "spawnflags" "1"
                 "filtername" "filter_redteam"
-                "force" "750"
-                "impulse_dir" "0 0 0"
+                "force" "1500"
+                "impulse_dir" "30 0 0"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
             }
 
 			// Phase 2 //
@@ -1081,6 +1113,7 @@ WaveSchedule
 				"OnTrigger" "SultanFireballRainRelay,CancelPending,,0,-1"
 				"OnTrigger" "SultanSummonRelay,CancelPending,,0,-1"
 				"OnTrigger" "SultanYeetRelay,CancelPending,,0,-1"
+				"OnTrigger" "SultanFireballRainMimic,$StopFiring,,0,-1"
 				"OnTrigger" "SultanPhase1AttackPoolRelay,Disable,,0,-1"
 				"OnTrigger" "SultanPhase2AttackPoolRelay,Enable,,0,-1"
 				"OnTrigger" "!activator,$Addcond,51 5,0,-1"
@@ -1128,29 +1161,141 @@ WaveSchedule
 				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
-				"OnTrigger" "SultanSummonGiantIndicator,Enable,,0.5,-1"
-				"OnTrigger" "SultanSummonGiantIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "SultanSummonGiantIndicator*,Enable,,0.5,-1"
+				"OnTrigger" "SultanSummonGiantIndicator*,SetAnimation,Start,,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_GBurstSoldier1,2.33,-1"
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave7_Subwave3_GBurstSoldier2,2.33,-1"
-				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_GBurstSoldier1,2.33,-1"
-				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_GBurstSoldier2,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
-				"OnTrigger" "SultanSummonGiantIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_GBurstSoldier1,2.4,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave7_Subwave3_GBurstSoldier2,2.4,-1"
+				"OnTrigger" "SultanSummonGiantIndicator*,SetAnimation,end,2.5,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
-				"OnTrigger" "SultanSummonGiantIndicator,Disable,,3.5,-1"
+				"OnTrigger" "SultanSummonGiantIndicator*,Disable,,3.5,-1"
 				"OnTrigger" "!activator,$RemoveCond,7,3.5,-1"
 
-				"OnTrigger" "SultanSummonSiphonRelay,Trigger,,10,-1"
+				"OnTrigger" "SultanSiphonCounter,GetValue,,8.5,-1"
+			}
+			logic_relay
+			{
+				"targetname" "SultanSummonSiphon1Relay"
+
+				"OnTrigger" "@p@SultanTarget,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
+				"OnTrigger" "@p@SultanTarget,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "@p@SultanTarget,$PlaySequence,taunt_flag_pyro,0,-1"
+				"OnTrigger" "SultanSiphonBeam1,StrikeOnce,,1.66,-1"
+				"OnTrigger" "SultanSiphonBeam2,StrikeOnce,,1.66,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,SummonSiphon,1.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\merasmus_stun.wav,1.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\merasmus_stun.wav,1.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil04.mp3,3.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil04.mp3,3.66,-1"
+				"OnTrigger" "SultanSiphonCounter,SetValue,0,3.7,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,5,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,5,-1"
+				"OnTrigger" "@p@SultanTarget,$PlaySequence,run_PRIMARY,5,-1"
+				"OnTrigger" "@p@SultanTarget,$ChangeAttributes,SultanDefault,5.1,-1"
+			}
+			logic_relay
+			{
+				"targetname" "SultanSummonSiphon2Relay"
+
+				"OnTrigger" "@p@SultanTarget,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
+				"OnTrigger" "@p@SultanTarget,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "@p@SultanTarget,$PlaySequence,taunt_flag_pyro,0,-1"
+				"OnTrigger" "SultanSiphonBeam1,StrikeOnce,,1.66,-1"
+				"OnTrigger" "SultanSiphonBeam2,StrikeOnce,,1.66,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,SummonSiphon,1.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\merasmus_stun.wav,1.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\merasmus_stun.wav,1.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil01.mp3,3.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_laughevil01.mp3,3.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_crits.wav,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_crits.wav,4,-1"
+				"OnTrigger" "SultanSiphonCounter,SetValue,0,3.7,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from ranged reduced,5,-1"
+				"OnTrigger" "!activator,$RemovePlayerAttribute,dmg from melee increased,5,-1"
+				"OnTrigger" "@p@SultanTarget,$PlaySequence,run_PRIMARY,5,-1"
+				"OnTrigger" "@p@SultanTarget,$ChangeAttributes,SultanRage,5.1,-1"
 			}
 
+			math_counter
+			{
+				"targetname" "SultanSiphonCounter"
+				"startvalue" "0"
+				"min" "0"
+				"max" "2"
+
+				"OnGetValue" "SultanSiphonCase,InValue,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "SultanSiphonCase"
+				
+				"Case01" "0"
+				"Case02" "1"
+				"Case03" "2"
+
+				"OnCase01" "@p@SultanTarget,$ChangeAttributes,SultanDefault,0,-1"
+				"OnCase02" "@p@SultanTarget,$ChangeAttributes,SultanSiphon1,0,-1"
+				"OnCase03" "@p@SultanTarget,$ChangeAttributes,SultanSiphon2,0,-1"
+			}
+
+			env_beam
+            {
+                "targetname" "SultanSiphonBeam1"
+                "BoltWidth" "8"
+                "LightningStart" "SultanSiphonBeamStart1"
+                "LightningEnd" "SultanSiphonBeamEnd1"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "255 128 128"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "2"
+				"spawnflags" "96"
+            }
+			env_beam
+            {
+                "targetname" "SultanSiphonBeam2"
+                "BoltWidth" "8"
+                "LightningStart" "SultanSiphonBeamStart2"
+                "LightningEnd" "SultanSiphonBeamEnd2"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "255 128 128"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "2"
+				"spawnflags" "96"
+            }
+			prop_dynamic
+            {
+                "targetname" "SultanSiphonBeamStart1"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
+			prop_dynamic
+            {
+                "targetname" "SultanSiphonBeamStart2"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
 			prop_dynamic
 			{
-				"targetname" "SultanSummonGiantIndicator"
-				"origin" "0 150 10"
+				"targetname" "SultanSummonGiantIndicator1"
+				"origin" "150 150 20"
 				"angles" "0 0 0"
 				"model" "models/props_mvm/indicator/indicator_circle.mdl"
 				"modelscale" "2.5"
@@ -1163,8 +1308,8 @@ WaveSchedule
 			}
 			prop_dynamic
 			{
-				"targetname" "SultanSummonGiantIndicator"
-				"origin" "0 -150 10"
+				"targetname" "SultanSummonGiantIndicator2"
+				"origin" "150 -150 20"
 				"angles" "0 0 0"
 				"model" "models/props_mvm/indicator/indicator_circle.mdl"
 				"modelscale" "2.5"
@@ -1175,6 +1320,30 @@ WaveSchedule
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
 			}
+		}
+		SultanSummon1_PT
+		{
+			NoFixUp 1
+
+			prop_dynamic
+            {
+                "targetname" "SultanSiphonBeamEnd1"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
+		}
+		SultanSummon2_PT
+		{
+			NoFixUp 1
+
+			prop_dynamic
+            {
+                "targetname" "SultanSiphonBeamEnd2"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 100"                
+            }
 		}
 	}
 
@@ -1285,38 +1454,40 @@ WaveSchedule
 			Name "Sultan of the Lost Land"
 			Class Pyro
 			ClassIcon pyro_dragon_crown
+			Skill Expert
 			Health 99975
 			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
-			Attributes HoldFireUntilFullReload
-			WeaponRestrictions MeleeOnly
+			WeaponRestrictions PrimaryOnly
 
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
 			SpawnTemplate "SultanLogic_PT"
 
 			Item "The Dragon's Fury"
-			Item "Ali Baba's Wee Booties"
 			Item "Sharpened Volcano Fragment"
 
-			Item "Sear Seer"
+			Item "SultanTurban" [$SIGSEGV]
 			Item "Hard-Headed Hardware"
 			Item "Forgotten King's Pauldrons"
 			Item "The Maniac's Manacles"
-			Item "Potato of Labor"
+			Item "SultanArmour" [$SIGSEGV]
+			Item "SultanBoots" [$SIGSEGV]
 
 			Item "Taunt: Second Rate Sorcery"
 
 			CharacterAttributes
 			{
-				"move speed penalty" 0.5
+				"move speed penalty" 0.25
 				"damage force reduction" 0.6
 				"airblast vulnerability multiplier" 0.6
 				"override footstep sound set" 6
 				"mod weapon blocks healing" 1
 				"cancel falling damage" 1
 				"voice pitch scale" 0
+				"no_attack" 0
+				"no_jump" 0
 			}
 
 			ItemAttributes
@@ -1334,20 +1505,6 @@ WaveSchedule
 				ItemName "Sharpened Volcano Fragment"
 
 				"attach particle effect" "2"
-			}
-
-			ItemAttributes
-			{
-				ItemName "Sear Seer"
-
-				"item style override" 2
-			}
-
-			ItemAttributes
-			{
-				ItemName "Potato of Labor"
-
-				"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
 			}
 
 			FireInput
@@ -1378,13 +1535,15 @@ WaveSchedule
 				Delay 0.2
 				Repeats 1
 				Cooldown -1
-				IfHealthBelow 66667
+				IfHealthBelow 50001
 			}
 
 			EventChangeAttributes
 			{
 				SultanIntro [$SIGSEGV]
 				{
+					WeaponRestrictions MeleeOnly
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.001
@@ -1394,6 +1553,12 @@ WaveSchedule
 						"voice pitch scale" 0
 						"no_attack" 1
 						"no_jump" 1
+					}
+
+					AddCond
+					{
+						Index 51
+						Duration 10
 					}
 
 					FireInput
@@ -1428,6 +1593,16 @@ WaveSchedule
 						"voice pitch scale" 0
 						"no_attack" 0
 						"no_jump" 0
+					}
+
+					ItemAttributes
+					{
+						ItemName "The Dragon's Fury"
+
+						"damage bonus" 1.5
+						"afterburn duration bonus" 2
+						"paintkit_proto_def_index" 390
+						"set_item_texture_wear" 0
 					}
 
 					FireInput
@@ -1467,7 +1642,6 @@ WaveSchedule
 				// Phase 1 Attack Pool
 				SultanFireballRain [$SIGSEGV]
 				{
-					WeaponRestrictions PrimaryOnly
 
 					CharacterAttributes
 					{
@@ -1572,6 +1746,7 @@ WaveSchedule
 				}
 
 				// Phase 2 Attack Pool
+
 				SultanSummonGiant [$SIGSEGV]
 				{
 					FireInput
@@ -1579,6 +1754,117 @@ WaveSchedule
 						Target "SultanSummonGiantRelay"
 						Action "Trigger"
 						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				SultanSiphon1 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.01
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
+					}
+					FireInput
+					{
+						Target "SultanSummonSiphon1Relay"
+						Action Trigger
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "Player"
+						Name "health regen"
+						Value 2500
+						Delay 1.66
+					}
+					AddAttribute
+					{
+						Item "Player"
+						Name "health regen"
+						Value 0
+						Delay 3.66
+					}
+				}
+				SultanSiphon2 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.01
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 1
+						"no_jump" 1
+					}
+					FireInput
+					{
+						Target "SultanSummonSiphon2Relay"
+						Action Trigger
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "Player"
+						Name "health regen"
+						Value 5000
+						Delay 1.66
+					}
+					AddAttribute
+					{
+						Item "Player"
+						Name "health regen"
+						Value 0
+						Delay 3.66
+					}
+				}
+				SultanRage [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"health regen" 0
+						"move speed penalty" 0.25
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 6
+						"voice pitch scale" 0
+						"no_attack" 0
+						"no_jump" 0
+					}
+
+					ItemAttributes
+					{
+						ItemName "The Dragon's Fury"
+
+						"damage bonus" 1.5
+						"afterburn duration bonus" 2
+						"mult_item_meter_charge_rate" 0.25
+						"paintkit_proto_def_index" 390
+						"set_item_texture_wear" 0
+					}
+
+					AddCond
+					{
+						Index 56
+						Duration 5
+					}
+
+					FireInput
+					{
+						Target !activator
+						Action $ChangeAttributes
+						Param "SultanDefault"
+						Delay 5
 						Repeats 1
 						Cooldown -1
 					}
@@ -4208,11 +4494,73 @@ WaveSchedule
 
 			TFBot
 			{
+				Name "Resurrected Burst Soldier"
 				Template T_TFBot_Giant_Soldier_Burst
 				Skill Expert
 				Action Mobber
 
 				UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
+				SpawnTemplate SultanSummon1_PT
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param SultanSummonGiantIndicator1
+					Delay 0.1
+					Repeats 1
+					Cooldown -1
+				}
+				FireInput
+				{
+					Target SultanSiphonCounter
+					Action Add
+					Param 1
+					Delay 6
+					Repeats 1
+					Cooldown -1
+				}
+
+				EventChangeAttributes
+				{
+					SummonSiphon [$SIGSEGV]
+					{
+						CharacterAttributes
+						{
+							"move speed penalty" 0.001
+							"damage force reduction" 0.6
+							"airblast vulnerability multiplier" 0.6
+							"override footstep sound set" 6
+							"voice pitch scale" 0
+							"no_attack" 1
+							"no_jump" 1
+						}
+
+						AddCond
+						{
+							Index 51
+						}
+
+						FireInput
+						{
+							Target !activator
+							Action $PlaySequence
+							Param dieviolent
+							Delay 0.1
+							Repeats 1
+							Cooldown -1
+						}
+						FireInput
+						{
+							Target !activator
+							Action $Suicide
+							Delay 2.1
+							Repeats 1
+							Cooldown -1
+						}
+					}
+				}
 			}
 		}
 		WaveSpawn // Support GBurst Soldiers
@@ -4231,11 +4579,73 @@ WaveSchedule
 
 			TFBot
 			{
+				Name "Resurrected Burst Soldier"
 				Template T_TFBot_Giant_Soldier_Burst
 				Skill Expert
 				Action Mobber
 
 				UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
+				SpawnTemplate SultanSummon2_PT
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param SultanSummonGiantIndicator2
+					Delay 0.1
+					Repeats 1
+					Cooldown -1
+				}
+				FireInput
+				{
+					Target SultanSiphonCounter
+					Action Add
+					Param 1
+					Delay 6
+					Repeats 1
+					Cooldown -1
+				}
+
+				EventChangeAttributes
+				{
+					SummonSiphon [$SIGSEGV]
+					{
+						CharacterAttributes
+						{
+							"move speed penalty" 0.001
+							"damage force reduction" 0.6
+							"airblast vulnerability multiplier" 0.6
+							"override footstep sound set" 6
+							"voice pitch scale" 0
+							"no_attack" 1
+							"no_jump" 1
+						}
+
+						AddCond
+						{
+							Index 51
+						}
+
+						FireInput
+						{
+							Target !activator
+							Action $PlaySequence
+							Param dieviolent
+							Delay 0.1
+							Repeats 1
+							Cooldown -1
+						}
+						FireInput
+						{
+							Target !activator
+							Action $Suicide
+							Delay 2.1
+							Repeats 1
+							Cooldown -1
+						}
+					}
+				}
 			}
 		}
 	}
