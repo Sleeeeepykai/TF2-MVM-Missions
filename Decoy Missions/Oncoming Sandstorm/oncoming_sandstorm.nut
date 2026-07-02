@@ -57,28 +57,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	//// DJINN FUNCTIONS ////
 
-	function DjinnInit(Target)
-	{
-		Target.ValidateScriptScope()
-		local DjinnScope = Target.GetScriptScope()
-
-		if (!("DjinnEntities" in DjinnScope))
-		{
-			DjinnScope.DjinnEntities <- []
-		}
-		for(local Child = Target.FirstMoveChild(); Child != null; Child = Child.NextMovePeer())
-		{
-			if (Child.GetClassname() == "bot_generator")
-			{
-				DjinnScope.DjinnEntities.append(Child)
-			}
-			else if (Child.GetClassname() == "info_target")
-			{
-				DjinnScope.DjinnEntities.append(Child)
-			}
-		}
-	}
-
 	function DjinnSummonTrace(Target)
 	{
 		for(local Child = Target.FirstMoveChild(); Child != null; Child = Child.NextMovePeer())
@@ -107,7 +85,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 
-	function DjinnSummonInit(Target)
+	function DjinnDemoSummonInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -131,6 +109,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
+
+	//// SULTAN FUNCTIONS ////
 
 	function SultanSummonInit(Target)
 	{

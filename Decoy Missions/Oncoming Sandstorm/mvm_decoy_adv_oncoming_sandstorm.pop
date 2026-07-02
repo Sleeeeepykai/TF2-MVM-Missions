@@ -39,14 +39,14 @@ WaveSchedule
 
 	// Precached Models //
 
-	PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 	PrecacheModel "models/bots/demo/bot_demo_gibby.mdl"
-	PrecacheModel "models/bots/pyro/bot_pyro_gibby.mdl"
-	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
 	PrecacheModel "models/bots/demo_boss/bot_demo_boss_gibby.mdl"
-	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+	PrecacheModel "models/bots/pyro/bot_pyro_gibby.mdl"
+	PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 	PrecacheModel "models/bots/heavy/bot_heavy_gibby.mdl"
 	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
+	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
@@ -268,7 +268,7 @@ WaveSchedule
 
 		//// Robot PTs ////
 
-		Djinn_PT
+		DjinnDemo_PT
 		{
 			RemoveIfKilled "DjinnTarget"
 
@@ -328,34 +328,10 @@ WaveSchedule
 
 			OnParentKilledOutput
 			{
-				Target "DjinnSummonGeneratorBodyGuard1"
-				Action "RemoveBots"
+				Target "DjinnClearRelay"
+				Action "Trigger"
 				Delay 0.1
-				Repeats 3
-				Cooldown -1
-			}
-			OnParentKilledOutput
-			{
-				Target "DjinnSummonGeneratorBodyGuard2"
-				Action "RemoveBots"
-				Delay 0.1
-				Repeats 3
-				Cooldown -1
-			}
-			OnParentKilledOutput
-			{
-				Target "DjinnSummonGeneratorMobber1"
-				Action "RemoveBots"
-				Delay 0.1
-				Repeats 3
-				Cooldown -1
-			}
-			OnParentKilledOutput
-			{
-				Target "DjinnSummonGeneratorMobber2"
-				Action "RemoveBots"
-				Delay 0.1
-				Repeats 3
+				Repeats 1
 				Cooldown -1
 			}
 			OnParentKilledOutput
@@ -389,8 +365,6 @@ WaveSchedule
 				"OnTrigger" "@p@DjinnTarget,$AddPlayerAttribute,dmg from melee increased|0.25,0,-1"
 				"OnTrigger" "@p@DjinnTarget,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "@p@DjinnTarget,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil02.mp3,0,-1"
 				"OnTrigger" "DjinnSummonIndicator,Enable,,0.5,-1"
 				"OnTrigger" "DjinnSummonIndicator,SetAnimation,Start,,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
@@ -405,12 +379,23 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
 				"OnTrigger" "DjinnSummonIndicator,SetAnimation,end,2.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_battlecry02.mp3,3.5,-1"
 				"OnTrigger" "@p@DjinnTarget,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
 				"OnTrigger" "@p@DjinnTarget,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "DjinnSummonIndicator,Disable,,3.5,-1"
 				"OnTrigger" "@p@DjinnTarget,$RemoveCond,7,3.5,-1"
+			}
+			logic_relay
+			{
+				"targetname" "DjinnClearRelay"
+
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard1,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard1,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard2,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorBodyGuard2,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorMobber1,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorMobber1,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorMobber2,RemoveBots,,0,-1"
+				"OnTrigger" "DjinnSummonGeneratorMobber2,RemoveBots,,0,-1"
 			}
 
 			math_counter
@@ -499,7 +484,7 @@ WaveSchedule
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnDemoSummonInit(self),0,-1"
 				"OnSpawned" "!activator,$BotCommand,interrupt_action -posent DjinnBodyguardPoint1 -distance 1 -duration 9999,0.5,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
@@ -513,7 +498,7 @@ WaveSchedule
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnDemoSummonInit(self),0,-1"
 				"OnSpawned" "!activator,$BotCommand,interrupt_action -posent DjinnBodyguardPoint2 -distance 1 -duration 9999,0.5,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
@@ -527,7 +512,7 @@ WaveSchedule
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnDemoSummonInit(self),0,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
 			bot_generator
@@ -540,7 +525,7 @@ WaveSchedule
 				"maxActive" "2"
 				"spawnOnlyWhenTriggered" "1"
 
-				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnSummonInit(self),0,-1"
+				"OnSpawned" "!activator,RunScriptCode,OncomingSandstorm.DjinnDemoSummonInit(self),0,-1"
 				"OnBotKilled" "DjinnSummonCounter,Subtract,1,0,-1"
 			}
 			info_target
@@ -1370,7 +1355,10 @@ WaveSchedule
 				"targetname" "SultanPhase3HandsRelay"
 				"OnTrigger" "SultanHandsSustainRelay,Trigger,,0,-1"
 				"OnTrigger" "SultanShield,Enable,,0,-1"
-
+				"OnTrigger" "tf_gamerules,PlayVO,player\invuln_on_vaccinator.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\merasmus_stun.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_paincrticialdeath03.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_paincrticialdeath03.mp3,2,-1"
 			}
 			logic_relay
 			{
@@ -1380,6 +1368,20 @@ WaveSchedule
 				"OnTrigger" "SultanHandsSustainRelay,Trigger,,0.15,-1"
 
 				"spawnflags" "2"
+			}
+			logic_relay
+			{
+				"targetname" "SultanStunRelay"
+				"OnTrigger" "SultanHandsSustainRelay,Disable,,0,-1"
+				"OnTrigger" "SultanShield,Disable,,0,-1"
+				"OnTrigger" "@p@SultanTarget,$AddCond,71 4,0,-1"
+				"OnTrigger" "@p@SultanTarget,$RemovePlayerAttribute,dmg from ranged reduced,0,-1"
+				"OnTrigger" "@p@SultanTarget,$RemovePlayerAttribute,dmg from melee increased,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\invuln_off_vaccinator.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\pyro_mvm_m_painsharp04.mp3,1,-1"
+				"OnTrigger" "@p@SultanTarget,$AddPlayerAttribute,no_jump|1,5,-1"
+				"OnTrigger" "@p@SultanTarget,$ChangeAttributes,SultanSummonGiantEvolved,5,-1"
+				"OnTrigger" "@p@SultanTarget,$RemovePlayerAttribute,no_jump,7.33,-1"
 			}
 
 			env_beam
@@ -1511,7 +1513,7 @@ WaveSchedule
 
 	Templates
 	{
-		T_TFBot_Giant_Pyro_Djinn
+		T_TFBot_Giant_Pyro_Djinn_Demo
 		{
 			Name "Djinn of the Sandstorm"
 			Class Pyro
@@ -1525,7 +1527,7 @@ WaveSchedule
 
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
-			SpawnTemplate Djinn_PT
+			SpawnTemplate "DjinnDemo_PT"
 
 			Item "TF_WEAPON_GRENADELAUNCHER"
 
@@ -2229,8 +2231,6 @@ WaveSchedule
 	// General Notes
 	// Look into reducing the projectile spam of Waves 2 and 3
 	// Look into varying what the Djinns summon on Waves 5 and 7
-	// Make the Hands of the Sultan give a damage res to the boss
-	// Make it so you can stun the boss by killing them
 	// Wave 1 Notes
 	Wave
 	{
@@ -2504,7 +2504,7 @@ WaveSchedule
 			TFBot
 			{
 				Name "Greater Djinn of the Sandstorm"
-				Template T_TFBot_Giant_Pyro_Djinn
+				Template T_TFBot_Giant_Pyro_Djinn_Demo
 				Health 10000
 				Scale 2
 				Attributes UseBossHealthBar
@@ -3496,7 +3496,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Pyro_Djinn
+					Template T_TFBot_Giant_Pyro_Djinn_Demo
 				}
 				TFBot
 				{
@@ -3564,7 +3564,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Pyro_Djinn
+					Template T_TFBot_Giant_Pyro_Djinn_Demo
 				}
 				TFBot
 				{
@@ -3633,7 +3633,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Pyro_Djinn
+					Template T_TFBot_Giant_Pyro_Djinn_Demo
 				}
 				TFBot
 				{
@@ -3702,7 +3702,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Pyro_Djinn
+					Template T_TFBot_Giant_Pyro_Djinn_Demo
 				}
 				TFBot
 				{
@@ -4364,7 +4364,7 @@ WaveSchedule
 			TFBot
 			{
 				Name "Djinn of the North"
-				Template T_TFBot_Giant_Pyro_Djinn
+				Template T_TFBot_Giant_Pyro_Djinn_Demo
 				Health 15000
 				Scale 2
 				Attributes UseBossHealthBar
@@ -4379,35 +4379,18 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 0.1
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
 			TFBot
 			{
 				Name "Djinn of the West"
-				Template T_TFBot_Giant_Pyro_Djinn
+				Template T_TFBot_Giant_Pyro_Djinn_Demo
 				Health 10000
 				Attributes UseBossHealthBar
 
 				Item "Sultan's Ceremonial"
-
-				FireInput
-				{
-					Target "DjinnSummonTimer"
-					Action "Enable"
-					Delay 4.9
-					Repeats 1
-					Cooldown -1
-				}
-				FireInput
-				{
-					Target "DjinnSummonTimer"
-					Action "FireTimer"
-					Delay 5
-					Repeats 1
-					Cooldown -1
-				}
 			}
 		}
 		WaveSpawn // 1 Djinn
@@ -4417,60 +4400,25 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 0.1
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
 			TFBot
 			{
 				Name "Djinn of the East"
-				Template T_TFBot_Giant_Pyro_Djinn
+				Template T_TFBot_Giant_Pyro_Djinn_Demo
 				Health 10000
 				Attributes UseBossHealthBar
 
 				Item "Sultan's Ceremonial"
-
-				FireInput
-				{
-					Target "DjinnSummonTimer"
-					Action "Enable"
-					Delay 4.9
-					Repeats 1
-					Cooldown -1
-				}
-				FireInput
-				{
-					Target "DjinnSummonTimer"
-					Action "FireTimer"
-					Delay 5
-					Repeats 1
-					Cooldown -1
-				}
 			}
 		}
 
-		WaveSpawn // 12 Scatter-Bonk Scouts
-		{
-			Name "Wave7_Subwave1_Scatter-Bonks"
-			WaitForAllSpawned "Wave7_Subwave1_ThreeDjinns"
-			Where spawnbot
-			TotalCount 12
-			MaxActive 10
-			SpawnCount 6
-			WaitBeforeStarting 4
-			WaitBetweenSpawns 10
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Scout_Bonk_Scatter
-				Skill Expert
-			}
-		}
 		WaveSpawn // 12 Burst Demos
 		{
 			Name "Wave7_Subwave1_BurstDemos"
-			WaitForAllSpawned "Wave7_Subwave1_Scatter-Bonks"
+			WaitForAllSpawned "Wave7_Subwave1_ThreeDjinns"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 12
@@ -4934,6 +4882,28 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn
+		{
+			Name "Wave7_SultanHandsCheck"
+			WaitForAllDead "Wave7_Subwave3_LeftHand"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_SultanHandsCheck"
+			WaitForAllDead "Wave7_Subwave3_RightHand"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_SultanHandsDead"
+			WaitForAllSpawned "Wave7_SultanHandsCheck"
+
+			FirstSpawnOutput
+			{
+				Target SultanStunRelay
+				Action Trigger
+			}
+		}
+
 		WaveSpawn // Support GHeavies
 		{
 			Name "Wave7_Subwave3_GHeavy"
@@ -4972,7 +4942,7 @@ WaveSchedule
 					Target SultanSiphonCounter
 					Action Add
 					Param 1
-					Delay 5.95
+					Delay 5.9
 					Repeats 1
 					Cooldown -1
 				}
@@ -5056,7 +5026,7 @@ WaveSchedule
 					Target SultanSiphonCounter
 					Action Add
 					Param 1
-					Delay 5.95
+					Delay 5.9
 					Repeats 1
 					Cooldown -1
 				}
@@ -5216,7 +5186,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // Support Rocket Shotgun Soldiers
+		WaveSpawn // Support Rapid Fire Soldiers
 		{
 			Name "Wave7_Subwave3_ThirdMinionWave"
 			Where spawnbot
@@ -5232,7 +5202,7 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Soldier_RocketShotgun
+				Template T_TFBot_Soldier_Spammer
 				Skill Expert
 				Action Mobber
 
