@@ -96,7 +96,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetFakeClientConVarValue(Target, "name", "Resurrected Demoman")
 		Target.SetCustomModelWithClassAnimations("models/bots/demo/bot_demo_gibby.mdl")
-		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "demo_crit")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "demo_summoner")
 
 		Target.AddWeaponRestriction(2)
 		Target.AddBotAttribute(16)
@@ -124,7 +124,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetFakeClientConVarValue(Target, "name", "Resurrected Soldier")
 		Target.SetCustomModelWithClassAnimations("models/bots/soldier/bot_soldier_gibby.mdl")
-		SetPropString(Target, "m_iszClassIcon", "soldier_crit")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "soldier_summoner")
 
 		Target.AddWeaponRestriction(2)
 		Target.AddBotAttribute(16)
@@ -148,7 +148,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetFakeClientConVarValue(Target, "name", "Resurrected Heavy")
 		Target.SetCustomModelWithClassAnimations("models/bots/heavy/bot_heavy_gibby.mdl")
-		SetPropString(Target, "m_iszClassIcon", "heavy_crit")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "heavy_summoner")
 
 		Target.AddWeaponRestriction(2)
 		Target.AddBotAttribute(16)
@@ -175,7 +175,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetFakeClientConVarValue(Target, "name", "Resurrected Rapid Fire Soldier")
 		Target.SetCustomModelWithClassAnimations("models/bots/soldier/bot_soldier_gibby.mdl")
-		SetPropString(Target, "m_iszClassIcon", "soldier_spammer")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "soldier_spammer")
 
 		Target.AddWeaponRestriction(2)
 		Target.AddBotAttribute(16)
