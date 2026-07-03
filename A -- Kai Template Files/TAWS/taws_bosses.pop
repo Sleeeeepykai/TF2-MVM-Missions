@@ -4,6 +4,49 @@ WaveSchedule
 
 	CustomWeapon
 	{
+		//// THE BIGROCK DEVICE ////
+
+		"PickaxeRocks"
+		{
+			OriginalItemName "The Iron Bomber"
+			"faster reload rate" 0
+			"projectile speed decreased" 0.65
+			"mult projectile scale" 0.5
+			"custom projectile size" 24
+			"custom projectile model" "models/props_forest/cliff_wall_09c.mdl"
+			"projectile trail particle" "electrocuted_blue"
+			"projectile spread angle penalty" 4
+			"mult projectile count" 3
+		}
+		"Rocket_Attack"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+			"damage bonus" 1
+			"projectile speed decreased" 0.4
+			"mod projectile heat seek power" 180
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 0.5
+			"mod projectile heat no predict target speed" 1
+			"projectile trail particle" "eyeboss_projectile"
+		}
+		"Bigrock_Rocket"
+        {
+            OriginalItemName "Highland High Heels"
+            "custom item model" "models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl" 
+            "attachment name" "flag"
+            "attachment angles" "0 270 0"
+            "attachment offset" "25 0 0"
+        }
+		"Bigrock_Rocket2"
+        {
+            OriginalItemName "Potato of Labor"
+            "custom item model" "models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl" 
+            "attachment name" "flag"
+            "attachment angles" "0 270 0"
+            "attachment offset" "-25 0 0"
+        }
+
+		//// THE HAMMER ////
 		"Hammer_Weapon"
         {
             OriginalItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
@@ -19,6 +62,84 @@ WaveSchedule
 
 	PointTemplates
 	{
+		//// THE BIGROCK DEVICE
+		BigrockDeviceLogic
+		{
+			OnSpawnOutput
+			{
+				Target "PickaxeAttack"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "PickaxeAttack"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "RocketAttackLeft"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "RocketAttackRight"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			tf_point_weapon_mimic
+			{
+				"spawnflags" "1"
+				"targetname" "PickaxeAttack"
+				"$weaponname" "PickaxeRocks"
+				"origin" "40 0 80"
+				"angles" "-40 0 0"
+				"$preventshootparent" "1"
+				"teamnum" "3"
+				"Crits" "false"
+				"modelscale" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketAttackLeft"
+				"origin" "25 50 150"
+				"angles" "315 0 0"
+
+				"$weaponname" "Rocket_Attack"
+				"teamnum" "3"
+				"crits" "false"
+				"$preventshootparent" "1"
+
+				"spawnflags" "1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketAttackRight"
+				"origin" "25 -50 150"
+				"angles" "315 0 0"
+
+				"$weaponname" "Rocket_Attack"
+				"teamnum" "3"
+				"crits" "false"
+				"$preventshootparent" "1"
+
+				"spawnflags" "1"
+			}
+		}
+		//// THE HAMMER ////
 		TheHammerLogic
 		{
 			OnSpawnOutput
@@ -200,6 +321,207 @@ WaveSchedule
 			Tag Cost_3000
 
 			Tag "Desc_gear forward."
+		}
+
+		T_TFBot_Boss_Soldier_BigrockDevice
+		{
+			Name "The Bigrock Device"
+			Class Soldier
+			ClassIcon soldier_pickaxe_escape_explode 
+			Health 35000
+			Scale 1.9
+			Attributes MiniBoss
+			Attributes SuppressFire
+			Attributes UseBossHealthBar
+			WeaponRestrictions MeleeOnly
+
+			SpawnTemplate BigrockDeviceLogic
+
+			Item "The Escape Plan"
+
+			Item "Potato Hat"
+			Item "Bigrock_Rocket" [$SIGSEGV]
+			Item "Bigrock_Rocket2" [$SIGSEGV]
+
+			CharacterAttributes
+			{
+				"move speed bonus"	0.5
+				"damage force reduction" 0.2
+				"airblast vulnerability multiplier" 0.2
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes 
+			{
+				ItemName "The Escape Plan"
+				"fire input on attack" "PickaxeAttack^FireMultiple^1"
+				"melee cleave attack" 1
+				"mod shovel speed boost" 0
+				"self mark for death" 0
+			}
+
+			AddAttribute 
+            {
+                Item "Bigrock_Rocket"
+                Name "attachment scale"
+                Value "2.35"
+                Delay 0.1
+                Repeats 1
+				Cooldown -1
+            }
+			AddAttribute 
+            {
+                Item "Bigrock_Rocket2"
+                Name "attachment scale"
+                Value "2.35"
+                Delay 0.1
+                Repeats 1
+				Cooldown -1
+            }
+
+			FireWeapon  
+			{
+				Delay 0
+				Type "Primary"
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				Duration 0.5
+				Cooldown 1.6
+			}
+
+			FireInput
+			{
+				Target "RocketAttackLeft"
+				Action "FireOnce"
+				Delay  0.25
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				IfHealthBelow 17501
+			}
+			FireInput
+			{
+				Target "RocketAttackRight"
+				Action "FireOnce"
+				Delay 0.25
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				IfHealthBelow 17501
+			}
+			FireInput
+			{
+				Target "RocketAttackLeft"
+				Action "FireOnce"
+				Delay  0.5
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+			FireInput
+			{
+				Target "RocketAttackRight"
+				Action "FireOnce"
+				Delay 0.5
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+			FireInput
+			{
+				Target "RocketAttackLeft"
+				Action "FireOnce"
+				Delay  0.75
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				IfHealthBelow 17501
+			}
+			FireInput
+			{
+				Target "RocketAttackRight"
+				Action "FireOnce"
+				Delay 0.75
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				IfHealthBelow 17501
+			}
+			FireInput
+			{
+				Target "RocketAttackLeft"
+				Action "FireOnce"
+				Delay 1
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+			FireInput
+			{
+				Target "RocketAttackRight"
+				Action "FireOnce"
+				Delay 1
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+			FireInput
+			{
+				Target "RocketAttackLeft"
+				Action "FireOnce"
+				Delay  1.25
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				IfHealthBelow 17501
+			}
+			FireInput
+			{
+				Target "RocketAttackRight"
+				Action "FireOnce"
+				Delay 1.25
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+				IfHealthBelow 17501
+			}
+			FireInput
+			{
+				Target "RocketAttackLeft"
+				Action "FireOnce"
+				Delay 1.5
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+			FireInput
+			{
+				Target "RocketAttackRight"
+				Action "FireOnce"
+				Delay 1.5
+				Repeats 0
+				Cooldown 5
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+
+			Tag BaseHealth_25000
+			Tag HealthPerWave_1000
+
+			Tag Cost_6500
+
+			Tag "Desc_Escape Plan with a 50% move speed penalty and two rocket launchers on its back. \nLaunches rocks with each swing and occasionally fires homing barrages. \nStarts at 25000 HP, gains 1000 HP per wave."
 		}
 
 		//// DEMOMAN BOSSES ////
