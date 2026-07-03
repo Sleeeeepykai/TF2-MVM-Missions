@@ -96,7 +96,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		SetFakeClientConVarValue(Target, "name", "Resurrected Demoman")
 		Target.SetCustomModelWithClassAnimations("models/bots/demo/bot_demo_gibby.mdl")
-		SetPropString(Target, "m_iszClassIcon", "demo_crit")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "demo_crit")
 
 		Target.AddWeaponRestriction(2)
 		Target.AddBotAttribute(16)
@@ -108,6 +108,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
+
+		local Icon = GetPropString(Target, "m_PlayerClass.m_iszClassIcon")
+
+		printl(Icon)
 	}
 	function DjinnSoldierSummonInit(Target)
 	{
