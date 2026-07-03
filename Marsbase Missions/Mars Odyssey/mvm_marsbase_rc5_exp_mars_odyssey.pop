@@ -2,7 +2,7 @@
 #base robot_giant.pop
 #base robot_moonlight_nai.pop
 
-//Collab Mission by SleepyKai & Nai
+//Collab Mission by Sleeeepykai & Nai
 
 WaveSchedule
 {
@@ -2698,6 +2698,8 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_Sniper
+
+			MaxVisionRange 1500
 		}
 	}
 	Mission // Engineer (Wave 2-3)
@@ -2748,6 +2750,8 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_Sniper
+
+			MaxVisionRange 1500
 		}
 	}
 
@@ -2773,10 +2777,8 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
-	// Set all Snipers to 1500 maxvisionrange
 
 	// Wave 1 Notes
-	// Reverse the subwaves so the burst stickies come first
 	Wave
 	{
 		InitWaveOutput
@@ -2820,93 +2822,14 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 6 Rocket Shotgun Soldiers and 6 Charged Big-Heal Medics
-		{
-			Name "Wave1_Subwave1_RocketShotgunSoldiers"
-			Where spawnbot
-			TotalCount 12
-			MaxActive 5
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 7
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Soldier_RocketShotgunBig
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal_Charged
-				}
-			}
-		}
-		WaveSpawn // 32 Shotgun Bros
-		{
-			Name "Wave1_Subwave1_ShotgunCrew"
-			Where spawnbot
-			Where spawnbot_right
-			TotalCount 32
-			MaxActive 12
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
-			TotalCurrency 100
-
-			RandomChoice
-            {
-				Shuffle 1 [$SIGSEGV]
-
-                TFBot
-                {
-					Template T_TFBot_Heavy_ShotgunStatless
-				}
-				TFBot
-                {
-					Template T_TFBot_Engineer_Shotgun
-                }
-                TFBot
-                {
-					Template T_TFBot_Soldier_Shotgun
-                }
-                TFBot
-                {
-					Template T_TFBot_Pyro_Shotgun
-                }
-            }
-		}
-		WaveSpawn // Support GRU Heavies
-		{
-			Name "Wave1_Subwave1_GRUHeavies"
-			Where spawnbot_left
-			Support 1
-			TotalCount 18
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 3
-			TotalCurrency 100
-			
-			TFBot
-			{
-				Name "Lightweight Champ"
-				Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
-				Skill Hard
-			}
-		}
-
-		// Subwave 2
 		WaveSpawn // 3 Sticky Burst Demos and 6 Pyros
 		{
-			Name "Wave1_Subwave2_StickyBurstDemoSquads"
-			WaitForAllSpawned "Wave1_Subwave1_RocketShotgunSoldiers"
+			Name "Wave1_Subwave1_StickyBurstDemoSquads"
 			Where spawnbot
 			TotalCount 9
 			MaxActive 9
 			SpawnCount 3
-			WaitBeforeStarting 15
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 6
 			TotalCurrency 100
 
@@ -2937,8 +2860,8 @@ WaveSchedule
 		}
 		WaveSpawn // 2 Sticky Burst Demos, 2 Shield Medics and 4 Pyros
 		{
-			Name "Wave1_Subwave2_StickyBurstDemoSquads2"
-			WaitForAllSpawned "Wave1_Subwave2_StickyBurstDemoSquads"
+			Name "Wave1_Subwave1_StickyBurstDemoSquads2"
+			WaitForAllSpawned "Wave1_Subwave1_StickyBurstDemoSquads"
 			Where spawnbot
 			TotalCount 8
 			MaxActive 8
@@ -2979,14 +2902,13 @@ WaveSchedule
 
 		WaveSpawn // 14 Demomen
 		{
-			Name "Wave1_Subwave2_Demomen"
-			WaitForAllSpawned "Wave1_Subwave1_RocketShotgunSoldiers"
+			Name "Wave1_Subwave1_Demomen"
 			Where spawnbot_left
 			Where spawnbot_right
 			TotalCount 14
 			MaxActive 8
 			SpawnCount 2
-			WaitBeforeStarting 15
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 4
 			TotalCurrency 100
 			
@@ -2996,9 +2918,90 @@ WaveSchedule
 				Skill Easy
 			}
 		}
+
+		WaveSpawn // Support GRU Heavies
+		{
+			Name "Wave1_Subwave2_GRUHeavies"
+			Where spawnbot_left
+			Support 1
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 3
+			TotalCurrency 100
+			
+			TFBot
+			{
+				Name "Lightweight Champ"
+				Template T_TFBot_Heavyweapons_Heavyweight_Champ_Fast
+				Skill Hard
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 6 Rocket Shotgun Soldiers and 6 Charged Big-Heal Medics
+		{
+			Name "Wave1_Subwave2_RocketShotgunSoldiers"
+			WaitForAllSpawned "Wave1_Subwave1_StickyBurstDemoSquads2"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 7
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgunBig
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
+			}
+		}
+		WaveSpawn // 32 Shotgun Bros
+		{
+			Name "Wave1_Subwave2_ShotgunCrew"
+			WaitForAllSpawned "Wave1_Subwave1_StickyBurstDemoSquads2"
+			Where spawnbot
+			Where spawnbot_right
+			TotalCount 32
+			MaxActive 12
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 2
+			TotalCurrency 100
+
+			RandomChoice
+            {
+				Shuffle 1 [$SIGSEGV]
+
+                TFBot
+                {
+					Template T_TFBot_Heavy_ShotgunStatless
+				}
+				TFBot
+                {
+					Template T_TFBot_Engineer_Shotgun
+                }
+                TFBot
+                {
+					Template T_TFBot_Soldier_Shotgun
+                }
+                TFBot
+                {
+					Template T_TFBot_Pyro_Shotgun
+                }
+            }
+		}
+
 	}
 	// Wave 2 Notes
-	//reduce number of conch soldiers to 2 each
 	Wave
 	{
 		InitWaveOutput
@@ -3042,13 +3045,13 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn // 2 GLaser Heavy and 8 Conch Soldiers
+		WaveSpawn // 2 GLaser Heavies and 4 Conch Soldiers
 		{
 			Name "Wave2_Subwave1_GLaserHeavy"
 			Where spawnbot
-			TotalCount 10
-			MaxActive 8
-			SpawnCount 5
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 3
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 16
 			TotalCurrency 200
@@ -3061,14 +3064,6 @@ WaveSchedule
 				{
 					Name "Homelander from Temu"
 					Template T_TFBot_Giant_Heavy_Laser
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Concheror
-				}
-				TFBot
-				{
-					Template T_TFBot_Soldier_Extended_Concheror
 				}
 				TFBot
 				{
@@ -3153,14 +3148,17 @@ WaveSchedule
 				}
 				TFBot
 				{
+					Name "Big-Heal Medic"
 					Template T_TFBot_Medic_BigHeal
 				}
 				TFBot
 				{
+					Name "Big-Heal Medic"
 					Template T_TFBot_Medic_BigHeal
 				}
 				TFBot
 				{
+					Name "Big-Heal Medic"
 					Template T_TFBot_Medic_BigHeal
 				}
 			}
@@ -3202,7 +3200,6 @@ WaveSchedule
 		}
 	}
 	// Wave 3 Notes
-	// Remove shield medics
 	Wave
 	{
 		InitWaveOutput
@@ -3271,10 +3268,10 @@ WaveSchedule
 			Where spawnbot_left
 			Support 1
 			TotalCount 20
-			MaxActive 2
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 3
-			WaitBetweenSpawns 25
+			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			FirstSpawnWarningSound "mvm/mvm_tele_deliver.wav"
@@ -3408,7 +3405,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Fury Pyro, 1 Shield Medic and 2 Full-Uber Medics
+		WaveSpawn // 1 GBurst Fury Pyro and 3 Full-Uber Medics
 		{
 			Name "Wave3_Subwave2_GBurstFury"
 			WaitForAllSpawned "Wave3_Subwave2_Soldiers"
@@ -3428,7 +3425,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic
 				}
 				TFBot
 				{
@@ -3458,7 +3455,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Fury Pyro, 1 Shield Medic and 2 Full-Uber Medics
+		WaveSpawn // 1 GBurst Fury Pyro and 3 Full-Uber Medics
 		{
 			Name "Wave3_Subwave2_GBurstFury2"
 			WaitForAllSpawned "Wave3_Subwave2_GBurstFury"
@@ -3478,7 +3475,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic
 				}
 				TFBot
 				{
@@ -3511,7 +3508,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Fury Pyro, 1 Shield Medic and 2 Full-Uber Medics
+		WaveSpawn // 1 GBurst Fury Pyro and 3 Full-Uber Medics
 		{
 			Name "Wave3_Subwave2_GBurstFury3"
 			WaitForAllSpawned "Wave3_Subwave2_GBurstFury2"
@@ -3531,7 +3528,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic
 				}
 				TFBot
 				{
@@ -3561,7 +3558,7 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Fury Pyro, 1 Shield Medic and 2 Full-Uber Medics
+		WaveSpawn // 1 GBurst Fury Pyro and 3 Full-Uber Medics
 		{
 			Name "Wave3_Subwave2_GBurstFury4"
 			WaitForAllSpawned "Wave3_Subwave2_GBurstFury3"
@@ -3581,7 +3578,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
+					Template T_TFBot_Medic
 				}
 				TFBot
 				{
