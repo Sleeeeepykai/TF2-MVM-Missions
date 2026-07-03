@@ -108,10 +108,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
-
-		local Icon = GetPropString(Target, "m_PlayerClass.m_iszClassIcon")
-
-		printl(Icon)
 	}
 	function DjinnSoldierSummonInit(Target)
 	{
