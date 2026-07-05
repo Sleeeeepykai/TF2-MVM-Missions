@@ -210,6 +210,7 @@ WaveSchedule
 				"startdisabled" "1"
 
 				"OnStartTouch" "!parent,$ChangeAttributes,LimitbreakerTetherAbility,0,-1"
+				"OnStartTouch" "!activator,$ChangeAttributes,GSoldierLimitBreak,0,-1"
 			}
 			filter_tf_bot_has_tag
 			{
@@ -237,18 +238,18 @@ WaveSchedule
 				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,4.1,-1"
 				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,4.2,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,7.33,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,7.33,-1"
-				"OnTrigger" "@p@patienttarget,$Taunt,,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,7.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)7.33-1"
 				"OnTrigger" "LimitbreakerTetherBuilding,SetBuilder,,7.4,-1"
+				"OnTrigger" "LimitbreakerTetherBuilding,$SetProp$m_takedamage,0,7.4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/medic_mvm_specialcompleted04.mp3,10,-1"
 				"OnTrigger" "TetherIntroNote1,Show,,10,-1"
 				"OnTrigger" "SoldierLimitBreakVoiceline,PickRandom,,11.33,-1"
 				"OnTrigger" "TetherIntroNote2,Show,,15,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,LimitbreakerDefaultTether,20,-1"
+				"OnTrigger" "LimitbreakerTetherBuilding,$SetProp$m_takedamage,2,20,-1"
 			}
 
 			// Limitbreaker Tether Ability
@@ -259,12 +260,7 @@ WaveSchedule
 				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,0,-1"
 				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,0.1,-1"
 				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: Doctor's Defibrillators,0.2,-1"
-				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierLimitBreak,3.33,-1"
 				"OnTrigger" "LimitbreakerTetherSpawner,ForceSpawnAtEntityOrigin,!activator,3.33,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,3.33,-1"
-				"OnTrigger" "@p@patienttarget,$Taunt,,3.33,-1"
-				"OnTrigger" "@p@patienttarget,$Taunt,,3.34,-1"
-				"OnTrigger" "@p@patienttarget,$AddCond,51 3,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
@@ -274,23 +270,15 @@ WaveSchedule
 
 				"spawnflags" "2"
 			}
-			logic_relay // Limitbreaker Tether Sustain Relay
-			{
-				"targetname" "LimitbreakerTetherSustainRelay"
-				"OnTrigger" "LimitbreakerTether,StrikeOnce,,0,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,0.15,-1"
-
-				"spawnflags" "2"
-			}
 			logic_relay // Limitbreaker Tether Beam Break Relay
 			{
 				"targetname" "LimitbreakerTetherBreakRelay"
 				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay*,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerStun,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierStun,0,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Enable,,10,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay*,Enable,,10,-1"
 				"OnTrigger" "LimitbreakerDetector,Enable,,10,-1"
 
 				"spawnflags" "2"
@@ -300,9 +288,7 @@ WaveSchedule
 				"targetname" "LimitbreakerTetherPatientBreakRelay"
 				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,LimitbreakerDefault,0,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Enable,,10,-1"
 				"OnTrigger" "LimitbreakerDetector,Enable,,10,-1"
 
 				"spawnflags" "2"
@@ -314,23 +300,6 @@ WaveSchedule
 				"entitytemplate" "LimitbreakerTether"
 				"$autoparent" "1"
 			}
-			env_beam // Limitbreaker Tether Beam
-            {
-                "targetname" "LimitbreakerTether"
-                "BoltWidth" "8"
-                "LightningStart" "LimitBreakerTetherStart"
-                "LightningEnd" "LimitBreakerTetherEnd"
-                "origin" "0 0 0"
-                "renderamt" "200"
-                "rendercolor" "200 200 255"
-                "damage" "0"
-                "NoiseAmplitude" "1"
-                "dissolvetype" "1"
-                "texture" "sprites/laserbeam.spr"
-                "TouchType" "1"
-				"life" "0.16"
-				"spawnflags" "96"
-            }
 			prop_dynamic // Limitbreaker Tether Beam Start Point
             {
                 "targetname" "LimitbreakerTetherStart"
@@ -345,7 +314,7 @@ WaveSchedule
 			{
 				"targetname" "LimitbreakerLeaveRelay"
 				"OnTrigger" "LimitbreakerDetector,Disable,,0,-1"
-				"OnTrigger" "LimitbreakerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay*,Disable,,0,-1"
 				"OnTrigger" "LimitbreakerTetherAttachRelay,CancelPending,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GSoldierStun,0,-1"
 				"OnTrigger" "@p@LimitbreakerPart1Target,$TauntFromItem,Taunt: The Critical Fail,0,-1"
@@ -397,8 +366,6 @@ WaveSchedule
 
 		LimitBreakerTetherPatient
 		{
-			NoFixUp 1
-
 			OnSpawnOutput
             {
                 Target patienttarget
@@ -419,6 +386,42 @@ WaveSchedule
 				Delay -1
 			}
 
+			logic_relay
+			{
+				"targetname" "PatientLimitBreak"
+
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,3.33,-1"
+				"OnTrigger" "@p@patienttarget,$Taunt,,3.33,-1"
+				"OnTrigger" "@p@patienttarget,$Taunt,,3.34,-1"
+				"OnTrigger" "@p@patienttarget,$AddCond,51 3,3.33,-1"
+				"OnTrigger" "@p@patienttarget,$ChangeAttributes,GSoldierLimitBreakStage1,10.33,-1"
+			}
+			logic_relay // Limitbreaker Tether Sustain Relay
+			{
+				"targetname" "LimitbreakerTetherSustainRelay"
+				"OnTrigger" "LimitbreakerTether,StrikeOnce,,0,-1"
+				"OnTrigger" "LimitbreakerTetherSustainRelay,Trigger,,0.15,-1"
+
+				"spawnflags" "2"
+			}
+
+			env_beam // Limitbreaker Tether Beam
+            {
+                "targetname" "LimitbreakerTether"
+                "BoltWidth" "8"
+                "LightningStart" "LimitBreakerTetherStart"
+                "LightningEnd" "LimitBreakerTetherEnd"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "200 200 255"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "0.16"
+				"spawnflags" "96"
+            }
 			prop_dynamic // Limitbreaker Tether Beam End Point
             {
                 "targetname" "LimitbreakerTetherEnd"
@@ -732,6 +735,7 @@ WaveSchedule
 				"startdisabled" "1"
 
 				"OnStartTouch" "ReforgerTetherAttachRelay,Trigger,,0,-1"
+				"OnStartTouch" "!activator,$ChangeAttributes,GDemoReforged,0,-1"
 			}
 			filter_tf_bot_has_tag
 			{
@@ -752,10 +756,6 @@ WaveSchedule
 				"OnTrigger" "@p@ReforgerTarget,$Taunt,,0.2,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GDemoReforged,3.33,-1"
 				"OnTrigger" "ReforgerTetherSpawner,ForceSpawnAtEntityOrigin,@p@ReforgerTarget,3.33,-1"
-				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,3.33,-1"
-				"OnTrigger" "@p@ReforgerPatientTarget,$Taunt,,3.33,-1"
-				"OnTrigger" "@p@ReforgerPatientTarget,$Taunt,,3.34,-1"
-				"OnTrigger" "@p@ReforgerPatientTarget,$AddCond,51 3,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_supernova.wav,3.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
@@ -765,23 +765,15 @@ WaveSchedule
 
 				"spawnflags" "2"
 			}
-			logic_relay // Reforger Tether Sustain Relay
-			{
-				"targetname" "ReforgerTetherSustainRelay"
-				"OnTrigger" "ReforgerTether,StrikeOnce,,0,-1"
-				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,0.15,-1"
-
-				"spawnflags" "2"
-			}
 			logic_relay // Reforger Tether Beam Break Relay
 			{
 				"targetname" "ReforgerTetherBreakRelay"
 				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
-				"OnTrigger" "ReforgerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay*,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,ReforgerStun,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,GDemoStun,0,-1"
-				"OnTrigger" "ReforgerTetherSustainRelay,Enable,,10,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay*,Enable,,10,-1"
 				"OnTrigger" "ReforgerDetector,Enable,,10,-1"
 
 				"spawnflags" "2"
@@ -791,9 +783,9 @@ WaveSchedule
 				"targetname" "ReforgerTetherPatientBreakRelay"
 				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,0,-1"
-				"OnTrigger" "ReforgerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay*,Disable,,0,-1"
 				"OnTrigger" "pop_interface,ChangeBotAttributes,ReforgerDefault,0,-1"
-				"OnTrigger" "ReforgerSustainRelay,Enable,,10,-1"
+				"OnTrigger" "ReforgerSustainRelay*,Enable,,10,-1"
 				"OnTrigger" "ReforgerDetector,Enable,,10,-1"
 
 				"spawnflags" "2"
@@ -805,23 +797,6 @@ WaveSchedule
 				"entitytemplate" "ReforgerTether"
 				"$autoparent" "1"
 			}
-			env_beam // Reforger Tether Beam
-            {
-                "targetname" "ReforgerTether"
-                "BoltWidth" "8"
-                "LightningStart" "ReforgerTetherStart"
-                "LightningEnd" "ReforgerTetherEnd"
-                "origin" "0 0 0"
-                "renderamt" "200"
-                "rendercolor" "200 200 255"
-                "damage" "0"
-                "NoiseAmplitude" "1"
-                "dissolvetype" "1"
-                "texture" "sprites/laserbeam.spr"
-                "TouchType" "1"
-				"life" "0.16"
-				"spawnflags" "96"
-            }
 			prop_dynamic // Reforger Tether Beam Start Point
             {
                 "targetname" "ReforgerTetherStart"
@@ -865,8 +840,6 @@ WaveSchedule
 
 		ReforgerTetherPatient
 		{
-			NoFixUp 1
-
 			OnSpawnOutput
             {
                 Target ReforgerPatientTarget
@@ -882,11 +855,47 @@ WaveSchedule
 
 			OnParentKilledOutput
 			{
-				Target ReforgerPatientBreakRelay
+				Target ReforgerTetherPatientBreakRelay
 				Action Trigger
 				Delay -1
 			}
 
+			logic_relay
+			{
+				"targetname" "PatientReforge"
+
+				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,3.33,-1"
+				"OnTrigger" "@p@ReforgerPatientTarget,$Taunt,,3.33,-1"
+				"OnTrigger" "@p@ReforgerPatientTarget,$Taunt,,3.34,-1"
+				"OnTrigger" "@p@ReforgerPatientTarget,$AddCond,51 3,3.33,-1"
+				"OnTrigger" "@p@ReforgerPatientTarget,$ChangeAttributes,GDemoReforgedStage1,10.33,-1"
+			}
+			logic_relay // Reforger Tether Sustain Relay
+			{
+				"targetname" "ReforgerTetherSustainRelay"
+				"OnTrigger" "ReforgerTether,StrikeOnce,,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,0.15,-1"
+
+				"spawnflags" "2"
+			}
+
+			env_beam // Reforger Tether Beam
+            {
+                "targetname" "ReforgerTether"
+                "BoltWidth" "8"
+                "LightningStart" "ReforgerTetherStart"
+                "LightningEnd" "ReforgerTetherEnd"
+                "origin" "0 0 0"
+                "renderamt" "200"
+                "rendercolor" "200 200 255"
+                "damage" "0"
+                "NoiseAmplitude" "1"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "TouchType" "1"
+				"life" "0.16"
+				"spawnflags" "96"
+            }
 			prop_dynamic // Reforger Tether Beam End Point
             {
                 "targetname" "ReforgerTetherEnd"
@@ -1296,9 +1305,9 @@ WaveSchedule
 
 					FireInput
 					{
-						Target !activator
-						Action $Taunt
-						Delay 4.33
+						Target @c@!activator
+						Action Trigger
+						Delay 1
 						Repeats 1
 						Cooldown -1
 					}
@@ -1376,8 +1385,40 @@ WaveSchedule
 						"no_attack" 0
 						"no_jump" 0
 
-						"dmg from ranged reduced" 0.8
-						"dmg from melee increased" 0.8
+						"dmg from ranged reduced" 1
+						"dmg from melee increased" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+						"fire rate bonus" 0.5
+						"faster reload rate" 0.001
+						"projectile speed decreased" 0.65
+					}
+
+					FireInput
+					{
+						Target @c@!activator
+						Action Trigger
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				GSoldierLimitBreakStage1 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 3
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
 					}
 
 					ItemAttributes
@@ -1403,7 +1444,7 @@ WaveSchedule
 						Target !activator
 						Action $ChangeAttributes
 						Param GSoldierLimitBreakStage2
-						Delay 5
+						Delay 7.5
 						Repeats 1
 						Cooldown -1
 					}
@@ -1419,14 +1460,14 @@ WaveSchedule
 						"no_attack" 0
 						"no_jump" 0
 
-						"dmg from ranged reduced" 0.8
-						"dmg from melee increased" 0.8
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
 					}
 
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_ROCKETLAUNCHER"
-						"fire rate bonus" 0.4
+						"fire rate bonus" 0.3
 						"faster reload rate" 0.001
 						"projectile speed decreased" 0.65
 					}
@@ -1446,7 +1487,7 @@ WaveSchedule
 						Target !activator
 						Action $ChangeAttributes
 						Param GSoldierLimitBreakStage3
-						Delay 5
+						Delay 7.5
 						Repeats 1
 						Cooldown -1
 					}
@@ -1462,14 +1503,14 @@ WaveSchedule
 						"no_attack" 0
 						"no_jump" 0
 
-						"dmg from ranged reduced" 0.8
-						"dmg from melee increased" 0.8
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
 					}
 
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_ROCKETLAUNCHER"
-						"fire rate bonus" 0.4
+						"fire rate bonus" 0.3
 						"faster reload rate" 0.001
 						"projectile speed decreased" 0.65
 					}
@@ -2487,14 +2528,48 @@ WaveSchedule
 						"no_attack" 0
 						"no_jump" 0
 
-						"dmg from ranged reduced" 0.8
-						"dmg from melee increased" 0.8
+						"dmg from ranged reduced" 1
+						"dmg from melee increased" 1
 					}
 
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_GRENADELAUNCHER"
-						"faster reload rate" 0.65 //35% faster reload
+						"faster reload rate" 0.65
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 7.0
+						"projectile spread angle penalty" 5
+						"Projectile speed increased"	1.1
+					}
+
+					FireInput
+					{
+						Target @c@!activator
+						Action Trigger
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				GDemoReforgedStage1 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.65
 						"fire rate bonus" 0.1
 						"clip size upgrade atomic" 7.0
 						"projectile spread angle penalty" 5
@@ -2532,14 +2607,14 @@ WaveSchedule
 						"no_attack" 0
 						"no_jump" 0
 
-						"dmg from ranged reduced" 0.8
-						"dmg from melee increased" 0.8
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
 					}
 
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_GRENADELAUNCHER"
-						"faster reload rate" 0.4
+						"faster reload rate" 0.45
 						"fire rate bonus" 0.1
 						"clip size upgrade atomic" 7.0
 						"projectile spread angle penalty" 5
@@ -2577,14 +2652,14 @@ WaveSchedule
 						"no_attack" 0
 						"no_jump" 0
 
-						"dmg from ranged reduced" 0.8
-						"dmg from melee increased" 0.8
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
 					}
 
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_GRENADELAUNCHER"
-						"faster reload rate" 0.4
+						"faster reload rate" 0.45
 						"fire rate bonus" 0.1
 						"clip size upgrade atomic" 7.0
 						"projectile spread angle penalty" 5
@@ -3201,9 +3276,6 @@ WaveSchedule
 	}
 	// Wave 3 Notes
 	// Look into making the Limitbreaker's amplifier invulnerable
-	// The Limitbreaker's tether buffs are not impactful enough to be worth engaging with, they should be stronger
-	// Limitbreaker's tether should have some downtime before the first stage
-	// Rework the tether logic to allow for multiple giants active at once
 	Wave
 	{
 		InitWaveOutput
