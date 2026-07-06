@@ -1,0 +1,202 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 600
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	SniperAllowHeadshots 1
+	BodyPartScaleSpeed 10
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+
+	}
+	
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		Core_PTs
+		{
+			OnSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+						::DispatchParticleEffectOn <- function(hEntity, sName)
+						{
+							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = Entities.CreateByClassname(`trigger_particle`)
+							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromString(`particle_name`, sName)
+							hParticle.KeyValueFromInt(`attachment_type`, 1)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
+							hParticle.Kill()
+						}
+					  "
+            }
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "Core_PTs"
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Scout_ManaBlaster
+		{
+			Name "Mana Blaster Scout"
+			Template T_TFBot_Scout_Laser_Ricochet
+
+			Item "The Dark Falkirk Helm"
+			Item "Courtly Cuirass"
+			Item "The Sole Saviors"
+
+			ItemAttributes
+			{
+				ItemName "The Dark Falkirk Helm"
+
+				"item style override" 1
+			}
+		}
+		T_TFBot_Sniper_AstralBolt
+		{
+			Name "Astral Bolt Archer"
+			Class Sniper
+			ClassIcon sniper_bow_atomic_v2
+			Skill Hard
+
+			Item "The Huntsman"
+
+			Item "Starlight Sorcerer"
+
+			ItemAttributes
+			{
+				ItemName "The Huntsman"
+
+				"override projectile type" 12
+			}
+
+			ItemAttributes
+			{
+				ItemName "Starlight Sorcerer"
+
+				"item style override" 1
+			}
+		}
+		T_TFBot_Soldier_MagicMissile
+		{
+			Name "Magic Missile Soldier"
+			Class Soldier
+
+			Item "Point and Shoot"
+			Item "Marshall's Mutton Chops"
+			Item "The Kringle Collection"
+		}
+	}
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster (Waves 1-3)
+	{
+		Objective DestroySentries
+		Where spawnbot_leftpath_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 3
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	// General Notes
+	
+	// Wave 1 Notes
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_left_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+		
+		// Subwave 1
+		WaveSpawn // 6 Ricochet Blaster Scouts
+		{
+			Name "Wave1_Subwave1_RicochetScouts"
+			Where spawnbot_leftpath_main
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_ManaBlaster
+			}
+		}
+		WaveSpawn // 15 Plasma Bowmen
+		{
+			Name "Wave1_Subwave1_PlasmaBowman"
+			Where spawnbot_leftpath_right
+			TotalCount 15
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_AstralBolt
+			}
+		}
+	}
+}
