@@ -1,0 +1,803 @@
+#base robot_giant.pop
+
+WaveSchedule
+{
+	StartingCurrency 4000
+	WaveStartCountdown 0 [$SIGSEGV]
+
+	PrecacheModel "models/buildables/amplifier_test/amplifier.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib1.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib2.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib3.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib4.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib5.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib6.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib7.mdl" [$SIGSEGV]
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib8.mdl" [$SIGSEGV]
+
+	ExtraSpawnPoint [$SIGSEGV]
+	{
+		Name "red_spawn_forward"
+		TeamNum 2
+		X 5130
+		Y 3680
+		Z 672
+	}
+
+	Templates
+	{
+		T_TFBot_Giant_Engineer_Reforger
+		{
+			Name "Giant Reforger Engineer"
+			Class Engineer
+			ClassIcon engineer_upgraded
+			Skill Expert
+			Health 4500
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			Item "The Widowmaker"
+
+			UseHumanAnimations 1 [$SIGSEGV]
+
+			SpawnTemplate "Reforger_PT" [$SIGSEGV]
+
+			FireInput [$SIGSEGV]
+			{
+				Target "!self"
+				Action "CallScriptFunction"
+				Param "EnableReforger_Detector"
+				Delay 5
+				Repeats 1
+				Cooldown -1
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 7
+				"voice pitch scale" 0
+				"head scale" 0.7
+				"hand scale" 1.1
+			}
+
+			EventChangeAttributes
+			{
+				ReforgerDefault
+				{
+					WeaponRestrictions PrimaryOnly
+
+					Item "The Widowmaker"
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 7
+						"voice pitch scale" 0
+						"head scale" 0.7
+						"hand scale" 1.1
+						"no_attack" 0
+						"no_jump" 0
+					}
+				}
+
+				ReforgerTetherAbility
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 7
+						"voice pitch scale" 0
+						"head scale" 0.7
+						"hand scale" 1.1
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target "!self"
+						Action "CallScriptFunction"
+						Param "TriggerReforger_TetherAttachRelay"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param ReforgerDefaultTether
+						Delay 4.7
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				ReforgerStun
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.6
+						"airblast vulnerability multiplier" 0.6
+						"override footstep sound set" 7
+						"voice pitch scale" 0
+						"head scale" 0.7
+						"hand scale" 1.1
+						"no_attack" 1
+						"no_jump" 1
+					}
+
+					AddCond [$SIGSEGV]
+					{
+						Name TF_COND_MVM_BOT_STUN_RADIOWAVE
+						Duration 5
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param ReforgerDefault
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Giant_Demoman_Burst_Reforger
+		{
+			Template T_TFBot_Giant_Demo_Burst
+
+			SpawnTemplate "ReforgerTetherPatient" [$SIGSEGV]
+
+			Tag ReforgerGiant
+
+			EventChangeAttributes
+			{
+				GDemoDefault
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 1
+						"dmg from melee increased" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.65 //35% faster reload
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 7.0
+						"projectile spread angle penalty" 5
+						"projectile speed increased"	1.1
+					}
+				}
+
+				GDemoStun
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.001
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+						"no_attack" 1
+						"no_jump" 1
+
+						"dmg from ranged reduced" 1
+						"dmg from melee increased" 1
+					}
+
+					AddCond [$SIGSEGV]
+					{
+						Name TF_COND_MVM_BOT_STUN_RADIOWAVE
+						Duration 5
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "vo/mvm/mght/demoman_mvm_m_painsharp04.mp3"
+						Delay 0
+						Repeats 2
+						Cooldown -1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target !self
+						Action $RemoveCond
+						Param 16
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param GDemoDefault
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				GDemoReforged [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 1
+						"dmg from melee increased" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.65
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 7.0
+						"projectile spread angle penalty" 5
+						"Projectile speed increased"	1.1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target @c@!activator
+						Action Trigger
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				GDemoReforgedStage1 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.65
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 7.0
+						"projectile spread angle penalty" 5
+						"Projectile speed increased"	1.1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "weapons/vaccinator_charge_tier_01.wav"
+						Delay 0
+						Repeats 2
+						Cooldown -1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target !activator
+						Action $ChangeAttributes
+						Param GDemoReforgedStage2
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				GDemoReforgedStage2 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.45
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 7.0
+						"projectile spread angle penalty" 5
+						"projectile speed increased"	1.1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "weapons/vaccinator_charge_tier_02.wav"
+						Delay 0
+						Repeats 2
+						Cooldown -1
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target !activator
+						Action $ChangeAttributes
+						Param GDemoReforgedStage3
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+				}
+
+				GDemoReforgedStage3 [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 3
+						"no_attack" 0
+						"no_jump" 0
+
+						"dmg from ranged reduced" 0.65
+						"dmg from melee increased" 0.65
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.45
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 7.0
+						"projectile spread angle penalty" 5
+						"projectile speed increased"	1.1
+					}
+
+
+					AddCond [$SIGSEGV]
+					{
+						Name TF_COND_OFFENSEBUFF
+					}
+
+					FireInput [$SIGSEGV]
+					{
+						Target tf_gamerules
+						Action PlayVO
+						Param "weapons/vaccinator_charge_tier_04.wav"
+						Delay 0
+						Repeats 2
+						Cooldown -1
+					}
+				}
+			}
+		}
+	}
+
+	PointTemplates [$SIGSEGV]
+	{
+		KillRedSpawns
+		{
+			OnSpawnOutput
+			{
+				Target info_player_teamspawn
+				Action RunScriptCode
+				Param "if (self.GetTeam() == Constants.ETFTeam.TF_TEAM_RED && self.GetName() != `red_spawn_forward`) self.Destroy()"
+			}
+
+			OnSpawnOutput
+			{
+				Target player
+				Action RunScriptCode
+				Delay 0.02
+				Param "if (self.GetTeam() == Constants.ETFTeam.TF_TEAM_RED && self.IsAlive()) { self.ForceRespawn(); self.SnapEyeAngles(QAngle(0.0, -95.0, 0.0))}"
+			}
+		}
+
+		PopulatorInterface
+		{
+			point_populator_interface
+			{
+				targetname "pop_interface"
+			}
+		}
+
+		Reforger_PT
+		{
+			// Hack to allow ReforgerTetherBreakRelay to fire on Engie death.
+			KeepAlive 1
+			RemoveIfKilled "ReforgerDetector"
+			OnParentKilledOutput
+			{
+				Target ReforgerTetherBreakRelay
+				Action Trigger
+			}
+			OnParentKilledOutput
+			{
+				Target ReforgerDetector
+				Action Kill
+				Delay 0.02
+			}
+
+			OnSpawnOutput
+			{
+				Target !parent
+				Action RunScriptCode
+				// The underscores here are necessary to stop name fixup from happening in the script code.
+				Param "
+					function EnableReforger_Detector()
+					{
+						Reforger_Detector.AcceptInput(`Enable`, ``, null, null)
+					}
+					function TriggerReforger_TetherAttachRelay()
+					{
+						Reforger_TetherAttachRelay.AcceptInput(`Trigger`, ``, null, null)
+					}
+					function TriggerReforger_TetherBreakRelay()
+					{
+						Reforger_TetherBreakRelay.AcceptInput(`Trigger`, ``, null, null)
+					}
+					function KillReforger_Tether()
+					{
+						Reforger_Tether.Destroy()
+					}
+
+					function OnGameEvent_mvm_reset_stats(_) { self.TerminateScriptScope() }
+					function OnGameEvent_player_death(params) { if (GetPlayerFromUserID(params.userid) == self) self.TerminateScriptScope() }
+					__CollectGameEventCallbacks(this)
+				"
+			}
+
+			// Assign the entities from this instance to script functions on the parent,
+			//  so we can run inputs on them from outside of this PT.
+			OnSpawnOutput
+			{
+				Target ReforgerDetector
+				Action RunScriptCode
+				Param "activator.GetScriptScope().Reforger_Detector <- self"
+			}
+			OnSpawnOutput
+			{
+				Target ReforgerTetherAttachRelay
+				Action RunScriptCode
+				Param "activator.GetScriptScope().Reforger_TetherAttachRelay <- self"
+			}
+			OnSpawnOutput
+			{
+				Target ReforgerTetherBreakRelay
+				Action RunScriptCode
+				Param "activator.GetScriptScope().Reforger_TetherBreakRelay <- self"
+			}
+			OnSpawnOutput
+			{
+				Target ReforgerDetector
+				Action RunScriptCode
+				Param "Reforger_TetherStart <- Entities.FindByName(null, `ReforgerTetherStart`)"
+			}
+
+			trigger_multiple
+			{
+				"targetname" "ReforgerDetector"
+				"origin" "0 0 100"
+				"mins" "-384 -384 -256"
+				"maxs" "384 384 256"
+
+				"filtername" "ReforgerGiantFilter"
+				"spawnflags" "1"
+				"StartDisabled" "1"
+
+				"OnStartTouch" "ReforgerTetherAttachRelay,Trigger,,0,-1"
+				"OnStartTouch" "!activator,$ChangeAttributes,GDemoReforged,0,-1"
+				"OnStartTouch" "!activator,CallScriptFunction,TriggerPatient_Reforge,0,-1"
+				"OnStartTouch" "!self,RunScriptCode,activator.GetScriptScope().Reforger_TetherTo(Reforger_TetherStart),0,-1"
+			}
+
+			filter_tf_bot_has_tag
+			{
+				"targetname" "ReforgerGiantFilter"
+				"tags" "ReforgerGiant"
+				"require_all_tags" "1"
+			}
+
+			// Reforger Main Relays
+
+			// Reforger Tether Ability
+			logic_relay // Reforger Tether Beam Attach Relay
+			{
+				"targetname" "ReforgerTetherAttachRelay"
+
+				"OnTrigger" "ReforgerDetector,Disable,,0,-1"
+				"OnTrigger" "!parent,$AddPlayerAttribute,always allow taunt|1,0,-1"
+				"OnTrigger" "!parent,$Taunt,,0.02,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GDemoReforged,3.33,-1"
+				"OnTrigger" "ReforgerTetherSpawner,ForceSpawnAtEntityOrigin,!parent,3.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_supernova.wav,3.33,-1"
+				"OnTrigger" "playerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)3.33-1"
+				"OnTrigger" "ReforgerTetherBuilding,SetBuilder,,3.4,-1"
+				"OnTrigger" "DemomanReforgedVoiceline,PickRandom,,7.33,-1"
+				"OnTrigger" "!activatorRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `This giant has been Reforged!`, lifetime = 5.0, follow_entindex = self.entindex(), play_sound = `misc/null.wav` })7.33,-1" // Use game event for this instead of training_annotation, allows us to use follow_entindex.
+
+				"spawnflags" "2"
+			}
+
+			logic_relay // Reforger Tether Beam Break Relay
+			{
+				"targetname" "ReforgerTetherBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,ReforgerStun,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,GDemoStun,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Enable,,10,-1"
+				"OnTrigger" "ReforgerDetector,Enable,,10,-1"
+				"OnTrigger" "!self,Disable,,0,-1" // Don't allow multiple retriggers (i.e. destroying the building, then killing the Engie).
+				"OnTrigger" "!parent,CallScriptFunction,KillReforger_Tether,0,-1"
+
+				"spawnflags" "2"
+			}
+
+			logic_relay // Reforger Tether Patient Break Relay
+			{
+				"targetname" "ReforgerTetherPatientBreakRelay"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Disable,,0,-1"
+				"OnTrigger" "pop_interface,ChangeBotAttributes,ReforgerDefault,0,-1"
+				"OnTrigger" "ReforgerDetector,Enable,,10,-1"
+
+				"spawnflags" "2"
+			}
+
+			env_entity_maker // Reforger Tether Spawner
+			{
+				"targetname" "ReforgerTetherSpawner"
+				"entitytemplate" "ReforgerTether"
+				"$autoparent" "1"
+			}
+
+			prop_dynamic // Reforger Tether Beam Start Point
+			{
+				"parentname" "!parent" // Allows us to use GetMoveParent() (rafmod FakeParents cannot be fetched).
+				"targetname" "ReforgerTetherStart"
+				"model" "models/empty.mdl"
+				"solid" "0"
+				"origin" "0 0 100"
+			}
+		}
+
+		ReforgerTether
+		{
+			OnSpawnOutput
+			{
+				Target ReforgerTetherBuilding
+				Action RunScriptCode
+				Param "NetProps.SetPropEntity(self, `m_hBuilder`, activator)"
+				Delay 0.1
+			}
+
+			OnSpawnOutput
+			{
+				Target "ReforgerTetherBuilding"
+				Action "SetHealth"
+				Param 1000
+				Delay 0.1
+			}
+
+			obj_dispenser
+			{
+				"targetname" "ReforgerTetherBuilding"
+				"angles" "-70 0 0"
+				"origin" "-25 0 90"
+				"teamnum" "3"
+				"defaultupgrade" "2"
+				"solid" "0"
+				"$radiusmult" "0.01"
+				"$cannotbesapped" "1"
+				"$dispensermodelprefix" "models/buildables/amplifier_test/amplifier.mdl"
+
+				"OnDestroyed" "!parent,CallScriptFunction,TriggerReforger_TetherBreakRelay,0,-1"
+			}
+		}
+
+		ReforgerTetherPatient
+		{
+			OnSpawnOutput
+			{
+				Target !parent
+				Action RunScriptCode
+				// The underscores here are necessary to stop name fixup from happening in the script code.
+				Param "
+					function TriggerPatient_Reforge()
+					{
+						Patient_Reforge.AcceptInput(`Trigger`, ``, null, null)
+					}
+
+					function Reforger_TetherTo(ent)
+					{
+						NetProps.SetPropString(Reforger_Tether, `m_iszStartEntity`, ent.GetName())
+						ent.GetMoveParent().GetScriptScope().Reforger_Tether <- Reforger_Tether
+					}
+
+					function OnGameEvent_mvm_reset_stats(_) { self.TerminateScriptScope() }
+					function OnGameEvent_player_death(params) { if (GetPlayerFromUserID(params.userid) == self) self.TerminateScriptScope() }
+					__CollectGameEventCallbacks(this)
+				"
+			}
+
+			// Assign the entities from this instance to script functions on the parent,
+			//  so we can run inputs on them from outside of this PT.
+			OnSpawnOutput
+			{
+				Target PatientReforge
+				Action RunScriptCode
+				Param "activator.GetScriptScope().Patient_Reforge <- self"
+			}
+			OnSpawnOutput
+			{
+				Target ReforgerTether
+				Action RunScriptCode
+				Param "activator.GetScriptScope().Reforger_Tether <- self"
+			}
+
+			logic_relay
+			{
+				"targetname" "PatientReforge"
+
+				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,3.33,-1"
+				"OnTrigger" "!parent,$AddPlayerAttribute,always allow taunt|1,3.3,-1"
+				"OnTrigger" "!parent,$Taunt,,3.33,-1"
+				"OnTrigger" "!parent,$AddCond,51 3,3.33,-1"
+				"OnTrigger" "!parent,$ChangeAttributes,GDemoReforgedStage1,10.33,-1"
+			}
+
+			logic_relay // Reforger Tether Sustain Relay
+			{
+				"targetname" "ReforgerTetherSustainRelay"
+				"OnTrigger" "ReforgerTether,StrikeOnce,,0,-1"
+				"OnTrigger" "ReforgerTetherSustainRelay,Trigger,,0.15,-1"
+
+				"spawnflags" "2"
+			}
+
+			env_beam // Reforger Tether Beam
+			{
+				"targetname" "ReforgerTether"
+				"BoltWidth" "8"
+				"LightningStart" "ReforgerTetherStart"
+				"LightningEnd" "ReforgerTetherEnd"
+				"origin" "0 0 0"
+				"renderamt" "200"
+				"rendercolor" "200 200 255"
+				"damage" "0"
+				"NoiseAmplitude" "1"
+				"dissolvetype" "1"
+				"texture" "sprites/laserbeam.vmt"
+				"TouchType" "1"
+				"life" "0.16"
+				"spawnflags" "96"
+			}
+
+			prop_dynamic // Reforger Tether Beam End Point
+			{
+				"targetname" "ReforgerTetherEnd"
+				"model" "models/empty.mdl"
+				"solid" "0"
+				"origin" "0 0 100"
+			}
+		}
+	}
+
+	SpawnTemplate "PopulatorInterface" [$SIGSEGV]
+	SpawnTemplate "KillRedSpawns" [$SIGSEGV]
+
+	Wave
+	{
+		StartWaveOutput
+		{
+			Target wave_start_relay
+			Action Trigger
+		}
+
+		DoneOutput
+		{
+			Target wave_finished_relay
+			Action Trigger
+		}
+
+		WaveSpawn
+		{
+			Name "Combo1"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Reforger
+				}
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Engineer_Reforger
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Combo2"
+			Where spawnbot
+
+			WaitForAllDead "Combo1"
+			WaitBeforeStarting 2
+
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Reforger
+				}
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Engineer_Reforger
+				}
+			}
+		}
+	}
+}
