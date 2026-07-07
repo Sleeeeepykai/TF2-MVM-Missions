@@ -31,7 +31,7 @@ WaveSchedule
 
 	PointTemplates
 	{
-		Core_PTs
+		Core_PT
 		{
 			OnSpawnOutput
             {
@@ -57,7 +57,7 @@ WaveSchedule
 
 	//// SPAWNED POINT TEMPLATES ////
 
-	SpawnTemplate "Core_PTs"
+	SpawnTemplate "Core_PT"
 
 	//// ROBOT TEMPLATES ////
 
@@ -79,6 +79,7 @@ WaveSchedule
 				"item style override" 1
 			}
 		}
+
 		T_TFBot_Sniper_AstralBolt
 		{
 			Name "Astral Bolt Archer"
@@ -104,6 +105,7 @@ WaveSchedule
 				"item style override" 1
 			}
 		}
+
 		T_TFBot_Soldier_MagicMissile
 		{
 			Name "Magic Missile Soldier"
@@ -112,6 +114,16 @@ WaveSchedule
 			Item "Point and Shoot"
 			Item "Marshall's Mutton Chops"
 			Item "The Kringle Collection"
+		}
+
+		T_TFBot_Medic_BigHeal_Alchemist
+		{
+			Name "Big-Heal Alchemist"
+			Template T_TFBot_Medic_BigHeal
+
+			Item "The Nunhood"
+			Item "The Angel of Death"
+			Item "Emerald Jarate"
 		}
 	}
 
@@ -166,9 +178,34 @@ WaveSchedule
         }
 		
 		// Subwave 1
+		WaveSpawn // 2 Ricochet Blaster Scouts and 2 Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_RicochetScoutsIntro"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Scout_ManaBlaster
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+			}
+		}
+
 		WaveSpawn // 6 Ricochet Blaster Scouts
 		{
 			Name "Wave1_Subwave1_RicochetScouts"
+			WaitForAllDead "Wave1_Subwave1_RicochetScoutsIntro"
 			Where spawnbot_leftpath_main
 			TotalCount 6
 			MaxActive 4
@@ -185,17 +222,37 @@ WaveSchedule
 		WaveSpawn // 15 Plasma Bowmen
 		{
 			Name "Wave1_Subwave1_PlasmaBowman"
+			WaitForAllDead "Wave1_Subwave1_RicochetScoutsIntro"
 			Where spawnbot_leftpath_right
 			TotalCount 15
 			MaxActive 6
 			SpawnCount 3
-			WaitBeforeStarting 0
+			WaitBeforeStarting 2
 			WaitBetweenSpawns 4
 			TotalCurrency 60
 
 			TFBot
 			{
 				Template T_TFBot_Sniper_AstralBolt
+			}
+		}
+
+		WaveSpawn // 5 Soldiers
+		{
+			Name "Wave1_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave1_RicochetScouts"
+			Where spawnbot_leftpath_main
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_MagicMissile
+				Skill Normal
 			}
 		}
 	}
