@@ -24,7 +24,12 @@ WaveSchedule
 
 	CustomWeapon
 	{
+		"PyroArmour"
+		{
+			OriginalItemName "Potato of Labor"
 
+			"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
+		}
 	}
 	
 	//// POINT TEMPLATES ////
@@ -63,23 +68,7 @@ WaveSchedule
 
 	Templates
 	{
-		T_TFBot_Scout_ManaBlaster
-		{
-			Name "Mana Blaster Scout"
-			Template T_TFBot_Scout_Laser_Ricochet
-
-			Item "The Dark Falkirk Helm"
-			Item "Courtly Cuirass"
-			Item "The Sole Saviors"
-
-			ItemAttributes
-			{
-				ItemName "The Dark Falkirk Helm"
-
-				"item style override" 1
-			}
-		}
-
+		// Commons //
 		T_TFBot_Sniper_AstralBolt
 		{
 			Name "Astral Bolt Archer"
@@ -105,7 +94,6 @@ WaveSchedule
 				"item style override" 1
 			}
 		}
-
 		T_TFBot_Soldier_MagicMissile
 		{
 			Name "Magic Missile Soldier"
@@ -115,7 +103,6 @@ WaveSchedule
 			Item "Marshall's Mutton Chops"
 			Item "The Kringle Collection"
 		}
-
 		T_TFBot_Medic_BigHeal_Alchemist
 		{
 			Name "Big-Heal Alchemist"
@@ -124,6 +111,45 @@ WaveSchedule
 			Item "The Nunhood"
 			Item "The Angel of Death"
 			Item "Emerald Jarate"
+		}
+
+		// Minigiants //
+		T_TFBot_Scout_ManaBlaster
+		{
+			Name "Mana Blaster Scout"
+			Template T_TFBot_Scout_Laser_Ricochet
+
+			Item "The Dark Falkirk Helm"
+			Item "Courtly Cuirass"
+			Item "The Sole Saviors"
+
+			ItemAttributes
+			{
+				ItemName "The Dark Falkirk Helm"
+
+				"item style override" 1
+			}
+		}
+
+		// Giants //
+		T_TFBot_Giant_Pyro_Warhammer
+		{
+			Name "Giant Warhammer Warrior"
+			Template T_TFBot_Giant_Pyro_Homewrecker
+
+			Item "The Maul"
+
+			Item "The Flame Warrior"
+			Item "The Special Eyes"
+			Item "Rail Spikes"
+			Item "PyroArmour" [$SIGSEGV]
+
+			ItemAttributes
+			{
+				ItemName "The Special Eyes"
+
+				"item style override" 1
+			}
 		}
 	}
 
@@ -252,7 +278,69 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Soldier_MagicMissile
-				Skill Normal
+				Skill Easy
+			}
+		}
+		WaveSpawn // 2 Soldiers and 2 Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave1_RicochetScouts"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_MagicMissile
+					Skill Hard
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GHomewrecker Pyro and 3 Plasma Bowmen
+		{
+			Name "Wave1_Subwave2_GHomewreckerPyro"
+			WaitForAllSpawned "Wave1_Subwave1_Soldiers"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Warhammer
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
 			}
 		}
 	}
