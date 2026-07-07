@@ -1431,8 +1431,8 @@ WaveSchedule
 			{
 				"targetname" "SultanSummonRelay"
 
-				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
-				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.5,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.5,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
 				"OnTrigger" "SultanSummonIndicator,Enable,,0.5,-1"
@@ -1610,7 +1610,7 @@ WaveSchedule
 				"origin" "100 0 50"
 				"teamnum" "3"
 				"weapontype" "3"
-				"damage" "1000"
+				"damage" "2000"
 				"splashradius" "146"
 				"modelscale" "1"
 				"$preventshootparent" "1"
@@ -1699,8 +1699,8 @@ WaveSchedule
 			{
 				"targetname" "SultanSummonGiantRelay"
 
-				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
-				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.5,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.5,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
 				"OnTrigger" "SultanSummonGiantIndicator*,Enable,,0.5,-1"
@@ -1905,6 +1905,8 @@ WaveSchedule
 			logic_relay // Phase 3 Minions Relay
 			{
 				"targetname" "SultanPhase3MinionsRelay"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.5,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.5,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
@@ -2001,8 +2003,8 @@ WaveSchedule
 			{
 				"targetname" "SultanSummonGiantEvolvedRelay"
 
-				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.1,0,-1"
-				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.1,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from ranged reduced|0.5,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,dmg from melee increased|0.5,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
 				"OnTrigger" "!activator,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
 				"OnTrigger" "SultanSummonGiantIndicator*,Enable,,0.5,-1"
@@ -2831,7 +2833,7 @@ WaveSchedule
 						"override footstep sound set" 6
 						"voice pitch scale" 0
 						"no_attack" 0
-						"no_jump" 0
+						"no_jump" 1
 					}
 
 					FireInput
@@ -3000,7 +3002,7 @@ WaveSchedule
 	//// WAVES ////
 
 	// General Notes
-	// Look into reducing the projectile spam of Waves 2 and 3
+	// Waves 6 and 7 perhaps a little too vulnerable to Spy?
 
 	// Wave 1 Notes
 	Wave
@@ -3229,7 +3231,6 @@ WaveSchedule
 		}
 	}
 	// Wave 2 Notes
-	// Djinn completely folds to Heavy
 	Wave
 	{
 		InitWaveOutput
@@ -3328,21 +3329,28 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 GBurst Soldier
+		WaveSpawn // 1 GBurst Soldier and 1 Charged Big-Heal Medic
 		{
 			Name "Wave2_Subwave2_GBurstSoldier"
 			WaitForAllDead "Wave2_Subwave1_Djinn"
 			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Soldier_Burst
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
 			}
 		}
 		WaveSpawn // 8 Soldiers
@@ -3381,21 +3389,28 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier
+		WaveSpawn // 1 GBurst Soldier and 1 Charged Big-Heal Medic
 		{
 			Name "Wave2_Subwave2_GBurstSoldier2"
 			WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier"
 			Where spawnbot
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Giant_Soldier_Burst
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Charged
+				}
 			}
 		}
 		WaveSpawn // 10 Soldiers
@@ -3434,14 +3449,14 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 1 GBurst Soldier and 4 Charged Big-Heal Medics
+		WaveSpawn // 1 GBurst Soldier and 2 Charged Big-Heal Medics
 		{
 			Name "Wave2_Subwave2_GBurstSoldier3"
 			WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier2"
 			Where spawnbot
-			TotalCount 5
-			MaxActive 5
-			SpawnCount 5
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
 			WaitBeforeStarting 16
 			WaitBetweenSpawns 0
 			TotalCurrency 100
@@ -3460,24 +3475,16 @@ WaveSchedule
 				{
 					Template T_TFBot_Medic_BigHeal_Charged
 				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal_Charged
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal_Charged
-				}
 			}
 		}
-		WaveSpawn // 6 Soldiers
+		WaveSpawn // 4 Soldiers
 		{
 			Name "Wave2_Subwave2_Soldiers3"
 			WaitForAllSpawned "Wave2_Subwave2_GBurstSoldier3"
 			Where spawnbot
-			TotalCount 6
-			MaxActive 6
-			SpawnCount 6
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 60
@@ -3561,14 +3568,14 @@ WaveSchedule
 				Template T_TFBot_Giant_Scout_Baseball
 			}
 		}
-		WaveSpawn // 20 Heavies
+		WaveSpawn // 15 Heavies
 		{
 			Name "Wave3_Subwave1_Heavies"
 			WaitForAllSpawned "Wave3_Subwave1_GScout"
 			Where spawnbot
-			TotalCount 20
-			MaxActive 20
-			SpawnCount 20
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 15
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 60
@@ -3693,11 +3700,6 @@ WaveSchedule
 					Class Demoman
 					Skill Normal
 				}
-				TFBot
-				{
-					Class Demoman
-					Skill Normal
-				}
 			}
 		}
 
@@ -3759,11 +3761,6 @@ WaveSchedule
 					Class Demoman
 					Skill Normal
 				}
-				TFBot
-				{
-					Class Demoman
-					Skill Normal
-				}
 			}
 		}
 
@@ -3815,11 +3812,6 @@ WaveSchedule
 			{
 				NoWaitForFormation 1 [$SIGSEGV]
 
-				TFBot
-				{
-					Class Demoman
-					Skill Normal
-				}
 				TFBot
 				{
 					Class Demoman
@@ -4146,6 +4138,22 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_GBurstDemo"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_Bowmen"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_GBurstDemo2"
+		}
+		WaveSpawn
+		{
+			Name "Wave4_EndCheck"
+			WaitForAllDead "Wave4_Subwave2_Heavies"
 		}
 
 		WaveSpawn
@@ -4161,7 +4169,6 @@ WaveSchedule
 		}
 	}
 	// Wave 5 Notes
-	// Bugged wavespawns, thoroughly check the wave
 	Wave
 	{
 		InitWaveOutput
@@ -5062,7 +5069,7 @@ WaveSchedule
 			SpawnCount 4
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 100
 
 			Squad
 			{
@@ -5118,7 +5125,7 @@ WaveSchedule
 			SpawnCount 4
 			WaitBeforeStarting 18
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 100
 
 			Squad
 			{
@@ -5176,7 +5183,7 @@ WaveSchedule
 			SpawnCount 4
 			WaitBeforeStarting 18
 			WaitBetweenSpawns 0
-			TotalCurrency 80
+			TotalCurrency 100
 
 			Squad
 			{
@@ -5208,7 +5215,7 @@ WaveSchedule
 			SpawnCount 8
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 5
-			TotalCurrency 40
+			TotalCurrency 80
 
 			Squad
 			{
@@ -5238,9 +5245,9 @@ WaveSchedule
 		// Subwave 2
 		WaveSpawn // 1 Djinn
 		{
-			Name "Wave7_Subwave1_ThreeDjinns"
+			Name "Wave7_Subwave1_TwoDjinns"
 			WaitForAllSpawned "Wave7_Subwave1_Check"
-			Where spawnbot
+			Where spawnbot_left
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -5252,32 +5259,9 @@ WaveSchedule
 
 			TFBot
 			{
-				Name "Djinn of the North"
-				Template T_TFBot_Giant_Pyro_Djinn_Heavy
-				Health 15000
-				Scale 2
-				Attributes UseBossHealthBar
-
-				Item "Sultan's Ceremonial"
-			}
-		}
-		WaveSpawn // 1 Djinn
-		{
-			Name "Wave7_Subwave1_ThreeDjinns"
-			WaitForAllSpawned "Wave7_Subwave1_Check"
-			Where spawnbot_left
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			TFBot
-			{
 				Name "Djinn of the West"
-				Template T_TFBot_Giant_Pyro_Djinn_Demo
-				Health 10000
+				Template T_TFBot_Giant_Pyro_Djinn_Heavy
+				Health 12500
 				Attributes UseBossHealthBar
 
 				Item "Sultan's Ceremonial"
@@ -5285,7 +5269,7 @@ WaveSchedule
 		}
 		WaveSpawn // 1 Djinn
 		{
-			Name "Wave7_Subwave1_ThreeDjinns"
+			Name "Wave7_Subwave1_TwoDjinns"
 			WaitForAllSpawned "Wave7_Subwave1_Check"
 			Where spawnbot_right
 			TotalCount 1
@@ -5299,27 +5283,10 @@ WaveSchedule
 			{
 				Name "Djinn of the East"
 				Template T_TFBot_Giant_Pyro_Djinn_Soldier
-				Health 10000
+				Health 12500
 				Attributes UseBossHealthBar
 
 				Item "Sultan's Ceremonial"
-			}
-		}
-		WaveSpawn
-		{
-			Name "Wave2_Subwave1_Dummy"
-			Support 1
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 9999
-			WaitBetweenSpawns 0
-			TotalCurrency 0
-
-			TFBot
-			{
-				Class Scout
-				ClassIcon demo_summoner
 			}
 		}
 		WaveSpawn
