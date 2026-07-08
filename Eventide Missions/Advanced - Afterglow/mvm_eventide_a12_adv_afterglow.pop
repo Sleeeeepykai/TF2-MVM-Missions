@@ -24,11 +24,37 @@ WaveSchedule
 
 	CustomWeapon
 	{
+		// Weapons //
+		"IgnisMageFireball"
+		{
+			OriginalItemName "TF_WEAPON_GRENADELAUNCHER"
+
+			"mod max primary clip override" -1
+			"grenade explode on impact" 1
+			"Set DamageType Ignite" 1
+			"custom item model" "models/workshop/weapons/c_models/c_rift_fire_axe/c_rift_fire_axe.mdl"
+			"custom kill icon" "firedeath"
+			"custom weapon fire sound" "misc/halloween/spell_fireball_cast.wav"
+			"custom impact sound" "misc/halloween/spell_fireball_impact.wav"
+			"custom projectile model" "models/empty.mdl"
+			"projectile trail particle" "~spell_fireball_small_red"
+			"mult projectile count" 3
+			"projectile spread angle penalty" 2
+			"projectile speed decreased" 0.65
+			"projectile gravity" -1
+		}
+		// Cosmetics //
 		"PyroArmour"
 		{
 			OriginalItemName "Potato of Labor"
 
 			"custom item model" "models/workshop/player/items/pyro/tw_pyrobot_armor/tw_pyrobot_armor.mdl"
+		}
+		"HeavyHelmet"
+		{
+			OriginalItemName "Potato of Labor"
+
+			"custom item model" "models/workshop/player/items/heavy/tw_heavybot_helmet/tw_heavybot_helmet.mdl"
 		}
 	}
 	
@@ -43,18 +69,8 @@ WaveSchedule
                 Target BigNet
                 Action RunScriptCode
                 Param "
-						::DispatchParticleEffectOn <- function(hEntity, sName)
-						{
-							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
-							local hParticle = Entities.CreateByClassname(`trigger_particle`)
-							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
-							hParticle.KeyValueFromString(`particle_name`, sName)
-							hParticle.KeyValueFromInt(`attachment_type`, 1)
-							hParticle.KeyValueFromInt(`spawnflags`, 64)
-							hParticle.DispatchSpawn()
-							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
-							hParticle.Kill()
-						}
+						IncludeScript(`tankextensions_main`, getroottable())
+						IncludeScript(`tankextensions/hammertank`, getroottable())
 					  "
             }
 		}
@@ -96,7 +112,7 @@ WaveSchedule
 		}
 		T_TFBot_Soldier_MagicMissile
 		{
-			Name "Magic Missile Soldier"
+			Name "Magic Missile Apprentice"
 			Class Soldier
 
 			Item "Point and Shoot"
@@ -112,11 +128,63 @@ WaveSchedule
 			Item "The Angel of Death"
 			Item "Emerald Jarate"
 		}
+		T_TFBot_Scout_BulletSquire
+		{
+			Name "Bullet Squire"
+			Class Scout
+
+			Item "Courtly Cuirass"
+			Item "Squire's Sabatons"
+		}
+		T_TFBot_Heavy_WolfBrawler
+		{
+			Name "Wolf-Spirit Brawler"
+			Template T_TFBot_Heavy_Heavyweight_Champ
+
+			Item "The K-9 Mane"
+			Item "Bone-Cut Belt"
+			Item "Road Block"
+		}
+		T_TFBot_Heavy_BulletBerserker
+		{
+			Name "Bullet Berserker"
+			Class Heavy
+
+			Item "HeavyHelmet" [$SIGSEGV]
+			Item "Bone-Cut Belt"
+			Item "Road Block"
+		}
+		T_TFBot_Spy_FashionableMannequin
+		{
+			Name "Fashionable Mannequin"
+			Template T_TFBot_Spy
+
+			Item "The Belgian Detective"
+			Item "Showstopper"
+		}
+		T_TFBot_Demoman_DynamiteDwarf
+		{
+			Name "Dynamite Dwarf"
+			Class Demoman
+
+			Item "The Grenadier Helm"
+			Item "The Bolted Bombardier"
+			Item "EOTL_demo_dynamite"
+		}
+		T_TFBot_Medic_QuickUber_Alchemist
+		{
+			Name "Quick-Uber Alchemist"
+			Template T_TFBot_Medic_QuickUber
+
+			Item "The Nunhood"
+			Item "The Angel of Death"
+			Item "Emerald Jarate"
+		}
 
 		// Minigiants //
 		T_TFBot_Scout_ManaBlaster
 		{
-			Name "Mana Blaster Scout"
+			Name "Mana Blaster Knight"
 			Template T_TFBot_Scout_Laser_Ricochet
 
 			Item "The Dark Falkirk Helm"
@@ -134,7 +202,7 @@ WaveSchedule
 		// Giants //
 		T_TFBot_Giant_Pyro_Warhammer
 		{
-			Name "Giant Warhammer Warrior"
+			Name "Mega Warhammer Warrior"
 			Template T_TFBot_Giant_Pyro_Homewrecker
 
 			Item "The Maul"
@@ -149,6 +217,49 @@ WaveSchedule
 				ItemName "The Special Eyes"
 
 				"item style override" 1
+			}
+		}
+
+		T_TFBot_Giant_Soldier_Barrage_MasterMagician
+		{
+			Name "Magic Missile Master Magician"
+			Template T_TFBot_Giant_Soldier_Barrage
+
+			Item "Point and Shoot"
+			Item "The All-Father"
+			Item "The Gift Bringer"
+		}
+
+		T_TFBot_Giant_Pyro_IgnisMage
+		{
+			Name "Great Ignis Mage"
+			Class Pyro
+			ClassIcon pyro_dragon_fury_spell
+			Skill Expert
+			Health 3500
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			Item "IgnisMageFireball" [$SIGSEGV]
+			Item "The Freedom Staff"
+
+			Item "The Crone's Dome"
+			Item "dec2014 Torchers Tabard"
+			Item "dec2014 Armoured Appendages"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Freedom Staff"
+
+				"is_passive_weapon" 1
 			}
 		}
 	}
@@ -167,7 +278,25 @@ WaveSchedule
 		
 		TFBot
 		{
+			Name "Witch Buster"
 			Template T_TFBot_SentryBuster
+
+			Item "The Bone Cone"
+		}
+	}
+	Mission // Spy (Wave 2)
+	{
+		Objective Spy
+		Where spawnbot_leftpath_mission_spy
+		BeginAtWave 2
+		RunForThisManyWaves 1
+		InitialCooldown 60
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Spy_FashionableMannequin
 		}
 	}
 
@@ -231,14 +360,14 @@ WaveSchedule
 		WaveSpawn // 6 Ricochet Blaster Scouts
 		{
 			Name "Wave1_Subwave1_RicochetScouts"
-			WaitForAllDead "Wave1_Subwave1_RicochetScoutsIntro"
+			WaitForAllSpawned "Wave1_Subwave1_RicochetScoutsIntro"
 			Where spawnbot_leftpath_main
 			TotalCount 6
 			MaxActive 4
 			SpawnCount 2
-			WaitBeforeStarting 0
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 8
-			TotalCurrency 60
+			TotalCurrency 40
 
 			TFBot
 			{
@@ -248,12 +377,12 @@ WaveSchedule
 		WaveSpawn // 15 Plasma Bowmen
 		{
 			Name "Wave1_Subwave1_PlasmaBowman"
-			WaitForAllDead "Wave1_Subwave1_RicochetScoutsIntro"
+			WaitForAllSpawned "Wave1_Subwave1_RicochetScoutsIntro"
 			Where spawnbot_leftpath_right
 			TotalCount 15
 			MaxActive 6
 			SpawnCount 3
-			WaitBeforeStarting 2
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 4
 			TotalCurrency 60
 
@@ -341,6 +470,608 @@ WaveSchedule
 				{
 					Template T_TFBot_Sniper_AstralBolt
 				}
+			}
+		}
+		WaveSpawn // 20 Scouts
+		{
+			Name "Wave1_Subwave2_Scouts"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro"
+			Where spawnbot_leftpath_invasion
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_BulletSquire
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GHomewrecker Pyro and 3 Plasma Bowmen
+		{
+			Name "Wave1_Subwave2_GHomewreckerPyro2"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Warhammer
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+			}
+		}
+		WaveSpawn // 2 Soldiers and 2 Big-Heal Medics
+		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro2"
+			Where spawnbot_leftpath_left
+			TotalCount 4
+			MaxActive 3
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 9
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_MagicMissile
+					Skill Hard
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+			}
+		}
+		WaveSpawn // 2 Soldiers and 2 Big-Heal Medics
+		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro2"
+			Where spawnbot_leftpath_left
+			TotalCount 4
+			MaxActive 3
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 9
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_MagicMissile
+					Skill Hard
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+			}
+		}
+		WaveSpawn // 15 Scouts
+		{
+			Name "Wave1_Subwave2_Scouts"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro"
+			Where spawnbot_leftpath_invasion
+			TotalCount 15
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_BulletSquire
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GHomewrecker Pyro and 3 Plasma Bowmen
+		{
+			Name "Wave1_Subwave2_GHomewreckerPyro3"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro2"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Warhammer
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_AstralBolt
+				}
+			}
+		}
+		WaveSpawn // 5 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers2"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro3"
+			Where spawnbot_leftpath_main
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_MagicMissile
+				Skill Easy
+			}
+		}
+		WaveSpawn // 2 Ricochet Blaster Scouts
+		{
+			Name "Wave1_Subwave2_RicochetScouts"
+			WaitForAllSpawned "Wave1_Subwave2_GHomewreckerPyro3"
+			Where spawnbot_leftpath_main
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_ManaBlaster
+			}
+		}
+	}
+	// Wave 2 Notes
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_left_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 2
+		WaveSpawn // 1 GBarrage Soldier
+		{
+			Name "Wave2_Subwave1_GBarrageSoldier"
+			Where spawnbot_leftpath_main
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Barrage_MasterMagician
+			}
+		}
+
+		WaveSpawn // 10 KGB Heavies
+		{
+			Name "Wave2_Subwave1_KGBHeavies"
+			WaitForAllSpawned "Wave2_Subwave1_GBarrageSoldier"
+			Where spawnbot_leftpath_main
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_WolfBrawler
+			}
+		}
+
+		WaveSpawn // 1 GBarrage Soldier
+		{
+			Name "Wave2_Subwave1_GBarrageSoldier2"
+			WaitForAllSpawned "Wave2_Subwave1_GBarrageSoldier"
+			Where spawnbot_leftpath_main
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Barrage_MasterMagician
+			}
+		}
+		WaveSpawn // 30 KGB Heavies
+		{
+			Name "Wave2_Subwave1_KGBHeavies2"
+			WaitForAllSpawned "Wave2_Subwave1_GBarrageSoldier2"
+			Where spawnbot_leftpath_invasion
+			TotalCount 30
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_WolfBrawler
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave2_Subwave2_Tank"
+			WaitForAllSpawned "Wave2_Subwave1_GBarrageSoldier2"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Name "tankboss_left_long"
+				Health 21000
+				Speed 75
+				StartingPathTrackNode "tank_path_leftpath_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 15 Heavies
+		{
+			Name "Wave2_Subwave2_Heavies"
+			WaitForAllSpawned "Wave2_Subwave2_Tank"
+			Where spawnbot_leftpath_main
+			TotalCount 15
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave2_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave2_Subwave2_Tank"
+			Where spawnbot_leftpath_right
+			TotalCount 10
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_MagicMissile
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GBarrage Soldier and 5 Heavies
+		{
+			Name "Wave2_Subwave2_GBarrageSoldier"
+			WaitForAllSpawned "Wave2_Subwave2_Heavies"
+			Where spawnbot_leftpath_main
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 120
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage_MasterMagician
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+					Skill Easy
+				}
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave2_Subwave2_Soldiers2"
+			WaitForAllSpawned "Wave2_Subwave2_GBarrageSoldier"
+			Where spawnbot_leftpath_right
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_MagicMissile
+				Skill Normal
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_left_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 GFireball Pyro and 3 Quick-Uber Medics
+		{
+			Name "Wave3_Subwave1_GFireballPyro"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_IgnisMage
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber_Alchemist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber_Alchemist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber_Alchemist
+				}
+			}
+		}
+
+		WaveSpawn // 1 GFireball Pyro and 3 Quick-Uber Medics
+		{
+			Name "Wave3_Subwave1_GFireballPyro2"
+			WaitForAllDead "Wave3_Subwave1_GFireballPyro"
+			Where spawnbot_leftpath_main
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_IgnisMage
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber_Alchemist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber_Alchemist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber_Alchemist
+				}
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_left_relay`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Hammer Tank
+		{
+			Name "Wave4_Subwave1_HammerTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Name "hammertank"
+				ClassIcon tank_mallet
+				Health 24000
+				Speed 75
+				StartingPathTrackNode "tank_path_rightpath_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 24 Demomen
+		{
+			Name "Wave4_Subwave1_Demomen"
+			WaitForAllSpawned "Wave4_Subwave1_HammerTank"
+			Where spawnbot_rightpath_invasion
+			RandomSpawn 1
+			TotalCount 24
+			MaxActive 16
+			SpawnCount 12
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 15
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_DynamiteDwarf
+				Skill Normal
 			}
 		}
 	}
