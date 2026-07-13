@@ -1,0 +1,83 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1600
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	//// PRECACHES ////
+
+	// Precached Models
+
+	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_classic_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+	}
+}

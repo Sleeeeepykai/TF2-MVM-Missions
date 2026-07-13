@@ -1,5 +1,73 @@
 WaveSchedule
 {
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		//// ATOMIZER SNIPER ////
+
+		PlasmaSniper_BeamPT
+		{
+			RemoveIfKilled "PlasmaAimBeam"
+
+			OnSpawnOutput
+			{
+				Target "PlasmaAimStart"
+				Action ClearParent
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "PlasmaAimEnd"
+				Action ClearParent
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "PlasmaAimBeam"
+				Action TurnOn
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "PlasmaAimBeam"
+				Action Kill
+				Delay 3.5
+			}
+
+			env_beam
+			{
+				"targetname" "PlasmaAimBeam"
+				"origin" "0 0 0"
+				"LightningStart" "PlasmaAimStart"
+				"LightningEnd" "PlasmaAimEnd"
+				"life" "0"
+				"BoltWidth" "5"
+				"TextureScroll" "-20"
+				"texture" "sprites/laserbeam.vmt"
+				"rendermode" "1"
+				"renderamt" "144"
+				"rendercolor" "192 0 255"
+			}
+			prop_dynamic
+			{
+				"targetname" "PlasmaAimStart"
+				"origin" "0 0 0"
+				"model" "models/empty.mdl"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "PlasmaAimEnd"
+				"origin" "5000 0 0"
+				"model" "models/empty.mdl"
+				"disableshadows" "1"
+			}
+		}
+	}
+
+	//// ROBOT TEMPLATES ////
+
 	Templates
 	{
 		//// SOLDIER TEMPLATES ////
@@ -100,6 +168,93 @@ WaveSchedule
 				"projectile spread angle penalty" 5
 
 				"projectile trail particle" "scorchshot_trail_crit_blue"
+			}
+		}
+
+		//// SNIPER TEMPLATES ////
+
+		T_TFBot_Giant_Sniper_Atomizer
+		{
+			Name "Giant Atomizer Sniper"
+			Class Sniper
+			ClassIcon sniper_atomic_hyper
+			Skill Expert
+			Health 3000
+			Attributes MiniBoss
+			Attributes AlwaysCrit
+			Attributes SuppressFire
+			WeaponRestrictions PrimaryOnly
+			Action Sniper
+
+			AimAt Body
+
+			UseCustomModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+			Item "Shooting Star"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.7
+				"airblast vulnerability multiplier" 0.7
+				"override footstep sound set" 5
+			}
+
+			ItemAttributes
+			{
+				ItemName "Shooting Star"
+
+				"dmg penalty vs players" 10
+				"faster reload rate" 2.5
+
+				"override projectile type" 13
+				"energy weapon penetration" 1
+				"projectile speed increased" 0.1
+				"projectile acceleration" 20000
+				"projectile acceleration start time" 2.5
+				"projectile acceleration time" 1
+
+				"projectile trail particle" "drg_pomson_projectile"
+				"particle color rgb" 16760832
+
+				"fire input on attack" "tf_gamerules^playvo^weapons/physcannon/energy_sing_explosion2.wav"
+			}
+
+			ShootTemplate
+			{
+				Name "PlasmaSniper_BeamPT"
+				AttachToProjectile 1
+				ItemName "Shooting Star"
+			}
+
+			FireWeapon
+			{
+				Type Primary
+				Delay 0.5
+				Cooldown 3
+				Duration 0.1
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $AddCond
+				Param 1
+				Delay 0.1
+				Cooldown 0.1
+				IfSeeTarget 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $RemoveCond
+				Param 1
+				Delay 2
+				Cooldown 1
+				IfNoTarget 1
 			}
 		}
 	}
