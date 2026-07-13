@@ -25,9 +25,101 @@ WaveSchedule
 
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
 
+	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_chassis.mdl"
+	PrecacheModel "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_cannon.mdl"
+
 	//// CUSTOM WEAPONS ////
 
 	//// POINT TEMPLATES ////
+
+			Core_PT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						IncludeScript(`tankextensions_main`, getroottable())
+						IncludeScript(`tankextensions/combattank`, getroottable())
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`, getroottable())
+						IncludeScript(`tankextensions/combattank_weapons/cannon`, getroottable())
+					  "
+			}
+			point_populator_interface
+			{
+				"targetname" "pop_interface"
+			}
+
+			logic_relay
+			{
+				"targetname" "TankCleanupRelay"
+
+				"OnTrigger" "tank_boss*,RemoveHealth,100000,0,-1"
+			}
+
+			// Universal Filters
+            filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
+		}
 
 	//// SPAWNED POINT TEMPLATES ////
 
@@ -51,6 +143,9 @@ WaveSchedule
 		}
 	}
 
+	// General Notes
+
+	// Wave 1 Notes
 	Wave
 	{
 		InitWaveOutput
@@ -61,6 +156,11 @@ WaveSchedule
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_CANNON_ROCKET_SPEED = 2000
+						COMBATTANK_CANNON_ROCKET_DAMAGE = 200
+					})
             	  "
         }
 		StartWaveOutput
@@ -79,5 +179,120 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 1 Mini Cannon Tank
+		{
+			Name "Wave1_Subwave1_MiniCannonTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Template Tank_Combat_Cannon_Tiny
+				Health 24000
+				StartingPathTrackNode "tank_path_a_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+
+		WaveSpawn // 40 Demoknights
+		{
+			Name "Wave1_Subwave1_Demoknights"
+			WaitForAllSpawned "Wave1_Subwave1_MiniCannonTank"
+			Where spawnbot
+			Where spawnbot_left
+			Where spawnbot_right
+			RandomSpawn 1
+			TotalCount 40
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 6 Heavies
+		{
+			Name "Wave1_Subwave1_Heavies"
+			WaitForAllSpawned "Wave1_Subwave1_MiniCannonTank"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 5
+			TotalCurrency 80
+
+			TFBot
+			{
+				Class Heavy
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 4 Shield Medics and 8 Heavies
+		{
+			Name "Wave1_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave1_Subwave1_Demoknights"
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					Action FetchFlag
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Normal
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Normal
+				}
+			}
+		}
+		WaveSpawn // 24 Demomen
+		{
+			Name "Wave1_Subwave1_Demomen"
+			WaitForAllSpawned "Wave1_Subwave1_Demoknights"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 24
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Demoman
+				Skill Easy
+			}
+		}
 	}
 }
