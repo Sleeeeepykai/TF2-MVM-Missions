@@ -245,6 +245,14 @@ WaveSchedule
 			Item "The Bolted Bombardier"
 			Item "EOTL_demo_dynamite"
 		}
+		T_TFBot_Pyro_IgnisAcolyte
+		{
+			Name "Ignis Acolyte"
+			Class Pyro
+
+			Item "dec2014 2014_pyromancer_hood"
+			Item "dec2014 Torchers Tabard"
+		}
 
 		// Minigiants //
 		T_TFBot_Scout_ManaBlaster
@@ -323,6 +331,17 @@ WaveSchedule
 			Item "The Bolted Bombardier"
 			Item "EOTL_demo_dynamite"
 		}
+		T_TFBot_Giant_Soldier_Burst_ClusterMissile
+		{
+			Name "Magic Cluster Missile Wizard"
+			Template T_TFBot_Giant_Soldier_Burst
+
+			Item "Point and Shoot"
+			Item "The All-Father"
+			Item "The Gift Bringer"
+
+			UseHumanAnimations 1
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -345,12 +364,45 @@ WaveSchedule
 			Item "The Bone Cone"
 		}
 	}
+	Mission // Sentry Buster (Waves 4-6)
+	{
+		Objective DestroySentries
+		Where spawnbot_rightpath_mission_sentrybuster
+		BeginAtWave 4
+		RunForThisManyWaves 3
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Name "Witch Buster"
+			Template T_TFBot_SentryBuster
+
+			Item "The Bone Cone"
+		}
+	}
 	Mission // Spy (Wave 2)
 	{
 		Objective Spy
 		Where spawnbot_leftpath_mission_spy
 		BeginAtWave 2
 		RunForThisManyWaves 1
+		InitialCooldown 60
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Spy_LivingMannequin
+		}
+	}
+	Mission // Spy (Wave 4-5)
+	{
+		Objective Spy
+		Where spawnbot_rightpath_mission_spy
+		BeginAtWave 4
+		RunForThisManyWaves 2
 		InitialCooldown 60
 		CooldownTime 30
 		DesiredCount 2
@@ -1299,6 +1351,238 @@ WaveSchedule
 			{
 				Template T_TFBot_Demoman_DynamiteDwarf
 				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier
+		{
+			Name "Wave4_Subwave1_GBurstSoldier"
+			WaitForAllSpawned "Wave4_Subwave1_HammerTank"
+			Where spawnbot_rightpath_main
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_ClusterMissile
+			}
+		}
+		WaveSpawn // 4 Heavies and 4 Big-Heal Medics
+		{
+			Name "Wave4_Subwave1_Heavies"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier"
+			Where spawnbot_rightpath_invasion
+			TotalCount 8
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+			}
+		}
+		WaveSpawn // 10 Pyros
+		{
+			Name "Wave4_Subwave1_Pyros"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier"
+			Where spawnbot_rightpath_main
+			TotalCount 10
+			MaxActive 8
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+					Skill Expert
+					Attributes AlwaysFireWeapon
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier
+		{
+			Name "Wave4_Subwave1_GBurstSoldier2"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier"
+			Where spawnbot_rightpath_main
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 22
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_ClusterMissile
+			}
+		}
+		WaveSpawn // 4 Heavies and 4 Big-Heal Medics
+		{
+			Name "Wave4_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier2"
+			Where spawnbot_rightpath_invasion
+			TotalCount 8
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+			}
+		}
+		WaveSpawn // 10 Pyros
+		{
+			Name "Wave4_Subwave1_Pyros2"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier2"
+			Where spawnbot_rightpath_main
+			TotalCount 10
+			MaxActive 8
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+					Skill Expert
+					Attributes AlwaysFireWeapon
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_IgnisAcolyte
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier, 2 Big-Heal Medics and 3 Heavies
+		{
+			Name "Wave4_Subwave1_GBurstSoldier3"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier2"
+			Where spawnbot_rightpath_main
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 22
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst_ClusterMissile
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal_Alchemist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_BulletBerserker
+				}
+			}
+		}
+		WaveSpawn // 10 Pyros
+		{
+			Name "Wave4_Subwave1_Pyros3"
+			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier3"
+			Where spawnbot_rightpath_main
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_IgnisAcolyte
 			}
 		}
 	}
