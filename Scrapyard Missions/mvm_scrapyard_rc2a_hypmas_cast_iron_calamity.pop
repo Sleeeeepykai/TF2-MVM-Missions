@@ -205,6 +205,25 @@ WaveSchedule
 
 	//// ROBOT TEMPLATES ////
 
+	Templates
+	{
+		T_TFBot_Heavy_Reinforced
+		{
+			Name "Reinforced Heavy"
+			Class Heavy
+			ClassIcon heavy_armored
+			Skill Expert
+			Health 600
+			Scale 1.5
+
+			CharacterAttributes
+			{
+				"dmg from ranged reduced" 0.75
+				"dmg from melee increased" 0.75
+			}
+		}
+	}
+
 	//// MISSION BOTS ////
 
 	Mission // Sentry Buster
@@ -304,7 +323,6 @@ WaveSchedule
 		{
 			Name "Wave1_Subwave1_Demoknights"
 			WaitForAllSpawned "Wave1_Subwave1_CannonTank"
-			Where spawnbot
 			Where spawnbot_left
 			Where spawnbot_right
 			RandomSpawn 1
@@ -321,73 +339,28 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 6 Heavies
+		WaveSpawn // 6 Reinforced Heavies and 6 Uber Medics
 		{
-			Name "Wave1_Subwave1_Heavies"
+			Name "Wave1_Subwave1_ReinforcedHeavies"
 			WaitForAllSpawned "Wave1_Subwave1_CannonTank"
-			Where spawnbot
-			TotalCount 6
-			MaxActive 3
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 5
-			TotalCurrency 80
-
-			TFBot
-			{
-				Class Heavy
-				Skill Normal
-			}
-		}
-
-		WaveSpawn // 4 Shield Medics and 8 Heavies
-		{
-			Name "Wave1_Subwave1_Heavies2"
-			WaitForAllSpawned "Wave1_Subwave1_Demoknights"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 6
-			SpawnCount 3
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 8
-			TotalCurrency 100
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 5
+			TotalCurrency 80
 
 			Squad
 			{
 				TFBot
 				{
-					Template T_TFBot_Medic_Shield
-					Action FetchFlag
+					Template T_TFBot_Heavy_Reinforced
 				}
 				TFBot
 				{
-					Class Heavy
-					Skill Normal
+					Template T_TFBot_Medic_Uber
 				}
-				TFBot
-				{
-					Class Heavy
-					Skill Normal
-				}
-			}
-		}
-		WaveSpawn // 24 Demomen
-		{
-			Name "Wave1_Subwave1_Demomen"
-			WaitForAllSpawned "Wave1_Subwave1_Demoknights"
-			Where spawnbot_left
-			Where spawnbot_right
-			TotalCount 24
-			MaxActive 12
-			SpawnCount 6
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 8
-			TotalCurrency 100
-
-			TFBot
-			{
-				Class Demoman
-				Skill Easy
 			}
 		}
 
@@ -1457,10 +1430,12 @@ WaveSchedule
 					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
 
 					TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 135
 						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.5
 						COMBATTANK_ROCKETPOD_RELOAD_DELAY = 0.5
-						COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
-						COMBATTANK_ROCKETPOD_HOMING_DURATION = 1
+						COMBATTANK_ROCKETPOD_HOMING_SPEED_MULT = 1
+						COMBATTANK_ROCKETPOD_HOMING_DURATION = 2
+						COMBATTANK_ROCKETPOD_PARTICLE_TRAIL_HOMING = `scorchshot_trail_crit_blue`
 					})
             	  "
         }
