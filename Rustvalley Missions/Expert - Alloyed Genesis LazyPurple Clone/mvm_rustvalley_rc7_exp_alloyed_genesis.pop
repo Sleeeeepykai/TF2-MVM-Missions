@@ -82,7 +82,7 @@ WaveSchedule
     PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
     PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
     PrecacheModel "models/weapons/w_models/w_atomball_blu.mdl"
-    PrecacheModel "models/megalaser_beam_v2.mdl"
+    PrecacheModel "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
 
     LuaScriptFile "scripts/shockwave_shields.lua" //
 
@@ -393,8 +393,8 @@ WaveSchedule
                 "Set DamageType Ignite" 1
                 "custom item model" "models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"
                 "custom kill icon" "firedeath"
-                "custom weapon fire sound" "=70|misc/halloween/spell_fireball_cast.wav"
-                "custom impact sound" "=70|misc/halloween/spell_fireball_impact.wav"
+                "custom weapon fire sound" "=75|misc/halloween/spell_fireball_cast.wav"
+                "custom impact sound" "=75|misc/halloween/spell_fireball_impact.wav"
                 "custom projectile model" "models/empty.mdl"
                 "projectile trail particle" "~spell_fireball_small_red"
                 "projectile speed decreased" 0.65
@@ -475,8 +475,6 @@ WaveSchedule
                    
                     CharacterAttributes
                     {
-                        "dmg from ranged reduced" 0.25
-                        "dmg from melee increased" 0.25
                         "attach particle effect"	3044
                         "not solid to players" 1
                         "ignored by enemy sentries" 1
@@ -484,6 +482,7 @@ WaveSchedule
                         //"blast dmg to self increased" 0
                         "self dmg push force decreased" 0.001
                         "move speed bonus" 0.7
+                        "Health regen" 15
                         "hand scale" 0
                         "add cond when active" 7680
                         "cancel falling damage" 1
@@ -505,6 +504,7 @@ WaveSchedule
                     Item "TF_WEAPON_GRENADELAUNCHER"
                     ItemAttributes
                     {
+                        "add cond when active" 79
                         
                         "mult stun resistance" 0.2
                         "projectile gravity" 6969
@@ -540,7 +540,7 @@ WaveSchedule
                         Delay 0
                         Repeats 1
                     }
-                    FireInput //shake
+                   FireInput //shake
                     {
                         Target "!self"
                         Action "runscriptcode"
@@ -620,12 +620,11 @@ WaveSchedule
                         "centerfire projectile" 1
                         "custom projectile model" "models/empty.mdl"
                     } 
-               
+            
+                    
                     Attributes AlwaysFireWeapon
                     CharacterAttributes
                     {
-                        "dmg from ranged reduced" 1
-                        "dmg from melee increased" 1
                         "ignored by enemy sentries" 0
                         "move speed bonus" 0.4
                         "hand scale" 1.1
@@ -3049,8 +3048,6 @@ WaveSchedule
                 "targetname" "makesurethesebitchesunlock"
                 "OnTrigger"  "cap_b_trigtimer,addoutput,OnCapTeam1 tothenextpointgo:trigger::0:-1,0,-1"
                 "OnTrigger"  "cap_a_trigtimer,addoutput,OnCapTeam1 tothenextpointgo2:trigger::0:-1,0,-1"
-                "OnTrigger"  "cap_b_trigtimer,$setkey$area_time_to_cap,38,0,-1"
-                "OnTrigger"  "cap_a_trigtimer,$setkey$area_time_to_cap,38,0,-1"
             }
             logic_relay
             {
@@ -3065,14 +3062,12 @@ WaveSchedule
                 "OnTrigger"  "destruction_fence_2,setanimation,deathpit_sink,29,1"
                 "OnTrigger"  "tf_gamerules,PlayVo,mvm\mvm_tank_smash.wav,26,1"
                 "OnTrigger"  "playerrunscriptcodeScreenShake(self.GetOrigin(), 5, 8, 1, 50000, 0, true)261"
-                "OnTrigger"  "cap_a_trigtimer,$setkey$area_time_to_cap,10,0,1"
                 "OnTrigger"  "pathblocker_a*,kill,,26,1"
             }
             logic_relay
             {
                 "targetname" "tothenextpointgo"
                 "OnTrigger"  "cap_a_trigtimer,SetTeamCanCap,2 1,0,1"
-                "OnTrigger"  "cap_b_trigtimer,$setkey$area_time_to_cap,10,0,1"
                 "OnTrigger"  "pathblocker_a,enable,,0,1"
                 "OnTrigger"  "cap_a_trigtimerRunScriptCodeNetProps.SetPropEntity(self,`m_hFilter`,Entities.FindByName(null, `capture_filter`))01"
                 "OnTrigger"  "cap_a,input,setlocked,0,1"
@@ -3095,11 +3090,19 @@ WaveSchedule
                 "OnTrigger"  "cap_b_trigtimerRunScriptCodeNetProps.SetPropEntity(self,`m_hFilter`,Entities.FindByName(null, `capture_filter`))0-1"
                 "OnTrigger"  "cap_b,input,setlocked,0,-1"
                 "OnTrigger"  "timeforatwist,show,,3,-1"
+                "OnTrigger"  "timeforatwist1,show,,13,-1"
             }
             training_annotation
             {
                 "targetname"   "timeforatwist"
                 "display_text" "It's time to fight back! Capture the gates back!"
+                "lifetime"     "10"
+                "origin"       "-1256 2445 -76"
+            }
+            training_annotation
+            {
+                "targetname"   "timeforatwist1"
+                "display_text" "Defend them! Wave loss will trigger if all gates are lost!"
                 "lifetime"     "10"
                 "origin"       "-1256 2445 -76"
             }
@@ -3208,6 +3211,7 @@ WaveSchedule
                 "OnTrigger"  "door_alarm_light2,TurnOff,,0,-1"
                 "OnTrigger"  "nav_interface,recomputeblockers,,0,-1"
                 "OnTrigger"  "nav_interface,recomputeblockers,,2,-1"
+                "OnTrigger"  "cap_b_trigtimer,AddOutput,OnCapTeam2 RedLoseRelay:Trigger::0:-1,0,-1"
             }
             logic_relay
             {
@@ -3291,7 +3295,7 @@ WaveSchedule
             {
                 "targetname" "1fence_destruction"
                 "model"      "models/props_mvm/wood_boards_deathpit.mdl"
-                "origin"     "-1302 1130 -268"
+                "origin"     "-1302 1130 -168"
                 "modelscale" "2"
                 "disableshadows" "1"
                 "startdisabled" "1"
@@ -3482,7 +3486,7 @@ WaveSchedule
                 "fadeInDuration" 0
                 "fadeOutDuration" 5
                 "filename" "materials/colorcorrection/rustvalleynight2.raw"
-                "maxweight" "0.7"
+                "maxweight" "0.5"
                 
             }
             prop_dynamic
@@ -4402,6 +4406,14 @@ WaveSchedule
                 Param "@p@alloyedgenesis"
                 Delay 0.1
             }
+            OnSpawnOutput
+            {
+                Target "cap_b_trigtimer"
+                Action "AddOutput"
+                Param "OnCapTeam2 RedLoseRelay:Trigger::0:-1"
+                Delay -1
+                Repeats 1
+            }
 
             logic_relay
             {
@@ -4490,8 +4502,12 @@ WaveSchedule
                 "OnTrigger" "player*,$RemoveCond,125,,0,-1"
 
                 "OnTrigger" "hecloned,CancelPending,,0,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,for_john_baseball,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,for_john_baseball,0,-1"
                 "OnTrigger" "pop_interface,$KillWaveSpawn,for_spytosis,0,-1"
                 "OnTrigger" "pop_interface,$PauseWaveSpawn,for_spytosis,0,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,IMRUSHINGITRAHHHH,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,IMRUSHINGITRAHHHH,0,-1"
 
                 "OnTrigger" "gethimoutoftheloop,CancelPending,,0,-1"
 
@@ -4551,6 +4567,10 @@ WaveSchedule
                 "OnTrigger" "hecloned_scout,CancelPending,,0,-1"
                 "OnTrigger" "pop_interface,$KillWaveSpawn,for_john_baseball,0,-1"
                 "OnTrigger" "pop_interface,$PauseWaveSpawn,for_john_baseball,0,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,for_spytosis,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,for_spytosis,0,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,IMRUSHINGITRAHHHH,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,IMRUSHINGITRAHHHH,0,-1"
 
                 "OnTrigger" "sectoniaattackgooo,CancelPending,,0,-1"
                 "OnTrigger" "player,SetFogController,normal_nonfog,0,-1"
@@ -5198,7 +5218,7 @@ WaveSchedule
 
                 "origin" "120 0 120"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "1.8"
                 "solid" "0"
 
@@ -5249,7 +5269,7 @@ WaveSchedule
                 "parentname" "spintheselasersthanks"
                 "origin" "-400 0 250"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.35"
                 "solid" "0"
                 "angles" "90 0 0"
@@ -5287,7 +5307,7 @@ WaveSchedule
                 "parentname" "spintheselasersthanks"
                 "origin" "400 0 250"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.35"
                 "solid" "0"
                 "angles" "90 0 0"
@@ -5325,7 +5345,7 @@ WaveSchedule
                 "parentname" "spintheselasersthanks"
                 "origin" "0 400 250"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.35"
                 "solid" "0"
                 "angles" "90 0 0"
@@ -5363,7 +5383,7 @@ WaveSchedule
                 "parentname" "spintheselasersthanks"
                 "origin" "0 -400 250"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.35"
                 "solid" "0"
                 "angles" "90 0 0"
@@ -6250,6 +6270,8 @@ WaveSchedule
                 "OnTrigger" "TeamWipeLoseHintTimer,Disable,,7,-1"
                 "OnTrigger" "pop_interface,$KillWaveSpawn,thebobcarriers,7,-1"
                 "OnTrigger" "pop_interface,$PauseWaveSpawn,thebobcarriers,7,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,IMRUSHINGITRAHHHH,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,IMRUSHINGITRAHHHH,0,-1"
                 "OnTrigger" "intel_classic,ForceReset,,7,-1"
                 "OnTrigger" "thisbossneedsahero,Disable,,7,-1"
                 "OnTrigger" "RedLoseRelay,Disable,,7,-1"
@@ -6322,7 +6344,7 @@ WaveSchedule
                 "OnTrigger" "pop_interface,$ResumeWaveSpawn,IMRUSHINGITRAHHHH,0.1,-1"
                 "OnTrigger" "thisbossneedsahero,Enable,,0,-1"
                 "OnTrigger" "intel_classic,ForceReset,,0,-1"
-                "OnTrigger" "RedLoseRelay,Disable,,0,-1"
+                "OnTrigger" "RedLoseRelay,Enable,,0,-1"
             }
             logic_timer
             {
@@ -6379,7 +6401,18 @@ WaveSchedule
         }
         dumbassrobloxobby
         {
-            
+            OnSpawnOutput
+            {
+                Target "goupanddownfuckface"
+                Action Trigger
+                Delay 0
+            }
+            logic_relay
+            {
+                "targetname" "goupanddownfuckface"
+                "OnTrigger"  "ObstacleCourseLaserFINALRunScriptCodelocal o=self.GetOrigin(),i=RandomFloat(0,PI);function BobbingVFXThink(){self.SetAbsOrigin(o+Vector(0,0,sin(Time()*2+i)*128));return-1}AddThinkToEnt(self,`BobbingVFXThink`)0.1-1"
+                "OnTrigger"  "ObstacleCourseDamageTriggerFINALRunScriptCodelocal p=self.GetOrigin(),i=RandomFloat(0,PI);function BobbingVFXThink(){self.SetAbsOrigin(p+Vector(0,0,sin(Time()*2+i)*128));return-1}AddThinkToEnt(self,`BobbingVFXThink`)0.1-1"
+            }
             prop_dynamic
             {
                 "targetname" "ObstacleCourseLaser"
@@ -6387,7 +6420,7 @@ WaveSchedule
                 "origin" "-3872 512 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6419,7 +6452,7 @@ WaveSchedule
                 "origin" "-3520 768 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6451,7 +6484,7 @@ WaveSchedule
                 "origin" "-2944 640 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6480,10 +6513,42 @@ WaveSchedule
             {
                 "targetname" "ObstacleCourseLaser"
 
+                "origin" "-2612 1042 572"
+                "angles" "90 0 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "modelscale" "0.5"
+                "solid" "0"
+
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            trigger_hurt
+            {
+                "targetname" "ObstacleCourseDamageTrigger"
+
+				"origin" "-2612 1042 572"
+                
+				"mins" "-64 -64 -996"
+                "maxs" "64 64 996"
+
+                "damagetype" "1048576"
+                "damage" "333"
+                "filtername" "filter_is_red_not_ubered"
+                "spawnflags" "64"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "ObstacleCourseLaser"
+
                 "origin" "-3008 1152 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6508,46 +6573,26 @@ WaveSchedule
                 "startdisabled" "1"
             }
 
-            prop_dynamic
+            // Doom Spinner #1
+
+            func_rotating
             {
-                "targetname" "ObstacleCourseLaser"
-
-                "origin" "-2528 532 -288"
-                "angles" "0 90 0"
-
-                "model" "models/megalaser_beam_v2.mdl"
-                "modelscale" "0.5"
-                "solid" "0"
-
-                "disablebonefollowers" "1"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-            trigger_hurt
-            {
-                "targetname" "ObstacleCourseDamageTrigger"
-
-				"origin" "-2528 1792 -288"
-                
-				"mins" "-64 -996 -64"
-                "maxs" "64 996 64"
-
-                "damagetype" "1048576"
-                "damage" "333"
-                "filtername" "filter_is_red_not_ubered"
-                "spawnflags" "64"
-                "disableshadows" "1"
-                "startdisabled" "1"
+                "targetname" "ObstacleCourseDoomSpinner1"
+                "origin" "-1424 1884 572"
+                "maxspeed" "55"
+                "spawnflags" "81"
+                "fanfriction" "50"
             }
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner1"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-                "origin" "-2048 1760 572"
+                "origin" "-1784 1884 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6557,9 +6602,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner1DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-				"origin" "-2048 1760 572"
+				"origin" "-1784 1884 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6574,12 +6620,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner1"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-                "origin" "-1824 1984 572"
+                "origin" "-1424 2244 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6589,9 +6636,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner1DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-				"origin" "-1824 1984 572"
+				"origin" "-1424 2244 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6606,12 +6654,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner1"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-                "origin" "-1504 1664 572"
+                "origin" "-1064 1884 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6621,9 +6670,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner1DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-				"origin" "-1504 1664 572"
+				"origin" "-1064 1884 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6638,12 +6688,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner1"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-                "origin" "-1152 1600 572"
+                "origin" "-1424 1524 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6653,9 +6704,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner1DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner1"
 
-				"origin" "-1152 1600 572"
+				"origin" "-1424 1524 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6668,14 +6720,16 @@ WaveSchedule
                 "startdisabled" "1"
             }
 
+            // The Rest
+
             prop_dynamic
             {
                 "targetname" "ObstacleCourseLaser"
 
-                "origin" "-2558 1216 -120"
+                "origin" "-1820 1216 -120"
                 "angles" "0 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6687,7 +6741,7 @@ WaveSchedule
             {
                 "targetname" "ObstacleCourseDamageTrigger"
 
-				"origin" "-796 1216 -120"
+				"origin" "-1350 1216 -120"
                 
 				"mins" "-996 -64 -64"
                 "maxs" "996 64 64"
@@ -6704,10 +6758,10 @@ WaveSchedule
             {
                 "targetname" "ObstacleCourseLaser"
 
-                "origin" "-2558 1216 0"
+                "origin" "-1820 1216 0"
                 "angles" "0 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6719,7 +6773,7 @@ WaveSchedule
             {
                 "targetname" "ObstacleCourseDamageTrigger"
 
-				"origin" "-796 1216 0"
+				"origin" "-1350 1216 0"
                 
 				"mins" "-996 -64 -64"
                 "maxs" "996 64 64"
@@ -6739,7 +6793,7 @@ WaveSchedule
                 "origin" "-896 992 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6771,7 +6825,7 @@ WaveSchedule
                 "origin" "-1088 704 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6803,7 +6857,7 @@ WaveSchedule
                 "origin" "-1376 416 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6828,15 +6882,27 @@ WaveSchedule
                 "startdisabled" "1"
             }
 
+            // Doom Spinner #2
+
+            func_rotating
+            {
+                "targetname" "ObstacleCourseDoomSpinner2"
+                "origin" "-296 194 572"
+                "maxspeed" "55"
+                "spawnflags" "83"
+                "fanfriction" "50"
+            }
+
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-832 224 572"
+                "origin" "-296 194 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
-                "modelscale" "0.5"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "modelscale" "1"
                 "solid" "0"
 
                 "disablebonefollowers" "1"
@@ -6845,9 +6911,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-832 224 572"
+				"origin" "-296 194 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6862,12 +6929,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-544 576 572"
+                "origin" "-296 672 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6877,9 +6945,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-448 576 572"
+				"origin" "-296 672 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6894,12 +6963,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-544 288 572"
+                "origin" "120 432 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6909,9 +6979,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-448 288 572"
+				"origin" "120 432 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6926,12 +6997,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-544 0 572"
+                "origin" "120 -44 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6941,9 +7013,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-448 0 572"
+				"origin" "120 -4 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6958,12 +7031,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-192 -288 572"
+                "origin" "-296 -284 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -6973,9 +7047,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-192 -288 572"
+				"origin" "-296 -284 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -6990,12 +7065,13 @@ WaveSchedule
 
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-280 128 572"
+                "origin" "-712 -44 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -7005,9 +7081,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-224 128 572"
+				"origin" "-712 -44 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -7019,15 +7096,16 @@ WaveSchedule
                 "disableshadows" "1"
                 "startdisabled" "1"
             }
-
+            
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserSpinner2"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-                "origin" "-280 448 572"
+                "origin" "-712 432 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -7037,9 +7115,10 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseSpinner2DamageTrigger"
+                "parentname" "ObstacleCourseDoomSpinner2"
 
-				"origin" "-224 448 572"
+				"origin" "-712 432 572"
                 
 				"mins" "-64 -64 -996"
                 "maxs" "64 64 996"
@@ -7052,101 +7131,7 @@ WaveSchedule
                 "startdisabled" "1"
             }
 
-            prop_dynamic
-            {
-                "targetname" "ObstacleCourseLaser"
-
-                "origin" "-192 736 572"
-                "angles" "90 0 0"
-
-                "model" "models/megalaser_beam_v2.mdl"
-                "modelscale" "0.5"
-                "solid" "0"
-
-                "disablebonefollowers" "1"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-            trigger_hurt
-            {
-                "targetname" "ObstacleCourseDamageTrigger"
-
-				"origin" "-192 736 572"
-                
-				"mins" "-64 -64 -996"
-                "maxs" "64 64 996"
-
-                "damagetype" "1048576"
-                "damage" "333"
-                "filtername" "filter_is_red_not_ubered"
-                "spawnflags" "64"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-
-            prop_dynamic
-            {
-                "targetname" "ObstacleCourseLaser"
-
-                "origin" "0 0 572"
-                "angles" "90 0 0"
-
-                "model" "models/megalaser_beam_v2.mdl"
-                "modelscale" "0.5"
-                "solid" "0"
-
-                "disablebonefollowers" "1"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-            trigger_hurt
-            {
-                "targetname" "ObstacleCourseDamageTrigger"
-
-				"origin" "0 0 572"
-                
-				"mins" "-64 -64 -996"
-                "maxs" "64 64 996"
-
-                "damagetype" "1048576"
-                "damage" "333"
-                "filtername" "filter_is_red_not_ubered"
-                "spawnflags" "64"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-
-            prop_dynamic
-            {
-                "targetname" "ObstacleCourseLaser"
-
-                "origin" "0 288 572"
-                "angles" "90 0 0"
-
-                "model" "models/megalaser_beam_v2.mdl"
-                "modelscale" "0.5"
-                "solid" "0"
-
-                "disablebonefollowers" "1"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-            trigger_hurt
-            {
-                "targetname" "ObstacleCourseDamageTrigger"
-
-				"origin" "0 288 572"
-                
-				"mins" "-64 -64 -996"
-                "maxs" "64 64 996"
-
-                "damagetype" "1048576"
-                "damage" "333"
-                "filtername" "filter_is_red_not_ubered"
-                "spawnflags" "64"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
+            // The Rest
 
             prop_dynamic
             {
@@ -7155,7 +7140,7 @@ WaveSchedule
                 "origin" "160 576 572"
                 "angles" "90 0 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -7180,14 +7165,16 @@ WaveSchedule
                 "startdisabled" "1"
             }
 
+            // THE FINAL CHALLENGE
+
             prop_dynamic
             {
-                "targetname" "ObstacleCourseLaser"
+                "targetname" "ObstacleCourseLaserFINAL"
 
-                "origin" "256 372 -168"
+                "origin" "480 400 64"
                 "angles" "0 270 0"
 
-                "model" "models/megalaser_beam_v2.mdl"
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "modelscale" "0.5"
                 "solid" "0"
 
@@ -7197,41 +7184,9 @@ WaveSchedule
             }
             trigger_hurt
             {
-                "targetname" "ObstacleCourseDamageTrigger"
+                "targetname" "ObstacleCourseDamageTriggerFINAL"
 
-				"origin" "256 124 -168"
-                
-				"mins" "-64 -996 -64"
-                "maxs" "64 996 64"
-
-                "damagetype" "1048576"
-                "damage" "333"
-                "filtername" "filter_is_red_not_ubered"
-                "spawnflags" "64"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-
-            prop_dynamic
-            {
-                "targetname" "ObstacleCourseLaser"
-
-                "origin" "480 372 64"
-                "angles" "0 270 0"
-
-                "model" "models/megalaser_beam_v2.mdl"
-                "modelscale" "0.5"
-                "solid" "0"
-
-                "disablebonefollowers" "1"
-                "disableshadows" "1"
-                "startdisabled" "1"
-            }
-            trigger_hurt
-            {
-                "targetname" "ObstacleCourseDamageTrigger"
-
-				"origin" "480 124 64"
+				"origin" "480 400 64"
                 
 				"mins" "-64 -996 -64"
                 "maxs" "64 996 64"
@@ -8521,37 +8476,65 @@ WaveSchedule
         WaveSpawn
         {
             Name "w2ba"
-            WaitForAllDead "w2a"
+            WaitForAllSpawned "w2a"
             Where spawnbot_boss0
             Where spawnbot_main1
-            TotalCount 26
-            MaxActive 12
+            TotalCount 12
+            MaxActive 6
             SpawnCount 3
-            WaitBeforeStarting 0
-            WaitBetweenSpawns 8.2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 9
         
             TotalCurrency 150
             TFBot
             {
-                Template T_TFBot_Scout_Shortstop
-                Skill Normal
-                AimTrackingInterval 0.5
+                Class Heavy
+                Name "Multi Utility Heavy"
+                ClassIcon heavy
+                Skill Hard
+                //Weapons
+                ItemAttributes
+                {
+                    ItemName "Tf_weapon_minigun"
+                    "mod minigun can holster while spinning" 1
+                }
+                Item "Gloves of Running Urgently MvM"
+
+                //Cosmetics
+                Item "Big Steel Jaw of Summer Fun"
+                Item "Pugilist's Protector"
+
+                //Rafmod
+                WeaponSwitch
+                {
+                    Delay 0
+                    Cooldown 0
+                    IfSeeTarget 1
+                    Type "Primary"
+                }
+                WeaponSwitch
+                {
+                    Delay 0
+                    Cooldown 1
+                    IfSeeTarget 0
+                    Type "Melee"
+                }
             }
             
         }
         WaveSpawn
         {
             Name "w2b"
-            WaitForAllDead "w2aa"
+            WaitForAllSpawned "w2aa"
             Where spawnbot_boss0
             Where spawnbot_right0
             Where spawnbot_left0
             Where spawnbot_main1
             TotalCount 12
-            MaxActive 9
+            MaxActive 7
             SpawnCount 3
             WaitBeforeStarting 0
-            WaitBetweenSpawns 22
+            WaitBetweenSpawns 25
         
             TotalCurrency 150
             Squad
@@ -8604,13 +8587,13 @@ WaveSchedule
         WaveSpawn
         {
             Name "w2ba"
-            WaitForAllDead "w2a"
+            WaitForAllSpawned "w2aa"
             Where spawnbot_right0
             Where spawnbot_main1
-            TotalCount 32
-            MaxActive 9
+            TotalCount 16
+            MaxActive 6
             SpawnCount 3
-            WaitBeforeStarting 0
+            WaitBeforeStarting 50
             WaitBetweenSpawns 6
         
             TotalCurrency 200
@@ -8659,126 +8642,55 @@ WaveSchedule
         WaveSpawn
         {
             Name "w2ca"
-            WaitForAllSpawned "w2ba"
+            WaitForAllSpawned "w2c"
             Where spawnbot_scattered0
             Where spawnbot_main_slow1
-            TotalCount 36
-            MaxActive 16
-            SpawnCount 4
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 6
-        
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 5
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 30
             TotalCurrency 200
-            Squad
-            {
-                TFBot
-                { 
-                    Class Heavy
-                    Name "Multi Utility Heavy"
-                    ClassIcon heavy
-                    Skill Hard
-                    //Weapons
-                    ItemAttributes
-                    {
-                        ItemName "Tf_weapon_minigun"
-                        "mod minigun can holster while spinning" 1
-                    }
-                    Item "Gloves of Running Urgently MvM"
-
-                    //Cosmetics
-                    Item "Big Steel Jaw of Summer Fun"
-                    Item "Pugilist's Protector"
-
-                    //Rafmod
-                    WeaponSwitch
-                    {
-                        Delay 0
-                        Cooldown 0
-                        IfSeeTarget 1
-                        Type "Primary"
-                    }
-                    WeaponSwitch
-                    {
-                        Delay 0
-                        Cooldown 1
-                        IfSeeTarget 0
-                        Type "Melee"
-                    }
-                }
-                TFBot
-                {
-                    Template T_TFBot_Medic_BigHeal
-                }
+        
+            TFBot
+            { 
+                Template T_TFBot_Demoman_Samurai
             }
         }
         WaveSpawn
         {
-            Name "w2c"
-            WaitForAllSpawned "w2ba"
+            Name "w2ca"
+            WaitForAllSpawned "w2c"
             Where spawnbot_left0
             Where spawnbot_right0
             Where spawnbot_main_slow1
-            TotalCount 4
-            MaxActive 3
+            TotalCount 20
+            MaxActive 7
             SpawnCount 1
-            WaitBeforeStarting 15
-            WaitBetweenSpawns 16
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2.5
         
-            TotalCurrency 200
+            TotalCurrency 50
+        
             TFBot
-            {
-                ClassIcon	demo_nuker_giant
-                Health	4000
-                Name	"Giant Nuker Demo"
-                Scale	1.75
-                Class	Demoman
-                Skill	Easy
-                WeaponRestrictions	PrimaryOnly
-                Attributes	"MiniBoss"
-                Attributes	"HoldFireUntilFullReload"
-                Attributes	"AlwaysFireWeapon"
-                Attributes	"AlwaysCrit"
-                Tag bot_giant
-                ItemAttributes
-                {
-                    ItemName	tf_weapon_grenadelauncher
-                    "grenade launcher mortar mode"	0
-                    "faster reload rate"	2
-                    "fire rate bonus"	2
-                    "clip size penalty"	0.5
-                    "Projectile speed increased"	0.8
-                    "projectile spread angle penalty"	5
-                    "damage bonus"	7
-                    "damage causes airblast"	1
-                    "blast radius increased"	1.5
-                    "use large smoke explosion"	1
-                    "custom projectile model" "models/weapons/w_models/w_atomball_blu.mdl"
-                    "custom impact sound" "doomsday.launch_exp"
-                }
-                CharacterAttributes
-                {
-                    "move speed bonus"	0.5
-                    "damage force reduction"	0.4
-                    "airblast vulnerability multiplier"	0.4
-                    "override footstep sound set"	4
-                    "mult projectile scale" 1.5
-                }
-                Item	"scotch bonnet"
+            { 
+                Template T_TFBot_Soldier_Extended_Concheror
             }
         }
         WaveSpawn
         {
-            Name "w2d"
-            WaitForAllDead "w2c"
-            Where spawnbot_boss0
-            Where spawnbot_main1
+            Name "w2ca"
+            WaitForAllSpawned "w2c"
+            Where spawnbot_left0
+            Where spawnbot_right0
+            Where spawnbot_main_slow1
             TotalCount 2
             MaxActive 2
             SpawnCount 1
             WaitBeforeStarting 0
             WaitBetweenSpawns 25
         
-            TotalCurrency 100
+            TotalCurrency 200
             RandomChoice
             {
                 Shuffle 1
@@ -9053,49 +8965,120 @@ WaveSchedule
         }
         WaveSpawn
         {
-            WaitForAllDead "w2c"
-            Where spawnbot_left0
-            Where spawnbot_right0
+            Name "w2d"
+            WaitForAllDead "w2ca"
+            Where spawnbot_boss0
             Where spawnbot_main1
-            TotalCount 24
-            MaxActive 16
-            SpawnCount 6
+            TotalCount 4
+            MaxActive 2
+            SpawnCount 1
             WaitBeforeStarting 0
             WaitBetweenSpawns 20
-            Support Limited
-            TotalCurrency 200
         
+            TotalCurrency 100
             TFBot
-            { 
-                Template T_TFBot_Demoman_Samurai
-            }
-        }
-        WaveSpawn
-        {
-            Name "w2daa"
-            WaitForAllspawned "w2ca"
-            Where spawnbot_left0
-            Where spawnbot_right0
-            Where spawnbot_main_slow1
-            TotalCount 20
-            MaxActive 7
-            SpawnCount 1
-            WaitBeforeStarting 20
-            WaitBetweenSpawns 2.5
-        
-            TotalCurrency 50
-        
-            TFBot
-            { 
-                Template T_TFBot_Soldier_Extended_Concheror
+            {
+                ClassIcon	demo_nuker_giant
+                Health	4000
+                Name	"Giant Nuker Demo"
+                Scale	1.75
+                Class	Demoman
+                Skill	Easy
+                WeaponRestrictions	PrimaryOnly
+                Attributes	"MiniBoss"
+                Attributes	"HoldFireUntilFullReload"
+                Attributes	"AlwaysFireWeapon"
+                Attributes	"AlwaysCrit"
+                Tag bot_giant
+                ItemAttributes
+                {
+                    ItemName	tf_weapon_grenadelauncher
+                    "grenade launcher mortar mode"	0
+                    "faster reload rate"	2
+                    "fire rate bonus"	2
+                    "clip size penalty"	0.25
+                    "Projectile speed increased"	0.8
+                    "projectile spread angle penalty"	5
+                    "damage bonus"	7
+                    "damage causes airblast"	1
+                    "blast radius increased"	1.5
+                    "use large smoke explosion"	1
+                    "custom projectile model" "models/weapons/w_models/w_atomball_blu.mdl"
+                    "custom impact sound" "doomsday.launch_exp"
+                }
+                CharacterAttributes
+                {
+                    "move speed bonus"	0.5
+                    "damage force reduction"	0.4
+                    "airblast vulnerability multiplier"	0.4
+                    "override footstep sound set"	4
+                    "mult projectile scale" 1.5
+                }
+                Item	"scotch bonnet"
             }
         }
         WaveSpawn
         {
             Name "w2da"
-            WaitForAllSpawned "w2daa"
+            WaitForAllDead "w2ca"
+            Where spawnbot_left0
+            Where spawnbot_right0
+            Where spawnbot_main1
+            TotalCount 36
+            MaxActive 10
+            SpawnCount 4
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 6
+        
+            Squad
+            {
+                TFBot
+                { 
+                    Class Heavy
+                    Name "Multi Utility Heavy"
+                    ClassIcon heavy
+                    Skill Hard
+                    //Weapons
+                    ItemAttributes
+                    {
+                        ItemName "Tf_weapon_minigun"
+                        "mod minigun can holster while spinning" 1
+                    }
+                    Item "Gloves of Running Urgently MvM"
+
+                    //Cosmetics
+                    Item "Big Steel Jaw of Summer Fun"
+                    Item "Pugilist's Protector"
+
+                    //Rafmod
+                    WeaponSwitch
+                    {
+                        Delay 0
+                        Cooldown 0
+                        IfSeeTarget 1
+                        Type "Primary"
+                    }
+                    WeaponSwitch
+                    {
+                        Delay 0
+                        Cooldown 1
+                        IfSeeTarget 0
+                        Type "Melee"
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn
+        {
+            Name "w2da"
+            WaitForAllSpawned "w2ca"
             Where spawnbot_boss0
             Where spawnbot_right0
+
             Where spawnbot_left0
             Where spawnbot_main_slow1
             TotalCount 32
@@ -9124,9 +9107,29 @@ WaveSchedule
                 }
             }
         }
+        WaveSpawn
+        {
+            Name "WaveEndCheck"
+            WaitForAllDead "w2c"
+        }
+        WaveSpawn
+        {
+            Name "WaveEndCheck"
+            WaitForAllDead "w2ca"
+        }
+        WaveSpawn
+        {
+            Name "WaveEndCheck"
+            WaitForAllDead "w2d"
+        }
+        WaveSpawn
+        {
+            Name "WaveEndCheck"
+            WaitForAllDead "w2da"
+        }
         WaveSpawn // Dummy
         {
-            WaitForAllDead "w2d"
+            WaitForAllSpawned "WaveEndCheck"
             TotalCount 0
             SpawnCount 0
             WaitBeforeStarting 3
@@ -9136,50 +9139,6 @@ WaveSchedule
                 Action "Trigger"
             }
         }
-        // WaveSpawn
-        // {
-        //     Name ""
-        //     WaitForAllDead "w2d"
-        //     Where spawnbot_main1
-        //     Where spawnbot_ambush1
-        //     TotalCount 99
-        //     MaxActive 22
-        //     SpawnCount 1
-        //     WaitBeforeStarting 3.1
-        //     WaitBetweenSpawns 0
-        //     Hideicon 1
-        //     Support 1
-        //     TotalCurrency 0
-        
-        //     TFBot
-        //     {
-        //         Name "The Horde"
-        //         Class Soldier
-        //         Skill Expert
-        //         Action Mobber
-        //         ItemAttributes 
-        //         {
-        //             ItemName "TF_WEAPON_ROCKETLAUNCHER"
-        //             "faster reload rate" -0.8
-        //             "move speed bonus" 4
-        //             "damage bonus" 0.001
-        //         }
-        //         AddAttribute
-        //         {
-        //             Item Player
-        //             Name "no_attack"
-        //             Value 1
-        //             Delay 9
-        //             Repeats 1
-        //         }
-        //         Taunt
-        //         {
-        //             Delay 9.5
-        //             Repeats 1
-        //         }
-        //     }
-
-        // }
         WaveSpawn // Dummy
         {
             WaitForAllDead "w2d"
@@ -9201,6 +9160,7 @@ WaveSchedule
                 EntFire(`func_button*`, `unlock`)
                 EntFire(`door_alarm_light`, `TurnOn`)
                 EntFire(`openthefuckingdoors`, `trigger`)
+                EntFire(`RedLoseRelay`,`enable`)
             "
         }
         DoneOutput
@@ -9375,6 +9335,24 @@ WaveSchedule
                 Target "startmovingfatty"
                 Action Trigger
                 Delay 5
+            }
+        }
+        WaveSpawn
+        {
+            WaitBeforeStarting 5
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        for (local Entity = null; Entity = Entities.FindByClassname(Entity, `trigger_capture_area`);)
+                        {
+                            local CapturePointName = NetProps.GetPropString(Entity, `m_iszCapPointName`)
+                            NetProps.SetPropFloat(Entity, `m_flCapTime`, 60)
+
+                            Entity.AcceptInput(`SetControlPoint`, CapturePointName, null, null)
+                        }
+                      "
             }
         }
         WaveSpawn
@@ -9624,7 +9602,7 @@ WaveSchedule
                 Name "hammertank"
                 ClassIcon tank_mallet
                 StartingPathTrackNode "w3_necrosmasher_1"
-                Health 30000
+                Health 22500
                 Speed 75
                 Skin 0
 
@@ -9680,7 +9658,7 @@ WaveSchedule
             TotalCount 30
             MaxActive 12
             SpawnCount 3
-            WaitBeforeStarting 20
+            WaitBeforeStarting 30
             WaitBetweenSpawns 3
             Support Limited
             TotalCurrency 100
@@ -9752,7 +9730,7 @@ WaveSchedule
                 Addcond
                 {
                     Index 66
-                    Duration 9.45
+                    Duration 9.75
                 }
                 FireInput
                 {
@@ -12928,6 +12906,24 @@ WaveSchedule
                 Action Trigger
             }
         }
+        WaveSpawn
+        {
+            WaitBeforeStarting 5
+            FirstSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        for (local Entity = null; Entity = Entities.FindByClassname(Entity, `trigger_capture_area`);)
+                        {
+                            local CapturePointName = NetProps.GetPropString(Entity, `m_iszCapPointName`)
+                            NetProps.SetPropFloat(Entity, `m_flCapTime`, 60)
+
+                            Entity.AcceptInput(`SetControlPoint`, CapturePointName, null, null)
+                        }
+                      "
+            }
+        }
         
         WaveSpawn
         {
@@ -13051,7 +13047,7 @@ WaveSchedule
 				ClassIcon 	soldier_gib_jumper_lite
 				Class	Soldier
 				Name	"Larry Clone"
-				Health 3000
+				Health 1000
 				Skill	Expert
 				MaxVisionRange	1300
 				Attributes Autojump
