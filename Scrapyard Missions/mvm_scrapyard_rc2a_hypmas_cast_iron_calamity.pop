@@ -63,15 +63,6 @@ WaveSchedule
 
 			logic_relay
 			{
-				"targetname" "TankMoveRelay"
-
-				"OnTrigger" "tank_boss*,SetSpeed,25,0,-1"
-				"OnTrigger" "tank_boss*,SetSpeed,50,1.5,-1"
-				"OnTrigger" "tank_boss*,SetSpeed,75,3,-1"
-				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
-			}
-			logic_relay
-			{
 				"targetname" "TankCleanupRelay"
 
 				"OnTrigger" "tank_boss*,RemoveHealth,100000,0,-1"
@@ -139,6 +130,21 @@ WaveSchedule
                 "Filter04"   "filter_is_not_ubered4"
                 "Filter05"   "filter_is_player"
             }
+		}
+
+		CombatTank_PT
+		{
+			NoFixUp 1
+
+			logic_relay
+			{
+				"targetname" "TankMoveRelay"
+
+				"OnTrigger" "tank_boss*,SetSpeed,25,0,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,50,1.5,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,75,3,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
+			}
 		}
 	}
 
@@ -1688,7 +1694,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 80
 
 			Tank
 			{
@@ -1697,6 +1703,8 @@ WaveSchedule
 				ClassIcon tank_combat_rocket_homing_dual_kai
 				Health 60000
 				StartingPathTrackNode "tank_path_carrier_1"
+
+				SpawnTemplate "CombatTank_PT"
 
 				OnBombDroppedOutput
 				{
@@ -1721,6 +1729,13 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
 			}
 		}
 		WaveSpawn // 1 GHeavy
@@ -1738,17 +1753,24 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
 			}
 		}
 
-		WaveSpawn // 10 Burst Demos
+		WaveSpawn // 7 Burst Demos
 		{
 			Name "Wave4_Subwave1_BurstDemos"
 			WaitForAllSpawned "Wave4_Subwave1_GHeavy"
 			Where spawnbot_left
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -1758,14 +1780,14 @@ WaveSchedule
 				Template T_TFBot_Demoman_Burst
 			}
 		}
-		WaveSpawn // 10 Burst Demos
+		WaveSpawn // 7 Burst Demos
 		{
 			Name "Wave4_Subwave1_BurstDemos"
 			WaitForAllSpawned "Wave4_Subwave1_GHeavy"
 			Where spawnbot_right
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -1776,9 +1798,39 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn
+		WaveSpawn // 3 Supercharged Rangers
 		{
-			Name "Wave4_Subwave1_"
+			Name "Wave4_Subwave1_SuperchargedRangers"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy"
+			Where spawnbot_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Ranger_Supercharged
+			}
+		}
+		WaveSpawn // 3 Supercharged Rangers
+		{
+			Name "Wave4_Subwave1_SuperchargedRangers"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Ranger_Supercharged
+			}
 		}
 
 		WaveSpawn // 1 GHeavy
@@ -1796,6 +1848,13 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
 			}
 		}
 		WaveSpawn // 1 GHeavy
@@ -1813,19 +1872,395 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
 			}
 		}
 
-		// Subwave 3
+		WaveSpawn // 2 Shield Medics and 6 Supercharged Rangers
+		{
+			Name "Wave4_Subwave1_SuperchargedRangers2"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy2"
+			Where spawnbot_left
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 7
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
+					WeaponRestrictions SecondaryOnly
+					Action FetchFlag
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 2 Shield Medics and 6 Supercharged Rangers
+		{
+			Name "Wave4_Subwave1_SuperchargedRangers2"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy2"
+			Where spawnbot_right
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 7
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
+					WeaponRestrictions SecondaryOnly
+					Action FetchFlag
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+			}
+		}
+
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave4_Subwave1_GHeavy3"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy2"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
+			}
+		}
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave4_Subwave1_GHeavy3"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy2"
+			Where spawnbot_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
+			}
+		}
+
+		WaveSpawn // 7 Burst Demos
+		{
+			Name "Wave4_Subwave1_BurstDemos2"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy3"
+			Where spawnbot_left
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 7 Burst Demos
+		{
+			Name "Wave4_Subwave1_BurstDemos2"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy3"
+			Where spawnbot_right
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+
+		WaveSpawn // 1 Shield Medic and 3 Supercharged Rangers
+		{
+			Name "Wave4_Subwave1_SuperchargedRangers3"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy3"
+			Where spawnbot_left
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
+					WeaponRestrictions SecondaryOnly
+					Action FetchFlag
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 1 Shield Medic and 3 Supercharged Rangers
+		{
+			Name "Wave4_Subwave1_SuperchargedRangers3"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy3"
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+					Attributes IgnoreEnemies
+					WeaponRestrictions SecondaryOnly
+					Action FetchFlag
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Supercharged
+				}
+			}
+		}
+
+		// Subwave 2
 		WaveSpawn // Tank Move Up
 		{
-			Name "Wave4_Subwave3_TimeToGo"
-			WaitForAllSpawned "#"
+			Name "Wave4_Subwave2_TimeToGo"
+			WaitForAllSpawned "Wave4_Subwave1_GHeavy3"
 			WaitBeforeStarting 25
 			FirstSpawnOutput
 			{
 				Target TankMoveRelay
 				Action Trigger
+			}
+		}
+
+		WaveSpawn // 2 GPyros
+		{
+			Name "Wave4_Subwave2_GPyro"
+			WaitForAllSpawned "Wave4_Subwave2_TimeToGo"
+			Where spawnbot_left
+			TotalCount 2
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 2 GPyros
+		{
+			Name "Wave4_Subwave2_GPyro"
+			WaitForAllSpawned "Wave4_Subwave2_TimeToGo"
+			Where spawnbot_right
+			TotalCount 2
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn // 30 Scouts
+		{
+			Name "Wave4_Subwave2_Scouts"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Scout
+				Skill Expert
+			}
+		}
+		WaveSpawn // 15 Supercharged Scouts
+		{
+			Name "Wave4_Subwave2_Scouts"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro"
+			Where spawnbot
+			TotalCount 15
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
+			}
+		}
+
+		WaveSpawn // 1 GRapid Fury Pyro and 1 GCharged Medic
+		{
+			Name "Wave4_Subwave2_GRapidFury"
+			WaitForAllSpawned "Wave4_Subwave2_GPyro"
+			Where spawnbot_right
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+			}
+		}
+		WaveSpawn // 5 Supercharged Scouts
+		{
+			Name "Wave4_Subwave2_Scouts2"
+			WaitForAllSpawned "Wave4_Subwave2_GRapidFury"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
 			}
 		}
 	}
