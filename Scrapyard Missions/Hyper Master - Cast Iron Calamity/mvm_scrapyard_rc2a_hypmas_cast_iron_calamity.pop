@@ -33,6 +33,16 @@ WaveSchedule
 
 	//// CUSTOM WEAPONS ////
 
+	CustomWeapon
+	{
+		"PrototypeHelmet"
+		{
+            OriginalItemName "Corona Australis"
+
+            "set item tint rgb" 16711680
+		}
+	}
+
 	//// POINT TEMPLATES ////
 
 	PointTemplates
@@ -149,11 +159,304 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
 			}
 		}
+
+		Miniboss_Heavy_Intro_PT
+		{
+			OnSpawnOutput
+			{
+				Target HisFit
+				Action TurnOff
+			}
+
+			logic_relay
+			{
+				"targetname" "EvilPortalActivationRelay"
+				
+				"OnTrigger" "EvilPortalParticle1,Start,,0,-1"
+				"OnTrigger" "EvilPortalAmbient,PlaySound,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`misc/halloween/spell_teleport.wav`);EmitSoundEx({sound_name=`misc/halloween/spell_teleport.wav`,channel = 6,pitch = 80,special_dsp = 25,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`weapons/barret_arm_shot.wav`);EmitSoundEx({sound_name=`weapons/barret_arm_shot.wav`,channel = 6,pitch = 50,special_dsp = 25,filter_type=5})0-1"
+				"OnTrigger" "EvilPortalParticle2,Start,,2,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`weapons/bumper_car_hit_ghost.wav`);EmitSoundEx({sound_name=`weapons/bumper_car_hit_ghost.wav`,channel = 6,pitch = 50,special_dsp = 25,filter_type=5})2-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`weapons/vaccinator_charge_tier_03.wav`);EmitSoundEx({sound_name=`weapons/vaccinator_charge_tier_03.wav`,channel = 6,pitch = 50,special_dsp = 25,filter_type=5})2-1"
+				"OnTrigger" "EvilPortalParticle3,Start,,4,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_activate.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_activate.wav`,channel = 6,pitch = 85,special_dsp = 25,filter_type=5})4-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_revive.wav`);EmitSoundEx({sound_name=`mvm/mvm_revive.wav`,channel = 6,pitch = 75,special_dsp = 25,filter_type=5})4-1"
+			}
+			logic_relay
+			{
+				"targetname" "EvilPortalEnableRelay"
+
+				"OnTrigger" "EvilPortalParticle1,Start,,0,-1"
+				"OnTrigger" "EvilPortalAmbient,PlaySound,,0,-1"
+				"OnTrigger" "EvilPortalParticle2,Start,,0,-1"
+				"OnTrigger" "EvilPortalParticle3,Start,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "EvilPortalSummonRelay"
+				"OnTrigger" "EvilPortalLaser,Enable,,0,-1"
+				"OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)0-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`megalaser_fire.wav`);EmitSoundEx({sound_name=`megalaser_fire.wav`,channel = 6,pitch = 85,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_deliver.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_deliver.wav`,channel = 6,pitch = 100,filter_type=5})0-1"
+				"OnTrigger" "EvilPortalLaserParticleTimer,Enable,,0,-1"
+				"OnTrigger" "Him,Enable,,0,-1"
+				"OnTrigger" "HisFit,TurnOn,,0,-1"
+				"OnTrigger" "Him,SetAnimation,taunt_flag_heavy,0,-1"
+				"OnTrigger" "Him,SetPlaybackRate,0.01,6,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,laser_related_attack.mp3,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,laser_related_attack.mp3,3.8,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,laser_related_attack.mp3,7.6,-1"
+
+				"OnTrigger" "EvilPortalLaser,AddOutput,renderfx 6,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,10,-1"
+				"OnTrigger" "EvilPortalParticle1,Stop,,10,-1"
+				"OnTrigger" "EvilPortalParticle2,Stop,,10,-1"
+				"OnTrigger" "EvilPortalParticle3,Stop,,10,-1"
+				"OnTrigger" "EvilPortalParticle4,Stop,,10,-1"
+				"OnTrigger" "EvilPortalParticle5,Stop,,10,-1"
+				"OnTrigger" "EvilPortalLaserParticleTimer,Disable,,10,-1"
+				"OnTrigger" "EvilPortalAmbient,StopSound,,10,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,laser_related_attack.mp3,10,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,laser_related_attack.mp3,10.1,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,laser_related_attack.mp3,10.2,-1"
+				"OnTrigger" "EvilPortalLaser,Disable,,11,-1"
+			}
+
+			ambient_generic
+			{
+				"targetname" "EvilPortalAmbient"
+				"origin" "-705 559 613"
+				
+				"message" "ambient/atmosphere/city_beacon_loop1.wav"
+				"health" "3"
+                "pitch" "100"
+				"radius" "100000"
+				"fadeinsecs" "1"
+				"fadeoutsecs" "3"
+				"spawnflags" "17"
+			}
+			ambient_generic
+			{
+				"targetname" "EvilPortalAmbient"
+				"origin" "-705 559 613"
+				
+				"message" "ambient/levels/citadel/zapper_ambient_loop1.wav"
+				"health" "3"
+                "pitch" "100"
+				"radius" "100000"
+				"fadeinsecs" "1"
+				"fadeoutsecs" "3"
+				"spawnflags" "17"
+			}
+
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle1"
+				"origin" "-705 559 613"
+				"effect_name" "dxhr_lightningball_parent_red"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle1"
+				"origin" "-705 559 613"
+				"effect_name" "eyeboss_team_red"
+				"start_active" "0"
+			}
+
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle2"
+				"origin" "-705 559 613" 
+				"effect_name" "eyeboss_doorway_vortex"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle2"
+				"origin" "-705 559 613" 
+				"effect_name" "eyeboss_vortex_red"
+				"start_active" "0"
+			}
+
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle3"
+				"origin" "-705 585 639"
+				"angles" "0 0 -45" 
+				"effect_name" "teleporter_mvm_bot_persist"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle3"
+				"origin" "-705 585 587"
+				"angles" "0 0 -135" 
+				"effect_name" "teleporter_mvm_bot_persist"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle3"
+				"origin" "-705 533 639"
+				"angles" "0 0 45" 
+				"effect_name" "teleporter_mvm_bot_persist"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle3"
+				"origin" "-705 533 587"
+				"angles" "0 0 135" 
+				"effect_name" "teleporter_mvm_bot_persist"
+				"start_active" "0"
+			}
+
+			logic_timer
+			{
+				"targetname" "EvilPortalLaserParticleTimer"
+                "refiretime" "2.5"
+                "startdisabled" "1"
+
+                "OnTimer" "EvilPortalParticle4,Start,,0,-1"
+                "OnTimer" "EvilPortalParticle5,Start,,0.5,-1"
+				"OnTimer" "EvilPortalParticle4,Stop,,1,-1"
+                "OnTimer" "EvilPortalParticle5,Stop,,1.5,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle4"
+				"origin" "-705 559 613"
+				"effect_name" "powerup_supernova_explode_red"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EvilPortalParticle5"
+				"origin" "-705 559 613"
+				"effect_name" "powerup_supernova_explode_red"
+				"start_active" "0"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "EvilPortalLaser"
+
+                "origin" "-705 559 613"
+				"angles" "90 0 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "rendermode" "1"
+				"rendercolor" "255 0 0"
+                "modelscale" "1"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "EvilPortalLaser"
+
+                "origin" "-705 559 613"
+				"angles" "90 0 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "rendermode" "1"
+				"rendercolor" "255 0 0"
+                "modelscale" "1"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "EvilPortalLaser"
+
+                "origin" "-705 559 613"
+				"angles" "90 0 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "rendermode" "1"
+				"rendercolor" "255 0 0"
+                "modelscale" "1"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "Him"
+				"origin" "-709 559 -319"
+
+				"model" "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+				"modelscale" "2"
+				"skin" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			tf_glow
+			{
+				"targetname" "HisGlow"
+				"target" "Him"
+				"GlowColor" "255 192 255 255"
+				"startdisabled" "1"
+			}
+			prop_dynamic_ornament
+            {
+                "targetname" "HisFit"
+                "InitialOwner" "Him"
+                "model" "models/workshop/player/items/sniper/invasion_corona_australis/invasion_corona_australis.mdl"
+
+				"skin" "0"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "HisFit"
+                "InitialOwner" "Him"
+                "model" "models/workshop/player/items/heavy/cc_summer2015_commissars_coat/cc_summer2015_commissars_coat.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "HisFit"
+                "InitialOwner" "Him"
+                "model" "models/workshop/player/items/heavy/sf14_halloween_bone_cut_belt/sf14_halloween_bone_cut_belt.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "HisFit"
+                "InitialOwner" "Him"
+                "model" "models/workshop/player/items/heavy/sum23_hog_heels/sum23_hog_heels.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+            }
+		}
+
+		Miniboss_Heavy_PT
+		{
+
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "Core_PT"
+	SpawnTemplate "Miniboss_Heavy_Intro_PT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -216,6 +519,66 @@ WaveSchedule
 
 	Templates
 	{
+		T_TFBot_Miniboss_Heavy_Megalaser
+		{
+			Name "Prototype XL-27M"
+			Class Heavy
+			ClassIcon heavy_statue_evileye
+			Skill Expert
+			Health 50000
+			Attributes MiniBoss
+			WeaponRestrictions SecondaryOnly
+
+			AimOffset "0 0 40"
+			CustomEyeGlowColor "0 0 0"
+
+			UseCustomModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
+			SpawnTemplate "Miniboss_Heavy_PT"
+
+            Item "PrototypeHelmet" [$SIGSEGV]
+			Item "Bone-Cut Belt"
+			Item "Hog Heels"
+
+            CharacterAttributes
+			{
+                "move speed penalty" 0.5
+                "damage force reduction" 0.01
+                "airblast vulnerability multiplier" 0.01
+				"airblast vertical vulnerability multiplier" 0.01
+                "override footstep sound set" 2
+                "gesture speed increase" 1000
+                "voice pitch scale" 0
+			}
+
+			EventChangeAttributes
+			{
+				Prototype_Default [$SIGSEGV]
+				{
+					WeaponRestrictions SecondaryOnly
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_SHOTGUN_HWG"
+						"dmg penalty vs players" 0.75
+						"fire rate bonus" 0.15
+						"mod max primary clip override" -1
+						"override projectile type" 13
+						"energy weapon penetration" 1
+						"color particle rgb" 16711680
+						"custom item model" "models/empty.mdl"
+						"custom weapon fire sound" "=75|weapons/bison_main_shot_02.wav"
+						"projectile trail particle" "~drg_pomson_projectile"
+					}
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FISTS"
+						"is_passive_weapon" 1
+						"damage penalty" 0
+					}
+				}
+			}
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -2389,6 +2752,54 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Scout_Blaster_Supercharged
+			}
+		}
+	}
+	// Wave 5 Notes
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_classic_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave5_Subwave1_Prototype"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_Heavy_Megalaser
 			}
 		}
 	}
