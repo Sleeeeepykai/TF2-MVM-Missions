@@ -35,6 +35,35 @@ WaveSchedule
 
 	CustomWeapon
 	{
+		//// PROTOTYPE MINIBOSS ////
+
+		// Weapons
+		"PrototypeDefault1"
+		{
+			OriginalItemName "TF_WEAPON_SHOTGUN_HWG"
+			"dmg penalty vs players" 0.75
+			"fire rate bonus" 0.15
+			"mod max primary clip override" -1
+			"override projectile type" 13
+			"energy weapon penetration" 1
+			"color particle rgb" 16711680
+			"custom item model" "models/empty.mdl"
+			"custom weapon fire sound" "=75|weapons/bison_main_shot_02.wav"
+			"projectile trail particle" "~drg_pomson_projectile"
+		}
+
+		"PrototypeBeamDetector"
+		{
+			OriginalItemName "The Righteous Bison"
+			"damage bonus" "0"
+			"penetrate teammates" "1"
+			"projectile speed increased" "3"
+			"no explosion particles" "1"
+			"projectile trail particle" "~"
+            "custom projectile model" "models/empty.mdl"
+		}
+
+		// Cosmetics
 		"PrototypeHelmet"
 		{
             OriginalItemName "Corona Australis"
@@ -229,7 +258,6 @@ WaveSchedule
 
 				"OnTrigger" "HisGlow,Enable,,15,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons/vaccinator_charge_tier_04.wav,15,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,weapons\sentry_shaft_laser_pass.wav,15,-1"
 				"OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 192, 255, 100, 0.7, 0.1, 1)15-1"
 
 				"OnTrigger" "Him,Disable,,17,-1"
@@ -461,7 +489,87 @@ WaveSchedule
 
 		Miniboss_Heavy_PT
 		{
+			OnSpawnOutput
+			{
+				Target "PrototypeMegalaser"
+				Action "$RotateTowards"
+				Param "!activator" //"!activator" //"!player"
+				Delay 0.02
+			}
 
+			logic_relay
+			{
+				"targetname" "PrototypeMegalaserAttack"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)6-1"
+				"OnTrigger" "FallenShocksMegaLaser,Enable,,6,-1"
+				"OnTrigger" "FallenShocksMegaLaserDamageDetector,$StartFiring,,6,-1"
+
+				"OnTrigger" "FallenShocksMegaLaser,Disable,,11,-1"
+				"OnTrigger" "FallenShocksMegaLaserDamageDetector,$StopFiring,,11,-1"
+				"OnTrigger" "FallenShocksMegaLaserDamageTrigger*,Disable,11,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "PrototypeMegalaser"
+
+                "origin" "0 0 162"
+				"angles" "0 0 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "rendermode" "1"
+				"rendercolor" "255 0 0"
+                "modelscale" "0.5"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+			env_entity_maker
+			{
+				"targetname" "PrototypeMegaLaserDamageParenter"
+				"entitytemplate" "PrototypeMegaLaserDamage"
+				"$autoparent" "1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "PrototypeMegaLaserDamageDetector"
+
+				"origin" "350 0 200"
+				"teamnum" "3"
+				"damage" "0"
+				"$weaponname" "PrototypeBeamDetector"
+				"$firetime" "0.1"
+				"$weaponnosound" "1"
+
+				"$OnFire" "PrototypeMegaLaserDamageParenter,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+		}
+
+		PrototypeMegaLaserDamage
+		{
+			trigger_hurt
+            {
+                "targetname" "PrototypeMegaLaserDamageTrigger"
+
+				"origin" "0 0 0"
+                
+				"mins" "-160 -160 -160"
+                "maxs" "160 160 160"
+
+                "damagetype" "1048576"
+                "damage" "333"
+                "filtername" "filter_redteam_nouber"
+                "spawnflags" "64"
+            }
 		}
 	}
 
@@ -531,7 +639,7 @@ WaveSchedule
 
 	Templates
 	{
-		T_TFBot_Miniboss_Heavy_Megalaser
+		T_TFBot_Miniboss_Heavy_MegaLaser
 		{
 			Name "Prototype XL-27M"
 			Class Heavy
@@ -575,30 +683,57 @@ WaveSchedule
 				Cooldown -1
 			}
 
+			FireInput
+			{
+				Target !activator
+				Action $ChangeAttributes
+				Param "Prototype_Megalaser"
+				Delay 3
+				Repeats 1
+				Cooldown -1
+			}
+
 			EventChangeAttributes
 			{
 				Prototype_Default [$SIGSEGV]
 				{
 					WeaponRestrictions SecondaryOnly
 
-					ItemAttributes
+					CharacterAttributes
 					{
-						ItemName "TF_WEAPON_SHOTGUN_HWG"
-						"dmg penalty vs players" 0.75
-						"fire rate bonus" 0.15
-						"mod max primary clip override" -1
-						"override projectile type" 13
-						"energy weapon penetration" 1
-						"color particle rgb" 16711680
-						"custom item model" "models/empty.mdl"
-						"custom weapon fire sound" "=75|weapons/bison_main_shot_02.wav"
-						"projectile trail particle" "~drg_pomson_projectile"
+						"move speed penalty" 0.4
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+						"override footstep sound set" 2
+						"gesture speed increase" 1000
+						"voice pitch scale" 0
+						"no_attack" 0
+						"no_jump" 0
 					}
+
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_FISTS"
 						"is_passive_weapon" 1
 						"damage penalty" 0
+					}
+				}
+
+				// Phase 1 Attacks //
+				Prototype_Megalaser [$SIGSEGV]
+				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.01
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+						"override footstep sound set" 2
+						"gesture speed increase" 1000
+						"voice pitch scale" 0
+						"no_attack" 0
+						"no_jump" 0
 					}
 				}
 			}
@@ -2823,7 +2958,7 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Miniboss_Heavy_Megalaser
+				Template T_TFBot_Miniboss_Heavy_MegaLaser
 			}
 		}
 	}
