@@ -54,28 +54,24 @@ WaveSchedule
 		// Weapons
 		"PrototypeDefault1"
 		{
-			OriginalItemName "TF_WEAPON_SHOTGUN_HWG"
-			"dmg penalty vs players" 0.75
+			OriginalItemName "The Righteous Bison"
+			"dmg penalty vs players" 1.25
 			"fire rate bonus" 0.15
-			"mod max primary clip override" -1
-			"override projectile type" 13
-			"energy weapon penetration" 1
-			"color particle rgb" 16711680
+			"faster reload rate" 0.001
+			"particle color rgb" 16711680
 			"custom item model" "models/empty.mdl"
 			"custom weapon fire sound" "=75|weapons/bison_main_shot_02.wav"
 			"projectile trail particle" "~drg_pomson_projectile"
 		}
 		"PrototypeDefault2"
 		{
-			OriginalItemName "TF_WEAPON_SHOTGUN_HWG"
-			"dmg penalty vs players" 0.75
-			"fire rate bonus" 2
-			"mod max primary clip override" -1
-			"override projectile type" 13
-			"energy weapon penetration" 1
-			"mult projectile count" 15
+			OriginalItemName "The Righteous Bison"
+			"dmg penalty vs players" 1.25
+			"fire rate bonus" 1.5
+			"faster reload rate" 0.001
+			"mult projectile count" 20
 			"projectile spread angle penalty" 15
-			"color particle rgb" 16711680
+			"particle color rgb" 16711680
 			"custom item model" "models/empty.mdl"
 			"fire input on attack" "LaserShotgunSoundCase^PickRandom"
 			"projectile trail particle" "~drg_pomson_projectile"
@@ -83,7 +79,6 @@ WaveSchedule
 		"PrototypeDefault3"
 		{
 			OriginalItemName "TF_WEAPON_SHOTGUN_HWG"
-			"fire rate bonus" 1
 			"mod max primary clip override" -1
 			"override projectile type extra" "mechanicalarmorb"
 			"custom item model" "models/empty.mdl"
@@ -95,9 +90,8 @@ WaveSchedule
 			"damage bonus" "0"
 			"penetrate teammates" "1"
 			"projectile speed increased" "3"
-			"no explosion particles" "1"
-			"projectile trail particle" "~"
-            "custom projectile model" "models/empty.mdl"
+            "noclip projectiles" 1
+            "projectile lifetime" 4
 		}
 
 		// Cosmetics
@@ -277,7 +271,7 @@ WaveSchedule
                 "OnTrigger" "tf_gamerules,PlayVO,laser_related_attack.mp3,7.6,-1"
 
 				"OnTrigger" "EvilPortalLaser*,AddOutput,renderfx 6,10,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,misc\halloween\spell_spawn_boss_disappear.wav,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss_disappear.wav,10,-1"
 				"OnTrigger" "EvilPortalParticle1,Stop,,10,-1"
 				"OnTrigger" "EvilPortalParticle2,Stop,,10,-1"
 				"OnTrigger" "EvilPortalParticle3,Stop,,10,-1"
@@ -290,12 +284,12 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,$StopVO,laser_related_attack.mp3,10.2,-1"
 				"OnTrigger" "EvilPortalLaser,Disable,,11,-1"
 
-				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleedare12.mp3,13,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_meleedare12.mp3,13,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/heavy_mvm_m_meleedare12.mp3,13,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/heavy_mvm_m_meleedare12.mp3,13,-1"
 
 				"OnTrigger" "HisGlow,Enable,,15,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons/vaccinator_charge_tier_04.wav,15,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,items\powerup_pickup_crits.wav,15,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_crits.wav,15,-1"
 				"OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 192, 255, 100, 0.7, 0.1, 1)15-1"
 
 				"OnTrigger" "Him,Disable,,17,-1"
@@ -500,15 +494,6 @@ WaveSchedule
             {
                 "targetname" "HisFit"
                 "InitialOwner" "Him"
-                "model" "models/workshop/player/items/heavy/cc_summer2015_commissars_coat/cc_summer2015_commissars_coat.mdl"
-
-				"skin" "1"
-                "disablebonefollowers" "1"
-            }
-			prop_dynamic_ornament
-            {
-                "targetname" "HisFit"
-                "InitialOwner" "Him"
                 "model" "models/workshop/player/items/heavy/sf14_halloween_bone_cut_belt/sf14_halloween_bone_cut_belt.mdl"
 
 				"skin" "1"
@@ -538,13 +523,40 @@ WaveSchedule
 			{
 				Target "PrototypeMegalaser"
 				Action "$RotateTowards"
-				Param "!activator" //"!activator" //"!player"
+				Param "!activator"
 				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "PrototypeMegaLaserDamageDetector"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "PrototypeMegaLaserDamageDetector"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "Glow"
+				Action "Enable"
+				Delay 0.1
 			}
 
 			info_target
 			{
 				"targetname" "PrototypeTarget"
+			}
+			tf_glow
+			{
+				"targetname" "Glow"
+				"target" "!parent"
+				"GlowColor" "255 192 255 255"
+				"startdisabled" "1"
 			}
 
 			logic_case
@@ -560,10 +572,59 @@ WaveSchedule
 			{
 				"targetname" "LaserShotgunSoundCase"
 
-				"OnCase01" "tf_gamerules,PlayVO,=75|voidlingshotgun1.mp3,0,-1"
-				"OnCase02" "tf_gamerules,PlayVO,=75|voidlingshotgun2.mp3,0,-1"
-				"OnCase03" "tf_gamerules,PlayVO,=75|voidlingshotgun3.mp3,0,-1"
-				"OnCase04" "tf_gamerules,PlayVO,=75|voidlingshotgun4.mp3,0,-1"
+				"OnCase01" "LaserShotgunSound1,PlaySound,,0,-1"
+				"OnCase01" "LaserShotgunSound1,StopSound,,1,-1"
+				"OnCase02" "LaserShotgunSound2,PlaySound,,0,-1"
+				"OnCase02" "LaserShotgunSound2,StopSound,,1,-1"
+				"OnCase03" "LaserShotgunSound3,PlaySound,,0,-1"
+				"OnCase03" "LaserShotgunSound3,StopSound,,1,-1"
+				"OnCase01" "LaserShotgunSound4,PlaySound,,0,-1"
+				"OnCase01" "LaserShotgunSound4,StopSound,,1,-1"
+			}
+
+			ambient_generic
+			{
+				"targetname" "LaserShotgunSound1"
+				"origin" "0 0 162"
+				
+				"message" "voidlingshotgun1.mp3"
+				"health" "10"
+                "pitch" "100"
+				"radius" "4096"
+				"spawnflags" "17"
+			}
+			ambient_generic
+			{
+				"targetname" "LaserShotgunSound2"
+				"origin" "0 0 162"
+				
+				"message" "voidlingshotgun2.mp3"
+				"health" "10"
+                "pitch" "100"
+				"radius" "4096"
+				"spawnflags" "17"
+			}
+			ambient_generic
+			{
+				"targetname" "LaserShotgunSound3"
+				"origin" "0 0 162"
+				
+				"message" "voidlingshotgun3.mp3"
+				"health" "10"
+                "pitch" "100"
+				"radius" "4096"
+				"spawnflags" "17"
+			}
+			ambient_generic
+			{
+				"targetname" "LaserShotgunSound4"
+				"origin" "0 0 162"
+				
+				"message" "voidlingshotgun1.mp3"
+				"health" "10"
+                "pitch" "100"
+				"radius" "4096"
+				"spawnflags" "17"
 			}
 
 			logic_relay
@@ -571,18 +632,28 @@ WaveSchedule
 				"targetname" "PrototypeMegalaserAttack"
 
 				"OnTrigger" "MegalaserChargeParticle,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/lair/perimeter_electric_fence1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/lair/perimeter_electric_fence1.wav,0,-1"
+
 				"OnTrigger" "MegalaserChargeParticle2,Start,,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,voidlinglasercharge.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,voidlinglasercharge.mp3,4,-1"
 
 				"OnTrigger" "!activator,$AddCond,87 6.25,5.75,-1"
 				"OnTrigger" "MegalaserChargeParticle,Stop,,6,-1"
 				"OnTrigger" "MegalaserChargeParticle2,Stop,,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/lair/perimeter_electric_fence1.wav,6,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/lair/perimeter_electric_fence1.wav,6.1,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 128, 128, 110, 0.7, 0.1, 1)6-1"
 				"OnTrigger" "PrototypeMegaLaser,Enable,,6,-1"
 				"OnTrigger" "PrototypeMegaLaserDamageDetector,$StartFiring,,6,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,voidlinglaserstart.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,voidlinglaserstart.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,voidlinglaserloop.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,voidlinglaserloop.mp3,6,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,voidlinglaserloop.mp3,6,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,voidlinglaserend.mp3,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss_disappear.wav,10,-1"
 				"OnTrigger" "PrototypeMegaLaser,Disable,,10,-1"
 				"OnTrigger" "PrototypeMegaLaserDamageDetector,$StopFiring,,10,-1"
 				"OnTrigger" "PrototypeMegaLaserDamageTrigger*,Disable,10,-1"
@@ -622,7 +693,7 @@ WaveSchedule
                 "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
                 "rendermode" "1"
 				"rendercolor" "255 0 0"
-                "modelscale" "0.5"
+                "modelscale" "0.75"
                 "solid" "0"
                 "disablebonefollowers" "1"
                 "disableshadows" "1"
@@ -653,6 +724,13 @@ WaveSchedule
 				"$weaponnosound" "1"
 
 				"$OnFire" "PrototypeMegaLaserDamageParenter,ForceSpawnAtEntityOrigin,!activator,0,-1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
 			}
 		}
 
@@ -664,8 +742,8 @@ WaveSchedule
 
 				"origin" "0 0 0"
                 
-				"mins" "-160 -160 -160"
-                "maxs" "160 160 160"
+				"mins" "-85 -85 -85"
+                "maxs" "85 85 85"
 
                 "damagetype" "1048576"
                 "damage" "333"
@@ -747,9 +825,10 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_statue_evileye
 			Skill Expert
-			Health 50000
+			Health 75000
 			Scale 2
 			Attributes MiniBoss
+			Attributes UseBossHealthBar
 			WeaponRestrictions SecondaryOnly
 
 			AimOffset "0 0 40"
@@ -760,7 +839,6 @@ WaveSchedule
 			SpawnTemplate "Miniboss_Heavy_PT"
 
             Item "PrototypeHelmet" [$SIGSEGV]
-			Item "Commissar's Coat"
 			Item "Bone-Cut Belt"
 			Item "Hog Heels"
 
