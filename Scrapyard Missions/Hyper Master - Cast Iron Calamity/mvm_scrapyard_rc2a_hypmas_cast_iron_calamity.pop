@@ -45,6 +45,8 @@ WaveSchedule
 	PrecacheSound "voidlinglaserloop.mp3"
 	PrecacheSound "voidlinglaserend.mp3"
 
+	PrecacheSound "planned_obsolescence_death.mp3"
+
 	//// CUSTOM WEAPONS ////
 
 	CustomWeapon
@@ -546,6 +548,13 @@ WaveSchedule
 				Action "Enable"
 				Delay 0.1
 			}
+			OnParentKilledOutput
+			{
+				Target "miniboss_heavy_death_pt"
+				Action "ForceSpawnAtEntityOrigin"
+				Param "!activator"
+				Delay -1
+			}
 
 			info_target
 			{
@@ -731,6 +740,98 @@ WaveSchedule
 				"$rotationspeedy" "300"
 				"$rotationlimitx" "180"
 				"$rotationlimity" "180"
+			}
+		}
+
+		Miniboss_Heavy_Death_PT
+		{
+			RemoveIfKilled "Heded"
+
+			OnSpawnOutput
+            {
+                Target PrototypeDeathRelay
+                Action "Trigger"
+                Delay 0.1
+            }
+			logic_relay
+			{
+				"targetname" "PrototypeDeathRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_painsevere01.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player\invulnerable_off.wav,0,-1"
+				"OnTrigger" "Hededglow,Disable,,1,-1"
+				"OnTrigger" "Heded,SetPlaybackRate,0.01,2,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_autodejectedtie03.mp3,4,-1"
+				"OnTrigger" "PrototypeDeathParticle,Start,,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,planned_obsolescence_death.mp3,6,-1"
+				"OnTrigger" "Heded,disable,,6,-1"
+				"OnTrigger" "Hededwithdrip,TurnOff,6,-1"
+				"OnTrigger" "Heded,Kill,,7,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "Heded"
+				"origin" "0 0 0"
+				"angles" "0 90 0"
+
+				"model" "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
+				"DefaultAnim" "primary_death_01"
+
+				"modelscale" "2"
+				"skin" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			tf_glow
+			{
+				"targetname" "Hededglow"
+				"target" "Heded"
+				"GlowColor" "255 192 255 255"
+			}
+			prop_dynamic_ornament
+            {
+                "targetname" "Hededwithdrip"
+                "InitialOwner" "Heded"
+                "model" "models/workshop/player/items/sniper/invasion_corona_australis/invasion_corona_australis.mdl"
+
+				"skin" "0"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "Hededwithdrip"
+                "InitialOwner" "Heded"
+                "model" "models/workshop/player/items/heavy/sf14_halloween_bone_cut_belt/sf14_halloween_bone_cut_belt.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "Hededwithdrip"
+                "InitialOwner" "Heded"
+                "model" "models/workshop/player/items/heavy/sum23_hog_heels/sum23_hog_heels.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+            }
+
+			info_particle_system
+			{
+				"targetname" "PrototypeDeathParticle"
+				"origin" "0 0 70"
+				"angles" "-90 0 0"
+				"effect_name" "mvm_tank_destroy"
+			}
+			info_particle_system
+			{
+				"targetname" "PrototypeDeathParticle"
+				"origin" "0 0 120"
+				"angles" "-90 0 0"
+				"effect_name" "hammer_bell_ring_shockwave"
 			}
 		}
 
@@ -3159,6 +3260,7 @@ WaveSchedule
             Param "
                     EntFire(`wave_start_classic_relay`, `Trigger`)
 					EntFire(`EvilPortalSummonRelay`, `Trigger`, null, 1)
+					EntFire(`tf_gamerules`, `PlayVO`, `music/hl_song15.wav`)
                   "
         }
         DoneOutput
@@ -3185,6 +3287,35 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Miniboss_Heavy_MegaLaser
+			}
+
+			DoneOutput
+			{
+				Target tf_gamerules
+				Action $StopVO
+				Param "music/hl_song15.wav"
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave5_Subwave2_TinyTank"
+			WaitForAllDead "Wave5_Subwave1_Prototype"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 25000
+				StartingPathTrackNode "tank_path_a_1"
 			}
 		}
 	}
