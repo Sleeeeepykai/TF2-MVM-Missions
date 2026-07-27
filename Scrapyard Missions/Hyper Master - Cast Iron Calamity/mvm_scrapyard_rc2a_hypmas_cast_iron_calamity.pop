@@ -259,7 +259,7 @@ WaveSchedule
 			{
 				"targetname" "EvilPortalSummonRelay"
 				"OnTrigger" "EvilPortalLaser,Enable,,0,-1"
-				"OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)0-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`megalaser_fire.wav`);EmitSoundEx({sound_name=`megalaser_fire.wav`,channel = 6,pitch = 85,filter_type=5})0-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_deliver.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_deliver.wav`,channel = 6,pitch = 100,filter_type=5})0-1"
 				"OnTrigger" "EvilPortalLaserParticleTimer,Enable,,0,-1"
@@ -550,15 +550,14 @@ WaveSchedule
 			}
 			OnParentKilledOutput
 			{
-				Target "miniboss_heavy_death_pt"
-				Action "ForceSpawnAtEntityOrigin"
-				Param "!activator"
-				Delay -1
+				Target "PrototypeMegalaserAttack"
+				Action "CancelPending"
 			}
 
 			info_target
 			{
 				"targetname" "PrototypeTarget"
+				"origin" "0 0 0"
 			}
 			tf_glow
 			{
@@ -745,24 +744,29 @@ WaveSchedule
 
 		Miniboss_Heavy_Death_PT
 		{
+			KeepAlive 1
+
 			RemoveIfKilled "Heded"
 
 			OnSpawnOutput
-            {
-                Target PrototypeDeathRelay
-                Action "Trigger"
-                Delay 0.1
-            }
+			{
+				Target Hededwithdrip
+				Action TurnOff
+			}
 			logic_relay
 			{
 				"targetname" "PrototypeDeathRelay"
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_painsevere01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,player\invulnerable_off.wav,0,-1"
+				"OnTrigger" "Heded,Enable,,0,-1"
+				"OnTrigger" "Hededwithdrip,TurnOn,,0,-1"
+				"OnTrigger" "Hededglow,Enable,,0,-1"
 				"OnTrigger" "Hededglow,Disable,,1,-1"
 				"OnTrigger" "Heded,SetPlaybackRate,0.01,2,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_autodejectedtie03.mp3,4,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)6-1"
 				"OnTrigger" "PrototypeDeathParticle,Start,,6,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,planned_obsolescence_death.mp3,6,-1"
 				"OnTrigger" "Heded,disable,,6,-1"
@@ -773,8 +777,6 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "Heded"
-				"origin" "0 0 0"
-				"angles" "0 90 0"
 
 				"model" "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
 
@@ -783,6 +785,7 @@ WaveSchedule
 				"modelscale" "2"
 				"skin" "1"
 				"disablebonefollowers" "1"
+				"startdisabled" "1"
 				"disableshadows" "1"
 			}
 			tf_glow
@@ -790,6 +793,7 @@ WaveSchedule
 				"targetname" "Hededglow"
 				"target" "Heded"
 				"GlowColor" "255 192 255 255"
+				"startdisabled" "1"
 			}
 			prop_dynamic_ornament
             {
@@ -823,15 +827,15 @@ WaveSchedule
 			{
 				"targetname" "PrototypeDeathParticle"
 				"origin" "0 0 70"
-				"angles" "-90 0 0"
 				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
 			}
 			info_particle_system
 			{
 				"targetname" "PrototypeDeathParticle"
 				"origin" "0 0 120"
-				"angles" "-90 0 0"
 				"effect_name" "hammer_bell_ring_shockwave"
+				"start_active" "0"
 			}
 		}
 
@@ -938,6 +942,9 @@ WaveSchedule
 			UseCustomModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
 
 			SpawnTemplate "Miniboss_Heavy_PT"
+			SpawnTemplate "Miniboss_Heavy_Death_PT"
+
+			Tag Prototype
 
             Item "PrototypeHelmet" [$SIGSEGV]
 			Item "Bone-Cut Belt"
@@ -3260,7 +3267,7 @@ WaveSchedule
             Param "
                     EntFire(`wave_start_classic_relay`, `Trigger`)
 					EntFire(`EvilPortalSummonRelay`, `Trigger`, null, 1)
-					EntFire(`tf_gamerules`, `PlayVO`, `music/hl_song15.wav`)
+					EntFire(`tf_gamerules`, `PlayVO`, `music/hl1_song15.mp3`)
                   "
         }
         DoneOutput
@@ -3273,7 +3280,7 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn
+		WaveSpawn // 1 Prototype
 		{
 			Name "Wave5_Subwave1_Prototype"
 			Where spawnbot
@@ -3291,9 +3298,12 @@ WaveSchedule
 
 			DoneOutput
 			{
-				Target tf_gamerules
-				Action $StopVO
-				Param "music/hl_song15.wav"
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`PrototypeDeathRelay`, `Trigger`)
+						EntFire(`tf_gamerules`, `$StopVO`, `music/hl1_song15.mp3`)
+					  "
 			}
 		}
 
@@ -3317,6 +3327,76 @@ WaveSchedule
 				Health 25000
 				StartingPathTrackNode "tank_path_a_1"
 			}
+		}
+
+		WaveSpawn // 1 GSpreadshot Soldier and 2 Full-Uber Medics
+		{
+			Name "Wave5_Subwave2_GSpreadshotSoldier"
+			WaitForAllSpawned "Wave5_Subwave2_TinyTank"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_SpreadShot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier
+		{
+			Name "Wave5_Subwave2_GRapidSoldier"
+			WaitForAllSpawned "Wave5_Subwave2_GSpreadshotSoldier"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 1 GRapid Soldier
+		{
+			Name "Wave5_Subwave2_GRapidSoldier"
+			WaitForAllSpawned "Wave5_Subwave2_GSpreadshotSoldier"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave5_Subwave1_"
 		}
 	}
 }
