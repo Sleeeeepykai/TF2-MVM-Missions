@@ -6,6 +6,13 @@
 #base robot_giant_custom_rafmod_kai.pop
 #base robot_tank_custom_rafmod_kai.pop
 
+// Gameplay:
+// Players are trapped in an arena
+// Their spawns have changed
+// They have jump-pads to go to spawn
+// They have control points to defend instead of a bomb
+// Robots will try to capture the control points
+
 WaveSchedule
 {
 	StartingCurrency 400
@@ -24,11 +31,89 @@ WaveSchedule
 
 	//// CUSTOM WEAPONS ////
 
+	CustomWeapon
+	{
+		"PunchieCapHat"
+		{
+			OriginalItemName "Potato of Labor"
+
+			"set item tint rgb" 15787660
+			"custom item model" "models/player/items/heavy/pugilist_protector.mdl"
+		}
+	}
+
 	//// POINT TEMPLATES ////
 
 	PointTemplates
 	{
 		//// Core PTs ////
+
+		CorePTs
+		{
+			logic_auto
+			{
+				"targetname" "MissionSetup"
+
+				"OnMapSpawn" "arena_mode_enable_relay,Trigger,,0,-1"
+			}
+
+			logic_timer
+			{
+				"targetname" "MissionAlarmTimer"
+				"RefireTime" "12"
+
+				"OnTimer" "arena_mode_lockdown_alarm,PlaySound,,0.1,-1"
+				"OnTimer" "arena_mode_lockdown_alarm,StopSound,,6,-1"
+			}
+
+			func_respawnroom
+			{
+				"targetname" "ArenaBotRespawnRoom"
+				"origin" "480 4856 416"
+				"mins" "-1216 -856 -800"
+				"maxs" "1216 856 800"
+
+				"teamnum" "3"
+			}
+
+			logic_relay
+			{
+				"targetname" "MissionIntroRelay"
+
+				"OnTrigger" "arena_mode_transition_text1,Show,,0,-1"
+				"OnTrigger" "arena_mode_controlpointtext1,Show,,5,-1"
+				"OnTrigger" "arena_mode_controlpointtext2,Show,,10,-1"
+			}
+			logic_relay
+			{
+				"targetname" "ArenaWaveStartRelay"
+
+				"OnTrigger" "MissionAlarmTimer,Disable,,0,-1"
+				"OnTrigger" "bombpath_left_avoid,Disable,,0,-1"
+				"OnTrigger" "bombpath_right_avoid,Disable,,0,-1"
+				"OnTrigger" "arena_mode_maingate_open,Trigger,,0,-1"
+				"OnTrigger" "arena_mode_maingate_spawnbot_enable,Trigger,,0,-1"
+				"OnTrigger" "arena_mode_spawnbotleft_enable,Trigger,,0,-1"
+				"OnTrigger" "arena_mode_spawnbotright_enable,Trigger,,0,-1"
+			}
+
+			training_annotation
+			{
+				"targetname" "arena_mode_controlpointtext1"
+
+				"origin" "632 2620 712"
+				"display_text" "We now must control key areas to keep our foothold."
+				"lifetime" "5"
+			}
+			training_annotation
+			{
+				"targetname" "arena_mode_controlpointtext2"
+
+				"origin" "632 2620 712"
+				"display_text" "Do not let the robots capture them!"
+				"lifetime" "5"
+			}
+		}
 
 		ControlPointPTs
 		{
@@ -46,6 +131,11 @@ WaveSchedule
 				"cpm_restrict_team_cap_win" "2"
 				"custom_position_x" "0.435"
 				"custom_position_y" "0.75"
+			}
+			filter_tf_bot_has_tag // Control Point Bot Filter
+			{
+				"targetname" "ControlPointFilter"
+				"tags" "ArenaCaptureBot"
 			}
 
 			// Control Point A
@@ -88,6 +178,7 @@ WaveSchedule
 			trigger_capture_area // Control Point A Capture Area
 			{
 				"targetname" "ControlPointACaptureArea"
+				"filtername" "ControlPointFilter"
 				"origin" "-820 2756 40"
 				"mins" "-112 -112 -128"
 				"maxs" "112 112 128"
@@ -144,6 +235,7 @@ WaveSchedule
 			trigger_capture_area // Control Point B Capture Area
 			{
 				"targetname" "ControlPointBCaptureArea"
+				"filtername" "ControlPointFilter"
 				"origin" "750 2672 288"
 				"mins" "-112 -112 -128"
 				"maxs" "112 112 128"
@@ -200,6 +292,7 @@ WaveSchedule
 			trigger_capture_area // Control Point C Capture Area
 			{
 				"targetname" "ControlPointCCaptureArea"
+				"filtername" "ControlPointFilter"
 				"origin" "2084 2532 288"
 				"mins" "-112 -112 -128"
 				"maxs" "112 112 128"
@@ -220,15 +313,395 @@ WaveSchedule
 
 	//// SPAWNED POINT TEMPLATES ////
 
+	SpawnTemplate "CorePTs"
 	SpawnTemplate "ControlPointPTs"
 
 	//// EXTRA TANK PATHS ////
 
 	//// EXTRA SPAWN POINTS ////
 
+	ExtraSpawnPoint
+	{
+		Name "spawnbot_arena_mainleft"
+		X 224 Y 4376 Z -192
+		TeamNum 3
+	}
+	ExtraSpawnPoint
+	{
+		Name "spawnbot_arena_mainright"
+		X 736 Y 4384 Z -192
+		TeamNum 3
+	}
+
 	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		//// GIANTS ////
+		T_TFBot_Giant_Soldier_PointB
+		{
+			Template T_TFBot_Giant_Soldier
+			Action Mobber
+
+			Tag ArenaCaptureBot
+
+			Item "MvM GateBot Light Soldier"
+
+			InterruptAction
+			{
+				Target "ControlPointB"
+				Delay 0.1
+				Repeats 0
+				Cooldown 5
+				Duration 5
+				Distance 100
+			}
+		}
+
+		//// MINIGIANTS ////
+		T_TFBot_Demoman_Spammer_PointA
+		{
+			Template T_TFBot_Demoman_Spammer
+			Action Mobber
+
+			Tag ArenaCaptureBot
+
+			Item "MvM GateBot Light Demoman"
+
+			InterruptAction
+			{
+				Target "ControlPointA"
+				Delay 0.1
+				Repeats 0
+				Cooldown 5
+				Duration 5
+				Distance 100
+			}
+		}
+		T_TFBot_Demoman_Spammer_PointC
+		{
+			Template T_TFBot_Demoman_Spammer
+			Action Mobber
+
+			Tag ArenaCaptureBot
+
+			Item "MvM GateBot Light Demoman"
+
+			InterruptAction
+			{
+				Target "ControlPointA"
+				Delay 0.1
+				Repeats 0
+				Cooldown 5
+				Duration 5
+				Distance 100
+			}
+		}
+
+		//// COMMONS ////
+		T_TFBot_Heavy_Lightweight_Champ_PointC
+		{
+			Name "Lightweight Champ"
+			Class Heavy
+			ClassIcon heavy_gru
+			Skill Easy
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			Tag ArenaCaptureBot
+
+			Item "Gloves of Running Urgently MvM"
+
+			Item "PunchieCapHat" [$SIGSEGV]
+			Item "MvM GateBot Light Heavy"
+
+			InterruptAction
+			{
+				Target "ControlPointC"
+				Delay 0.1
+				Repeats 0
+				Cooldown 5
+				Duration 5
+				Distance 100
+			}
+		}
+	}
 
 	//// MISSION BOTS ////
 
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_arena_mainleft [$SIGSEGV]
+		Where spawnbot_arena_mainright [$SIGSEGV]
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
 	//// WAVES ////
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`MissionIntroRelay`, `Trigger`)
+					EntFire(`ArenaWaveStartRelay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 GSoldier and 1 Full-Uber Medic
+		{
+			Name "Wave1_Subwave1_GSoldier"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_PointB
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 Rapid Fire Demos
+		{
+			Name "Wave1_Subwave1_RapidDemo"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Action Mobber
+			}
+		}
+		WaveSpawn // 10 KGB Heavies
+		{
+			Name "Wave1_Subwave1_TheMen"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 10
+			MaxActive 7
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ
+				Action Mobber
+			}
+		}
+		WaveSpawn // 10 GRU Heavies
+		{
+			Name "Wave1_Subwave1_TheMen"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 10
+			MaxActive 7
+			SpawnCount 5
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ
+				Action Mobber
+			}
+		}
+
+		WaveSpawn // 1 GSoldier and 1 Full-Uber Medic
+		{
+			Name "Wave1_Subwave1_GSoldier2"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 Rapid Fire Demos
+		{
+			Name "Wave1_Subwave1_RapidDemo2"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Action Mobber
+			}
+		}
+		WaveSpawn // 10 GRU Heavies
+		{
+			Name "Wave1_Subwave1_TheMen2"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_right
+			TotalCount 10
+			MaxActive 7
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_PointC
+			}
+		}
+		WaveSpawn // 10 KGB Heavies
+		{
+			Name "Wave1_Subwave1_TheMen2"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_left
+			TotalCount 10
+			MaxActive 7
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ
+				Action Mobber
+			}
+		}
+
+		WaveSpawn // 1 GSoldier and 1 Full-Uber Medic
+		{
+			Name "Wave1_Subwave1_GSoldier3"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_PointB
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 Rapid Fire Demos
+		{
+			Name "Wave1_Subwave1_RapidDemo3"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
+			Where spawnbot_arena_left [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Action Mobber
+			}
+		}
+		WaveSpawn // 2 Rapid Fire Demos
+		{
+			Name "Wave1_Subwave1_RapidDemo3"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
+			Where spawnbot_arena_right [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Action Mobber
+			}
+		}
+	}
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`ArenaWaveStartRelay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+		}
+	}
 }
