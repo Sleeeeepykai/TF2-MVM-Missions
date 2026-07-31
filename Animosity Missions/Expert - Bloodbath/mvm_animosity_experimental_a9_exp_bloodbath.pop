@@ -96,6 +96,13 @@ WaveSchedule
 				"OnTrigger" "arena_mode_spawnbotleft_enable,Trigger,,0,-1"
 				"OnTrigger" "arena_mode_spawnbotright_enable,Trigger,,0,-1"
 			}
+			logic_relay
+			{
+				"targetname" "ArenaWaveFinishRelay"
+
+				"OnTrigger" "arena_mode_maingate_close,Trigger,,0,-1"
+				"OnTrigger" "arena_mode_maingate_spawnbot_disable,Trigger,,0,-1"
+			}
 
 			training_annotation
 			{
@@ -113,6 +120,69 @@ WaveSchedule
 				"display_text" "Do not let the robots capture them!"
 				"lifetime" "5"
 			}
+
+			// Global Filters
+			filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
 		}
 
 		ControlPointPTs
@@ -132,9 +202,38 @@ WaveSchedule
 				"custom_position_x" "0.435"
 				"custom_position_y" "0.75"
 			}
-			filter_tf_bot_has_tag // Control Point Bot Filter
+			filter_multi // Control Point Filter
 			{
 				"targetname" "ControlPointFilter"
+				"Negated" "0"
+				"FilterType" "1"
+				"Filter01"   "ControlPointPlayerFilter"
+                "Filter02"   "ControlPointBotFilter"
+			}
+			filter_multi // Control Point Player Filter
+			{
+				"targetname" "ControlPointPlayerFilter"
+				"Negated" "0"
+				"FilterType" "0"
+				"Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+			}
+			filter_multi // Control Point Bot Filter
+			{
+				"targetname" "ControlPointBotFilter"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "ControlPointBotTagFilter"
+			}
+			filter_tf_bot_has_tag // Control Point Bot Tag Filter
+			{
+				"targetname" "ControlPointBotTagFilter"
 				"tags" "ArenaCaptureBot"
 			}
 
@@ -180,8 +279,8 @@ WaveSchedule
 				"targetname" "ControlPointACaptureArea"
 				"filtername" "ControlPointFilter"
 				"origin" "-820 2756 40"
-				"mins" "-112 -112 -128"
-				"maxs" "112 112 128"
+				"mins" "-128 -220 -128"
+				"maxs" "128 220 128"
 				"solid" "0"
 
 				"area_cap_point" "ControlPointA"
@@ -237,8 +336,8 @@ WaveSchedule
 				"targetname" "ControlPointBCaptureArea"
 				"filtername" "ControlPointFilter"
 				"origin" "750 2672 288"
-				"mins" "-112 -112 -128"
-				"maxs" "112 112 128"
+				"mins" "-160 -160 -128"
+				"maxs" "160 160 128"
 				"solid" "0"
 
 				"area_cap_point" "ControlPointB"
@@ -272,7 +371,7 @@ WaveSchedule
 				"point_group" "0"
 				"point_default_owner" "2"
 				"point_start_locked" "0"
-				"team_previouspoint_2_0" "ControlPointA"
+				"team_previouspoint_2_0" "ControlPointC"
 				"team_previouspoint_3_0" "ControlPointC"
 
 				"team_model_0" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
@@ -294,8 +393,8 @@ WaveSchedule
 				"targetname" "ControlPointCCaptureArea"
 				"filtername" "ControlPointFilter"
 				"origin" "2084 2532 288"
-				"mins" "-112 -112 -128"
-				"maxs" "112 112 128"
+				"mins" "-140 -224 -128"
+				"maxs" "140 224 128"
 				"solid" "0"
 
 				"area_cap_point" "ControlPointC"
@@ -389,7 +488,7 @@ WaveSchedule
 
 			InterruptAction
 			{
-				Target "ControlPointA"
+				Target "ControlPointC"
 				Delay 0.1
 				Repeats 0
 				Cooldown 5
@@ -447,6 +546,10 @@ WaveSchedule
 	}
 
 	//// WAVES ////
+
+	// General Notes
+	
+	// Wave 1 Notes
 	Wave
 	{
 		StartWaveOutput
@@ -465,259 +568,8 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
+					EntFire(`ArenaWaveFinishRelay`, `Trigger`)
                   "
-		}
-
-		// Subwave 1
-		WaveSpawn // 1 GSoldier and 1 Full-Uber Medic
-		{
-			Name "Wave1_Subwave1_GSoldier"
-			Where spawnbot_arena_mainleft [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_PointB
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 2 Rapid Fire Demos
-		{
-			Name "Wave1_Subwave1_RapidDemo"
-			Where spawnbot_arena_mainright [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 10
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Spammer
-				Action Mobber
-			}
-		}
-		WaveSpawn // 10 KGB Heavies
-		{
-			Name "Wave1_Subwave1_TheMen"
-			Where spawnbot_arena_mainleft [$SIGSEGV]
-			TotalCount 10
-			MaxActive 7
-			SpawnCount 5
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 10
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Heavyweight_Champ
-				Action Mobber
-			}
-		}
-		WaveSpawn // 10 GRU Heavies
-		{
-			Name "Wave1_Subwave1_TheMen"
-			Where spawnbot_arena_mainright [$SIGSEGV]
-			TotalCount 10
-			MaxActive 7
-			SpawnCount 5
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 10
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Lightweight_Champ
-				Action Mobber
-			}
-		}
-
-		WaveSpawn // 1 GSoldier and 1 Full-Uber Medic
-		{
-			Name "Wave1_Subwave1_GSoldier2"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier"
-			Where spawnbot_arena_mainright [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier
-					Action Mobber
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 2 Rapid Fire Demos
-		{
-			Name "Wave1_Subwave1_RapidDemo2"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
-			Where spawnbot_arena_mainleft [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Spammer
-				Action Mobber
-			}
-		}
-		WaveSpawn // 10 GRU Heavies
-		{
-			Name "Wave1_Subwave1_TheMen2"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
-			Where spawnbot_arena_right
-			TotalCount 10
-			MaxActive 7
-			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Lightweight_Champ_PointC
-			}
-		}
-		WaveSpawn // 10 KGB Heavies
-		{
-			Name "Wave1_Subwave1_TheMen2"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
-			Where spawnbot_arena_left
-			TotalCount 10
-			MaxActive 7
-			SpawnCount 5
-			WaitBeforeStarting 4
-			WaitBetweenSpawns 10
-			TotalCurrency 20
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Heavyweight_Champ
-				Action Mobber
-			}
-		}
-
-		WaveSpawn // 1 GSoldier and 1 Full-Uber Medic
-		{
-			Name "Wave1_Subwave1_GSoldier3"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
-			Where spawnbot_arena_mainright [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
-			WaitBeforeStarting 20
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_PointB
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 2 Rapid Fire Demos
-		{
-			Name "Wave1_Subwave1_RapidDemo3"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
-			Where spawnbot_arena_left [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Spammer_PointA
-				Action Mobber
-			}
-		}
-		WaveSpawn // 2 Rapid Fire Demos
-		{
-			Name "Wave1_Subwave1_RapidDemo3"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
-			Where spawnbot_arena_right [$SIGSEGV]
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Demoman_Spammer_PointC
-				Action Mobber
-			}
-		}
-		WaveSpawn // 10 KGB Heavies
-		{
-			Name "Wave1_Subwave1_TheMen3"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
-			Where spawnbot_arena_mainleft [$SIGSEGV]
-			TotalCount 10
-			MaxActive 7
-			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Heavyweight_Champ
-				Action Mobber
-			}
-		}
-		WaveSpawn // 10 GRU Heavies
-		{
-			Name "Wave1_Subwave1_TheMen3"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
-			Where spawnbot_arena_mainright [$SIGSEGV]
-			TotalCount 10
-			MaxActive 7
-			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 10
-			TotalCurrency 40
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Lightweight_Champ
-				Action Mobber
-			}
 		}
 	}
 	Wave
