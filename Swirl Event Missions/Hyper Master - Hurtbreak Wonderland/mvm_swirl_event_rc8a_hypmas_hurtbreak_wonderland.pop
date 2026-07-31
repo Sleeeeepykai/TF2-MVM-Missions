@@ -1,0 +1,224 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1200
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	//// PRECACHES ////
+
+	// Precached Models
+
+	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		Core_PTs
+		{
+
+		}
+
+		Masquerade_Boss_Intro_PT
+		{
+			OnSpawnOutput
+			{
+				Target MasqueradeManBot
+				Action TurnOff
+			}
+			OnSpawnOutput
+			{
+				Target MasqueradeFit
+				Action TurnOff
+			}
+
+			logic_relay
+			{
+				"targetname" "MasqueradeIntroRelay"
+			}
+
+			logic_relay
+			{
+				"targetname" "MasqueradeIdleRelay"
+
+				"OnTrigger" "MasqueradeMan,Enable,,0,-1"
+				"OnTrigger" "MasqueradeManBot,TurnOn,,0,-1"
+				"OnTrigger" "MasqueradeFit,TurnOn,,0,-1"
+				"OnTrigger" "MasqueradeParticle,Start,,0,-1"
+				"OnTrigger" "MasqueradeParticleTimer,Enable,,0,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_flag_scout,0,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,6,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "MasqueradeMan"
+				"origin" "208 -336 1000"
+				"angles" "0 90 0"
+
+				"model" "models/player/scout.mdl"
+				"modelscale" "2"
+
+				"rendermode" "10"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			prop_dynamic_ornament
+			{
+				"targetname" "MasqueradeManBot"
+				"InitialOwner" "MasqueradeMan"
+
+				"model" "models/bots/scout_boss/bot_scout_gray_boss.mdl"
+				"modelscale" "2"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic_ornament
+            {
+                "targetname" "MasqueradeFit"
+                "InitialOwner" "MasqueradeMan"
+                "model" "models/workshop/player/items/scout/dec2014_marauders_mask/dec2014_marauders_mask.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "MasqueradeFit"
+                "InitialOwner" "MasqueradeMan"
+                "model" "models/workshop/player/items/scout/hwn2025_torn_terror/hwn2025_torn_terror.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "MasqueradeFit"
+                "InitialOwner" "MasqueradeMan"
+                "model" "models/workshop/player/items/scout/dec2014_truands_tunic/dec2014_truands_tunic.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic_ornament
+            {
+                "targetname" "MasqueradeFit"
+                "InitialOwner" "MasqueradeMan"
+                "model" "models/workshop/player/items/scout/dec2014_fools_footwear/dec2014_fools_footwear.mdl"
+
+				"skin" "1"
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			info_particle_system
+			{
+				"targetname" "MasqueradeParticle"
+				"origin" "208 -336 992"
+				"effect_name" "hwn_cart_drips_blue"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeParticle"
+				"origin" "208 -336 992"
+				"effect_name" "hwn_cart_cap_neutral"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeParticle2"
+				"origin" "208 -336 992"
+				"effect_name" "powerup_supernova_explode_blue"
+				"start_active" "0"
+			}
+
+			logic_timer
+			{
+				"targetname" "MasqueradeParticleTimer"
+                "refiretime" "1.5"
+                "startdisabled" "1"
+
+                "OnTimer" "MasqueradeParticle2,Start,,0,-1"
+				"OnTimer" "MasqueradeParticle2,Stop,,1,-1"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "Masquerade_Boss_Intro_PT"
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	//// WAVES ////
+
+	// General Notes
+
+	// Wave 1 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_init_lower_relay`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_boss_relay`, `Trigger`)
+				  "
+		}
+	}
+	// Wave 2 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_init_upper_relay`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_boss_relay`, `Trigger`)
+				  "
+		}
+	}
+}
