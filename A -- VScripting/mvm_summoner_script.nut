@@ -29,35 +29,20 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
-::OncomingSandstorm <-
+::SummonerScript <-
 {
 	//// CLEANUP FUNCTIONS ////
 
 	function CleanUp()
 	{
-		delete ::OncomingSandstorm
+		delete ::SummonerScript
 	}
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) CleanUp() }
 
-	//// MAP FUNCTIONS ////
+	//// SUMMONER FUNCTIONS ////
 
-	function SandstormInit()
-	{
-		EntFire("nav_avoid_intel_bridges_timer", "Kill")
-
-		SetSkyboxTexture("sky_sandstorm")
-
-		for(local Soundscape; Soundscape = Entities.FindByName(Soundscape, "sndscp_outside");)
-		{
-			Soundscape.KeyValueFromString("soundscape", "stormfront.outside")
-			Soundscape.DispatchSpawn()
-		}
-	}
-
-	//// DJINN FUNCTIONS ////
-
-	function DjinnSummonTrace(Target)
+	function SummonerMinionTrace(Target)
 	{
 		for(local Child = Target.FirstMoveChild(); Child != null; Child = Child.NextMovePeer())
 		{
@@ -85,7 +70,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 
-	function DjinnDemoSummonInit(Target)
+	function SummonerDemoSummonInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -109,7 +94,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
-	function DjinnSoldierSummonInit(Target)
+	function SummonerSoldierSummonInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -133,7 +118,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
-	function DjinnHeavySummonInit(Target)
+	function SummonerHeavySummonInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -158,9 +143,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetModelScale(1.3, 0.0)
 	}
 
-	//// SULTAN FUNCTIONS ////
-
-	function SultanSummonInit(Target)
+	function SummonerRapidFireSoldierMinionInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -191,4 +174,4 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
-__CollectGameEventCallbacks(OncomingSandstorm)
+__CollectGameEventCallbacks(SummonerScript)

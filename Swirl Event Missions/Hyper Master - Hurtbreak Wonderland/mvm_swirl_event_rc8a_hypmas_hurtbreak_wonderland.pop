@@ -25,6 +25,8 @@ WaveSchedule
 
 	// Precached Models
 
+	PrecacheModel "models/bots/scout_boss/bot_scout_gray_boss.mdl"
+
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
 	// Precached Sounds
@@ -68,6 +70,13 @@ WaveSchedule
 						MusicSystemMent.ResetAll();
 						MusicSystemMent.HookByName(`bignet`);
 					  "
+			}
+
+			logic_relay
+			{
+				"targetname" "BombSetupRelay"
+
+				"OnTrigger" "item_teamflag*,SetReturnTime,60,5,-1"
 			}
 		}
 
@@ -554,7 +563,28 @@ WaveSchedule
 
 	//// ROBOT TEMPLATES ////
 
+	T_TFBot_Giant_Pyro_Necromancer
+	{
+		
+	}
+
 	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 2
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
 
 	//// WAVES ////
 
@@ -579,6 +609,7 @@ WaveSchedule
 			Param "
 					EntFire(`wave_start_boss_relay`, `Trigger`)
 					EntFire(`MasqueradeIntroRelay`, `Trigger`)
+					EntFire(`BombSetupRelay`, `Trigger`)
 				  "
 		}
 
@@ -589,6 +620,21 @@ WaveSchedule
 			Line "{12E8EE}Those tracks include: Ultrakill OST by Arsi Hakita Patala."
 			Line "{12E8EE}Opt in/out with the Music Volume Slider in the settings."
 			Line ""
+		}
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_Necromancer"
+			Where spawnbot_chief
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 68
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+
 		}
 	}
 	// Wave 2 Notes
