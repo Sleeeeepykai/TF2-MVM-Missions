@@ -19,11 +19,34 @@ WaveSchedule
 	AddSentryBusterWhenDamageDealtExceeds 3000
     AddSentryBusterWhenKillCountExceeds 10
 
+	WaveStartCountdown 7
+
 	//// PRECACHES ////
 
 	// Precached Models
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
+
+	// Precached Sounds
+
+	PrecacheSound "music/in_absentia_logos.wav"
+	PrecacheSound "music/spiral_out.wav"
+
+	//// DISABLED SOUNDS ////
+
+    DisableSound "Announcer.MVM_Wave_End"
+    DisableSound "Announcer.MVM_Final_Wave_End"	
+	DisableSound "Announcer.MVM_Bonus"
+    DisableSound "Announcer.MVM_Get_To_Upgrade"
+
+    DisableSound "music.mvm_start_wave"
+    DisableSound "music.mvm_start_last_wave"					   
+	DisableSound "music.mvm_start_mid_wave"						   
+	DisableSound "music.mvm_start_tank_wave"
+    DisableSound "music.mvm_end_wave"
+    DisableSound "music.mvm_end_last_wave"						   
+	DisableSound "music.mvm_end_mid_wave"						   
+	DisableSound "music.mvm_end_tank_wave"
 
 	//// CUSTOM WEAPONS ////
 
@@ -31,9 +54,21 @@ WaveSchedule
 
 	PointTemplates
 	{
-		Core_PTs
+		Core_PT
 		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						IncludeScript(`music_system_ment`, getroottable())
 
+						PrecacheSound(`#music/in_absentia_logos.wav`)
+						PrecacheSound(`#music/spiral_out.wav`)
+						MusicSystemMent.ResetAll();
+						MusicSystemMent.HookByName(`bignet`);
+					  "
+			}
 		}
 
 		Masquerade_Boss_Intro_PT
@@ -49,11 +84,272 @@ WaveSchedule
 				Action TurnOff
 			}
 
+			// Masquerade Evil Portal OOOOOO SHIVER ME TIMBERS
+
+			logic_relay
+			{
+				"targetname" "MasqueradePortalRelay"
+
+				"OnTrigger" "MasqueradePortalParticle,Start,,0,-1"
+				"OnTrigger" "MasqueradePortalParticleTimer,Enable,,0,-1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "MasqueradePortalParticle"
+				"origin" "208 -336 1088"
+				"effect_name" "dxhr_lightningball_parent_blue"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradePortalParticle"
+				"origin" "208 -336 1088"
+				"effect_name" "eyeboss_team_blue"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradePortalParticle"
+				"origin" "208 -336 1088"
+				"effect_name" "eb_doorway_vortex04"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradePortalParticle2"
+				"origin" "208 -336 1088"
+				"effect_name" "eb_tp_vortex02"
+				"start_active" "0"
+			}
+
+			logic_timer
+			{
+				"targetname" "MasqueradePortalParticleTimer"
+                "refiretime" "1.5"
+				"startdisabled" "1"
+
+                "OnTimer" "MasqueradePortalParticle2,Start,,0,-1"
+				"OnTimer" "MasqueradePortalParticle2,Stop,,1,-1"
+			}
+
+			// Masquerade Intro
+
 			logic_relay
 			{
 				"targetname" "MasqueradeIntroRelay"
+
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)0-1"
+				"OnTrigger" "playerrunscriptcodeScreenFade(null, 0, 0, 0, 255, 2, 0.4, 2)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 2, 0.4, 1)2-1"
+				"OnTrigger" "MasqueradeIntroCamera1,CallScriptFunction,EnableAll,2,-1"
+				
+				"OnTrigger" "MasqueradeIntroParticle,Start,,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/fire/ignite.wav,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/fire/fire_small_loop1.wav,10,-1"
+
+				"OnTrigger" "MasqueradeIntroParticle2,Start,,13,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/fire/fire_small_loop1.wav,13,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/fire/fire_small_loop1.wav,13.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_fireball_cast.wav,13,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/fire/fire_big_loop1.wav,13,-1"
+
+				"OnTrigger" "MasqueradePortalParticle,Stop,,16,-1"
+				"OnTrigger" "MasqueradePortalParticleTimer,Disable,,16,-1"
+				"OnTrigger" "MasqueradeIntroParticle,Stop,,16,-1"
+				"OnTrigger" "MasqueradeIntroParticle2,Stop,,16,-1"
+				"OnTrigger" "MasqueradeIntroParticle3,Start,,16,-1"
+
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/fire/fire_big_loop1.wav,16,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/fire/fire_big_loop1.wav,16.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode.wav,16,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 1.5, 1)16-1"
+				"OnTrigger" "MasqueradeIdleRelay,Trigger,,16,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Oh what's up?,23.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,24,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_beingshotinvincible06.mp3,24,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_beingshotinvincible06.mp3,24,-1"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/in_absentia_logos.wav`),25,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}In Absentia Logos - Heaven Pierce Her,25,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/freeze_cam.wav,25,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/freeze_cam.wav,25,-1"
+				"OnTrigger" "MasqueradeIntroCardUpper,Display,,25,-1"
+				"OnTrigger" "MasqueradeIntroCardLower,Display,,26,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 2, 0.4, 2)30-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 2, 0.4, 1)32-1"
+                "OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)32-1"
+				"OnTrigger" "MasqueradeIntroCamera1,CallScriptFunction,DisableAll,32,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Look at you chuckleheads down there!,34.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,35,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_apexofjump03.mp3,35,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_apexofjump03.mp3,35,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,What's the matter? You freaking stupid?,37.4,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,37.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_misc09.mp3,37.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_misc09.mp3,37.5,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,No seriously you all suck!,39.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,40,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_jeers07.mp3,40,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_jeers07.mp3,40,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Would you look at you? I mean look at you!,41.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,42,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination09.mp3,42,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination09.mp3,42,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,You're like a car crash in slow motion.,43.9,-1"
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,It's like I'm watchin' ya fly through a windshield.,45,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,44,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,45.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_misc07.mp3,44,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_misc07.mp3,44,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,There ain't enough crits in the world to kill me!,48.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,49,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationsol06.mp3,49,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationsol06.mp3,49,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,You're gettin' dominated chucklehead!,50.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,51,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination15.mp3,51,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination15.mp3,51,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,You morons are about to catch a real beatin'.,52.9,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,53,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_taunts17.mp3,53,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_taunts17.mp3,53,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)53-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_flag_scout_outro,55,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_teleport.wav,55.33,-1"
+				"OnTrigger" "MasqueradeChargeParticle,Start,,55.33,-1"
+				"OnTrigger" "MasqueradeMan,SetAnimation,secondrate_sorcery_scout,55.33,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Think fast chucklenuts!,56.8,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,56.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_stunballhit15.mp3,56.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_stunballhit15.mp3,56.83,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_lightning_ball_cast.wav,57.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,57.83,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 255, 0.7, 3, 1)57.83-1"
+				"OnTrigger" "MasqueradeChargeParticle,Stop,57.83,-1"
+				"OnTrigger" "MasqueradeCC,Enable,,57.83,-1"
+				"OnTrigger" "MasqueradeVortex,Enable,,57.83,-1"
+				"OnTrigger" "MasqueradeVortexArm,Enable,,57.83,-1"
+				"OnTrigger" "MasqueradeIdleRelay,Trigger,,58.83,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Bang! I make it look easy.,60.99,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,61,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_award12.mp3,61,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_award12.mp3,61,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,How do you like me now blockhead?,62.99,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,63,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_revenge02.mp3,63,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_revenge02.mp3,63,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Let's do this.,64.99,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,65,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare03.mp3,65,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare03.mp3,65,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Go go go!,66.99,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,67,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_go03.mp3,67,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_go03.mp3,67,-1"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/spiral_out.wav`),68,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}Spiral Out - Heaven Pierce Her,68,-1"
 			}
 
+			point_viewcontrol
+			{
+				"targetname" "MasqueradeIntroCamera1"
+				"origin" "208 370 676"
+
+				"target" "MasqueradePortalParticle"
+				"moveto" "MasqueradeIntroPath_1"
+				"speed" "50"
+                "acceleration" "0"
+                "deceleration" "0"
+
+                "spawnflags" "28"
+                "vscripts" "point_viewcontrol_fix"
+			}
+
+			info_particle_system
+			{
+				"targetname" "MasqueradeIntroParticle"
+				"origin" "208 -336 1088"
+				"effect_name" "spell_fireball_small_red"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeIntroParticle2"
+				"origin" "208 -336 1088"
+				"effect_name" "lava_fireball"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeIntroParticle3"
+				"origin" "208 -336 1088"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+
+			game_text
+			{
+				"targetname" "MasqueradeIntroCardUpper"
+				"spawnflags" "1"
+				"message" "THE STAR OF THE SHOW"
+				"x" "-1"
+				"y" "0.7"
+				"effect" "2"
+				"color" "255 255 255"
+				"fxtime" "1"
+				"holdtime" "4"
+				"fadeout" "1"
+				"channel" "1"
+			}
+			game_text
+			{
+				"targetname" "MasqueradeIntroCardLower"
+				"spawnflags" "1"
+				"message" "MASQUERADE"
+				"x" "-1"
+				"y" "0.75"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "1"
+				"holdtime" "2"
+				"fadeout" "1"
+				"channel" "2"
+			}
+			game_text
+			{
+				"targetname" "MasqueradeTextCard"
+				"spawnflags" "1"
+				"message" ""
+				"x" "-1"
+				"y" "0.65"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "0.2"
+				"holdtime" "1.5"
+				"fadeout" "0.2"
+				"channel" "3"
+			}
+
+			// Masquerade Shows Up
 			logic_relay
 			{
 				"targetname" "MasqueradeIdleRelay"
@@ -152,7 +448,7 @@ WaveSchedule
 			info_particle_system
 			{
 				"targetname" "MasqueradeParticle2"
-				"origin" "208 -336 992"
+				"origin" "208 -336 976"
 				"effect_name" "powerup_supernova_explode_blue"
 				"start_active" "0"
 			}
@@ -160,18 +456,101 @@ WaveSchedule
 			logic_timer
 			{
 				"targetname" "MasqueradeParticleTimer"
-                "refiretime" "1.5"
+                "refiretime" "3"
                 "startdisabled" "1"
 
                 "OnTimer" "MasqueradeParticle2,Start,,0,-1"
 				"OnTimer" "MasqueradeParticle2,Stop,,1,-1"
 			}
+
+			// Masquerade Transforms the Map
+
+			info_particle_system
+			{
+				"targetname" "MasqueradeChargeParticle"
+				"origin" "208 -320 1312"
+				"effect_name" "charge_up"
+				"start_active" "0"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "MasqueradeVortex"
+				"origin" "208 -336 2189"
+
+				"model" "models/reudina/vortex_reu.mdl"
+				"modelscale" "5"
+
+				"rendermode" "1"
+				"rendercolor" "255 216 128"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "MasqueradeVortexArm"
+				"origin" "127 -263 1826"
+				"angles" "0 0 90"
+				
+				"model" "models/reudina/wof_reu.mdl"
+				"modelscale" "3"
+
+				"rendermode" "1"
+				"rendercolor" "255 216 128"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "MasqueradeVortexArm"
+				"origin" "289 -409 1826"
+				"angles" "0 180 90"
+				
+				"model" "models/reudina/wof_reu.mdl"
+				"modelscale" "3"
+
+				"rendermode" "1"
+				"rendercolor" "255 216 128"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			color_correction
+            {
+                "targetname" "MasqueradeCC"
+                "origin" "208 -320 1312"
+
+				"filename" "materials/colorcorrection/hurtbreaklight.raw"
+                "maxweight" "1"
+
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" "0"
+                "fadeOutDuration" "5"
+                "StartDisabled" "1"
+            }
 		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
+	SpawnTemplate "Core_PT"
 	SpawnTemplate "Masquerade_Boss_Intro_PT"
+
+	//// EXTRA TANK PATHS ////
+
+	ExtraTankPath
+	{
+		Name "MasqueradeIntroPath"
+		Node "208 370 676"
+		Node "208 64 832"
+	}
 
 	//// ROBOT TEMPLATES ////
 
@@ -190,6 +569,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_init_lower_relay`, `Trigger`)
+					EntFire(`MasqueradePortalRelay`, `Trigger`)
 				  "
 		}
 		StartWaveOutput
@@ -198,7 +578,17 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_boss_relay`, `Trigger`)
+					EntFire(`MasqueradeIntroRelay`, `Trigger`)
 				  "
+		}
+
+		Explanation  
+		{
+			Line ""
+			Line "{12E8EE}This mission will feature music potentially protected by copyright."
+			Line "{12E8EE}Those tracks include: Ultrakill OST by Arsi Hakita Patala."
+			Line "{12E8EE}Opt in/out with the Music Volume Slider in the settings."
+			Line ""
 		}
 	}
 	// Wave 2 Notes
