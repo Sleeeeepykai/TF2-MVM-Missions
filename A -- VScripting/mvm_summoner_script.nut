@@ -70,7 +70,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		}
 	}
 
-	function SummonerDemoSummonInit(Target)
+	function SummonerDemomanMinionInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -94,7 +94,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
-	function SummonerSoldierSummonInit(Target)
+	function SummonerSoldierMinionInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
@@ -118,7 +118,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
-	function SummonerHeavySummonInit(Target)
+	function SummonerHeavyMinionInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
 		Target.ClearAllBotAttributes()
