@@ -1,3 +1,11 @@
+#base robot_giant_vanilla_kai.pop
+#base robot_standard_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
 WaveSchedule
 {
 	StartingCurrency 1000
@@ -11,7 +19,17 @@ WaveSchedule
 
 	MaxRedPlayers 6
 	AllowBotExtraSlots 1
-	RobotLimit 28
+	RobotLimit 40
+
+	MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
 
 	//// PRECACHES ////
 
@@ -21,7 +39,97 @@ WaveSchedule
 
 	//// POINT TEMPLATES ////
 
+	PointTemplates
+	{
+		//// CORE PTs ////
+
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `TERMINATION`)
+
+						EntFire(`Player`, `$TeleportToEntity`, `spawnbot_right`)
+
+						EntFire(`carrier_lift`, `SetSpeed`, 99999)
+						EntFire(`carrier_lift_tab`, `SetSpeed`, 99999)
+						EntFire(`carrier_disable_relay`, `Trigger`)
+
+						EntFire(`drydock_open_relay`, `Trigger`)
+						EntFire(`shortcut_bridge_retract_relay`, `Trigger`)
+						EntFire(`silo_door_close`, `Trigger`)
+						EntFire(`01_door_lock_relay`, `Trigger`)
+						EntFire(`01_door`, `SetSpeed`, 99999)
+						EntFire(`02_door_lock_relay`, `Trigger`)
+						EntFire(`02_door_flank_1_lock_relay`, `Trigger`)
+						EntFire(`02_door_flank_2_lock_relay`, `Trigger`)
+						EntFire(`03_door_lock_relay`, `Trigger`)
+						EntFire(`03_door_flank_1_lock_relay`, `Trigger`)
+						EntFire(`03_door_flank_2_lock_relay`, `Trigger`)
+						EntFire(`04_door_lock_relay`, `Trigger`)
+						EntFire(`05_door_lock_relay`, `Trigger`)
+						EntFire(`06_door_lock_relay`, `Trigger`)
+						EntFire(`08_door_lock_relay`, `Trigger`)
+					  "
+			}
+
+			point_populator_interface
+            {
+                "targetname" "pop_interface"
+            }
+
+			logic_timer // Ragdoll Remover
+			{
+				"targetname"    "RagdollRemover"
+				"RefireTime"    "5"
+				"OnTimer"       "tf_ragdoll*,Kill,,0,-1"
+			}
+		}
+
+		SpawnBarrierPT
+		{
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 7996 805"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_256.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 7996 1065"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_256.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 8126 805"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_128.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 8126 1065"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_128.mdl"
+				"solid" "6"
+			}
+		}
+	}
+
 	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+	SpawnTemplate "SpawnBarrierPT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -39,7 +147,23 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`red_rev_mission_relay`, `Trigger`)
+
+					IncludeScript(`claudz_logic_v3`)
+
+					Convars.SetValue(`tf_playergib`, 0)
 				  "
 		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay`, `Trigger`)
+
+					EntFire(`01_door`, `SetSpeed`, 50)
+				  "
+		}
+
+		CustomMaxWaveNumber 7
 	}
 }
