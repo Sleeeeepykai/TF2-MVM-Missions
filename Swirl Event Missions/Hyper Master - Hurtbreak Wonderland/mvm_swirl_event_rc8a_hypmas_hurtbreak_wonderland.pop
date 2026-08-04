@@ -43,6 +43,7 @@ WaveSchedule
 
 	// Precached Sounds
 
+	PrecacheSound "music/in_absentia_logos_calm.wav"
 	PrecacheSound "music/in_absentia_logos.wav"
 	PrecacheSound "music/spiral_out.wav"
 
@@ -66,6 +67,25 @@ WaveSchedule
 
 	CustomWeapon
 	{
+		//// WEAPONS ////
+		"MasqueradeFireRainWeapon"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+			"add damage type" 8
+			"remove damage type" 64
+			"Set DamageType Ignite" 1
+			"custom kill icon" "firedeath"
+			"custom weapon fire sound" "=75|misc/halloween/spell_fireball_cast.wav"
+			"custom impact sound" "=75|misc/halloween/spell_fireball_impact.wav"
+			"custom projectile model" "models/empty.mdl"
+			"projectile trail particle" "~spell_fireball_small_blue"
+			"projectile speed decreased" 0.9
+			"projectile spread angle penalty" 3
+			"projectile gravity" -1
+		}
+
+		//// COSMETICS ////
 		"SummonerArmour"
 		{
 			OriginalItemName "Potato of Labor"
@@ -90,6 +110,7 @@ WaveSchedule
 						EntFire(`snd_wavestart`, `Kill`)
 						IncludeScript(`music_system_ment`)
 
+						PrecacheSound(`#music/in_absentia_logos_calm.wav`)
 						PrecacheSound(`#music/in_absentia_logos.wav`)
 						PrecacheSound(`#music/spiral_out.wav`)
 						MusicSystemMent.ResetAll()
@@ -101,6 +122,21 @@ WaveSchedule
 						IncludeScript(`tankextensions/combattank`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
 						IncludeScript(`tankextensions/combattank`)
+
+						::DispatchParticleAttached <- function(entity, name, attachment)
+						{
+							if(entity == null) return
+							if(name == null) { entity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = CreateByClassname(`trigger_particle`)
+							SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromInt(`attachment_type`, 4)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.KeyValueFromString(`particle_name`, name)
+							hParticle.KeyValueFromString(`attachment_name`, attachment)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, ``, entity, entity)
+							hParticle.Kill()
+						}
 					  "
 			}
 
@@ -114,7 +150,7 @@ WaveSchedule
 
 		//// Masquerade PTs ////
 
-		Masquerade_Boss_Intro_PT
+		Masquerade_Boss_Cinematics_PT
 		{
 			OnSpawnOutput
 			{
@@ -214,7 +250,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_beingshotinvincible06.mp3,24,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_beingshotinvincible06.mp3,24,-1"
 
-				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/in_absentia_logos.wav`),25,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/in_absentia_logos_calm.wav`),25,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}In Absentia Logos - Heaven Pierce Her,25,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/freeze_cam.wav,25,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/freeze_cam.wav,25,-1"
@@ -306,6 +342,8 @@ WaveSchedule
 				"OnTrigger" "MasqueradeVortexArm,Enable,,58.83,-1"
 				"OnTrigger" "MasqueradeIdleRelay,Trigger,,59.83,-1"
 
+				"OnTrigger" "MasqueradeIntroCamera5,$SetTarget,MasqueradePortalParticle,59.83,-1"
+
 				"OnTrigger" "MasqueradeTextCard,$setkey$message,Bang! I make it look easy.,61.99,-1"
 				"OnTrigger" "MasqueradeTextCard,Display,,62,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_award12.mp3,62,-1"
@@ -326,8 +364,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_go03.mp3,68,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_go03.mp3,68,-1"
 
-				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/spiral_out.wav`),70,-1"
-				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}Spiral Out - Heaven Pierce Her,70,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(`#music/in_absentia_logos.wav, 0.5, 0.5`)70-1"
 			}
 
 			point_viewcontrol
@@ -488,6 +525,7 @@ WaveSchedule
 			}
 
 			// Masquerade Shows Up
+
 			logic_relay
 			{
 				"targetname" "MasqueradeIdleRelay"
@@ -673,6 +711,213 @@ WaveSchedule
                 "fadeOutDuration" "5"
                 "StartDisabled" "1"
             }
+
+			// Masquerade Mid-wave Cutscene (Wave 1)
+
+			logic_relay
+			{
+				"targetname" "MasqueradeWave1HazardCutscene"
+
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)0-1"
+				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,EnableAll,0,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_the_critical_fail_scout,0.1,-1"
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,It's startin' to bore me how much you suck.,0,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination06.mp3,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination06.mp3,0.1,-1"
+
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,2.83,-1"
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Depth perception pal. Look into it.,2.99,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationdem05.mp3,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationdem05.mp3,3,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_meteor_cast.wav,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_meteor_cast.wav,4,-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `spell_fireball_small_red`, `hand_L`)4-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `spell_fireball_small_red`, `hand_R`)4-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Play ball!,5.99,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_battlecry01.mp3,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_battlecry01.mp3,6,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_the_trackmans_touchdown,6,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 1, 1)7.16-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,7.16,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.16,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.16,-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `projectile_fireball_ring_fire`, `hand_L`)7.16-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `projectile_fireball_ring_fire`, `hand_R`)7.16-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, null, `hand_L`)8.16-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, null, `hand_R`)8.16-1"
+				"OnTrigger" "MasqueradeFireRainStageHazardPT,ForceSpawn,,8.16,-1"
+				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,8.16,-1"
+				"OnTrigger" "MasqueradeIntroCamera7,CallScriptFunction,EnableAll,8.16,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,8.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,8.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,9.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,9.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,10.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,10.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,11,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,11.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,11.66,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,12,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
+				"OnTrigger" "MasqueradeIntroCamera7,CallScriptFunction,DisableAll,11,-1"
+				"OnTrigger" "MasqueradeIdleRelay,Trigger,,11,-1"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/spiral_out.wav`),11,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}Spiral Out - Heaven Pierce Her,11,-1"
+			}
+			point_viewcontrol
+			{
+				"targetname" "MasqueradeIntroCamera7"
+				"origin" "208 610 1316"
+
+				"target" "MasqueradePortalParticle"
+                "acceleration" "0"
+                "deceleration" "0"
+				"trackspeed" "50"
+
+                "spawnflags" "28"
+                "vscripts" "point_viewcontrol_fix"
+			}
+		}
+		MasqueradeFireRainStageHazardPT
+		{
+			RemoveIfKilled "FireRainTimer"
+
+			logic_timer
+			{
+				"targetname" "FireRainTimer"
+				"RefireTime" "0.2"
+
+				"OnTimer" "FireRainLocationCase,PickRandomShuffle,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "FireRainLocationCase"
+				
+				"OnCase01" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation1,0,-1"
+				"OnCase02" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation2,0,-1"
+				"OnCase03" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation3,0,-1"
+				"OnCase04" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation4,0,-1"
+				"OnCase05" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation5,0,-1"
+				"OnCase06" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation6,0,-1"
+				"OnCase07" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation7,0,-1"
+				"OnCase08" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation8,0,-1"
+				"OnCase09" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation9,0,-1"
+				"OnCase10" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation10,0,-1"
+				"OnCase11" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation11,0,-1"
+				"OnCase12" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation12,0,-1"
+				"OnCase13" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation13,0,-1"
+				"OnCase14" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation14,0,-1"
+				"OnCase15" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation15,0,-1"
+				"OnCase16" "MasqueradeFireRainWeaponPT,ForceSpawnAtEntityOrigin,FireRainLocation16,0,-1"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation2"
+				"origin" "208 -672 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation3"
+				"origin" "-320 -448 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation4"
+				"origin" "576 -320 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation6"
+				"origin" "224 96 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation7"
+				"origin" "-544 -128 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation8"
+				"origin" "416 832 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation9"
+				"origin" "224 1664 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation10"
+				"origin" "-960 1792 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation11"
+				"origin" "-1712 1520 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation12"
+				"origin" "-1942 1792 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation13"
+				"origin" "-2224 880 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation14"
+				"origin" "-2480 432 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation15"
+				"origin" "-3360 -320 1536"
+			}
+			info_target
+			{
+				"targetname" "FireRainLocation16"
+				"origin" "-2288 -160 1536"
+			}
+		}
+		MasqueradeFireRainWeaponPT
+		{
+			RemoveIfKilled "MasqueradeFireRain"
+
+			
+			OnSpawnOutput
+			{
+				Target MasqueradeFireRain
+				Action FireOnce
+				Delay 0.2
+			}
+			OnSpawnOutput
+			{
+				Target MasqueradeFireRain
+				Action Kill
+				Delay 0.3
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "MasqueradeFireRain"
+				"angles" "45 90 0"
+				"teamnum" "3"
+				"$weaponname" "MasqueradeFireRainWeapon"
+			}
 		}
 
 		//// Summoner PTs ////
@@ -956,7 +1201,7 @@ WaveSchedule
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "Core_PT"
-	SpawnTemplate "Masquerade_Boss_Intro_PT"
+	SpawnTemplate "Masquerade_Boss_Cinematics_PT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -1714,6 +1959,36 @@ WaveSchedule
 		{
 			Name "Wave1_Subwave3_Check"
 			WaitForAllDead "Wave1_Subwave3_GBurstSoldier3"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave3_Check"
+			WaitForAllDead "Wave1_Subwave3_Scouts3"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave3_Check"
+			WaitForAllDead "Wave1_Subwave3_Bowmen3"
+		}
+
+		// Cutscene
+		WaveSpawn
+		{
+			Name "Wave1_Subwave4_MasqueradeCutscene1"
+			WaitForAllSpawned "Wave1_Subwave3_Check"
+			WaitBeforeStarting 3
+
+			FirstSpawnOutput
+			{
+				Target MasqueradeWave1HazardCutscene
+				Action Trigger
+			}
+		}
+
+		// Subwave 4
+		WaveSpawn
+		{
+			
 		}
 	}
 	// Wave 2 Notes
