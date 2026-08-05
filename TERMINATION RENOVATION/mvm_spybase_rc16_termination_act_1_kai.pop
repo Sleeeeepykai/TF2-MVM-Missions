@@ -33,7 +33,46 @@ WaveSchedule
 
 	//// PRECACHES ////
 
-	// Precached Models
+	// Precached Models //
+
+	PrecacheModel "models/spybase/emp_tank.mdl"
+
+	// Precached Sounds //
+
+	// VOX
+	PrecacheSound "wee_woo_wee_woo.mp3"
+
+	// Saxton Hale Voicelines
+	PrecacheSound "saxton_hale_intro1.mp3"
+	PrecacheSound "saxtonhale/saxton_hale_intro2.mp3"
+	PrecacheSound "saxtonhale/saxton_hale_engibotintro_variation3.mp3"
+	
+	// Music
+	PrecacheSound "termination_leadening_winds.wav"
+
+	//// DISABLED SOUNDS ////
+
+    DisableSound "Announcer.MVM_Wave_End"
+	DisableSound "Announcer.MVM_Get_To_Upgrade"
+	DisableSound "Announcer.MVM_Final_Wave_End"	
+	DisableSound "music.mvm_end_last_wave"						
+	DisableSound "music.mvm_end_mid_wave"						
+	DisableSound "music.mvm_end_tank_wave"						
+	DisableSound "music.mvm_end_wave"							
+	DisableSound "music.mvm_lost_wave"							
+	DisableSound "music.mvm_start_last_wave"					
+	DisableSound "music.mvm_start_mid_wave"	
+	DisableSound "music.mvm_start_tank_wave"					
+	DisableSound "music.mvm_start_wave"
+	DisableSound "Announcer.MVM_First_Wave_Start"				
+	DisableSound "Announcer.MVM_Wave_Start"						
+	DisableSound "Announcer.MVM_Wave_End"						
+	DisableSound "Announcer.MVM_Wave_Lose"						
+	DisableSound "Announcer.MVM_Final_Wave_Start"
+
+	//// LUA SCRIPTS ////
+
+	LuaScriptFile "tank_repair_script.lua"
 
 	//// CUSTOM WEAPONS ////
 
@@ -50,7 +89,7 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
-						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `TERMINATION`)
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination`)
 
 						EntFire(`Player`, `$TeleportToEntity`, `spawnbot_right`)
 
@@ -73,6 +112,12 @@ WaveSchedule
 						EntFire(`05_door_lock_relay`, `Trigger`)
 						EntFire(`06_door_lock_relay`, `Trigger`)
 						EntFire(`08_door_lock_relay`, `Trigger`)
+
+						IncludeScript(`music_system_ment`)
+						PrecacheSound(`#termination_leadening_winds.wav`)
+
+						MusicSystemMent.ResetAll()
+						MusicSystemMent.HookByName(`bignet`)
 					  "
 			}
 
@@ -87,10 +132,356 @@ WaveSchedule
 				"RefireTime"    "5"
 				"OnTimer"       "tf_ragdoll*,Kill,,0,-1"
 			}
+			logic_timer // Alarm Timer
+			{
+				"targetname" "MissionAlarmTimer"
+				"RefireTime" "60"
+
+				"OnTimer" "tf_gamerules,PlayVO,ambient/alarms/citadel_alert_loop2.wav,0.1,-1"
+				"OnTimer" "tf_gamerules,$StopVO,ambient/alarms/citadel_alert_loop2.wav,6,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "ActStartRelay"
+
+				"OnTrigger" "SpawnDoorButton,Unlock,,0,-1"
+				"OnTrigger" "SpawnDoorButtonGlowTimer,Enable,0.1,-1"
+				"OnTrigger" "HUDHint,$setkey$message,MOUSE1: INTERACT,0,-1"
+				"OnTrigger" "HUDHintTimer,Enable,0.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\engineer_mvm_gunslingertriplepunchfinal01.mp3,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\engineer_mvm_battlecry04.mp3,4,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "SpawnSupplyLocker"
+				"origin" "-1361 9264 688"
+				"angles" "0 135 0"
+				"model" "models/props_gameplay/resupply_locker.mdl"
+				"solid" "6"
+			}
+			func_regenerate
+			{
+				"targetname" "SpawnSupplyLockerTrigger"
+				"origin" "-1361 9264 688"
+				"mins" "-60 -60 -96"
+                "maxs" "135 60 96"
+				"teamnum" "2"
+				"associatedmodel" "SpawnSupplyLocker"
+				"spawnflags" "1"
+			}
+
+			logic_timer
+			{
+				"targetname"    "HUDHintTimer"
+				"RefireTime"    "2.0"
+				"startdisabled" "1"
+
+				"OnTimer" "HUDHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "HUDHint"
+				"message" ""
+				"spawnflags" "1"
+			}
+
+			
+		}
+
+		//// MAP ASSET PTs ////
+
+		SpawnDoorPT
+		{
+			RemoveIfKilled "SpawnDoorButton"
+
+			OnSpawnOutput
+			{
+				Target SpawnDoorAlarmLight
+				Action TurnOff
+			}
+
+			logic_relay
+			{
+				"targetname" "SpawnDoorBreakdownRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,passtime/ball_smack.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_plant.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_timer.wav,0,-1"
+				"OnTrigger" "SpawnDoorButtonSapper,Enable,,0,-1"
+				"OnTrigger" "SpawnDoorButtonGlowTimer,Disable,,0,-1"
+				"OnTrigger" "SpawnDoorAlarmLightProp,SetAnimation,spin,0,-1"
+				"OnTrigger" "SpawnDoorAlarmLightProp,Skin,4,0,-1"
+				"OnTrigger" "SpawnDoorAlarmLightProp,SetPlaybackRate,-1,0.01,-1"
+				"OnTrigger" "SpawnDoorAlarmLightProp2,SetAnimation,spin,0,-1"
+				"OnTrigger" "SpawnDoorAlarmLightProp2,Skin,4,0,-1"
+				"OnTrigger" "SpawnDoorAlarmLight,Toggle,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,wee_woo_wee_woo.mp3,2,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave1_Subwave1_Snipers,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,4,-1"
+				"OnTrigger" "ActIntroCardUpper,Display,,4,-1"
+				"OnTrigger" "ActIntroCardLower,Display,,5,-1"
+				"OnTrigger" "BigNetRunScriptCodeNetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination - Indium Infiltration`)5-1"
+				"OnTrigger" "Player,$DisplayTextChat,{yellow}[ Now Playing: {6383ff} Leadening Winds - GoodBobFR {yellow}],5,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination_leadening_winds.wav`),6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap5.wav,6,-1"
+				"OnTrigger" "SpawnDoorSpark1,Start,,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap9.wav,7,-1"
+				"OnTrigger" "SpawnDoorSpark2,Start,,7,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap2.wav,8,-1"
+				"OnTrigger" "SpawnDoorSpark3,Start,,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap3.wav,8.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap9.wav,9,-1"
+				"OnTrigger" "SpawnDoorSpark4,Start,,9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\levels\citadel\zapper_warmup1.wav,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,10,-1"
+				"OnTrigger" "SpawnDoorCharge,Start,,10,-1"
+				"OnTrigger" "SpawnDoorCharge,Stop,,12,-1"
+				"OnTrigger" "SpawnDoorExplosion,Start,,12,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode.wav,12,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,weapons/sapper_timer.wav,12,-1"
+				"OnTrigger" "01_door_unlock_relay,Trigger,,12,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave1_Subwave1_ChiefTechnician,12,-1"
+				"OnTrigger" "SpawnBarrierFence,Kill,,12.4,-1"
+				"OnTrigger" "SpawnDoorButton,Kill,,12.5,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "SpawnDoorButtonProp"
+				"parentname" "01_door"
+				"origin" "-2215 7525 1060"
+				"model" "models/props_powerhouse/emergency_launch_button.mdl"
+				"modelscale" "1.5"
+				"solid" "6"
+
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnDoorButtonSapper"
+				"parentname" "01_door"
+				"origin" "-2218 7528 1076"
+				"angles" "75 0 -90"
+				"model" "models/buildables/sapper_sentry1.mdl"
+				"modelscale" "1.5"
+				"solid" "0"
+
+				"disableshadows" "1"
+				"startdisabled" "1"
+ 			}
+			func_button
+			{
+				"targetname" "SpawnDoorButton"
+				"origin" "-2064 7505 750"
+				"mins" "-40 -65 -75"
+                "maxs" "20 30 75"
+				"wait" "-1"
+
+				"spawnflags" "2560"
+
+				"OnPressed" "SpawnDoorBreakdownRelay,Trigger,,0,-1"
+			}
+			logic_timer
+			{
+				"targetname" "SpawnDoorButtonGlowTimer"
+				"RefireTime" "1"
+				"startdisabled" "1"
+
+				"OnTimer" "SpawnDoorButtonGlow,Enable,,0,-1"
+				"OnTimer" "SpawnDoorButtonGlow,Disable,,0.5,-1"
+			}
+			tf_glow
+			{
+				"targetname" "SpawnDoorButtonGlow"
+				"target" "SpawnDoorButtonProp"
+				"GlowColor" "255 255 255 255"
+				"startdisabled" "1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "SpawnDoorAlarmLightProp"
+				"origin" "-1797 7631 1017"
+				"angles" "60 270 135"
+				"model" "models/props_gameplay/mvm_gemergency_light.mdl"
+				"skin" "1"
+				"defaultanim" "idle"
+
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnDoorAlarmLightProp2"
+				"origin" "-2319 7628 1017"
+				"angles" "60 270 -135"
+				"model" "models/props_gameplay/mvm_gemergency_light.mdl"
+				"skin" "1"
+				"defaultanim" "idle"
+
+				"disableshadows" "1"
+			}
+			light_dynamic
+			{
+				"targetname" "SpawnDoorAlarmLight"
+				"origin" "-1816 7648 1000"
+				"pitch" "90"
+				"_light" "225 0 0"
+				"brightness" "4"
+				"spotlight_radius" "225"
+				"distance" "225"
+				"_inner_cone" "0"
+				"_cone" "0"
+			}
+            light_dynamic
+			{
+				"targetname" "SpawnDoorAlarmLight"
+				"origin" "-2296 7648 1000"
+				"pitch" "90"
+				"_light" "225 0 0"
+				"brightness" "4"
+				"spotlight_radius" "225"
+				"distance" "225"
+				"_inner_cone" "0"
+				"_cone" "0"
+			}
+
+			game_text
+			{
+				"targetname" "ActIntroCardUpper"
+				"message" "ACT 1"
+				"x" "-1"
+				"y" "0.4"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"holdtime" "3"
+				"fadeout" "0.2"
+				"channel" "1"
+
+				"spawnflags" "1"
+			}
+			game_text
+			{
+				"targetname" "ActIntroCardLower"
+				"message" "INDIUM INFILTRATION"
+				"x" "-1"
+				"y" "0.45"
+				"effect" "2"
+				"color" "255 255 255"
+				"fxtime" "0.05"
+				"fadein" "0.05"
+				"holdtime" "1.55"
+				"fadeout" "0.2"
+				"channel" "2"
+
+				"spawnflags" "1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "SpawnDoorSpark1"
+				"origin" "-2034 7504 788"
+				"effect_name" "pomson_impact_electro"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorSpark2"
+				"origin" "-2099 7535 792"
+				"effect_name" "pomson_impact_electro"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorSpark3"
+				"origin" "-2045 7535 749"
+				"effect_name" "manmelter_impact_electro"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorSpark4"
+				"origin" "-2090 7535 729"
+				"effect_name" "manmelter_impact_electro"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorCharge"
+				"origin" "-2064 7535 762"
+				"effect_name" "charge_up"
+				"start_active" "0"
+			}
+
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-1483 7998 688"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-1593 7823 688"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-1780 7535 688"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-2064 7535 688"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-2292 7535 688"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-2525 7637 672"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-2608 7664 876"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "SpawnDoorExplosion"
+				"origin" "-2882 7679 880"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
 		}
 
 		SpawnBarrierPT
 		{
+			RemoveIfKilled "SpawnBarrierFence"
+
 			prop_dynamic
 			{
 				"targetname" "SpawnBarrierFence"
@@ -123,17 +514,383 @@ WaveSchedule
 				"model" "models/props_coalmines/wood_fence_128.mdl"
 				"solid" "6"
 			}
+
+			func_nobuild
+			{
+				"target" "SpawnBarrierNobuild"
+				"origin" "-1315 8033 688"
+                "mins" "-100 -200 -100"
+                "maxs" "100 200 100"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
+			}
+
+			func_forcefield
+			{
+				"targetname" "SpawnBarrierForcefield"
+				"origin" "-1415 8027 688"
+				"mins" "-20 -200 0"
+				"maxs" "20 200 3000"
+				"teamnum" "3"
+			}
+		}
+
+		EMPTankPT
+		{
+			RemoveIfKilled "EMPTank"
+
+			prop_dynamic
+			{
+				"targetname" "EMPTank"
+				"origin" "-2283 8763 688"
+				"angles" "0 -90 0"
+				"model" "models/spybase/emp_tank.mdl"
+				"defaultanim" "deploy"
+				"solid" "6"
+
+				"OnAnimationBegun" "!self,SetPlaybackRate,0.001,0,-1"
+				"OnAnimationBegun" "!selfRunScriptCodeNetProps.SetPropBool(self, `m_bClientSideAnimation`, false); self.SetCycle(0.5)-1-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "EMPTankTrack"
+				"origin" "-2338 8763 688"
+				"angles" "0 -90 0"
+				"model" "models/bots/boss_bot/tank_track_l.mdl"
+				"solid" "0"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "EMPTankTrack"
+				"origin" "-2227 8763 688"
+				"angles" "0 -90 0"
+				"model" "models/bots/boss_bot/tank_track_r.mdl"
+				"solid" "0"
+				"disableshadows" "1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "EMPTankEngibot"
+				"origin" "-2351 8760 763"
+				"angles" "0 45 90"
+				"model" "models/bots/engineer/bot_engineer.mdl"
+				"defaultanim" "melee_swing"
+				"solid" "0"
+				
+				"OnAnimationBegun" "!self,SetPlaybackRate,1.4,0,-1"
+			}
+			prop_dynamic_ornament
+			{
+				"targetname" "EMPTankEngibotWrench"
+				"InitialOwner" "EMPTankEngibot"
+				"model" "models/weapons/c_models/c_wrench/c_wrench.mdl"
+			}
+		}
+
+		//// PLAYER PTs ////
+
+		PlayerVoicelinePT
+		{
+			OnSpawnOutput
+			{
+				Target Act1IntroVoicelineRelay
+				Action Trigger
+				Delay 3
+			}
+
+			logic_relay
+			{
+				"targetname" "Act1IntroVoicelineRelay"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Aaaalright Mercenaries! The name's Saxton Hale. You gents have just broken into Gray Mann's not-so-secret base for me.,1.4,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: What for you might ask? Well he's holdin' onto heaps of Australium down below and its your job to get it out.,14.4,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})271"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})271"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: First task is gonna get ya escortin' a path for this EMP Tank here - it'll crack upper security wide open.,27,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: But she's a delicate beauty so make sure those robot lackeys don't rip her a new one.,39,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_engibotintro_variation3.mp3`,channel = 6,special_dsp = 55,filter_type=5})501"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_engibotintro_variation3.mp3`,channel = 6,special_dsp = 55,filter_type=5})501"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: This Engibot we stole and had reprogrammed by RnD to whip up gadgets along the way. It'll handle the tech-ing while you Mercenaries handle the smashing!,50,-1"
+			}
 		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "CorePT"
+
+	SpawnTemplate "SpawnDoorPT"
 	SpawnTemplate "SpawnBarrierPT"
+	SpawnTemplate "EMPTankPT"
+
+	PlayerSpawnOnceTemplate "PlayerVoicelinePT"
 
 	//// EXTRA TANK PATHS ////
 
 	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Chief_Technician
+		{
+			Name "Chief Technician"
+			Class Engineer
+			ClassIcon engineer_hyper
+			Health 20000
+			Scale 1.75
+			Skill Expert
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			WeaponRestrictions MeleeOnly
+
+			MaxVisionRange 1500
+
+			Tag giant
+
+			Action Mobber
+
+			SpawnTemplate ChiefTechnicianIndicator
+			SpawnTemplate ChiefTechnicianRingAttackMaker
+
+			Item "The Rescue Ranger"
+			Item "The Eureka Effect"
+
+			Item "Hazard Handler"
+			Item "Cargo Constructor"
+
+			CharacterAttributes
+			{
+				"move speed bonus" 0.001
+				"never gib" 1
+				"no_jump" 1
+				"damage force reduction" 0.5
+				"airblast vulnerability multiplier" 0.5
+				"override footstep sound set" 4
+				"voice pitch scale" 0.75
+				"displace touched enemies" 1
+			}
+			ItemAttributes
+			{
+				ItemName "The Rescue Ranger"
+				"fire rate bonus" 0.8
+				"faster reload rate" 0.5
+				"clip size bonus" 2
+				"hold fire until full reload" 1
+				"never gib" 1
+			}
+
+			AddCond // Temporary Invincibility
+			{
+				Index 51
+			}
+			FireInput // Sets Starting Position
+			{
+				Target !self
+				Action $SetLocalOrigin
+				Param "-2048 6624 704"
+				Delay 0
+				Repeats 1
+				Cooldown -1
+			}
+			InterruptAction // He Standing Still
+			{
+				Target "-2048 6624 704"
+				Delay 0
+				Repeats 1
+				Duration 1
+				Cooldown 0
+				AimTarget "-2035 7193 688"
+				AlwaysLook 1
+				WaitUntilDone 0
+			}
+		
+			FireInput // Voiceline
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "PrecacheSound("vo\mvm\norm\engineer_mvm_jeers04.mp3");EmitSoundEx({sound_name = "vo\mvm\norm\engineer_mvm_jeers04.mp3",pitch = 85,filter_type = 5})"
+				Delay 2.5
+				Repeats 1
+				Cooldown -1
+			}
+			FireInput // Taunt
+			{
+				Target !self
+				Action $PlaySequence
+				Param "taunt_highFiveStart"
+				Delay 5
+				Repeats 1
+				Cooldown -1
+			}
+			FireInput // Voiceline
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "PrecacheSound("vo\mvm\norm\engineer_mvm_helpmedefend01.mp3");EmitSoundEx({sound_name = "vo\mvm\norm\engineer_mvm_helpmedefend01.mp3",pitch = 85,filter_type = 5})"
+				Delay 5
+				Repeats 1
+				Cooldown -1
+			}
+
+			AddAttribute // Makes Him Start Moving
+			{
+				Item Player  
+				Name "move speed bonus"
+				Value 0.5
+				Delay 10
+			}
+			InterruptAction // Moves to the Main Console
+			{
+				Target "-5850 5279 512"
+				Delay 10.1
+				Repeats 1
+				Duration 1
+				Cooldown 0
+				WaitUntilDone 1
+				OnDoneChangeAttributes "BossIdle"
+			}
+
+			ChangeAttributes // Boss Fight Trigger
+			{
+				Name "BossFightStart"
+				Delay 0
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 19999
+			}
+
+			EventChangeAttributes
+			{
+				BossIdle [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-4940 1789 536"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $RemoveCond
+						Param 51
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					Taunt
+					{
+						Delay 1
+						Cooldown -1
+						Repeats 1
+						Duration 999
+						Name "Rancho Relaxo Taunt"
+					}
+				}
+				BossFightStart [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "nowtherealfightbegins"
+						Action Trigger
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action RunScriptCode
+						Param "self.StopTaunt(false);"
+						Delay 0.25
+					}
+					ChangeAttributes
+					{
+						Name "BossFightPattern"
+						Delay 8
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				BossFightPattern [$SIGSEGV]
+				{
+					InterruptAction // Keeps the Boss Stationary
+					{
+						Target "-5067 1783 536"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 50
+					}
+					WeaponSwitch
+					{
+						Delay 0
+						Cooldown 14
+						Repeats 1
+						Type "Primary"
+					}
+					WeaponSwitch
+					{
+						Delay 7
+						Cooldown 14
+						Repeats 1
+						Type "Secondary"
+					}
+					ChangeAttributes
+					{
+						Name "BossFightWaveAttack"
+						Delay 12
+					}
+				}
+				BossFightWaveAttack [$SIGSEGV]
+				{
+					RingofFire 10
+
+					WeaponSwitch
+					{
+						Delay 0
+						Cooldown -1
+						Repeats 1
+						Type "Melee"
+					}
+					FireInput
+					{
+						Target !self
+						Action $PlaySequence
+						Param "taunt_drg_melee"
+						Delay 0.5
+						Cooldown 2
+						Repeats 2
+					}
+					FireInput
+					{
+						Target "ring_maker"
+						Action ForceSpawn
+						Delay 2.5
+						Cooldown 2
+						Repeats 2
+					}
+					ChangeAttributes
+					{
+						Name "BossFightPattern"
+						Delay 7
+					}
+				}
+			}
+		}
+	}
 
 	//// MISSION BOTS ////
 
@@ -159,11 +916,570 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`ActStartRelay`, `Trigger`)
 
-					EntFire(`01_door`, `SetSpeed`, 50)
+					EntFire(`01_door`, `SetSpeed`, 500)
 				  "
 		}
 
 		CustomMaxWaveNumber 7
+
+		// Subwave 1
+		WaveSpawn // 10 Snipers
+		{
+			Name "Wave1_Subwave1_Snipers"
+			Where spawnbot_side_3
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			StartDisabled 1
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot // Sniper 1
+				{
+					Template T_TFBot_Sniper
+					Action Sniper
+					Attributes DisableDodge
+					Scale 1.0001
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2584 5902 688"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "SniperMode"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					EventChangeAttributes
+					{
+						SniperMode [$SIGSEGV]
+						{
+							WeaponRestrictions PrimaryOnly
+
+							InterruptAction
+							{
+								Target "-1536 5952 896"
+								Delay 0.5
+								Repeats 0
+								Duration 25
+								Cooldown 0.3
+								Distance 50
+							}
+							FireWeapon
+							{
+								Type Primary
+								Delay 0.5
+								Cooldown 1.5
+								Duration 0.1
+								IfSeeTarget 1
+								IfLeftSpawn 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $AddCond
+								Param 1
+								Delay 0.1
+								Cooldown 0.1
+								IfSeeTarget 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $RemoveCond
+								Param 1
+								Delay 2
+								Cooldown 1
+								IfNoTarget 1
+							}
+
+							ChangeAttributes
+							{
+								Name "MeleeMode"
+								Delay 25
+								Repeats 1
+								Cooldown -1
+							}
+						}
+						MeleeMode [$SIGSEGV]
+						{
+							WeaponRestrictions MeleeOnly
+							ActionOverride Mobber
+						}
+					}
+				}
+				TFBot // Sniper 2
+				{
+					Template T_TFBot_Sniper
+					Action Sniper
+					Attributes DisableDodge
+					Scale 1.0001
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2584 5902 688"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "SniperMode"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					EventChangeAttributes
+					{
+						SniperMode [$SIGSEGV]
+						{
+							WeaponRestrictions PrimaryOnly
+
+							InterruptAction
+							{
+								Target "-1792 5952 896"
+								Delay 0.5
+								Repeats 0
+								Duration 25
+								Cooldown 0.3
+								Distance 50
+							}
+							FireWeapon
+							{
+								Type Primary
+								Delay 0.5
+								Cooldown 1.5
+								Duration 0.1
+								IfSeeTarget 1
+								IfLeftSpawn 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $AddCond
+								Param 1
+								Delay 0.1
+								Cooldown 0.1
+								IfSeeTarget 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $RemoveCond
+								Param 1
+								Delay 2
+								Cooldown 1
+								IfNoTarget 1
+							}
+
+							ChangeAttributes
+							{
+								Name "MeleeMode"
+								Delay 25
+								Repeats 1
+								Cooldown -1
+							}
+						}
+						MeleeMode [$SIGSEGV]
+						{
+							WeaponRestrictions MeleeOnly
+							ActionOverride Mobber
+						}
+					}
+				}
+				TFBot // Sniper 3
+				{
+					Template T_TFBot_Sniper
+					Action Sniper
+					Attributes DisableDodge
+					Scale 1.0001
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2584 5902 688"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "SniperMode"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					EventChangeAttributes
+					{
+						SniperMode [$SIGSEGV]
+						{
+							WeaponRestrictions PrimaryOnly
+
+							InterruptAction
+							{
+								Target "-2208 5920 704"
+								Delay 0.5
+								Repeats 0
+								Duration 25
+								Cooldown 0.3
+								Distance 50
+							}
+							FireWeapon
+							{
+								Type Primary
+								Delay 0.5
+								Cooldown 1.5
+								Duration 0.1
+								IfSeeTarget 1
+								IfLeftSpawn 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $AddCond
+								Param 1
+								Delay 0.1
+								Cooldown 0.1
+								IfSeeTarget 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $RemoveCond
+								Param 1
+								Delay 2
+								Cooldown 1
+								IfNoTarget 1
+							}
+
+							ChangeAttributes
+							{
+								Name "MeleeMode"
+								Delay 25
+								Repeats 1
+								Cooldown -1
+							}
+						}
+
+						MeleeMode [$SIGSEGV]
+						{
+							WeaponRestrictions MeleeOnly
+							ActionOverride Mobber
+						}
+					}
+				}
+				TFBot // Sniper 4
+				{
+					Template T_TFBot_Sniper
+					Action Sniper
+					Attributes DisableDodge
+					Scale 1.0001
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2584 5902 688"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "SniperMode"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					EventChangeAttributes
+					{
+						SniperMode [$SIGSEGV]
+						{
+							WeaponRestrictions PrimaryOnly
+
+							InterruptAction
+							{
+								Target "-1568 6208 704"
+								Delay 0.5
+								Repeats 0
+								Duration 25
+								Cooldown 0.3
+								Distance 50
+							}
+							FireWeapon
+							{
+								Type Primary
+								Delay 0.5
+								Cooldown 1.5
+								Duration 0.1
+								IfSeeTarget 1
+								IfLeftSpawn 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $AddCond
+								Param 1
+								Delay 0.1
+								Cooldown 0.1
+								IfSeeTarget 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $RemoveCond
+								Param 1
+								Delay 2
+								Cooldown 1
+								IfNoTarget 1
+							}
+
+							ChangeAttributes
+							{
+								Name "MeleeMode"
+								Delay 25
+								Repeats 1
+								Cooldown -1
+							}
+						}
+						MeleeMode [$SIGSEGV]
+						{
+							WeaponRestrictions MeleeOnly
+							ActionOverride Mobber
+						}
+					}
+				}
+				TFBot // Sniper 5
+				{
+					Template T_TFBot_Sniper
+					Action Sniper
+					Attributes DisableDodge
+					Scale 1.0001
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2584 5902 688"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "SniperMode"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					EventChangeAttributes
+					{
+						SniperMode [$SIGSEGV]
+						{
+							WeaponRestrictions PrimaryOnly
+
+							InterruptAction
+							{
+								Target "-1824 6272 704"
+								Delay 0.5
+								Repeats 0
+								Duration 25
+								Cooldown 0.3
+								Distance 50
+							}
+							FireWeapon
+							{
+								Type Primary
+								Delay 0.5
+								Cooldown 1.5
+								Duration 0.1
+								IfSeeTarget 1
+								IfLeftSpawn 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $AddCond
+								Param 1
+								Delay 0.1
+								Cooldown 0.1
+								IfSeeTarget 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $RemoveCond
+								Param 1
+								Delay 2
+								Cooldown 1
+								IfNoTarget 1
+							}
+
+							ChangeAttributes
+							{
+								Name "MeleeMode"
+								Delay 25
+								Repeats 1
+								Cooldown -1
+							}
+						}
+						MeleeMode [$SIGSEGV]
+						{
+							WeaponRestrictions MeleeOnly
+							ActionOverride Mobber
+						}
+					}
+				}
+				TFBot // Sniper 6
+				{
+					Template T_TFBot_Sniper
+					Action Sniper
+					Attributes DisableDodge
+					Scale 1.0001
+
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2584 5902 688"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "SniperMode"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					EventChangeAttributes
+					{
+						SniperMode [$SIGSEGV]
+						{
+							WeaponRestrictions PrimaryOnly
+
+							InterruptAction
+							{
+								Target "-2016 6240 704"
+								Delay 0.5
+								Repeats 0
+								Duration 25
+								Cooldown 0.3
+								Distance 50
+							}
+							FireWeapon
+							{
+								Type Primary
+								Delay 0.5
+								Cooldown 1.5
+								Duration 0.1
+								IfSeeTarget 1
+								IfLeftSpawn 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $AddCond
+								Param 1
+								Delay 0.1
+								Cooldown 0.1
+								IfSeeTarget 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $RemoveCond
+								Param 1
+								Delay 2
+								Cooldown 1
+								IfNoTarget 1
+							}
+
+							ChangeAttributes
+							{
+								Name "MeleeMode"
+								Delay 25
+								Repeats 1
+								Cooldown -1
+							}
+						}
+						MeleeMode [$SIGSEGV]
+						{
+							WeaponRestrictions MeleeOnly
+							ActionOverride Mobber
+						}
+					}
+				}
+			}
+		}
+		WaveSpawn // Chief Technician
+		{
+			Name "Wave1_Subwave1_ChiefTechnician"
+			Where spawnbot_side_3
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Chief_Technician
+			}
+		}
 	}
 }
