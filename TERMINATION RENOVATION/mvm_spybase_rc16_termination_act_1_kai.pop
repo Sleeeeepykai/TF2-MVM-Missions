@@ -1,10 +1,5 @@
-#base robot_giant_vanilla_kai.pop
-#base robot_standard_vanilla_kai.pop
-#base robot_giant_custom_kai.pop
-#base robot_standard_custom_kai.pop
-#base robot_standard_custom_rafmod_kai.pop
-#base robot_giant_custom_rafmod_kai.pop
-#base robot_tank_custom_rafmod_kai.pop
+#base robot_standard.pop
+#base robot_giant.pop
 
 WaveSchedule
 {
@@ -37,6 +32,8 @@ WaveSchedule
 
 	PrecacheModel "models/spybase/emp_tank.mdl"
 
+	PrecacheModel "models/robot_factory/monorail/trains/monorail_cargo_container_separate_open.mdl"
+
 	// Precached Sounds //
 
 	// VOX
@@ -46,6 +43,14 @@ WaveSchedule
 	PrecacheSound "saxton_hale_intro1.mp3"
 	PrecacheSound "saxtonhale/saxton_hale_intro2.mp3"
 	PrecacheSound "saxtonhale/saxton_hale_engibotintro_variation3.mp3"
+
+	PrecacheSound "saxtonhale/saxton_hale_bombpickup.mp3"
+	PrecacheSound "saxtonhale/saxton_hale_drilltank.mp3"
+
+	PrecacheSound "saxtonhale/saxton_hale_emptankready.mp3"
+
+	// SFX
+	PrecacheSound "tank_emp_deploy.mp3"
 	
 	// Music
 	PrecacheSound "termination_leadening_winds.wav"
@@ -76,6 +81,18 @@ WaveSchedule
 
 	//// CUSTOM WEAPONS ////
 
+	CustomWeapon
+	{
+		//// COSMETICS ////
+
+		"ExtraBomb"
+		{
+			OriginalItemName "Potato of Labor"
+
+			"custom item model" "models/props_td/atom_bomb.mdl"
+		}
+	}
+
 	//// POINT TEMPLATES ////
 
 	PointTemplates
@@ -98,7 +115,6 @@ WaveSchedule
 						EntFire(`carrier_disable_relay`, `Trigger`)
 
 						EntFire(`drydock_open_relay`, `Trigger`)
-						EntFire(`shortcut_bridge_retract_relay`, `Trigger`)
 						EntFire(`silo_door_close`, `Trigger`)
 						EntFire(`01_door_lock_relay`, `Trigger`)
 						EntFire(`01_door`, `SetSpeed`, 99999)
@@ -118,7 +134,20 @@ WaveSchedule
 
 						MusicSystemMent.ResetAll()
 						MusicSystemMent.HookByName(`bignet`)
+
+						IncludeScript(`tankextensions_main`)
+						IncludeScript(`tankextensions/drilltank`)
 					  "
+			}
+
+			logic_auto
+			{
+				"targetname" "MissionExtraSetup"
+
+				"OnMapSpawn" "tank_path_emp_8,AddOutput,OnPass EMPTankDisruptRelay:Trigger::0:-1,0,-1"
+				"OnMapSpawn" "tank_path_emp_21,AddOutput,OnPass EMPTankDeployRelay:Trigger::0:-1,0,-1"
+
+				"OnMapSpawn" "ConsoleControlPointCaptureArea,SetControlPoint,ConsoleControlPoint,0,-1"
 			}
 
 			point_populator_interface
@@ -146,12 +175,119 @@ WaveSchedule
 				"targetname" "ActStartRelay"
 
 				"OnTrigger" "SpawnDoorButton,Unlock,,0,-1"
-				"OnTrigger" "SpawnDoorButtonGlowTimer,Enable,0.1,-1"
+				"OnTrigger" "SpawnDoorButtonGlowTimer,Enable,,0.1,-1"
 				"OnTrigger" "HUDHint,$setkey$message,MOUSE1: INTERACT,0,-1"
-				"OnTrigger" "HUDHintTimer,Enable,0.1,-1"
+				"OnTrigger" "HUDHintTimer,Enable,,0.1,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_gunslingertriplepunchfinal01.mp3,0.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_battlecry04.mp3,4,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "FirstObjectiveRelay"
+
+				"OnTrigger" "Player,$DisplayTextHint,CLEAR THE PATH FOR OUR EMP TANK,0,-1"
+				"OnTrigger" "HUDHintTimer,Enable,,5,-1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] CLEAR THE PATH FOR OUR EMP TANK,5,-1"
+			}
+			logic_relay
+			{
+				"targetname" "SecondObjectiveRelay"
+
+				"OnTrigger" "02_door_flank_1_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "spybase_nav_interface,RecomputeBlockers,,0,-1"
+				"OnTrigger" "Player,$DisplayTextHint,[OBJECTIVE] TAKE OUT THE GIANT AND GRAB HIS BOMB,8,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})81"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_bombpickup.mp3`,channel = 6,special_dsp = 55,filter_type=5})9.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_bombpickup.mp3`,channel = 6,special_dsp = 55,filter_type=5})9.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Looks like they brought us a bomb! Excellent! Normally I'd smash through all these crates myself but I guess you'll need to blow em up instead.,9.4,-1"
+			}
+			logic_relay
+			{
+				"targetname" "ThirdObjectiveRelay"
+
+				"OnTrigger" "02_door_flank_2_unlock_relay,Trigger,,4,-1"
+				"OnTrigger" "03_door_flank_2_unlock_relay,Trigger,,4,-1"
+				"OnTrigger" "spybase_nav_interface,RecomputeBlockers,,4,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave1_Subwave3_DrillTank,6,-1"
+				"OnTrigger" "Player,$DisplayTextHint,[OBJECTIVE] STOP THE DRILL TANK FROM REACHING OUR PAYLOAD,6,1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})61"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_drilltank.mp3`,channel = 6,special_dsp = 55,filter_type=5})7.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_drilltank.mp3`,channel = 6,special_dsp = 55,filter_type=5})7.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Crikey! Drill Tank incoming! take it out or our EMP Tank's trashed!,7.4,-1"
+			}
+			logic_relay
+			{
+				"targetname" "FourthObjectiveRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/cp_harbor_blue_whistle.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_moveup01.mp3,1,-1"
+				"OnTrigger" "Player,$DisplayTextHint,[OBJECTIVE] PROTECT THE EMP TANK,0,1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] PROTECT THE EMP TANK,5,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})21"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_emptankready.mp3`,channel = 6,special_dsp = 55,filter_type=5})3.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_emptankready.mp3`,channel = 6,special_dsp = 55,filter_type=5})3.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Great work boys! You've bought our Engibot enough time to finish up the EMP. Keep him safe while he reaches the security breaker!,3.4,-1"
+			}
+			logic_relay
+			{
+				"targetname" "FifthObjectiveRelay"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_chieftechnician.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_chieftechnician.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: That Chief Technician's riling me up; go smash his head in so you can redeploy that bridge!,1.4,-1"
+
+				"OnTrigger" "ChiefTechnicianHighlightTimer,Enable,,3,-1"
+				"OnTrigger" "Player,$DisplayTextHint,[OBJECTIVE] KILL THE CHIEF TECHNICIAN AND CONTROL THE MAIN CONSOLE,3,-1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] KILL THE CHIEF TECHNICIAN AND CONTROL THE MAIN CONSOLE,5,-1"
+
+				"OnTrigger" "tank_hologram_relay_left,Trigger,,8,-1"
+				"OnTrigger" "03_door_unlock_relay,Trigger,,8,-1"
+				"OnTrigger" "spybase_nav_interface,RecomputeBlockers,,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_lift_start.wav,8,-1"
+				"OnTrigger" "ConsoleDoorPT,ForceSpawn,,8,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "EMPTankDisruptRelay"
+
+				"OnTrigger" "!activator,SetSpeed,0,0,-1"
+				"OnTrigger" "shortcut_bridge_retract_relay,Trigger,,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_dominationengineer_mvm03.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_dominationengineer_mvm03.mp3`,channel = 6,pitch = 90,special_dsp = 57,filter_type = 5})2-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_dominationengineer_mvm03.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_dominationengineer_mvm03.mp3`,channel = 6,pitch = 90,special_dsp = 57,filter_type = 5})2-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_jeers02.mp3,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_helpme03.mp3,7,-1"
+
+				"OnTrigger" "FifthObjectiveRelay,Trigger,,10,-1"
+			}
+			logic_relay
+			{
+				"targetname" "EMPTankDeployRelay"
+
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
+				"OnTrigger" "!activator,SetSpeed,0,0,-1"
+				"OnTrigger" "!activator,SetAnimation,deploy,0,-1"
+				"OnTrigger" "!activator,SetPlaybackrate,0.67,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,tank_emp_deploy.mp3,0,-1"
+
+				"OnTrigger" "EMPTankCharge,Start,,7.6,-1"
+
+				"OnTrigger" "EMPTankExplosion,Start,,12.5,-1"
+				"OnTrigger" "!activator,RemoveHealth,999999,12.6,-1"
+				"OnTrigger" "red_normal_mission_relay,Trigger,,12.6,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 51, 153, 255, 128, 1, 0, 1)12.6-1"
+				"OnTrigger" "RobotSpawnBarrier,Kill,,12.6,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave1_Subwave6_GRapidSoldiers,12.6,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave1_Subwave6_GRapidSoldiers,12.6,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave1_Subwave6_BurstDemos,12.6,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave1_Subwave6_BurstDemos,12.6,-1"
 			}
 
 			prop_dynamic
@@ -187,6 +323,19 @@ WaveSchedule
 				"message" ""
 				"spawnflags" "1"
 			}
+
+            logic_relay
+			{
+				"targetname" "RedLoseRelay"
+				"OnTrigger" "bots_win,RoundWin,,0,-1"
+			}
+			logic_relay
+			{
+				"targetname" "RepairmanDeathRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave1_Subwave3_Repairmen,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave1_Subwave3_Repairmen,0,-1"
+			}
 		}
 
 		//// MAP ASSET PTs ////
@@ -205,7 +354,7 @@ WaveSchedule
 			{
 				"targetname" "SpawnDoorBreakdownRelay"
 
-				"OnTrigger" "tf_gamerules,PlayVO,passtime/ball_smack.wav,0,-1"
+				"OnTrigger" "HUDHintTimer,Disable,,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_plant.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_timer.wav,0,-1"
 				"OnTrigger" "SpawnDoorButtonSapper,Enable,,0,-1"
@@ -246,7 +395,8 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,$StopVO,weapons/sapper_timer.wav,12,-1"
 				"OnTrigger" "01_door_unlock_relay,Trigger,,12,-1"
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave1_Subwave1_ChiefTechnician,12,-1"
-				"OnTrigger" "SpawnBarrierFence,Kill,,12.4,-1"
+				"OnTrigger" "BlockerCratePT,ForceSpawn,12,-1"
+				"OnTrigger" "SpawnBarrierFence,Kill,,12,-1"
 				"OnTrigger" "SpawnDoorButton,Kill,,12.5,-1"
 			}
 
@@ -534,9 +684,19 @@ WaveSchedule
 			}
 		}
 
-		EMPTankPT
+		EMPTankPropPT
 		{
 			RemoveIfKilled "EMPTank"
+
+			logic_relay
+			{
+				"targetname" "EMPTankDeathRelay"
+
+				"OnTrigger" "tank_boss*,RemoveHealth,99999,0,-1"
+				"OnTrigger" "RedLoseRelay,Trigger,,0,-1"
+				"OnTrigger" "EMPTankDeathParticle,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode.wav,0,-1"
+			}
 
 			prop_dynamic
 			{
@@ -586,6 +746,370 @@ WaveSchedule
 				"InitialOwner" "EMPTankEngibot"
 				"model" "models/weapons/c_models/c_wrench/c_wrench.mdl"
 			}
+
+			info_particle_system
+			{
+				"targetname" "EMPTankDeathParticle"
+				"origin" "-2289 8788 748"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "EMPTankDeathParticle"
+				"origin" "-2289 8788 748"
+				"effect_name"  "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
+		}
+
+		BlockerCratePT
+		{
+			RemoveIfKilled "BlockerCrate"
+
+			prop_dynamic
+			{
+				"targetname" "BlockerCrate"
+				"origin" "-4743 5735 590"
+				"angles" "0 30 0"
+				"model" "models/robot_factory/monorail/trains/monorail_cargo_container_separate_open.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "BlockerCrate"
+				"origin" "-4743 5735 715"
+				"angles" "0 30 0"
+				"model" "models/robot_factory/monorail/trains/monorail_cargo_container_separate_open.mdl"
+				"solid" "6"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "BlockerCrateBombPlantHint"
+				"parentname" "BlockerCrateBombPlantHintRotator"
+				"origin" "-4639 5782 512"
+				"model" "models/props_td/atom_bomb.mdl"
+				"modelscale" "2"
+				"solid" "0"
+				"renderfx" "15"
+
+				"startdisabled" "1"
+			}
+			func_rotating
+			{
+				"targetname" "BlockerCrateBombPlantHintRotator"
+				"origin" "-4639 5782 512"
+				"maxspeed" "80"
+				"fanfriction" "0"
+				"dmg" "0"
+
+				"spawnflags" "65"
+ 			}
+
+			logic_relay
+			{
+				"targetname" "BlockerCrateBombExplosionRelay"
+
+				"OnTrigger" "02_door_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "ThirdObjectiveRelay,Trigger,,0,-1"
+				"OnTrigger" "BlockerCrateBombExplosionParticle,Start,,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)0-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 192, 1, 0, 1)0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/debris2.wav,0,-1"
+
+				"OnTrigger" "BlockerCrate,Kill,,0.2,-1"
+			}
+
+			func_flagdetectionzone
+			{
+				"targetname" "BlockerCrateBombPlantZone"
+				"origin" "-4906 5608 512"
+				"mins" "-300 -300 -60"
+				"maxs" "250 300 60"
+				"TeamNum" "2"
+
+				"OnStartTouchFlag" "BlockerCrateBomb,ForceDrop,,0,-1"
+
+				"OnDroppedFlag" "BlockerCrateBombPlantHint,Disable,,0,-1"
+				"OnDroppedFlag" "BlockerCrateBomb,SetTeam,2,0,-1"
+				"OnDroppedFlag" "BlockerCrateBomb,SetReturnTime,12,0,-1"
+
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/sentry_upgrading5.wav,0,-1"
+
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,2,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,4,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,6,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,8,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,10,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,11.5,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,11.65,-1"
+				"OnDroppedFlag" "tf_gamerules,PlayVO,weapons/det_pack_timer.wav,11.8,-1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "BlockerCrateBombExplosionParticle"
+				"origin" "-4739 5741 551"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BlockerCrateBombExplosionParticle"
+				"origin" "-4533 5726 593"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BlockerCrateBombExplosionParticle"
+				"origin" "-4742 5994 572"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BlockerCrateBombExplosionParticle"
+				"origin" "-4739 5741 551"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BlockerCrateBombExplosionParticle"
+				"origin" "-4533 5726 593"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BlockerCrateBombExplosionParticle"
+				"origin" "-4742 5994 572"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
+		}
+
+		ConsoleDoorPT
+		{
+			RemoveIfKilled "ConsoleDoorButton"
+
+			logic_relay
+			{
+				"targetname" "ConsoleDoorBreakdownRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_plant.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_timer.wav,0,-1"
+				"OnTrigger" "ConsoleDoorButtonSapper,Enable,,0,-1"
+				"OnTrigger" "ConsoleDoorButtonGlowTimer,Disable,,0,-1"
+
+				"OnTrigger" "ConsoleDoorButtonParticle,Start,,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/sapper_removed.wav,5,-1"
+				"OnTrigger" "05_door_unlock_relay,Trigger,,5,-1"
+				"OnTrigger" "06_door_unlock_relay,Trigger,,5,-1"
+				"OnTrigger" "spybase_nav_interface,RecomputeBlockers,,5,-1"
+				"OnTrigger" "ConsoleDoorButton,Kill,,5.1,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "ConsoleDoorButtonProp"
+				"parentname" "05_door"
+				"origin" "-4579 3137 787"
+				"model" "models/props_powerhouse/emergency_launch_button.mdl"
+				"modelscale" "1.5"
+				"solid" "6"
+
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "ConsoleDoorButtonSapper"
+				"parentname" "05_door"
+				"origin" "-4579 3156 787"
+				"angles" "75 0 -90"
+				"model" "models/buildables/sapper_sentry1.mdl"
+				"modelscale" "1.5"
+				"solid" "0"
+
+				"disableshadows" "1"
+				"startdisabled" "1"
+ 			}
+			func_button
+			{
+				"targetname" "ConsoleDoorButton"
+				"origin" "-4579 3137 787"
+				"mins" "-40 -65 -75"
+                "maxs" "20 30 75"
+				"wait" "-1"
+
+				"spawnflags" "2560"
+
+				"OnPressed" "ConsoleDoorBreakdownRelay,Trigger,,0,-1"
+			}
+			logic_timer
+			{
+				"targetname" "ConsoleDoorButtonGlowTimer"
+				"RefireTime" "1"
+
+				"OnTimer" "ConsoleDoorButtonGlow,Enable,,0,-1"
+				"OnTimer" "SpawnDoorButtonGlow,Disable,,0.5,-1"
+			}
+			tf_glow
+			{
+				"targetname" "ConsoleDoorButtonGlow"
+				"target" "ConsoleDoorButtonProp"
+				"GlowColor" "255 255 255 255"
+				"startdisabled" "1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "ConsoleDoorButtonParticle"
+				"origin" "-4579 3156 787"
+				"effect_name" "grenade_smoke_cycle"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "ConsoleDoorButtonParticle"
+				"origin" "-4579 3156 787"
+				"effect_name" "grenade_smoke"
+				"start_active" "0"
+			}
+		}
+		ConsoleControlPointPT
+		{
+			team_control_point_master
+			{
+				"targetname" "ControlPointMaster"
+				"cpm_restrict_team_cap_win" "1"
+				"custom_position_x" "0.5"
+				"custom_position_y" "0.75"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "ConsoleControlPointBase"
+				"origin" "-5060 1790 536"
+				"model" "models/props_gameplay/cap_point_base.mdl"
+				"solid" "0"
+				"skin" "2"
+			}
+			team_control_point
+			{
+				"targetname" "ConsoleControlPoint"
+				"origin" "-5060 1790 536"
+
+				"point_printname" "Main Console"
+				"point_index" "0"
+				"point_group" "0"
+				"point_default_owner" "3"
+				"point_start_locked" "0"
+
+				"team_model_0" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_0" "sprites/obj_icons/icon_obj_neutral"
+				"team_overlay_0" "sprites/obj_icons/icon_obj_a"
+
+				"team_model_2" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_2" "sprites/obj_icons/icon_obj_red"
+				"team_overlay_2" "sprites/obj_icons/icon_obj_a"
+
+				"team_model_3" "models/effects/mvm_holograms/mvm_cappoint_hologram_onlyblue.mdl"
+				"team_icon_3" "sprites/obj_icons/icon_obj_blu"
+				"team_overlay_3" "sprites/obj_icons/icon_obj_a"
+			}
+			trigger_capture_area
+			{
+				"targetname" "ConsoleControlPointCaptureArea"
+				"origin" "-5060 1790 536"
+				"mins" "-210 -175 -166"
+				"maxs" "210 175 166"
+				"solid" "0"
+
+				"area_cap_point" "ConsoleControlPoint"
+				"area_time_to_cap" "15"
+				"team_cancap_2" "1"
+				"team_cancap_3" "0"
+
+				"OnCapTeam1" "ControlPointABase,Skin,1,0,-1"
+				"OnCapTeam1" "ConsoleCaptureRelay,Trigger,,0,-1"
+				"OnCapTeam2" "ControlPointABase,Skin,2,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "ConsoleCaptureRelay"
+
+				"OnTrigger" "TerminalSpyPaintParticle,Start,,0.5,-1"
+				"OnTrigger" "TerminalSpyBot,Skin,0,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/sprayer.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/spy_mvm_thanks02.mp3,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ui/quest_decode.wav,5,-1"
+				"OnTrigger" "shortcut_bridge_extend_relay,Trigger,,7,-1"
+				"OnTrigger" "drydock_close_relay,Trigger,,7,-1"
+				"OnTrigger" "04_door_unlock_relay,Trigger,,7,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\alarms\klaxon1.wav,7,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\alarms\klaxon1.wav,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\alarms\klaxon1.wav,13,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,75,25,-1"
+				"OnTrigger" "Player,$DisplayTextHint,[OBJECTIVE] PROTECT THE EMP TANK,25,-1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] PROTECT THE EMP TANK,25,-1"
+				"OnTrigger" "pop_interface,$ResumeWavespawn,Wave1_Subwave7_GRapidSquad,25,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "TerminalSpy"
+				"origin" "-5226 1940 536"
+				"angles" "0 125 0"
+				"model" "models/player/spy.mdl"
+				"defaultanim" "taunttailored_terminal_a2"
+
+				"rendermode" "10"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic_ornament
+			{
+				"targetname" "TerminalSpyBot"
+				"InitialOwner" "TerminalSpy"
+				"model" "models/bots/spy/bot_spy.mdl"
+
+				"skin" "1"
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "TerminalSpyConsole"
+				"origin" "-5253 1943 588"
+				"angles" "0 320 0"
+
+				"model" "models/props_moonbase/moon_interior_keyboard01.mdl"
+				"modelscale" "0.74"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "TerminalSpyPaintParticle"
+				"origin" "-5226 1940 536"
+				"effect_name" "grenade_smoke_cycle"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "TerminalSpyPaintParticle"
+				"origin" "-5226 1940 536"
+				"effect_name" "grenade_smoke"
+				"start_active" "0"
+			}
 		}
 
 		//// PLAYER PTs ////
@@ -620,9 +1144,104 @@ WaveSchedule
 			}
 		}
 
+		PlayerBombPT
+        {
+            KeepAlive 1
+
+			RemoveIfKilled "BlockerCrateBomb"
+
+			OnSpawnOutput
+			{
+				Target "BlockerCrateBomb"
+				Action SetParent
+				Param !activator
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "BlockerCrateBomb"
+				Action SetParentAttachment
+				Param flag
+				Delay 0.05
+			}
+
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBomb"
+				Action ClearParent
+			}
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBomb"
+				Action $TeleportToEntity
+				Param !activator
+			}
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBomb"
+				Action $SetLocalAngles
+				Param "0 0 0"
+				Delay 0.05
+			}
+
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBomb"
+				Action Enable
+			}
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBomb"
+				Action SetTeam
+				Param 3
+			}
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBombGlow"
+				Action Enable
+			}
+			OnParentKilledOutput
+			{
+				Target "BlockerCrateBombArrow"
+				Action ShowSprite
+			}
+
+			item_teamflag
+			{
+				"targetname" "BlockerCrateBomb"
+				"flag_model" "models/props_td/atom_bomb.mdl"
+				"modelscale" "1"
+				"TeamNum" "2"
+				"startdisabled" "1"
+
+				"OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
+				"OnPickup1" "BlockerCrateBombArrow,HideSprite,,0,-1"
+				"OnPickup1" "BlockerCrateBombPlantHint,Enable,,0,-1"
+				"OnPickup1" "!activatorRunScriptCodeClientPrint(self, 4, `YOU PICKED UP THE BOMB! PLACE IT NEXT TO THE CONTAINERS!`)0-1"
+				"OnPickup1" "!activatorRunScriptCodeClientPrint(self, 4, `YOU PICKED UP THE BOMB! PLACE IT NEXT TO THE CONTAINERS!`)4-1"
+
+				"OnReturn" "BlockerCrateBombExplosionRelay,Trigger,,0,-1"
+				"OnReturn" "!self,Kill,,0.2,-1"
+			}
+			tf_glow
+			{
+				"targetname" "BlockerCrateBombGlow"
+				"target" "BlockerCrateBomb"
+				"GlowColor" "0 176 199 255"
+				"startdisabled" "1"
+			}
+			env_sprite
+			{
+				"targetname" "BlockerCrateBombArrow"
+				"origin" "0 0 100"
+				"model" "materials/hud/arrow_big_down.vmt"
+				"scale" "0.2"
+			}
+        }
+
 		//// ROBOT PTs ////
 
-		// Chief Technician Assets
+		// Chief Technician
 		ChiefTechnicianPT
         {
 			logic_relay
@@ -631,52 +1250,54 @@ WaveSchedule
 
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_jeers04.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_jeers04.mp3`,channel = 6,pitch = 90,filter_type = 5})2.5-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_jeers04.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_jeers04.mp3`,channel = 6,pitch = 90,filter_type = 5})2.5-1"
-				"OnTrigger" "!activator+,$PlaySequence,taunt_highfivestart,6,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_highfivestart,6,-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_helpmedefend01.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_helpmedefend01.mp3`,channel = 6,pitch = 90,filter_type = 5})6-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_helpmedefend01.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_helpmedefend01.mp3`,channel = 6,pitch = 90,filter_type = 5})6-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_go01.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_go01.mp3`,channel = 6,pitch = 90,filter_type = 5})10.1-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_go01.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_go01.mp3`,channel = 6,pitch = 90,filter_type = 5})10.1-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/drg_wrench_teleport.wav,10.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_moveup02.mp3,12.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_moveup02.mp3,12.1,-1"
 			}
-            logic_relay // Highlighter Relay
-            {
-                "targetname" "chieftechnicianhighlighter"
-                "OnTrigger"  "highlightglow1,enable,,0,-1"
-                "OnTrigger"  "highlightglow1,disable,,2.49,-1"
-                "OnTrigger"  "highlightglow2,enable,,2.5,-1"
-                "OnTrigger"  "highlightglow2,disable,,4.99,-1"
-                "OnTrigger"  "chieftechnicianhighlighter,trigger,,5,-1"
-                "spawnflags" "2"
-            }
+
+			logic_timer
+			{
+				"targetname" "ChiefTechnicianHighlightTimer"
+				"RefireTime" "1"
+				"startdisabled" "1"
+
+				"OnTimer" "ChiefTechnicianHighlight,Enable,,0,-1"
+				"OnTimer" "ChiefTechnicianHighlight,Disable,,0.5,-1"
+			}
+			tf_glow
+			{
+				"targetname" "ChiefTechnicianHighlight"
+				"target" "!parent"
+				"GlowColor" "255 255 255 255"
+				"startdisabled" "1"
+			}
+
 			logic_relay
 			{
-				"targetname" "chieftechnicianhighlighter"
-				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})81"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_chieftechnician.mp3`,special_dsp = 55,filter_type=5})9.41"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`saxtonhale/saxton_hale_chieftechnician.mp3`,special_dsp = 55,filter_type=5})9.41"
-				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: That Chief Technician is riling me up; go smash his head in so you can redeploy that bridge!,9.4,1"
+				"targetname" "ChiefTechnicianFightRelay"
+
+				"OnTrigger" "!activator,$RemoveCond,7,0,-1"
+				"OnTrigger" "ChiefTechnicianChairParticle,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/rd_robot_explosion01.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_paincriticaldeath02.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_paincriticaldeath02.mp3`,channel = 6,pitch = 90,filter_type = 5})0-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_paincriticaldeath02.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_paincriticaldeath02.mp3`,channel = 6,pitch = 90,filter_type = 5})0-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_dominationengineer_mvm06.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_dominationengineer_mvm06.mp3`,channel = 6,pitch = 90,filter_type = 5})5-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`vo/mvm/norm/engineer_mvm_dominationengineer_mvm06.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/engineer_mvm_dominationengineer_mvm06.mp3`,channel = 6,pitch = 90,filter_type = 5})5-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave1_Subwave5_Bowmen,5,-1"
+				"OnTrigger" "ChiefTechnicianChairParticle,Stop,,5,-1"
 			}
-            tf_glow // Indicator Glow
-            {
-                "GlowColor" "255 255 0 255"
-                "target" "!parent"
-				"targetname" "highlightglow1"
-				"startdisabled" "1"
-            }
-            tf_glow // Indicator Glow
-            {
-                "GlowColor" "0 255 0 255"
-                "target" "!parent"
-				"targetname" "highlightglow2"
-				"startdisabled" "1"
-            }
-            tf_glow // Indicator Glow
-            {
-                "GlowColor" "102 153 255 255"
-                "target" "!parent"
-				"targetname" "highlightglow3"
-				"startdisabled" "1"
-            }
-            info_particle_system // Boss Fight Start FX (I thought this was already set up?)
+
+			info_particle_system
 			{
-				"targetname" "kablooey"
+				"targetname" "ChiefTechnicianChairParticle"
 				"origin" "0 0 0"
 				"angles" "0 0 0"
 				"effect_name" "mvm_tank_destroy"
@@ -802,6 +1423,61 @@ WaveSchedule
                 delay "5.5"
             }
         }
+
+		// Drill Tank
+		DrillTankPT
+		{
+			NoFixUp 1
+
+			info_target
+			{
+				"targetname" "DrillTankRepairTarget"
+				"origin" "0 0 0"
+			}
+		}
+
+		// EMP Tank
+		EMPTankPT
+		{
+			NoFixUp 1
+
+			OnSpawnOutput
+			{
+				Target "EMPTank"
+				Action Kill
+			}
+			info_target
+			{
+				"targetname" "EMPTankTarget"
+				"origin" "0 0 0"
+			}
+
+			dispenser_touch_trigger
+			{
+				"targetname" "EMPTankDispenserZone"
+				"mins" "-300 -200 -60"
+				"maxs" "300 200 60"
+			}
+			mapobj_cart_dispenser
+			{
+				"targetname" "EMPTankDispenser"
+				"TeamNum" "2"
+				"touch_trigger" "EMPTankDispenserZone"
+			}
+
+			info_particle_system
+			{
+				"targetname" "EMPTankCharge"
+				"origin" "60 0 120"
+				"effect_name" "charge_up"
+			}
+            info_particle_system
+			{
+				"targetname" "EMPTankExplosion"
+				"origin" "0 0 100"
+				"effect_name" "hammer_bell_ring_shockwave"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -810,33 +1486,93 @@ WaveSchedule
 
 	SpawnTemplate "SpawnDoorPT"
 	SpawnTemplate "SpawnBarrierPT"
-	SpawnTemplate "EMPTankPT"
+	SpawnTemplate "EMPTankPropPT"
+	SpawnTemplate "ConsoleControlPointPT"
 
 	//PlayerSpawnOnceTemplate "PlayerVoicelinePT"
 
 	//// EXTRA TANK PATHS ////
 
+	// Drill Tank Path
+	ExtraTankPath
+	{
+		Name "tank_path_drill"
+		Node "-5856 4176 576"
+		Node "-5584 4256 576"
+		Node "-5264 4368 576"
+		Node "-5232 4528 576"
+		Node "-5280 4720 576"
+		Node "-5280 4928 576"
+		Node "-5232 5120 576"
+		Node "-5136 5328 576"
+		Node "-4976 5504 576"
+		Node "-4688 5808 576"
+		Node "-4416 5920 576"
+		Node "-4176 5920 576"
+		Node "-3872 5920 592"
+		Node "-3456 5920 736"
+		Node "-2496 5936 736"
+		Node "-2320 5984 736"
+		Node "-2144 6144 736"
+		Node "-2048 6352 736"
+		Node "-2016 6592 736"
+		Node "-2080 7440 752"
+		Node "-2192 7808 752"
+		Node "-2304 8064 752"	
+		Node "-2278 8572 696"
+	}
+
+	// EMP Tank Path
+	ExtraTankPath
+	{
+		Name "tank_path_emp"
+		Node "-2283 8763 710"
+		Node "-2252 8365 710"
+		Node "-2317 8114 710"
+		Node "-2158 7806 688"
+		Node "-2066 7557 688"
+		Node "-2046 6292 688"
+		Node "-2255 5870 688"
+		Node "-2201 5625 688"
+		Node "-1849 5413 688"
+		Node "-1833 5320 688"
+		Node "-1824 5090 689"
+		Node "-1824 4920 676"
+		Node "-1824 4751 663"
+		Node "-1824 4591 634"
+		Node "-1824 4414 593"
+		Node "-1824 4222 543"
+		Node "-1824 4182 539"
+		Node "-1824 4168 521"
+		Node "-1794 3970 512"
+		Node "-1350 3516 512"
+		Node "-1274 2226 512"
+		Node "-1271 2160 512"
+		Node "-1271 2159 512"
+		Node "-1271 2158 512"
+		Node "-1271 2190 512"
+	}
+
 	//// ROBOT TEMPLATES ////
 
 	Templates
 	{
+		//// MINIBOSSES ////
 		T_TFBot_Chief_Technician
 		{
 			Name "Chief Technician"
 			Class Engineer
 			ClassIcon engineer_hyper
 			Health 20000
-			Scale 1.75
 			Skill Expert
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
 			WeaponRestrictions MeleeOnly
+			Action Mobber
 
 			MaxVisionRange 1500
 
 			Tag giant
-
-			Action Mobber
 
 			SpawnTemplate "ChiefTechnicianPT"
 			SpawnTemplate "ChiefTechnicianRingAttackMaker"
@@ -849,15 +1585,16 @@ WaveSchedule
 
 			CharacterAttributes
 			{
-				"move speed bonus" 0.001
-				"never gib" 1
-				"no_jump" 1
+				"move speed penalty" 0.001
 				"damage force reduction" 0.5
 				"airblast vulnerability multiplier" 0.5
 				"override footstep sound set" 4
-				"voice pitch scale" 0.75
 				"displace touched enemies" 1
+				"never gib" 1
+				"no_jump" 1
+				"voice pitch scale" 0
 			}
+
 			ItemAttributes
 			{
 				ItemName "The Rescue Ranger"
@@ -865,13 +1602,8 @@ WaveSchedule
 				"faster reload rate" 0.5
 				"clip size bonus" 2
 				"hold fire until full reload" 1
-				"never gib" 1
 			}
 
-			AddCond // Temporary Invincibility
-			{
-				Index 51
-			}
 			FireInput // Sets Starting Position
 			{
 				Target !self
@@ -881,56 +1613,65 @@ WaveSchedule
 				Repeats 1
 				Cooldown -1
 			}
-			InterruptAction // He Standing Still
-			{
-				Target "-2048 6624 704"
-				Delay 0
-				Repeats 1
-				Duration 1
-				Cooldown 0
-				AimTarget "-2035 7193 688"
-				AlwaysLook 1
-				WaitUntilDone 0
-			}
 			
 			FireInput
 			{
-				Target "ChiefTechnicianIntroRelay"
-				Action "Trigger"
-				Delay 0
+				Target !self
+				Action $ChangeAttributes
+				Param "BossIntro"
+				Delay 0.1
 				Repeats 1
 				Cooldown -1
-			}
-
-			AddAttribute // Makes Him Start Moving
-			{
-				Item Player  
-				Name "move speed bonus"
-				Value 0.5
-				Delay 10
-			}
-			InterruptAction // Moves to the Main Console
-			{
-				Target "-5850 5279 512"
-				Delay 10.1
-				Repeats 1
-				Duration 1
-				Cooldown 0
-				WaitUntilDone 1
-				OnDoneChangeAttributes "BossIdle"
-			}
-
-			ChangeAttributes // Boss Fight Trigger
-			{
-				Name "BossFightStart"
-				Delay 0
-				Repeats 1
-				Cooldown -1
-				IfHealthBelow 19999
 			}
 
 			EventChangeAttributes
 			{
+				BossIntro [$SIGSEGV]
+				{
+					AddCond
+					{
+						Index 51
+					}
+
+					FireInput
+					{
+						Target "ChiefTechnicianIntroRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					InterruptAction // He Standing Still
+					{
+						Target "-2048 6624 704"
+						Delay 0
+						Repeats 1
+						Duration 1
+						Cooldown 0
+						AimTarget "-2035 7193 688"
+						AlwaysLook 1
+						WaitUntilDone 0
+					}
+
+					ClientCommand
+                    {
+                        Name "eureka_teleport 1"
+                        Delay 10.1
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "BossIdle"
+						Delay 12.1
+						Repeats 1
+						Cooldown -1
+					}
+				}
 				BossIdle [$SIGSEGV]
 				{
 					FireInput
@@ -959,23 +1700,30 @@ WaveSchedule
 						Duration 999
 						Name "Rancho Relaxo Taunt"
 					}
+
+					ChangeAttributes // Boss Fight Trigger
+					{
+						Name "BossFightStart"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfHealthBelow 19999
+					}
 				}
 				BossFightStart [$SIGSEGV]
 				{
+					CharacterAttributes
+					{
+						"move speed penalty" 0.5
+					}
+
 					FireInput
 					{
-						Target "nowtherealfightbegins"
+						Target "ChiefTechnicianFightRelay"
 						Action Trigger
 						Delay 0
 						Repeats 1
 						Cooldown -1
-					}
-					FireInput
-					{
-						Target !self
-						Action RunScriptCode
-						Param "self.StopTaunt(false);"
-						Delay 0.25
 					}
 					ChangeAttributes
 					{
@@ -1052,6 +1800,201 @@ WaveSchedule
 				}
 			}
 		}
+
+		//// TANKS ////
+
+		Tank_Drill
+		{
+			Name "drilltank$pingsound|ambient/levels/citadel/zapper_warmup1.wav"
+			ClassIcon tank_drill_lite
+
+			SpawnTemplate "DrillTankPT"
+
+			OnBombDroppedOutput
+			{
+				Target EMPTankDeathRelay
+				Action Trigger
+			}
+		}
+
+		Tank_EMP
+		{
+			Name "emptank$model|models/spybase/emp_tank.mdl^disablebomb|1^teamnum|2"
+			ClassIcon tank_red_lite
+
+			SpawnTemplate "EMPTankPT"
+
+			OnKilledOutput
+			{
+				Target RedLoseRelay
+				Action Trigger
+			}
+		}
+
+		//// GIANTS ////
+		T_TFBot_Giant_Engineer_Widowmaker
+        {
+            Name "Giant Widowmaker Engineer"
+            Class Engineer
+            ClassIcon engineer_widowmaker_nys_giant
+            Health 3000
+            Skill Expert
+            Attributes MiniBoss
+			ExtAttr IgnoreBuildings
+
+			Tag giant
+
+            Item "The Widowmaker"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+                "damage force reduction" 0.6
+                "airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 7
+				"voice pitch scale" 0
+				"head scale" 0.7
+				"hand scale" 1.1
+				"never gib" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Widowmaker"
+
+				"fire rate penalty" 1.25
+			}
+        }
+		T_TFBot_Giant_Pyro_Phlogistinator
+        {
+            Name "Giant Phlogistinator Pyro"
+			Class Pyro
+			ClassIcon pyro_phlog_v2_giant
+			Skill Expert
+			Health 3000
+			Attributes MiniBoss
+            Attributes SpawnWithFullCharge
+			WeaponRestrictions PrimaryOnly
+
+			Tag giant
+
+            Item "The Phlogistinator"
+
+			Item "Brigade Helm"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+			}
+
+            FireWeapon
+            {
+                Type "Secondary"
+                Delay 2
+                Duration 0.1
+                Repeats 0
+                Cooldown 2
+                IfSeeTarget 1
+                IfLeftSpawn 1
+            }
+        }
+		T_TFBot_Giant_Scout_Homewrecker
+		{
+			Name "Giant Wrecking Crew"
+			Template T_TFBot_Giant_Scout
+			ClassIcon scout_homewrecker
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			Item "The Homewrecker"
+			
+			Item "Hazard Handler"
+
+			CharacterAttributes
+			{
+				"dmg pierces resists absorbs" 1
+				"cancel falling damage" 1
+				"mult dmg vs tanks" 2.5
+				"never gib" 1
+			}
+		}
+
+		//// COMMONS ////
+		T_TFBot_Engineer_Shotgun
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			ClassIcon heavy_shotgun
+			Skill Normal
+			WeaponRestrictions PrimaryOnly
+			Action Mobber
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+		T_TFBot_Engineer_Ranger
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			ClassIcon engineer_ranger_nys
+			Skill Normal
+			WeaponRestrictions PrimaryOnly
+			Action Mobber
+
+			Item "The Rescue Ranger"
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+		T_TFBot_Engineer_Wrench_Repairman
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			Skill Expert
+			Attributes AlwaysFireWeapon
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+
+			EventChangeAttributes
+			{
+				RepairMode [$SIGSEGV]
+				{
+					InterruptAction // Guides them to Repair the Drill Tank
+					{
+						Target "DrillTankRepairTarget"
+						AimTarget "DrillTankRepairTarget"
+						Delay 0.1
+						Repeats 1
+						Duration 999
+						KillAimTarget 1
+						Distance 50
+					}
+				}
+				MeleeMode [$SIGSEGV]
+				{
+					WeaponRestrictions MeleeOnly
+					ActionOverride Mobber
+				}
+			}
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -1081,6 +2024,7 @@ WaveSchedule
 					EntFire(`ActStartRelay`, `Trigger`)
 
 					EntFire(`01_door`, `SetSpeed`, 500)
+					EntFire(`02_door`, `SetSpeed`, 500)
 				  "
 		}
 
@@ -1642,6 +2586,731 @@ WaveSchedule
 			{
 				Template T_TFBot_Chief_Technician
 			}
+		}
+
+		WaveSpawn // 3 GSoldiers
+		{
+			Name "Wave1_Subwave1_GSoldier"
+			WaitForAllSpawned "Wave1_Subwave1_ChiefTechnician"
+			Where spawnbot_side_3
+			TotalCount 3
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 12
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+ 			}
+
+			FirstSpawnOutput
+			{
+				Target FirstObjectiveRelay
+				Action Trigger
+			}
+		}
+		WaveSpawn // 20 Bat Scouts
+		{
+			Name "Wave1_Subwave1_BatScouts"
+			WaitForAllSpawned "Wave1_Subwave1_ChiefTechnician"
+			Where spawnbot_side_3
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 6
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Melee
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GHeavy, 3 Big-Heal Medics and 3 Burst Demos
+		{
+			Name "Wave1_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier"
+			Where spawnbot_side_2
+			TotalCount 7
+			MaxActive 7
+			SpawnCount 7
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons
+					Skill Easy
+					Action Mobber
+
+					MaxVisionRange 900
+
+					SpawnTemplate "PlayerBombPT"
+
+					Tag giant
+
+					Item "ExtraBomb" [$SIGSEGV]
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.4
+						"never gib" 1
+					}
+
+					AddAttribute 
+					{
+						Item "ExtraBomb"
+						Name "attachment name"
+						Value "flag"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					InterruptAction // Moves to EMP Tank
+					{
+						Target "-2265 8308 683"
+						Delay 0.1
+						Repeats 1
+						Duration 2
+						Cooldown 0
+						WaitUntilDone 1
+						OnDoneChangeAttributes "DeployBomb"
+					}
+
+					EventChangeAttributes
+					{
+						DeployBomb [$SIGSEGV]
+						{
+							ActionOverride Idle
+
+							CharacterAttributes
+							{
+								"move speed bonus" 0.001
+								"no_jump" 1
+							}
+
+							FireInput
+							{
+								Target !self
+								Action $PlaySequence
+								Param "melee_deploybomb"
+								Delay 0
+								Repeats 1
+								Cooldown -1
+							}
+							FireInput
+							{
+								Target tf_gamerules
+								Action PlayVO
+								Param "mvm/mvm_deploy_giant.wav"
+								Delay 0
+								Repeats 1
+								Cooldown -1
+							}
+							FireInput
+							{
+								Target EMPTankDeathRelay
+								Action Trigger
+								Delay 2
+								Repeats 1
+								Cooldown -1
+							}
+							FireInput
+							{
+								Target !self
+								Action $Suicide
+								Delay 2.1
+								Repeats 1
+								Cooldown -1
+							}
+						}
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target SecondObjectiveRelay
+				Action Trigger
+			}
+		}
+		WaveSpawn // 15 Scouts and 15 Homewrecker Pyros
+		{
+			Name "Wave1_Subwave2_ScoutsandPyros"
+			WaitForAllSpawned "Wave1_Subwave2_GHeavy"
+			Where spawnbot_side_2
+			TotalCount 30
+			MaxActive 12
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 3
+			TotalCurrency 50
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Class Scout
+					Skill Easy
+					Action Mobber
+					ExtAttr IgnoreNPC
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+                {
+                    Name "Wrecking Crew"
+                    Class Pyro
+                    Action Mobber
+                    Item "The Person in the Iron Mask"
+					ClassIcon pyro_homewrecker_lite
+                    WeaponRestrictions MeleeOnly
+                    Item "The Homewrecker"
+                    CharacterAttributes
+                    {
+                        "never gib" 1
+                    }
+                }
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 Drill Tank
+		{
+			Name "Wave1_Subwave3_DrillTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 150
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			StartDisabled 1
+
+			Tank
+			{
+				Template Tank_Drill
+				Health 23000
+				Speed 75
+				StartingPathTrackNode "tank_path_drill_1"
+			}
+
+			DoneOutput
+			{
+				Target RepairmanDeathRelay
+				Action Trigger
+			}
+		}
+		WaveSpawn // 20 Shotgun Engineers and 20 Rescue Ranger Engineers
+		{
+			Name "Wave1_Subwave3_Engineers"
+			WaitForAllSpawned "Wave1_Subwave3_DrillTank"
+			Where spawnbot_side_1
+			TotalCount 40
+			MaxActive 20
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 1.5
+			TotalCurrency 60
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Engineer_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger
+				}
+			}
+		}
+		WaveSpawn // 20 Repairmen Engineers
+		{
+			Name "Wave1_Subwave3_Repairmen"
+			WaitForAllSpawned "Wave1_Subwave3_DrillTank"
+			Where spawnbot_side_1
+			Support Limited
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Wrench_Repairman
+			}
+		}
+		WaveSpawn // 3 Giant Widowmaker Engineers
+		{
+			Name "Wave1_Subwave3_GWidowmakers"
+			WaitForAllSpawned "Wave1_Subwave3_DrillTank"
+			Where spawnbot_side_1
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 7
+			WaitBetweenSpawns 25
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Engineer_Widowmaker
+				Action Mobber
+			}
+		}
+
+		// Subwave 4
+		WaveSpawn // 1 EMP Tank
+		{
+			Name "Wave1_Subwave4_EMPTank"
+			WaitForAllDead "Wave1_Subwave3_DrillTank"
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_EMP
+				Health 40000
+				Speed 75
+				StartingPathTrackNode "tank_path_emp_1"
+			}
+
+			FirstSpawnOutput
+			{
+				Target FourthObjectiveRelay
+				Action Trigger
+			}
+		}
+
+		WaveSpawn // 2 GPhlog Pyros
+		{
+			Name "Wave1_Subwave4_GPhlog"
+			WaitForAllSpawned "Wave1_Subwave4_EMPTank"
+			Where spawnbot_side_3
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 20
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Phlogistinator
+
+				InterruptAction
+				{
+					Delay 0.5
+					Target "EMPTankTarget"
+					AimTarget "EMPTankTarget"
+					KillAimTarget 1
+					Duration 999
+				}
+			}
+
+		}
+		WaveSpawn // 4 GHomewrecker Scouts
+		{
+			Name "Wave1_Subwave4_GScouts"
+			WaitForAllSpawned "Wave1_Subwave4_EMPTank"
+			Where spawnbot_side_1
+			TotalCount 4
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 20
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Homewrecker
+
+				InterruptAction
+				{
+				    Delay 0.5
+					Target "EMPTankTarget"
+                    AimTarget "EMPTankTarget"
+                    KillAimTarget 1
+					Duration 999
+				}
+			}
+		}
+		WaveSpawn // 20 Black Box Soldiers
+		{
+			Name "Wave1_Subwave4_BlackBoxes"
+			WaitForAllSpawned "Wave1_Subwave4_EMPTank"
+			Where spawnbot_side_1
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 50
+
+			TFBot
+            {
+                Template T_TFBot_Soldier_RocketShotgun
+                Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+            }
+		}
+
+		// Subwave 5
+		WaveSpawn // 20 Bowmen
+		{
+			Name "Wave1_Subwave5_Bowmen"
+			Where spawnbot_07
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 50
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Huntsman
+				MaxVisionRange 900
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+				
+				InterruptAction
+				{
+					Target "-5067 1783 536"
+					Delay 0.1
+					Repeats 99
+					Cooldown 5
+					Duration 5
+					Distance 50
+				}
+			}
+		}
+		WaveSpawn // 10 Combo Soldiers and 10 Reserve Shooter Soldiers
+		{
+			Name "Wave1_Subwave5_Soldiers"
+			WaitForAllDead "Wave1_Subwave1_ChiefTechnician"
+			Where spawnbot_07
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 50
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Name "Combo Soldier"
+					Class Soldier
+					ClassIcon soldier_shotgun2
+					Attributes HoldFireUntilFullReload
+					UseBestWeapon 1
+					Action Mobber
+
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+
+					CharacterAttributes
+					{
+						"deploy time decreased" 0.5
+						"never gib" 1
+					}
+
+					InterruptAction
+					{
+						Target "-5067 1783 536"
+						Delay 0.1
+						Repeats 99
+						Cooldown 5
+						Duration 5
+						Distance 50
+					}
+				}
+				TFBot
+				{
+					Name "Reserve Shooter Soldier"
+					Class Soldier
+					ClassIcon heavy_shotgun
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+					Action Mobber
+
+					Item "The Reserve Shooter"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+
+					InterruptAction
+					{
+						Target "-5067 1783 536"
+						Delay 0.1
+						Repeats 99
+						Cooldown 5
+						Duration 5
+						Distance 50
+					}
+				}
+			}
+		}
+
+		// Subwave 6
+		WaveSpawn // 4 GRapid Soldiers and 20 Shotgun Soldiers
+		{
+			Name "Wave1_Subwave6_GRapidSoldiers"
+			WaitForAllDead "Wave1_Subwave1_ChiefTechnician"
+			Where normal_red_spawn
+			TotalCount 24
+			MaxActive 16
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Action Mobber
+					
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+
+					InterruptAction
+					{
+						Target "-1504 2303 511"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+						Duration 10
+						WaitUntilDone 1
+						Distance 0
+
+						AimTarget "tank_boss"
+						KillAimTarget 1
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					ClassIcon soldier_shotgun2
+					Skill Easy
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+					Action Mobber
+
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					ClassIcon soldier_shotgun2
+					Skill Easy
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+					Action Mobber
+
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					ClassIcon soldier_shotgun2
+					Skill Easy
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+					Action Mobber
+
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					ClassIcon soldier_shotgun2
+					Skill Easy
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+					Action Mobber
+
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Class Soldier
+					ClassIcon soldier_shotgun2
+					Skill Easy
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+					Action Mobber
+
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 21 Burst Demos
+		{
+			Name "Wave1_Subwave6_BurstDemos"
+			WaitForAllSpawned "Wave1_Subwave6_GRapidSoldiers"
+			Where normal_red_spawn
+			TotalCount 21
+			MaxActive 15
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 5
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Demo_Burst
+				Action Mobber
+				
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+
+				InterruptAction
+				{
+					Target "-1504 2303 511"
+					Delay 0.1
+					Repeats 2
+					Cooldown 0
+					Duration 5
+					Distance 50
+				}
+			}
+		}
+
+		WaveSpawn // Stops the Wave from Ending
+		{
+			Name "Wave1_RunPreserver"
+			WaitForAllDead "Wave1_Subwave6_BurstDemos"
+			WaitBeforeStarting 99999
 		}
 	}
 }
