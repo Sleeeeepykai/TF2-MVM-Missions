@@ -15,23 +15,921 @@ WaveSchedule
 	AllowBotExtraSlots 1
 	RobotLimit 40
 
+	MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
 	//// PRECACHES ////
+
+	// Precached Models //
+
+	PrecacheModel "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+	PrecacheModel "models/effects/mvm_holograms/mvm_cappoint_hologram_onlyblue.mdl"
+
+	// Precached Sounds //
+
+	// VOX
+	PrecacheSound "termination/act2/wave2-7/vox/termination_vox_subsurface.mp3"
+
+	// Saxton Hale Voicelines
+	PrecacheSound "termination/act2/wave2-7/saxtonhalevoicelines/saxton_hale_intro.mp3"
+
+	// Gray Mann Voicelines
+	PrecacheSound "termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa.mp3"
+	PrecacheSound "termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa2.mp3"
+
+	PrecacheSound "termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointb.mp3"
+
+	// Music
+	PrecacheSound "termination/act2/wave2-7/music/termination_factory_intrusion_calm.wav"
+	PrecacheSound "termination/act2/wave2-7/music/termination_factory_intrusion.wav"
 
 	//// DISABLED SOUNDS ////
 
+	DisableSound "music.mvm_end_last_wave"						
+	DisableSound "music.mvm_end_mid_wave"						
+	DisableSound "music.mvm_end_tank_wave"						
+	DisableSound "music.mvm_end_wave"							
+	DisableSound "music.mvm_lost_wave"							
+	DisableSound "music.mvm_start_last_wave"					
+	DisableSound "music.mvm_start_mid_wave"						
+	DisableSound "music.mvm_start_tank_wave"					
+	DisableSound "music.mvm_start_wave"	
+	DisableSound "Announcer.MVM_Get_To_Upgrade"					
+	DisableSound "Announcer.MVM_Spy_Alert" 						
+	DisableSound "Announcer.mvm_spybot_death"					
+	DisableSound "Announcer.mvm_spybot_death_all"				
+	DisableSound "Announcer.MVM_First_Wave_Start"				
+	DisableSound "Announcer.MVM_Wave_Start"						
+	DisableSound "Announcer.MVM_Wave_End"						
+	DisableSound "Announcer.MVM_Wave_Lose"						
+	DisableSound "Announcer.MVM_Final_Wave_Start"					
+	DisableSound "Announcer.MVM_Final_Wave_End"					
+	DisableSound "Announcer.MVM_Robots_Planted"					
+	DisableSound "Announcer.MVM_All_Dead"						
+	DisableSound "Announcer.MVM_Bomb_Alert_Entered"				
+	DisableSound "Announcer.MVM_Bomb_Alert_Near_Hatch"			
+	DisableSound "Announcer.MVM_Bomb_Alert_Deploying"			
+	DisableSound "Announcer.MVM_Sentry_Buster_Alert"			
+	DisableSound "Announcer.MVM_Sentry_Buster_Alert_Another"	
+	DisableSound "Announcer.MVM_General_Wave_Start"				
+	DisableSound "Announcer.MVM_Game_Over_Loss"					
+	DisableSound "Announcer.MVM_Tank_Planted"					
+	DisableSound "Announcer.MVM_Tank_Alert_Spawn"				
+	DisableSound "Announcer.MVM_Tank_Alert_Another"				
+	DisableSound "Announcer.MVM_Tank_Alert_Multiple"			
+	DisableSound "Announcer.MVM_Tank_Alert_Halfway"				
+	DisableSound "Announcer.MVM_Tank_Alert_Halfway_Multiple"	
+	DisableSound "Announcer.MVM_Tank_Alert_Near_Hatch"			
+	DisableSound "Announcer.MVM_Tank_Alert_Deploying"
+    DisableSound "mvm\mvm_tank_deploy.wav"		
+	DisableSound "Announcer.RoundBegins1Seconds"				
+	DisableSound "Announcer.RoundBegins2Seconds"				
+	DisableSound "Announcer.RoundBegins3Seconds"				
+	DisableSound "Announcer.RoundEnds1Seconds"					
+	DisableSound "Announcer.RoundEnds2Seconds"					
+	DisableSound "Announcer.RoundEnds3Seconds"
+
 	//// LUA SCRIPTS ////
+
+	LuaScriptFile "tank_repair_script.lua"
 	
 	//// CUSTOM WEAPONS ////
 
 	//// POINT TEMPLATES ////
 
+	PointTemplates
+	{
+		//// CORE PTs ////
+
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination`)
+
+						EntFire(`Player`, `$TeleportToEntity`, `red_spawn_point_rev`)
+
+						EntFire(`tube_bot_model`, `Disable`)
+
+						IncludeScript(`music_system_ment`)
+						PrecacheSound(`#termination/act2/wave2-7/music/termination_factory_intrusion_calm.wav`)
+						PrecacheSound(`#termination/act2/wave2-7/music/termination_factory_intrusion.wav`)
+
+						MusicSystemMent.ResetAll()
+						MusicSystemMent.HookByName(`bignet`)
+					  "
+			}
+
+			point_populator_interface
+            {
+                "targetname" "pop_interface"
+            }
+
+			logic_timer
+			{
+				"targetname"    "RagdollRemover"
+				"RefireTime"    "5"
+				"OnTimer"       "tf_ragdoll*,Kill,,0,-1"
+			}
+
+			logic_timer
+			{
+				"targetname"    "HUDHintTimer"
+				"RefireTime"    "2.0"
+				"startdisabled" "1"
+
+				"OnTimer" "HUDHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "HUDHint"
+				"message" ""
+				"spawnflags" "1"
+			}
+
+			game_round_win
+			{
+				"targetname" "red_win"
+				"TeamNum" "2"
+				"switch_teams" "0"
+				"force_map_reset" "1"
+			}
+			logic_relay
+			{
+				"targetname" "RedWinRelay"
+				"OnTrigger" "red_win,RoundWin,,0,-1"
+			}
+            logic_relay
+			{
+				"targetname" "RedLoseRelay"
+				"OnTrigger" "bots_win,RoundWin,,0,-1"
+			}
+
+			prop_dynamic
+            {
+				"targetname" "ManufactoryGenerator"
+                "origin" "800 657 223.5"
+				"angles" "0 -90 0"
+                "model" "models/robot_factory/robot_factory_generator_fixed.mdl"
+				"defaultanim" "ref"
+                "solid" "6"
+
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Thermal Pyro Model
+			{
+				"targetname" "ThermalPyro"
+				"origin" "1800 254 74"
+				"angles" "0 180 0"
+				"model" "models/bots/pyro_boss/bot_thermal_pyro.mdl"
+				"modelscale" "2.5"
+				"defaultanim" "primary_stun_middle"
+				"skin" "1"
+
+				"disablebonefollowers" "1"
+
+				"onanimationbegun" "!self,SetPlaybackRate,1,0,-1"
+			}
+			prop_dynamic_ornament // Thermal Pyro Head Model
+			{
+				"targetname" "ThermalPyroHead"
+				"initialowner" "ThermalPyro"
+				"model" "models\workshop\player\items\pyro\hwn2023_dead_heat\hwn2023_dead_heat.mdl"
+				"skin" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			item_ammopack_medium
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "960 -1510 -1"
+            }
+			item_ammopack_medium
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "353 -328 0"
+            }
+			item_ammopack_full
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "-400 -1040 13"
+            }
+			item_healthkit_medium
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "960 -1430 -1"
+            }
+			item_healthkit_medium
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "1973 444 80"
+            }
+			item_healthkit_full
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "270 -328 0"
+            }
+			item_healthkit_full
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "1360 440 80"
+            }
+			item_ammopack_full
+            {
+                "targetname" "ammo_pack1"
+                "angles" "0 0 0"
+                "origin" "1270 430 80"
+            }
+
+			filter_multi 
+            {
+                "targetname" "filter_not_ubered"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
+			filter_multi 
+            {
+                "targetname" "filter_not_uber_nor_cash"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_not_ubered"
+                "Filter02"   "filter_cash"
+            }
+			filter_multi 
+            {
+                "targetname" "filter_cash"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_cash_small"
+                "Filter02"   "filter_is_cash_medium"
+                "Filter03"   "filter_is_cash_large"
+				"Filter04"	 "filter_is_cash_custom"
+				"Filter05"   "filter_is_reanimator"
+            }
+			filter_activator_class
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+			filter_activator_class
+            {
+                "targetname" "filter_is_cash_small"
+                "Negated" "1"
+                "filterclass" "item_currencypack_small"
+            }
+			filter_activator_class
+            {
+                "targetname" "filter_is_cash_medium"
+                "Negated" "1"
+                "filterclass" "item_currencypack_medium"
+            }
+			filter_activator_class
+            {
+                "targetname" "filter_is_cash_large"
+                "Negated" "1"
+                "filterclass" "item_currencypack_large"
+            }
+			filter_activator_class
+            {
+                "targetname" "filter_is_cash_custom"
+                "Negated" "1"
+                "filterclass" "item_currencypack_custom"
+            }
+			filter_activator_class
+            {
+                "targetname" "filter_is_reanimator"
+                "Negated" "1"
+                "filterclass" "entity_revive_marker"
+            }
+			filter_tf_condition
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+		}
+
+		//// Wave 2 PTs ////
+		Wave2PT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						//EntFire(`ElevatorSoundLoopRelay`, `Trigger`)
+
+						EntFire(`carrier_lift_raise_relay`, `Trigger`)
+						EntFire(`container_lift_raise_relay`, `Trigger`)
+
+						EntFire(`B1_wall_fix_relay`, `Trigger`)
+						EntFire(`C1_wall_fix_relay`, `Trigger`)
+						EntFire(`B1_wall_fix_relay`, `Trigger`, null, 0.2)
+						EntFire(`C1_wall_fix_relay`, `Trigger`, null, 0.2)
+
+						EntFire(`A_route_wall_1_fix_relay`, `Trigger`)
+						EntFire(`A_route_wall_2_fix_relay`, `Trigger`)
+						EntFire(`A_route_wall_3_fix_relay`, `Trigger`)
+						EntFire(`A_route_wall_4_fix_relay`, `Trigger`)
+
+						EntFire(`B1_door_lock_relay`, `Trigger`)
+						EntFire(`B1_door_lock_relay`, `Trigger`, null, 1)
+
+						EntFire(`bridge_flank_door_A_lock_relay`, `Trigger`)
+						EntFire(`bridge_flank_door_B_lock_relay`, `Trigger`)
+						EntFire(`bridge_flank_door_C_lock_relay`, `Trigger`)
+
+						EntFire(`hatch_shortcut_A_fix_relay`, `Trigger`)
+						EntFire(`hatch_shortcut_B_fix_relay`, `Trigger`)
+
+						EntFire(`red_spawn_security_door`, `Close`)
+					  "
+			}
+
+			logic_relay // Elevator Sound Loop
+			{
+				"targetname" "ElevatorSoundLoopRelay"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,plats\skylift_move.wav,0,-1"
+                "OnTrigger"	"tf_gamerules,$StopVO,plats\skylift_move.wav,7.59,-1"
+                "OnTrigger" "ElevatorSoundLoopRelay,Trigger,,7.595,-1"
+
+                "spawnflags" "2"
+			}
+
+			logic_auto
+			{
+				"targetname" "Wave2ExtraSetup"
+
+				"OnMapSpawn" "ControlPointACaptureArea,SetControlPoint,ControlPointA,0,-1"
+				"OnMapSpawn" "ControlPointBCaptureArea,SetControlPoint,ControlPointB,0,-1"
+				"OnMapSpawn" "ControlPointCCaptureArea,SetControlPoint,ControlPointC,0,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "FriendlyEngibot"
+				"origin" "308 2004 0"
+				"angles" "0 270 0"
+				"model" "models/bots/engineer/bot_engineer.mdl"
+				"defaultanim" "selectionmenu_idle"
+			}
+			prop_dynamic_ornament
+			{
+				"targetname" "FriendlyEngibotWrench"
+				"InitialOwner" "FriendlyEngibot"
+				"model" "models/weapons/c_models/c_wrench/c_wrench.mdl"
+			}
+
+			logic_relay
+			{
+				"targetname" "ActStartRelay"
+
+				"OnTrigger" "ElevatorSoundLoopRelay,Disable,,0,-1"
+				"OnTrigger"	"tf_gamerules,$StopVO,plats/skylift_move.wav,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)0-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,plats/hall_elev_stop.wav,0,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,plats/hall_elev_stop.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,termination/act2/wave2-7/vox/termination_vox_subsurface.mp3,1,1"
+				"OnTrigger" "door_front_l,SetSpeed,50,4,1"
+				"OnTrigger" "door_front_r,SetSpeed,50,4,1"
+				"OnTrigger" "door_front_l,Open,,4.1,1"
+				"OnTrigger" "door_front_r,Open,,4.1,1"
+				"OnTrigger"	"tf_gamerules,PlayVO,doors/door_metal_large_open1.wav,4.1,1"
+				"OnTrigger"	"tf_gamerules,PlayVO,doors/door_metal_large_open1.wav,4.1,1"
+				"OnTrigger" "ActIntroCardUpper,Display,,5,-1"
+				"OnTrigger" "ActIntroCardLower,Display,,6,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{yellow}[ Now Playing: {6383ff} Factory Intrusion - GoodBobFR {yellow}],6,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act2/wave2-7/music/termination_factory_intrusion_calm.wav`),6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_specialcompleted06.mp3,7.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_specialcompleted06.mp3,7.5,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})101"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave2-7/saxtonhalevoicelines/saxton_hale_intro.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave2-7/saxtonhalevoicelines/saxton_hale_intro.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Now that upper security is smashed to bits you boys have a job to do messing up lower security!,11.4,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Intel's shown us one of {d9d9d9}Gray Mann{reset}'s Drill Tanks is lyin' around here so you're gonna get your hands on it.,20.4,-1"
+				"OnTrigger" "Player,$DisplayTextHint,FIND A WAY TO REACH THE DRILL TANK,25,1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] ACQUIRE THE DRILL TANK,28,-1"
+				"OnTrigger" "HUDHintTimer,Enable,,28,-1"
+			}
+
+			game_text
+			{
+				"targetname" "ActIntroCardUpper"
+				"message" "ACT 2"
+				"x" "-1"
+				"y" "0.4"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"holdtime" "3"
+				"fadeout" "0.2"
+				"channel" "1"
+
+				"spawnflags" "1"
+			}
+			game_text
+			{
+				"targetname" "ActIntroCardLower"
+				"message" "UNAUTHORISED ACQUISITION"
+				"x" "-1"
+				"y" "0.45"
+				"effect" "2"
+				"color" "255 255 255"
+				"fxtime" "0.05"
+				"fadein" "0.05"
+				"holdtime" "1.35"
+				"fadeout" "0.2"
+				"channel" "2"
+
+				"spawnflags" "1"
+			}
+
+			prop_dynamic
+            {
+				"targetname" "ManufactoryDrillTank"
+                "origin" "848 -287 336"
+				"angles" "0 143 0"
+                "model" "models/bots/boss_bot/drill_tank/drill_tank.mdl"
+				"skin" "2"
+                "solid" "6"
+
+				"disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "ManufactoryDrillTank"
+				"origin" "838 -347 336"
+				"angles" "0 143 0"
+                "model" "models/bots/boss_bot/tank_track_l.mdl"
+                "solid" "0"
+
+				"disableshadows" "1"
+            }
+            prop_dynamic
+            {
+                "targetname" "ManufactoryDrillTank"
+				"origin" "901 -259 336"
+				"angles" "0 143 0"
+                "model" "models/bots/boss_bot/tank_track_r.mdl"
+                "solid" "0"
+
+				"disableshadows" "1"
+            }
+		}
+
+		Wave2ControlPointPT
+		{
+			team_control_point_master // Control Point Display
+			{
+				"targetname" "ControlPointMaster"
+				"cpm_restrict_team_cap_win" "2"
+				"custom_position_x" "0.435"
+				"custom_position_y" "0.7"
+			}
+
+			// Control Point A
+			logic_relay
+			{
+				"targetname" "ControlPointACaptureRelay"
+
+				"OnTrigger" "Wave2TimerPT,ForceSpawn,,0,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act2/wave2-7/music/termination_factory_intrusion.wav`),0,-1"
+				"OnTrigger" "B1_door_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "ControlPointBAnnotation,Show,,2,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa.mp3,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa.mp3,5,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Wait we aren't conducting training. What's going on out there?!,5,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/manhack_alert_pass1.wav,12,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa2.mp3`,channel = 6,special_dsp = 57,filter_type=5})171"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa2.mp3`,channel = 6,special_dsp = 57,filter_type=5})171"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Attention all personnel! We have intruders on Mann Co.'s property - my property!,17,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: I order you to force them out at once! Take them down!,27,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "ControlPointABase"
+				"origin" "2001 -3751 77"
+				"model" "models/props_gameplay/cap_point_base.mdl"
+				"solid" "0"
+				"skin" "2"
+				"disableshadows" "1"
+			}
+			team_control_point
+			{
+				"targetname" "ControlPointA"
+				"origin" "2001 -3751 77"
+				
+				"point_printname" "Alpha"
+				"point_index" "0"
+				"point_group" "0"
+				"point_default_owner" "3"
+				"pont_start_locked" "0"
+
+				"team_model_0" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_0" "sprites/obj_icons/icon_obj_neutral"
+				"team_overlay_0" "sprites/obj_icons/icon_obj_a"
+
+				"team_model_2" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_2" "sprites/obj_icons/icon_obj_red"
+				"team_overlay_2" "sprites/obj_icons/icon_obj_a"
+
+				"team_model_3" "models/effects/mvm_holograms/mvm_cappoint_hologram_onlyblue.mdl"
+				"team_icon_3" "sprites/obj_icons/icon_obj_blu"
+				"team_overlay_3" "sprites/obj_icons/icon_obj_a"
+				
+				"disableshadows" "1"
+			}
+			trigger_capture_area
+			{
+				"targetname" "ControlPointACaptureArea"
+				"origin" "2001 -3751 77"
+				"mins" "-210 -175 -166"
+				"maxs" "210 175 166"
+				"solid" "0"
+
+				"area_cap_point" "ControlPointA"
+				"area_time_to_cap" "15"
+				"team_cancap_2" "1"
+				"team_cancap_3" "0"
+
+				"OnCapTeam1" "ControlPointABase,Skin,1,0,-1"
+				"OnCapTeam1" "ControlPointACaptureRelay,Trigger,,0,-1"
+			}
+
+			training_annotation // Control Point B Annotation
+			{
+				"targetname" "ControlPointBAnnotation"
+				"lifetime" "10"
+				"display_text" "Control Point Unlocked!"
+				"origin" "-1085 858 305"
+			}
+
+			// Control Point B
+			logic_relay
+			{
+				"targetname" "ControlPointBCaptureRelay"
+
+				"OnTrigger" "bridge_flank_door_A_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_B_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "bridge_flank_door_C_unlock_relay,Trigger,,0,-1"
+				"OnTrigger" "ControlPointCAnnotation,Show,,2,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointb.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointb.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Oh I see what's going on. It's Saxton Fail and his ragtag Mercenaries. Good to see you again...,5,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "ControlPointBBase"
+				"origin" "-1083 861 192"
+				"model" "models/props_gameplay/cap_point_base.mdl"
+				"solid" "0"
+				"skin" "2"
+				"disableshadows" "1"
+			}
+			team_control_point
+			{
+				"targetname" "ControlPointB"
+				"origin" "-1083 861 192"
+				
+				"point_printname" "Beta"
+				"point_index" "1"
+				"point_group" "0"
+				"point_default_owner" "3"
+				"point_start_locked" "1"
+
+				"team_previouspoint_2_0" "ControlPointA"
+
+				"team_model_0" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_0" "sprites/obj_icons/icon_obj_neutral"
+				"team_overlay_0" "sprites/obj_icons/icon_obj_b"
+
+				"team_model_2" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_2" "sprites/obj_icons/icon_obj_red"
+				"team_overlay_2" "sprites/obj_icons/icon_obj_b"
+
+				"team_model_3" "models/effects/mvm_holograms/mvm_cappoint_hologram_onlyblue.mdl"
+				"team_icon_3" "sprites/obj_icons/icon_obj_blu"
+				"team_overlay_3" "sprites/obj_icons/icon_obj_b"
+				
+				"disableshadows" "1"
+			}
+			trigger_capture_area
+			{
+				"targetname" "ControlPointBCaptureArea"
+				"origin" "-1083 861 192"
+				"mins" "-210 -175 -166"
+				"maxs" "210 175 166"
+				"solid" "0"
+
+				"area_cap_point" "ControlPointB"
+				"area_time_to_cap" "15"
+				"team_cancap_2" "1"
+				"team_cancap_3" "0"
+
+				"OnCapTeam1" "ControlPointBBase,Skin,1,0,-1"
+				"OnCapTeam1" "ControlPointBCaptureRelay,Trigger,,0,-1"
+			}
+
+			// Control Point Annotations
+			training_annotation // Control Point C Annotation
+			{
+				"targetname" "ControlPointCAnnotation"
+				"lifetime" "10"
+				"display_text" "Capture the control point to take ownership of the Drill Tank!"
+				"origin" "510 0 489"
+			}
+
+			// Control Point C
+			prop_dynamic
+			{
+				"targetname" "ControlPointCBase"
+				"origin" "534 -0 336"
+				"model" "models/props_gameplay/cap_point_base.mdl"
+				"solid" "0"
+				"skin" "2"
+				"disableshadows" "1"
+			}
+			team_control_point
+			{
+				"targetname" "ControlPointC"
+				"origin" "534 -0 336"
+				
+				"point_printname" "Drill Tank"
+				"point_index" "2"
+				"point_group" "0"
+				"point_default_owner" "3"
+				"pont_start_locked" "1"
+
+				"team_previouspoint_2_0" "ControlPointB"
+
+				"team_model_0" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_0" "sprites/obj_icons/icon_obj_neutral"
+				"team_overlay_0" "sprites/obj_icons/icon_obj_c"
+
+				"team_model_2" "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
+				"team_icon_2" "sprites/obj_icons/icon_obj_red"
+				"team_overlay_2" "sprites/obj_icons/icon_obj_c"
+
+				"team_model_3" "models/effects/mvm_holograms/mvm_cappoint_hologram_onlyblue.mdl"
+				"team_icon_3" "sprites/obj_icons/icon_obj_blu"
+				"team_overlay_3" "sprites/obj_icons/icon_obj_c"
+				
+				"disableshadows" "1"
+			}
+			trigger_capture_area
+			{
+				"targetname" "ControlPointCCaptureArea"
+				"origin" "534 -0 336"
+				"mins" "-210 -175 -166"
+				"maxs" "210 175 166"
+				"solid" "0"
+
+				"area_cap_point" "ControlPointC"
+				"area_time_to_cap" "15"
+				"team_cancap_2" "1"
+				"team_cancap_3" "0"
+
+				"OnCapTeam1" "ControlPointCBase,Skin,1,0,-1"
+				"OnCapTeam1" "ControlPointCCaptureRelay,Trigger,,0,-1"
+			}
+		}
+
+		Wave2TimerPT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						IncludeScript(`textualtimer_v3`)
+						TextualTimer.SetParams({
+							minutes = 4
+							seconds = 00
+							x = -1
+							y = 0.77
+							text_prepend = `APPREHENSION: `
+							color = `0 255 255`
+							relayname = `RedLoseRelay`
+						})
+					  "
+			}
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						TextualTimer.Start()
+					  "
+				Delay 0.2
+			}
+		}
+	}
+
 	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
 
 	//// EXTRA TANK PATHS ////
 
 	//// EXTRA SPAWN POINTS ////
 
+	ExtraSpawnPoint // Door A2
+	{
+		Name "spawnbot_a2"
+		X 227 Y 282 Z 10
+		TeamNum 3
+ 	}
+
+	ExtraSpawnPoint // Hatch
+	{
+		Name "spawnbot_hatch"
+		X 1279 Y -2634 Z 10
+		TeamNum 3
+	}
+
+	ExtraSpawnPoint // Drill Tank
+    {
+        Name "spawnbot_drilltank"
+        X 3252 Y -1632 Z 240
+        TeamNum 3
+    }
+
 	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		//// GIANTS ////
+		T_TFBot_Giant_Engineer_Widowmaker
+        {
+            Name "Giant Widowmaker Engineer"
+            Class Engineer
+            ClassIcon engineer_widowmaker_nys_giant
+            Health 3000
+            Skill Expert
+            Attributes MiniBoss
+			ExtAttr IgnoreBuildings
+
+			Tag giant
+
+            Item "The Widowmaker"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+                "damage force reduction" 0.6
+                "airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 7
+				"voice pitch scale" 0
+				"head scale" 0.7
+				"hand scale" 1.1
+				"never gib" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Widowmaker"
+
+				"fire rate penalty" 1.25
+			}
+        }
+
+		//// MINIGIANTS ////
+		T_TFBot_Engineer_Homewrecker
+		{
+			Name "Wrecking Crew"
+			Class Engineer
+			ClassIcon pyro_homewrecker_lite
+			Skill Normal
+			Health 500
+			Scale 1.2
+			Attributes DisableDodge
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			ForceRomeVision 1
+
+			Item "Upgradeable TF_WEAPON_WRENCH"
+
+			CharacterAttributes
+			{
+				"voice pitch scale" 0.8
+				"cancel falling damage" 1
+				"never gib" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "Upgradeable TF_WEAPON_WRENCH"
+				"damage bonus" 2.25
+				"fire rate penalty" 1.5
+				"melee cleave attack" 1
+				"custom item model" "models/workshop/weapons/c_models/c_sledgehammer/c_sledgehammer.mdl"
+				"custom kill icon" "sledgehammer"
+			}
+		}
+
+		//// COMMONS ////
+		T_TFBot_Engineer_Shotgun
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			ClassIcon heavy_shotgun
+			Skill Normal
+			WeaponRestrictions PrimaryOnly
+			Action Mobber
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+		T_TFBot_Engineer_Ranger
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			ClassIcon engineer_ranger_nys
+			Skill Normal
+			WeaponRestrictions PrimaryOnly
+			Action Mobber
+
+			Item "The Rescue Ranger"
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+		T_TFBot_Engineer_Wrench_Repairman
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			Skill Expert
+			Attributes AlwaysFireWeapon
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+	}
 
 	//// MISSION BOTS ////
 
@@ -39,6 +937,557 @@ WaveSchedule
 
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`red_reverse_mission_relay`, `Trigger`)
+					EntFire(`Wave2PT`, `ForceSpawn`)
+					EntFire(`Wave2ControlPointPT`, `ForceSpawn`)
 
+					Convars.SetValue(`tf_playergib`, 0)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`red_reverse_wave_start_relay`, `Trigger`)
+					EntFire(`ActStartRelay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`red_reverse_wave_finished_relay`, `Trigger`)
+				  "
+		}
+
+		CustomMaxWaveNumber 7
+
+		// Sentry Guns
+		SentryGun 
+		{
+			TeamNum 2
+			Level 3
+			Health 99999
+			BodyGroup 1
+			Skin 2
+			Delay 6
+			Position
+			{
+				X 470 
+				Y 1400
+				Z 0
+				Pitch 0
+				Yaw -135
+				Roll 0
+			}
+		}
+		SentryGun
+		{
+			TeamNum 2
+			Level 3
+			Health 99999
+			BodyGroup 1
+			Skin 2
+			Delay 6
+			Position
+			{
+				X 140
+				Y 1770
+				Z 0
+				Pitch 0
+				Yaw -135
+				Roll 0
+			}
+		}
+		SentryGun
+		{
+			TeamNum 3 
+			Delay 0
+			Level 3
+            Skin 1
+            Health 180
+			Position
+			{
+				X 402
+				Y -1968
+				Z 160
+				Pitch 0
+				Yaw 125
+				Roll 0
+			}
+		}
+		SentryGun
+		{
+			TeamNum 3 
+			Delay 0
+			Level 3
+            Skin 1
+            Health 180
+			Position
+			{
+				X 2534
+				Y -2742
+				Z 224
+				Pitch 0
+				Yaw 177
+				Roll 0
+			}
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 GWidowmaker Engineer
+		{
+			Name "Wave2_Subwave1_GWidowmaker"
+			Where spawnbot_hatch [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Engineer_Widowmaker
+				Action Mobber
+
+				InterruptAction
+                {
+                    Target "475 -1427 0"
+                    Delay 0.5
+					Repeats 0
+					Duration 25
+					Cooldown 0.3
+					Distance 50
+                }
+			}
+		}
+		WaveSpawn // 1 GWidowmaker Engineer
+		{
+			Name "Wave2_Subwave1_GWidowmaker"
+			Where spawnbot_hatch [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Engineer_Widowmaker
+				Action Mobber
+
+				InterruptAction
+                {
+                    Target "1277 -2820 0"
+                    Delay 0.5
+					Repeats 0
+					Duration 25
+					Cooldown 0.3
+					Distance 50
+                }
+			}
+		}
+
+		WaveSpawn // 8 Wrench Engineers
+		{
+			Name "Wave2_Subwave1_Repairmen"
+			Where spawnbot_a2 [$SIGSEGV]
+			Support Limited
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0.2
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Wrench_Repairman
+					Health 75
+
+					InterruptAction
+					{
+						Target "-124 1205 0"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Wrench_Repairman
+					Health 75
+
+					InterruptAction
+					{
+						Target "-124 1205 0"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+					VoiceCommand
+                    {
+                        Delay 1.5
+                        Repeats 1
+                        Type "Move Up"
+                    }
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Wrench_Repairman
+					Health 75
+
+					InterruptAction
+					{
+						Target "-124 1205 0"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+					VoiceCommand
+                    {
+                        Delay 0.2
+                        Repeats 2
+                        CoolDown 5
+                        IfSeeTarget 1
+                        Type "Help"
+                    }
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Wrench_Repairman
+					Health 75
+
+					InterruptAction
+					{
+						Target "-124 1205 0"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+					VoiceCommand
+                    {
+                        Delay 0.35
+                        Repeats 1
+                        CoolDown 5
+                        IfSeeTarget 1
+                        Type "Negative"
+                    }
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Wrench_Repairman
+					Health 75
+
+					InterruptAction
+					{
+						Target "-124 1205 0"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+					VoiceCommand
+                    {
+                        Delay 2.2
+                        Repeats 1
+                        Type "Incoming"
+                    }
+				}
+			}
+		}
+		WaveSpawn // 1 Rescue Ranger Engineer
+		{
+			Name "Wave2_Subwave1_RangerEngineer"
+			Where spawnbot_hatch [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Ranger
+				Attributes AlwaysFireWeapon
+				Attributes HoldFireUntilFullReload
+
+				InterruptAction
+                {
+                    Target "451 -2054 160" // goes to the sentry on the left
+					AimTarget "402 -1968 205"
+                    Duration 9999
+                    Delay 0.1
+                    Repeats 1
+                    WaitUntilDone 1
+                }
+			}
+		}
+		WaveSpawn // 1 Rescue Ranger Engineer
+		{
+			Name "Wave2_Subwave1_RangerEngineer"
+			Where spawnbot_drilltank [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Ranger
+				Attributes AlwaysFireWeapon
+				Attributes HoldFireUntilFullReload
+
+				InterruptAction
+                {
+                    Target "2648 -2783 224" // goes to the sentry on the right
+					AimTarget "2534 -2742 264"
+                    Duration 9999
+                    Delay 0.1
+                    Repeats 1
+                    WaitUntilDone 1
+                }
+			}
+		}
+		WaveSpawn // 6 Homewrecker Engineers
+		{
+			Name "Wave2_Subwave1_HomewreckerEngineer"
+			Where spawnbot_hatch [$SIGSEGV]
+			Where spawnbot_drilltank [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Homewrecker
+			}
+		}
+		WaveSpawn // 12 Shotgun Engineers and 12 Ranger Engineers
+		{
+			Name "Wave2_Subwave1_Engineers"
+			Where spawnbot_hatch [$SIGSEGV]
+			Where spawnbot_drilltank [$SIGSEGV]
+			TotalCount 24
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Engineer_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier and 8 Burst Demos
+		{
+			Name "Wave2_Subwave1_GBurstSoldier"
+			Where spawnbot_drilltank [$SIGSEGV]
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 9
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 125
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer_Reload
+					Health 4200
+					Attributes DisableDodge
+					Action Mobber
+
+					Item "MvM GateBot Light Soldier"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+
+					InterruptAction
+					{
+						Target "2001 -3751 77"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demo_Burst
+					Action Mobber
+
+					Item "MvM GateBot Light Demoman"
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 2 GKnights
+		{
+			Name "Wave2_Subwave1_GKnight"
+			WaitForAllDead "Wave2_Subwave1_GBurstSoldier"
+			Where spawnbot_drilltank [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 6
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Giant_DemoMan_PrinceTavish
+				Action Mobber
+
+				Item "MvM GateBot Light Demoman"
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+
+				InterruptAction
+				{
+					Target "2001 -3751 77"
+					Delay 0.5
+					Repeats 0
+					Duration 25
+					Cooldown 0.3
+					Distance 50
+				}
+			}
+		}
+
+		WaveSpawn // Stops the Wave from Ending
+		{
+			Name "Wave2_RunPreserver"
+			WaitBeforeStarting 99999
+		}
 	}
 }
