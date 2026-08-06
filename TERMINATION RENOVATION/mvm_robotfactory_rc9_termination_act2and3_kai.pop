@@ -68,6 +68,9 @@ WaveSchedule
 	PrecacheSound "termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_graymannescape.mp3"
 	PrecacheSound "termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_australiumtankready.mp3"
 
+	PrecacheSound "termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence.mp3"
+	PrecacheSound "termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence2.mp3"
+
 	// Gray Mann Voicelines
 	PrecacheSound "termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa.mp3"
 	PrecacheSound "termination/act2/wave2-7/graymannvoicelines/gray_mann_controlpointa2.mp3"
@@ -1903,9 +1906,41 @@ WaveSchedule
 			{
 				"targetname" "InterceptorMonorailDeployRelay"
 
-				"OnTrigger" "tf_gamerules,PlayVO,misc\doomsday_missile_explosion.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_missile_explosion.wav,0,-1"
 				"OnTrigger" "tank_boss*,RemoveHealth,10000,0,-1"
 			}
+
+			logic_relay
+			{
+				"targetname" "ElevatorDoorsRelay"
+
+				"OnTrigger" "door_front_r,SetSpeed,60,0,-1"
+				"OnTrigger" "door_front_l,SetSpeed,60,0,-1"
+				"OnTrigger" "door_front_r,Open,,0.1,-1"
+				"OnTrigger" "door_front_l,Open,,0.1,-1"
+				"OnTrigger" "wave_finished_relay,Trigger,,5,-1"
+				"OnTrigger" "pop_interface,PauseBotSpawning,,5,-1"
+				"OnTrigger" "ElevatorAnnotation,Show,,10,-1"
+			}
+			training_annotation
+			{
+				"targetname" "ElevatorAnnotation"
+				"origin" "407 1686 265"
+				"display_text" "Get to the Elevator!"
+				"lifetime" "5"
+			}
+
+			logic_relay
+			{
+				"targetname" "AustraliumTankElevatorRelay"
+
+				"OnTrigger" "ElevatorCheck,Enable,,5,-1"
+				"OnTrigger" "!activator,$SetLocalOrigin,456 1387 0,5,-1"
+				"OnTrigger" "RedLoseRelay,Disable,,5,-1"
+				"OnTrigger" "!activator,Kill,,5.1,-1"
+				"OnTrigger" "Wave4ElevatorPT,ForceSpawn,,5.1,-1"
+			}
+
 		}
 		Wave4TimerPT
 		{
@@ -2003,6 +2038,139 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_7.mdl"
 				"solid" "6"
+			}
+		}
+		Wave4ElevatorPT
+		{
+			prop_dynamic
+			{
+				"targetname" "AustraliumTankProp"
+				"origin" "592 1504 0"
+				"angles" "0 45 0"
+				"model" "models/robot_factory/australium_tank.mdl"
+				"defaultanim" "movement"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "AustraliumTankProp"
+				"origin" "552 1543 0"
+				"angles" "0 45 0"
+				"model" "models/bots/boss_bot/tank_track_l.mdl"
+				"solid" "0"
+			}
+			prop_dynamic
+			{
+				"targetname" "AustraliumTankProp"
+				"origin" "632 1465 0"
+				"angles" "0 45 0"
+				"model" "models/bots/boss_bot/tank_track_r.mdl"
+				"solid" "0"
+			}
+
+			logic_relay
+			{
+				"targetname" "Act2CompleteRelay"
+
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(`#ui/gamestartup19.mp3`, 2, 2)0-1"
+				"OnTrigger" "door_front_r,Close,,0,-1"
+				"OnTrigger" "door_front_r,Close,,0,-1"
+				"OnTrigger" "HUDHintTimer,Disable,,0,-1"
+				"OnTrigger" "HUDHint,HideHudHint,,0,-1"
+
+				"OnTrigger" "bomb,ForceResetSilent,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Subwave4_ShotgunHeavies,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Subwave4_RapidSoldiers,,0,-1"
+
+				"OnTrigger" "lift_shaft,SetSpeed,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,plats/elevator_large_start1.wav,10,1"
+				"OnTrigger" "lift_shaft,SetPosition,0.66,11,-1"
+				"OnTrigger" "ElevatorSoundLoopRelay,Trigger,,11,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})35.61"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence.mp3`,channel = 6,special_dsp = 55,filter_type=5})371"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence.mp3`,channel = 6,special_dsp = 55,filter_type=5})371"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence.mp3`,channel = 6,special_dsp = 55,filter_type=5})371"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Looks like you boys aren't so useless after all! Now we get this Australium home sa-,37,-1"
+
+				"OnTrigger" "tf_gamerules,$StopVO,plats/skylift_move.wav,45,-1"
+				"OnTrigger" "ElevatorSoundLoopRelay,Disable,,45,1"
+                "OnTrigger" "tf_gamerules,PlayVO,plats/elevator_large_stop1.wav,45,1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/energy/weld1.wav,45,1"
+				"OnTrigger" "lift_shaft,SetPosition,0.33333,45,1"
+				"OnTrigger" "lift_shaft,SetSpeed,0,45.1,1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/materials/metal_rattle.wav,48.5,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/materials/metal_rattle.wav,48.5,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence2.mp3`,channel = 6,special_dsp = 55,filter_type=5})50.21"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence2.mp3`,channel = 6,special_dsp = 55,filter_type=5})50.21"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave4-7/saxtonhalevoicelines/saxton_hale_elevatorsequence2.mp3`,channel = 6,special_dsp = 55,filter_type=5})50.21"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Blimey!,50.2,-1"
+
+				"OnTrigger" "lift_shaft,SetSpeed,300,52,1"
+                "OnTrigger" "SubwaveWarningRelay,trigger,,52,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,plats/hall_elev_move.wav,52,1"
+				"OnTrigger" "tf_gamerules,PlayVO,plats/elevator_move_loop2.wav,52.7,1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)55-1"
+                "OnTrigger"	"tf_gamerules,PlayVO,plats\hall_elev_stop.wav,55,1"
+                "OnTrigger"	"tf_gamerules,$StopVO,plats\hall_elev_move.wav,55,1"
+				"OnTrigger" "ActIntroCardUpper,Display,,55,1"
+                "OnTrigger" "ActIntroCardLower,Display,,56,1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 1, 1, 2)58-1"
+				"OnTrigger" "tf_gamerules,$ChangeLevel,mvm_spybase_rc16|termination_act_4_kai,59,-1"     
+			}
+			trigger_multiple
+            {
+                "targetname" "ElevatorCheck"
+				"filtername" "red_filter"
+                "origin" "351 1629 0"
+                "mins" "-400 -400 -400"
+                "maxs" "400 400 400"
+                "spawnflags" "1"
+
+                "OnStartTouchAll" "Act2CompleteRelay,Trigger,,14,-1"
+            }
+			logic_relay
+			{
+				"targetname" "ElevatorSoundLoopRelay"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,plats/skylift_move.wav,0,-1"
+                "OnTrigger"	"tf_gamerules,$StopVO,plats/skylift_move.wav,7.59,-1"
+                "OnTrigger" "ElevatorSoundLoopRelay,Trigger,,7.595,-1"
+
+                "spawnflags" "2"
+			}
+			game_text
+			{
+				"targetname" "ActIntroCardUpper"
+				"message" "ACT 3.5"
+				"x" "-1"
+				"y" "0.4"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"holdtime" "3"
+				"fadeout" "0.2"
+				"channel" "1"
+
+				"spawnflags" "1"
+			}
+			game_text
+			{
+				"targetname" "ActIntroCardLower"
+				"message" "CODENAME: THERMAL"
+				"x" "-1"
+				"y" "0.45"
+				"effect" "2"
+				"color" "255 255 255"
+				"fxtime" "0.05"
+				"fadein" "0.05"
+				"holdtime" "1.55"
+				"fadeout" "0.2"
+				"channel" "2"
+
+				"spawnflags" "1"
 			}
 		}
 
@@ -5331,8 +5499,8 @@ WaveSchedule
 			WaitBetweenSpawns 6
 			TotalCurrency 50
 
-			FirstSpawnWarningSound "vo\mvm\norm\sniper_mvm_helpmedefend03.mp3"
-			LastSpawnWarningSound "vo\mvm\norm\sniper_mvm_cartmovingforwarddefense04.mp3"
+			FirstSpawnWarningSound "vo/mvm/norm/sniper_mvm_helpmedefend03.mp3"
+			LastSpawnWarningSound "vo/mvm/norm/sniper_mvm_cartmovingforwarddefense04.mp3"
 
 			TFBot
 			{
@@ -5351,8 +5519,8 @@ WaveSchedule
 			WaitBetweenSpawns 35
 			TotalCurrency 25
 
-			FirstSpawnWarningSound "vo\mvm\mght\heavy_mvm_m_specialcompleted03.mp3"
-			LastSpawnWarningSound "vo\mvm\mght\heavy_mvm_m_yell6.mp3"
+			FirstSpawnWarningSound "vo/mvm/mght/heavy_mvm_m_specialcompleted03.mp3"
+			LastSpawnWarningSound "vo/mvm/mght/heavy_mvm_m_yell6.mp3"
 
 			TFBot
 			{
@@ -5440,8 +5608,8 @@ WaveSchedule
 			WaitBetweenSpawns 7
 			TotalCurrency 25
 
-			FirstSpawnWarningSound "vo\mvm\mght\demoman_mvm_m_laughshort01.mp3"
-			LastSpawnWarningSound "vo\mvm\mght\demoman_mvm_m_battlecry01.mp3"
+			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_laughshort01.mp3"
+			LastSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry01.mp3"
 
 			TFBot
 			{
