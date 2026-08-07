@@ -1,0 +1,129 @@
+#base robot_standard.pop
+#base robot_giant.pop
+
+WaveSchedule
+{
+	StartingCurrency 4800
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 15
+
+	WaveStartCountdown 3
+
+	MaxRedPlayers 6
+	AllowBotExtraSlots 1
+	RobotLimit 40
+
+	MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+	//// PRECACHES ////
+
+	// Precached Models //
+
+	// Precached Sounds //
+
+	// VOX
+
+	// Saxton Hale Voicelines
+
+	// Gray Mann Voicelines
+
+	// SFX
+
+	// Music
+
+	//// DISABLED SOUNDS ////
+
+	//// LUA SCRIPTS ////
+
+	LuaScriptFile "tank_repair_script.lua"
+
+	//// CUSTOM WEAPONS ////
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		//// CORE PTs ////
+
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination`)
+
+						IncludeScript(`music_system_ment`)
+
+						MusicSystemMent.ResetAll()
+						MusicSystemMent.HookByName(`bignet`)
+
+						IncludeScript(`tankextensions_main`)
+					  "
+			}
+			
+			point_populator_interface
+            {
+                "targetname" "pop_interface"
+            }
+
+			logic_timer
+			{
+				"targetname"    "RagdollRemover"
+				"RefireTime"    "5"
+				"OnTimer"       "tf_ragdoll*,Kill,,0,-1"
+			}
+			logic_timer
+			{
+				"targetname" "MissionAlarmTimer"
+				"RefireTime" "60"
+
+				"OnTimer" "tf_gamerules,PlayVO,ambient/alarms/citadel_alert_loop2.wav,0.1,-1"
+				"OnTimer" "tf_gamerules,$StopVO,ambient/alarms/citadel_alert_loop2.wav,6,-1"
+			}
+
+			logic_timer
+			{
+				"targetname"    "HUDHintTimer"
+				"RefireTime"    "2.0"
+				"startdisabled" "1"
+
+				"OnTimer" "HUDHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "HUDHint"
+				"message" ""
+				"spawnflags" "1"
+			}
+
+            logic_relay
+			{
+				"targetname" "RedLoseRelay"
+				"OnTrigger" "bots_win,RoundWin,,0,-1"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// EXTRA TANK PATHS ////
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	//// WAVES ////
+}
