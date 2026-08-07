@@ -32,6 +32,8 @@ WaveSchedule
 	PrecacheModel "models/effects/mvm_holograms/mvm_cappoint_hologram.mdl"
 	PrecacheModel "models/effects/mvm_holograms/mvm_cappoint_hologram_onlyblue.mdl"
 
+	PrecacheModel "models/props_mvm/robot_spawnpoint.mdl"
+
 	PrecacheModel "models/flags/lava_canister.mdl"
 
 	PrecacheModel "models/bots/boss_bot/drill_tank/drill_tank_termination.mdl"
@@ -600,6 +602,25 @@ WaveSchedule
 
 				"disableshadows" "1"
             }
+
+			prop_dynamic
+			{
+				"targetname" "ExtraSpawnPoint"
+				"origin" "3252 -1632 223"
+				"model" "models/props_mvm/robot_spawnpoint.mdl"
+				"defaultanim" "idle"
+				"skin" "1"
+				"solid" "0"
+			}
+			prop_dynamic
+			{
+				"targetname" "ExtraSpawnPoint"
+				"origin" "1279 -2634 0"
+				"model" "models/props_mvm/robot_spawnpoint.mdl"
+				"defaultanim" "idle"
+				"skin" "1"
+				"solid" "0"
+			}
 		}
 
 		Wave2ControlPointPT
@@ -950,9 +971,7 @@ WaveSchedule
 				"targetname" "Wave3SetupRelay"
 
 				"OnTrigger" "tank_path_drill_14,AddOutput,OnPass FirstWallBreakRelay:Trigger::0:-1,0,-1"
-				"OnTrigger" "tank_path_drill_15,AddOutput,OnPass !activator:SetSpeed:75:0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_17,AddOutput,OnPass SecondWallBreakRelay:Trigger::0:-1,0,-1"
-				"OnTrigger" "tank_path_drill_18,AddOutput,OnPass !activator:SetSpeed:83:0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_24,AddOutput,OnPass ThirdWallBreakRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_36,AddOutput,OnPass GeneratorBreakRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_37,AddOutput,OnPass EscortVictoryRelay:Trigger::0:-1,0,-1"
@@ -1028,6 +1047,27 @@ WaveSchedule
 
 				"disableshadows" "1"
             }
+
+			prop_dynamic
+			{
+				"targetname" "ExtraSpawnPoint"
+				"origin" "3252 -1632 223"
+				"angles" "0 -90 0"
+				"model" "models/props_mvm/robot_spawnpoint.mdl"
+				"defaultanim" "idle"
+				"skin" "1"
+				"solid" "0"
+			}
+			prop_dynamic
+			{
+				"targetname" "ExtraSpawnPoint"
+				"origin" "1279 -2634 0"
+				"angles" "0 -165 0"
+				"model" "models/props_mvm/robot_spawnpoint.mdl"
+				"defaultanim" "idle"
+				"skin" "1"
+				"solid" "0"
+			}
 		}
 
 		Wave3SetupPT
@@ -1151,6 +1191,7 @@ WaveSchedule
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)60-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/machines/wall_crash1.wav,60,-1"
 
+				"OnTrigger" "!activator,SetSpeed,75,65,-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak1.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak1.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak1.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
@@ -1201,6 +1242,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/machines/wall_crash1.wav,60,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)60-1"
 
+				"OnTrigger" "!activator,SetSpeed,83,65,-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak2.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak2.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak2.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
@@ -3724,6 +3766,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_DemoMan_PrinceTavish
+				Attributes DisableDodge
 				Action Mobber
 
 				Item "MvM GateBot Light Demoman"
@@ -3871,7 +3914,6 @@ WaveSchedule
 		{
 			Name "Wave2_Subwave2_Soldiers"
 			WaitForAllSpawned "Wave2_Subwave2_GHeaterHeavy"
-			Where spawnbot_left_tank
 			Where spawnbot_right_tank
 			TotalCount 20
 			MaxActive 8
@@ -3916,14 +3958,14 @@ WaveSchedule
 						Target "-1271 255 -156"
 						Delay 0.5
 						Repeats 1
-						Duration 25
+						Duration 16
 						Cooldown 2
 						Distance 0
 					}
 					InterruptAction
 					{
 						Target "-1075 860 192"
-						Delay 25
+						Delay 16
 						Repeats 0
 						Duration 4
 						Cooldown 2
@@ -3939,7 +3981,6 @@ WaveSchedule
 			Name "Wave2_Subwave2_Engineers"
 			WaitForAllSpawned "Wave2_Subwave2_GHeaterHeavy"
 			Where spawnbot_left_tank
-			Where spawnbot_B2
 			TotalCount 20
 			MaxActive 8
 			SpawnCount 2
