@@ -187,6 +187,8 @@ WaveSchedule
 						MusicSystemMent.ResetAll()
 						MusicSystemMent.HookByName(`bignet`)
 
+						IncludeScript(`termination_graymann_train`)
+
 						IncludeScript(`tankextensions_main`)
 						IncludeScript(`tankextensions/drilltank_watermine`)
 					  "
@@ -1040,7 +1042,7 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_drillstart.mp3`,channel = 6,special_dsp = 57,filter_type=5})61"
 				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: You might think you're clever for breaking into my facility... But your luck will carry you no further!,6,-1"
 
-				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act2/wave3-7/music/termination_rusty_yet_pristine.mp3`),9.6,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act2/wave3-7/music/termination_rusty_yet_pristine.mp3`),8.5,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{yellow}[ Now Playing: {6383ff} Rusty Yet Pristine - GoodBobFR {yellow}],10,-1"
 
 				"OnTrigger" "Wave3FirstWallBreakPT,ForceSpawn,,10,-1"
@@ -1420,7 +1422,7 @@ WaveSchedule
 			{
 				"targetname" "GeneratorBreakRelay"
 
-				"OnTrigger" "!activator,SetSpeed,0.5,0,-1"
+				"OnTrigger" "!activator,SetSpeed,1,0,-1"
 
 				"OnTrigger" "GeneratorExplosionCase,PickRandomShuffle,,5,-1"
 				"OnTrigger" "GeneratorExplosionCase,PickRandomShuffle,,10,-1"
@@ -1832,7 +1834,7 @@ WaveSchedule
 				"color" "255 255 255"
 				"fxtime" "0.05"
 				"fadein" "0.05"
-				"holdtime" "1.35"
+				"holdtime" "1.65"
 				"fadeout" "0.2"
 				"channel" "2"
 
@@ -2093,6 +2095,7 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_1_build_chunk_1.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 			prop_dynamic
 			{
@@ -2100,6 +2103,7 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_2.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 			prop_dynamic
 			{
@@ -2107,6 +2111,7 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_3.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 			prop_dynamic
 			{
@@ -2114,6 +2119,7 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_4.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 			prop_dynamic
 			{
@@ -2121,13 +2127,15 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_5.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 			prop_dynamic
 			{
-				"targetname" "AustraliumTankPiece2"
+				"targetname" "AustraliumTankPiece6"
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_6.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 			prop_dynamic
 			{
@@ -2135,6 +2143,7 @@ WaveSchedule
 				"origin" "1360 -2600 8"
 				"model" "models/robot_factory/australium_tank_build_chunk_7.mdl"
 				"solid" "6"
+				"startdisabled" "1"
 			}
 		}
 		Wave4ElevatorPT
@@ -2940,6 +2949,25 @@ WaveSchedule
 
 			Item "VolatileBotBarrel" [$SIGSEGV]
 
+			AddAttribute 
+			{
+				Item "VolatileBotBarrel"
+				Name "attachment name"
+				Value "flag"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+			AddAttribute 
+			{
+				Item "VolatileBotBarrel"
+				Name "attachment scale"
+				Value "1.2"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+
 			FireInput
 			{
 				Target !self
@@ -3015,6 +3043,25 @@ WaveSchedule
 			CharacterAttributes
 			{
 				"health regen" 0
+			}
+
+			AddAttribute 
+			{
+				Item "VolatileBotBarrel"
+				Name "attachment name"
+				Value "flag"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+			AddAttribute 
+			{
+				Item "VolatileBotBarrel"
+				Name "attachment scale"
+				Value "1.2"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
 			}
 
 			FireInput
@@ -4672,6 +4719,40 @@ WaveSchedule
 				}
 			}
 		}
+		WaveSpawn // 6 Demoknights
+		{
+			Name "Wave3_Subwave3_Demoknights"
+			WaitForAllSpawned "Wave3_Subwave3_GHeavy"
+			Where spawnbot_reddit [$SIGSEGV]
+			Support Limited
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 2.1
+			WaitBetweenSpawns 0
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight
+				Attributes DisableDodge
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+
+				FireInput
+				{
+					Target !self
+					Action $SetLocalOrigin
+					Param "1277 -2054 80"
+					Delay 0
+					Repeats 1
+					Cooldown -1
+				}
+			}
+		}
 		WaveSpawn // 8 Demoknights
 		{
 			Name "Wave3_Subwave3_Demoknights"
@@ -4685,8 +4766,6 @@ WaveSchedule
 			WaitBetweenSpawns 9
 			TotalCurrency 25
 
-			FirstSpawnWarningSound "vo/mvm/norm/demoman_mvm_go02.mp3"
-
 			TFBot
 			{
 				Template T_TFBot_Demoman_Knight
@@ -4699,9 +4778,9 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 20 Flare Pyros
+		WaveSpawn // 20 Conch Soldiers
 		{
-			Name "Wave3_Subwave3_FlarePyros"
+			Name "Wave3_Subwave3_ConchSoldiers"
 			WaitForAllSpawned "Wave3_Subwave3_GHeavy"
 			Where spawnbot_reddit [$SIGSEGV]
 			Support Limited
@@ -4714,7 +4793,7 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Pyro_Flaregun
+				Template T_TFBot_Soldier_Extended_Concheror
 				Attributes DisableDodge
 				Action Mobber
 
@@ -5045,7 +5124,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`red_normal_mission_relay`, `Trigger`)
-					EntFire(`RelayD`, `Trigger`)
+					EntFire(`Relay_D`, `Trigger`)
 					EntFire(`Wave4PT`, `ForceSpawn`)
 				  "
 		}
@@ -5071,7 +5150,7 @@ WaveSchedule
 		WaveSpawn // 1 Engibot
 		{
 			Name "Wave4_Subwave1_Engibot"
-			Where spawnbot_reddit [$SIGSEGV]
+			Where spawnbot_drilltank [$SIGSEGV]
 			Support Limited
 			TotalCount 1
 			MaxActive 1
@@ -5084,6 +5163,16 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Technician_Friendly
+
+				FireInput
+				{
+					Target !self
+					Action $SetLocalOrigin
+					Param "1349 -3073 0"
+					Delay 0
+					Repeats 1
+					Cooldown -1
+				}
 
 				FireWeapon
 				{
