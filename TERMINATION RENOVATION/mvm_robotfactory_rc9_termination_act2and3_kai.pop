@@ -958,6 +958,14 @@ WaveSchedule
 						EntFire(`obj_sentry*`, `RemoveHealth`, 99999)
 						EntFire(`obj_dispenser*`, `RemoveHealth`, 99999)
 						EntFire(`obj_teleporter*`, `RemoveHealth`, 99999)
+
+						for(local Avoid; Avoid = Entities.FindByClassname(Avoid, `func_nav_avoid`);)
+						{
+							if(NetProps.GetPropInt(Avoid, `m_iHammerID`) == 1240574)
+							{
+								EntFireByHandle(Avoid, `AddOutput`, `targetname ControlRoomAvoid`, 0.0, null, null)
+							}
+						}
 					  "
 			}
 			OnSpawnOutput
@@ -971,7 +979,9 @@ WaveSchedule
 				"targetname" "Wave3SetupRelay"
 
 				"OnTrigger" "tank_path_drill_14,AddOutput,OnPass FirstWallBreakRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "tank_path_drill_15,AddOutput,OnPass !activator:SetSpeed:75:0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_17,AddOutput,OnPass SecondWallBreakRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "tank_path_drill_18,AddOutput,OnPass !activator:SetSpeed:83:0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_24,AddOutput,OnPass ThirdWallBreakRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_36,AddOutput,OnPass GeneratorBreakRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "tank_path_drill_37,AddOutput,OnPass EscortVictoryRelay:Trigger::0:-1,0,-1"
@@ -1028,9 +1038,9 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_drillstart.mp3`,channel = 6,special_dsp = 57,filter_type=5})61"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_drillstart.mp3`,channel = 6,special_dsp = 57,filter_type=5})61"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_drillstart.mp3`,channel = 6,special_dsp = 57,filter_type=5})61"
-				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: You might think you're clever breaking into my facility... But your luck will carry you no further!,6,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: You might think you're clever for breaking into my facility... But your luck will carry you no further!,6,-1"
 
-				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act2/wave3-7/music/termination_rusty_yet_pristine.mp3`),8.5,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act2/wave3-7/music/termination_rusty_yet_pristine.mp3`),9.6,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{yellow}[ Now Playing: {6383ff} Rusty Yet Pristine - GoodBobFR {yellow}],10,-1"
 
 				"OnTrigger" "Wave3FirstWallBreakPT,ForceSpawn,,10,-1"
@@ -1217,27 +1227,29 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,denominator/drill2.wav,59,-1"
 				"OnTrigger" "FirstWallBreakDust,Start,,59,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)60-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,60,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/machines/wall_crash1.wav,60,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/debris2.wav,60,-1"
+				"OnTrigger" "Wave3SecondWallBreakPT,ForceSpawn,,60,-1"
+				"OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,60,-1"
+				"OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,60,-1"
+				"OnTrigger" "A1_door_unlock_relay,Trigger,,60,-1"
 
-				"OnTrigger" "!activator,SetSpeed,75,65,-1"
+				"OnTrigger" "FirstWallBreakDust,Stop,,65,-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak1.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak1.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak1.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Stupid robots! Are you blind? They just destroyed my beautiful wall! Stop them!,65,-1"
 
-				"OnTrigger" "b1_wall_destroy_animation,$SetKey$renderfx 5,72,-1"
-				"OnTrigger" "bridge_flank_door_A_lock_relay,Trigger,,72,-1"
-				"OnTrigger" "bridge_flank_door_B_lock_relay,Trigger,,72,-1"
-				"OnTrigger" "A1_door_unlock_relay,Trigger,,72,-1"
+				"OnTrigger" "b1_wall_destroy_animation,$SetKey$renderfx,5,72,-1"
 
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})751"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_wallbreak1.mp3`,channel = 6,special_dsp = 55,filter_type=5})76.41"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_wallbreak1.mp3`,channel = 6,special_dsp = 55,filter_type=5})76.41"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_wallbreak1.mp3`,channel = 6,special_dsp = 55,filter_type=5})76.41"
-				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Now this is property damage! Don't let up mercenaries - I wanna see more carnage!,76.4,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Now that's property damage! Don't let up mercenaries - I wanna see more carnage!,76.4,-1"
 
-				"OnTrigger" "Wave3SecondWallBreakPT,ForceSpawn,,77,-1"
-				"OnTrigger" "FirstWallBreakDust,Kill,,77.1,-1"
+				"OnTrigger" "FirstWallBreakDust,Kill,,77,-1"
 			}
 			info_particle_system
 			{
@@ -1256,6 +1268,7 @@ WaveSchedule
 			{
 				Target SecondWallSequenceRelay
 				Action Trigger
+				Delay 17
 			}
 
 			logic_relay
@@ -1267,14 +1280,19 @@ WaveSchedule
 
 				"OnTrigger" "tf_gamerules,PlayVO,denominator/drill2.wav,59,-1"
 				"OnTrigger" "SecondWallBreakDust,Start,,59,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/machines/wall_crash1.wav,60,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)60-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,60,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/machines/wall_crash1.wav,60,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/debris2.wav,60,-1"
+				"OnTrigger" "Wave3ThirdWallBreakPT,ForceSpawn,,60,-1"
 
-				"OnTrigger" "!activator,SetSpeed,83,65,-1"
+				"OnTrigger" "SecondWallBreakDust,Stop,,65,-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak2.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak2.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak2.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
 				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Don't make me dismantle you robots myself! Destroy that drill!,65,-1"
+
+				"OnTrigger" "c1_wall_destroy_animation,$SetKey$renderfx,5,72,-1"
 
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})751"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_wallbreak2.mp3`,channel = 6,special_dsp = 55,filter_type=5})76.41"
@@ -1282,10 +1300,7 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_wallbreak2.mp3`,channel = 6,special_dsp = 55,filter_type=5})76.41"
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Solid progress gents! Solid progress!,76.4,-1"
 
-				"OnTrigger" "c1_wall_destroy_animation,$SetKey$renderfx 5,72,-1"
-
-				"OnTrigger" "Wave3ThirdWallBreakPT,ForceSpawn,,77,-1"
-				"OnTrigger" "SecondWallBreakDust,Kill,,77.1,-1"
+				"OnTrigger" "SecondWallBreakDust,Kill,,77,-1"
 			}
 			info_particle_system
 			{
@@ -1301,6 +1316,7 @@ WaveSchedule
 				"targetname" "SecondWallSequenceRelay"
 
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave2_GBurstDemo,0,-1"
+				"OnTrigger" "ControlRoomAvoid,Disable,,2,-1"
 				"OnTrigger" "A_route_wall_4_break_relay,Trigger,,2,-1"
 				"OnTrigger" "ControlRoomWindowParticle,Start,,2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_3.wav,2,-1"
@@ -1332,6 +1348,7 @@ WaveSchedule
 			{
 				Target ThirdWallSequenceRelay
 				Action Trigger
+				Delay 17
 			}
 
 			logic_relay
@@ -1339,11 +1356,12 @@ WaveSchedule
 				"targetname" "ThirdWallBreakRelay"
 
 				"OnTrigger" "!activator,SetSpeed,6.4,0,-1"
-				"OnTrigger" "A_route_wall_2_drill_relay,Trigger,,6.4,-1"
+				"OnTrigger" "A_route_wall_2_drill_relay,Trigger,,0,-1"
 
-				"OnTrigger" "c1_wall_destroy_animation,$SetKey$renderfx 5,58,-1"
+				"OnTrigger" "factory_wall_2_destroy_animation,$SetKey$renderfx,5,56,-1"
 
 				"OnTrigger"	"A_route_wall_2_break_relay,Trigger,,60,-1"
+				"OnTrigger" "Wave3GeneratorBreakPT,ForceSpawn,,60,-1"
 				"OnTrigger" "!activator,SetSpeed,75,60,-1"
 
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_wallbreak3.mp3`,channel = 6,special_dsp = 57,filter_type=5})651"
@@ -1359,8 +1377,7 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_wallbreak3.mp3`,channel = 6,special_dsp = 55,filter_type=5})76.41"
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: You heard him lads! To the generator!,76.4,-1"
 
-				"OnTrigger" "Wave3GeneratorBreakPT,ForceSpawn,,77,-1"
-				"OnTrigger" "ConnectorRoomParticle,Kill,,77.1,-1"
+				"OnTrigger" "ConnectorRoomParticle,Kill,,77,-1"
 			}
 
 			logic_relay
@@ -1396,6 +1413,7 @@ WaveSchedule
 			{
 				Target GeneratorSequenceRelay
 				Action Trigger
+				Delay 17
 			}
 
 			logic_relay
@@ -1659,15 +1677,16 @@ WaveSchedule
 			{
 				"targetname" "EscortVictoryRelay"
 
-				"OnTrigger" "!activator,RemoveHealth,999999,0,-1"
 				"OnTrigger" "RedLoseRelay,Disable,,0,-1"
 				"OnTrigger" "GeneratorFinalExplosionRelay,Trigger,,0,-1"
 				"OnTrigger" "A_route_wall_3_break_relay,Trigger,,0,-1"
 				"OnTrigger" "ManufactoryGenerator,Kill,,0,-1"
-				"OnTrigger" "BotScrap*,ForceResetSilent,0,-1"
+				"OnTrigger" "item_teamflag*,ForceDrop,,0,-1"
+				"OnTrigger" "BotScrap*,Kill,,0.1,-1"
 				"OnTrigger" "red_spawn_security_door,SetSpeed,47,0,-1"
 				"OnTrigger" "HUDHintTimer,Disable,,0,-1"
 				"OnTrigger" "HUDHint,HideHudHint,,0,-1"
+				"OnTrigger" "!activator,RemoveHealth,999999,0.1,-1"
 
 				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave5_GBurstStickyDemo,0,-1"
 				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave5_GBurstStickyDemo,0,-1"
@@ -1686,6 +1705,7 @@ WaveSchedule
 				"OnTrigger" "OfficeCamera,CallScriptFunction,DisableAll,9,-1"
 				"OnTrigger" "OfficeAnnotation,Show,,9,-1"
 				"OnTrigger" "OfficeCheck,Enable,,9,-1"
+				"OnTrigger" "red_normal_mission_relay,Trigger,,9,-1"
 
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_generatorbreak.mp3`,channel = 6,special_dsp = 57,filter_type=5})101"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_generatorbreak.mp3`,channel = 6,special_dsp = 57,filter_type=5})101"
@@ -1740,19 +1760,21 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,termination/act2/wave3-7/graymannvoicelines/gray_mann_escape.mp3,8,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Grah! Those damn robots were valuable! I'll add their repairs to your tab!,8,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 0.5, 0.5, 1)9-1"
-				"OnTrigger" "GrayMannEscapeCamera,CallScriptFunction,EnableAll,,9,-1"
+				"OnTrigger" "GrayMannEscapeCamera,CallScriptFunction,EnableAll,9,-1"
 
 				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)10-1"
 				"OnTrigger"	"tf_gamerules,PlayVO,misc/doomsday_cap_open_start.wav,10,-1"
 				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_tank_start.wav,12,1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_DummyBot,12,-1"
+				"OnTrigger"	"grey_mann_escape_relay,Trigger,,12,-1"
 
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 0.5, 0.5, 2)16-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 0.5, 0.5, 1)17-1"
 				"OnTrigger" "GrayMannEscapeCamera,CallScriptFunction,DisableAll,17,-1"
 
-				"OnTrigger" "Player,$DisplayTextHint,DO NOT LET GRAY MANN ESCAPE,0,-1"
-				"OnTrigger" "HUDHintTimer,Enable,,3,-1"
-				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] STOP GRAY MANN,3,-1"
+				"OnTrigger" "Player,$DisplayTextHint,DO NOT LET GRAY MANN ESCAPE,17,-1"
+				"OnTrigger" "HUDHintTimer,Enable,,20,-1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] STOP GRAY MANN,20,-1"
 
 				"OnTrigger" "GrayMannEscapeAnnotation,Show,,22,-1"
 				"OnTrigger"	"container_lift_lower_relay,Trigger,,22,1"
@@ -2404,7 +2426,7 @@ WaveSchedule
 				"OnPickup1" "!activatorRunScriptCodeClientPrint(self, 4, `YOU PICKED UP A PIECE OF SCRAP!`)01"
 				"OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
 				"OnReturn" "tank_boss,AddHealth,1000,0,1"
-				"OnReturn" "tank_boss,$TakeDamage,0,0.05,1"
+				"OnReturn" "tank_boss,RemoveHealth,0.1,0.05,1"
 				"OnReturn" "!self,Kill,,0.1,1"
 			}
 			tf_glow
@@ -3229,6 +3251,8 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_warrior
 			WeaponRestrictions MeleeOnly
+
+			Item "Warrior's Spirit"
 		}
 
 		T_TFBot_Pyro_Dragon_Fury
@@ -4451,14 +4475,34 @@ WaveSchedule
 					"never gib" 1
 				}
 
+				FireInput
+				{
+					Target !self
+					Action $SetLocalOrigin
+					Param "988 -544 171"
+					Delay 0.1
+					Repeats 1
+					Cooldown -1
+				}
+
+				InterruptAction
+				{
+					Target "230 -639 256"
+					Delay 0.5
+					Repeats 1
+					Duration 9
+					Cooldown 2
+					Distance 0
+				}
 				InterruptAction
 				{
 					Target "tank_boss"
 					AimTarget "tank_boss"
 					KillAimTarget 1
-					Delay 0.5
+					Delay 10
                     Repeats 1
 					Duration 25
+					AddToQueue 1
 					WaitUntilDone 1
 				}
 			}
@@ -4489,21 +4533,17 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 1 GBurst Demo
+		WaveSpawn // 3 GBurst Demos
 		{
 			Name "Wave3_Subwave2_GBurstDemo2"
 			WaitForAllSpawned "Wave3_Subwave2_GBurstDemo"
 			Where spawnbot_reddit [$SIGSEGV]
-			TotalCount 1
-			MaxActive 1
+			TotalCount 3
+			MaxActive 3
 			SpawnCount 1
 			WaitBeforeStarting 20
 			WaitBetweenSpawns 15
 			TotalCurrency 25
-
-			FirstSpawnWarningSound "vo/mvm/mght/demoman_mvm_m_battlecry02.mp3"
-
-			StartDisabled 1
 
 			RandomChoice
 			{
@@ -4549,6 +4589,7 @@ WaveSchedule
 		}
 
 		// Subwave 3
+		// Needs a bit of touchup
 		WaveSpawn // 1 GHeavy
 		{
 			Name "Wave3_Subwave3_GHeavy"
@@ -4560,7 +4601,7 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 25
 
-			FirstSpawnWarningSound "vo/mvm/mght/heavy_mvm_m_battlecry01.mp3"
+			FirstSpawnWarningSound "vo\mvm\mght\heavy_mvm_m_specialcompleted06.mp3"
 
 			StartDisabled 1
 
@@ -4655,17 +4696,6 @@ WaveSchedule
 				CharacterAttributes
 				{
 					"never gib" 1
-				}
-
-				InterruptAction
-				{
-					Target "tank_boss"
-					AimTarget "tank_boss"
-					KillAimTarget 1
-					Delay 0.5
-                    Repeats 1
-					Duration 25
-					WaitUntilDone 1
 				}
 			}
 		}
@@ -4949,15 +4979,16 @@ WaveSchedule
 		WaveSpawn // Dummy Bot to Imitate Gray Mann's Train
 		{
 			Name "Wave4_DummyBot"
-			WaitForAllDead "Wave3_Subwave1_DrillTank"
 			Where spawnbot_drilltank [$SIGSEGV]
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 10
+			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 
 			HideIcon 1
+
+			StartDisabled 1
 
 			TFBot
 			{ 
