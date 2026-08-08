@@ -30,17 +30,34 @@ WaveSchedule
 
 	// Precached Models //
 
+	PrecacheModel "models/robot_factory/australium_tank.mdl"
+	PrecacheModel "models/props_tumb/mvm/tank_shield.mdl"
+	PrecacheModel "models/props_mvm/no_entry.mdl"
+
+	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
 	// Precached Sounds //
 
 	// VOX
 
 	// Saxton Hale Voicelines
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3"
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3"
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro3.mp3"
+
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs.mp3"
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs2.mp3"
 
 	// Gray Mann Voicelines
+	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3"
+	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3"
 
 	// SFX
+	PrecacheSound "termination/act4/wave6-7/sfx/patrol_chief_beam.mp3"
 
 	// Music
+	PrecacheSound "termination/act4/wave6-7/music/termination_hurricane_of_power.wav"
+	PrecacheSound "termination/act4/wave7-7/music/termination_t_minus.mp3"
 
 	//// DISABLED SOUNDS ////
 
@@ -65,12 +82,22 @@ WaveSchedule
 				Param "
 						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination`)
 
+						EntFire(`sky_sunset_relay`, `Trigger`)
+
 						IncludeScript(`music_system_ment`)
+						PrecacheSound(`#termination/act4/wave6-7/music/termination_hurricane_of_power.wav`)
+						PrecacheSound(`#termination/act4/wave7-7/music/termination_t_minus.mp3`)
 
 						MusicSystemMent.ResetAll()
 						MusicSystemMent.HookByName(`bignet`)
 
 						IncludeScript(`tankextensions_main`)
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/minigun`)
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
+						IncludeScript(`tankextensions/combattank_weapons/fireball`)
+						IncludeScript(`tankextensions/combattank_weapons/railgun`)
+						IncludeScript(`tankextensions/drilltank_watermine`)
 					  "
 			}
 			
@@ -115,15 +142,918 @@ WaveSchedule
 				"OnTrigger" "bots_win,RoundWin,,0,-1"
 			}
 		}
+
+		//// WAVE 6 PTs ////
+
+		Wave6PT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`Player`, `$TeleportToEntity`, `lift_red_spawn`)
+
+						EntFire(`ActSetupRelay`, `Trigger`)
+
+						EntFire(`lift_spawn_set_team_red`, `Trigger`)
+						EntFire(`red_lift_door_left_trigger`, `Disable`, null, 0.02)
+						EntFire(`red_lift_door_right_trigger`, `Disable`, null, 0.02)
+						EntFire(`lift_door_left`, `Close`, null, 0.2)
+						EntFire(`lift_door_right`, `Close`, null, 0.2)
+
+						EntFire(`rocket_spawn_set_team_blu`, `Trigger`)
+
+						EntFire(`01_door_lock_relay`, `Trigger`)
+
+						EntFire(`carrier_lift`, `SetSpeed`, 99999)
+						EntFire(`carrier_lift_lower_relay`, `Trigger`)
+					  "
+			}
+
+			logic_relay
+			{
+				"targetname" "ActSetupRelay"
+
+				"OnTrigger" "tank_path_australium_9,AddOutput,OnPass FirstPatrolChiefAmbushRelay:Trigger::0:-1,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "ActStartRelay"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act4/wave6-7/music/termination_hurricane_of_power.wav`),0,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{yellow}[ Now Playing: {6383ff} Hurricane of Power - GoodBobFR {yellow}],0,-1"
+
+				"OnTrigger" "AustraliumTankProp,Kill,,0,-1"
+
+				"OnTrigger" "lift_door_left,Open,,0,-1"
+				"OnTrigger" "lift_door_right,Open,,0,-1"
+
+				"OnTrigger" "red_lift_door_left_trigger,Enable,,5,-1"
+				"OnTrigger" "red_lift_door_right_trigger,Enable,,5,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro3.mp3`,channel = 6,special_dsp = 55,filter_type=5})6.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro3.mp3`,channel = 6,special_dsp = 55,filter_type=5})6.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro3.mp3`,channel = 6,special_dsp = 55,filter_type=5})6.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: This was too easy. He practically handed it to us on a silver platter! You lot have thinned out his numbers so the rest of this should be a cakewalk.,6.4,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "FirstPatrolChiefAmbushRelay"
+
+				"OnTrigger" "shortcut_bridge_retract_relay,Trigger,,0,-1"
+				"OnTrigger" "carrier_lift_raise_relay,Trigger,,0,-1"
+				"OnTrigger" "carrier_door_front,SetAnimation,open,,0,-1"
+				"OnTrigger" "carrier_door_closed_collision,Disable,,0,-1"
+				"OnTrigger" "carrier_door_open_collision,Enable,,0,-1"
+				"OnTrigger" "vanilla_flank,Enable,,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/manhack_alert_pass1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/manhack_alert_pass1.wav,0,-1"
+				"OnTrigger" "!activator,SetSpeed,50,1,-1"
+				"OnTrigger" "!activator,SetSpeed,37.5,1.5,-1"
+				"OnTrigger" "!activator,SetSpeed,23,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_negativevocalization02.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_negativevocalization02.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/combine_gunship/ping_patrol.wav,3,1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 8, 2, 50000, 0, true)3-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Don't get your hopes up mercenaries! I told you - you won't leave this facility alive!,5,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: Obliterate them Patrol Chiefs!,13,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_HeavyPatrolChief,15,-1"
+				"OnTrigger" "01_door_unlock_relay,Trigger,,15,-1"
+				"OnTrigger" "!activator,SetSpeed,0,15,-1"
+				"OnTrigger" "!activator,SetSpeed,75,20,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_negativevocalization05.mp3,17,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_negativevocalization05.mp3,17,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})171"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs.mp3`,channel = 6,special_dsp = 55,filter_type=5})18.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs.mp3`,channel = 6,special_dsp = 55,filter_type=5})18.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs.mp3`,channel = 6,special_dsp = 55,filter_type=5})18.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: You're telling me he has more?!,18.4,-1"
+
+				"OnTrigger" "ActIntroCardUpper,Display,,17,-1"
+				"OnTrigger" "ActIntroCardLower,Display,,18,-1"
+				"OnTrigger" "BigNetRunScriptCodeNetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination - Total Teardown`)18-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3`,channel = 6,special_dsp = 57,filter_type=5})281"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3`,channel = 6,special_dsp = 57,filter_type=5})281"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3`,channel = 6,special_dsp = 57,filter_type=5})281"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: You will not escape my grasp! That Australium is mine!,28,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})351"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs2.mp3`,channel = 6,special_dsp = 55,filter_type=5})36.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs2.mp3`,channel = 6,special_dsp = 55,filter_type=5})36.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs2.mp3`,channel = 6,special_dsp = 55,filter_type=5})36.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Those Patrol Chiefs are screwing up the tank's mobility! Take them down! They will not stop us! Not when we're this close!,36.4,-1"
+			}
+
+			game_text
+			{
+				"targetname" "ActIntroCardUpper"
+				"message" "ACT 4"
+				"x" "-1"
+				"y" "0.4"
+				"effect" "0"
+				"color" "255 255 255"
+				"fadein" "0.5"
+				"holdtime" "3"
+				"fadeout" "0.2"
+				"channel" "1"
+
+				"spawnflags" "1"
+			}
+			game_text
+			{
+				"targetname" "ActIntroCardLower"
+				"message" "TOTAL TEARDOWN"
+				"x" "-1"
+				"y" "0.45"
+				"effect" "2"
+				"color" "255 255 255"
+				"fxtime" "0.05"
+				"fadein" "0.05"
+				"holdtime" "1.75"
+				"fadeout" "0.2"
+				"channel" "2"
+
+				"spawnflags" "1"
+			}
+		}
+
+		Wave6AustraliumTankPT
+		{
+			NoFixUp 1
+
+			RemoveIfKilled "AustraliumTankProp"
+
+			prop_dynamic
+			{
+				"targetname" "AustraliumTankProp"
+				"origin" "-2776 6656 688"
+				"model" "models/robot_factory/australium_tank.mdl"
+				"solid" "6"
+				"defaultanim" "move"
+			}
+			prop_dynamic_ornament
+			{
+				"targetname" "AustraliumTankTrack"
+				"InitialOwner" "AustraliumTankProp"
+				"model" "models/bots/boss_bot/tank_track_l.mdl"
+			}
+			prop_dynamic_ornament
+			{
+				"targetname" "AustraliumTankTrack"
+				"InitialOwner" "AustraliumTankProp"
+				"model" "models/bots/boss_bot/tank_track_r.mdl"
+			}
+		}
+
+		Wave6PlayerBarrierPT
+		{
+			RemoveIfKilled "PlayerMainForcefield"
+
+			func_forcefield
+			{
+				"targetname" "PlayerMainForcefield"
+				"origin" "-3551 4047 608"
+				"mins" "0 -8 -2000"
+                "maxs" "4000 8 2000"
+				"teamnum" "3"
+			}
+
+			func_forcefield
+			{
+				"targetname" "PlayerDoor04Forcefield"
+				"origin" "-3581 3442 608"
+                "maxs" "10 250 300"
+				"mins" "-10 -250 -0"
+				"teamnum" "3"
+			}
+			prop_dynamic
+			{
+				"targetname" "PlayerDoor04Sign"
+				"origin" "-3581 3504 728"
+				"angles" "0 180 0"
+				"model" "models/props_mvm/no_entry.mdl"
+				"fademindist" "0"
+				"fademaxdist" "500"
+			}
+
+			func_forcefield
+			{
+				"targetname" "PlayerDoor05Forcefield"
+				"origin" "-4658 3123 512"
+                "maxs" "300 10 300"
+				"mins" "-300 -10 -0"
+				"teamnum" "3"
+			}
+			prop_dynamic
+			{
+				"targetname" "PlayerDoor05Sign"
+				"origin" "-4572 3123 632"
+				"angles" "0 90 0"
+				"model" "models/props_mvm/no_entry.mdl"
+				"fademindist" "0"
+				"fademaxdist" "500"
+			}
+		}
+
+		Wave6BotBarrierPT
+		{
+			RemoveIfKilled "SpawnBarrierFence"
+
+			logic_relay
+			{
+				"targetname" "BotBarrierBreakRelay"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 40, 16, 2, 50000, 0, true)0-1"
+				"OnTrigger" "BotBarrierBreakExplosion,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/debris2.wav,0,-1"
+				"OnTrigger" "SpawnBarrierFence,Kill,,0.1,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "BotBarrierBreakExplosion"
+				"origin" "-1435 7986 691"
+				"effect_name" "cinefx_goldrush"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BotBarrierBreakExplosion"
+				"origin" "-1435 7986 691"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+				"start_active" "0"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 7996 805"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_256.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 7996 1065"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_256.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 8126 805"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_128.mdl"
+				"solid" "6"
+			}
+			prop_dynamic
+			{
+				"targetname" "SpawnBarrierFence"
+				"origin" "-1417 8126 1065"
+				"angles" "0 90 0"
+				"model" "models/props_coalmines/wood_fence_128.mdl"
+				"solid" "6"
+			}
+
+			func_nobuild
+			{
+				"target" "SpawnBarrierNobuild"
+				"origin" "-1315 8033 688"
+                "mins" "-100 -200 -100"
+                "maxs" "100 200 100"
+				"AllowTeleporters" "0"
+				"AllowSentry" "0"
+				"AllowDispenser" "0"
+			}
+
+			func_forcefield
+			{
+				"targetname" "SpawnBarrierForcefield"
+				"origin" "-1415 8027 688"
+				"mins" "-20 -200 0"
+				"maxs" "20 200 3000"
+				"teamnum" "3"
+			}
+		}
+
+		//// PLAYER PTs ////
+
+		PlayerVoicelinePT
+		{
+			OnSpawnOutput
+			{
+				Target Act4IntroVoicelineRelay
+				Action Trigger
+				Delay 3
+			}
+
+			logic_relay
+			{
+				"targetname" "Act4IntroVoicelineRelay"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Great work taking out that prototype! I don't think Gray Mann's got anything up his sleeve now.,1.4,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: It'll be smooth sailing from here! With this Australium we'll load it onto that ol' rocket on the other end and send it packing to a safe location.,11.4,-1"
+			}
+		}
+
+		//// ROBOT PTs ////
+
+		// Australium Tank
+		AustraliumTankPT
+		{
+			prop_dynamic
+			{
+				"targetname" "AustraliumTankBeamPoint"
+				"origin" "0 0 120"
+                "model" "models/empty.mdl"
+			}
+
+			logic_relay
+			{
+				"targetname" "PatrolChiefBeamReleaseRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss_disappear.wav,0,-1"
+				"OnTrigger" "AustraliumTankBeamEffect,$SetKey$renderfx,6,0,-1"
+				"OnTrigger" "AustraliumTankBeamEffect,Disable,,1.5,-1"
+				"OnTrigger" "AustraliumTankBeamEffect,$SetKey$renderfx,24,1.5,-1"
+				"OnTrigger" "australiumtank,SetSpeed,60,1.5,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "AustraliumTankBeamEffect"
+				"origin" "0 0 0"
+				"model" "models/props_tumb/mvm/tank_shield.mdl"
+				"rendercolor" "0 0 0"
+				"renderfx" "24"
+
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			dispenser_touch_trigger
+			{
+				"targetname" "AustraliumTankDispenserZone"
+				"mins" "-300 -200 -60"
+				"maxs" "300 200 60"
+			}
+			mapobj_cart_dispenser
+			{
+				"targetname" "AustraliumTankDispenser"
+				"TeamNum" "2"
+				"touch_trigger" "AustraliumTankDispenserZone"
+			}
+		}
+
+		// Patrol Chief Heavy
+		PatrolChiefHeavyPT
+		{
+			OnParentKilledOutput
+			{
+				Target "BeamReleaseRelay"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "PatrolChiefHeavyBeamRelay"
+				
+				"OnTrigger" "PatrolChiefHeavyBeamSustainRelay,Trigger,,0,-1"
+				"OnTrigger" "australiumtank,SetSpeed,5,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,termination/act4/wave6-7/sfx/patrol_chief_beam.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_supernova.wav,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)0-1"
+				"OnTrigger" "AustraliumTankBeamEffect,Enable,,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_burstchester_heavy,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "PatrolChiefHeavyBeamSustainRelay"
+				"OnTrigger" "PatrolChiefHeavyBeam,StrikeOnce,,0,-1"
+				"OnTrigger" "PatrolChiefHeavyBeamSustainRelay,Trigger,,0.15,-1"
+				"spawnflags" "2"
+			}
+
+			env_beam
+			{
+				"targetname" "PatrolChiefHeavyBeam"
+				"origin" "0 0 140"
+				"LightningStart" "PatrolChiefHeavyBeamStart"
+				"LightningEnd" "AustraliumTankBeamPoint"
+				"texture" "sprites/laserbeam.spr"
+				"BoltWidth" "10"
+				"life" "0.16"
+				"renderamt" "200"
+				"rendercolor" "200 200 255"
+				"NoiseAmplitude" "1"
+				"spawnflags" "96"
+			}
+			prop_dynamic
+            {
+                "targetname" "PatrolChiefHeavyBeamStart"
+				"origin" "0 0 120"
+                "model" "models/empty.mdl"
+            }
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
+	SpawnTemplate "CorePT"
+
+	//PlayerSpawnOnceTemplate "PlayerVoicelinePT"
+
 	//// EXTRA TANK PATHS ////
 
+	// Australium Tank Path
+	ExtraTankPath
+	{
+		Name "tank_path_australium"
+		Node "-2776 6656 712"
+		Node "-2416 6656 712"
+		Node "-2280 6600 712"
+		Node "-2200 6464 712"
+		Node "-2184 6240 720"
+		Node "-2224 6048 728"
+		Node "-2256 5984 728"
+		Node "-2264 5872 728"
+		Node "-2240 5720 728"
+		Node "-2200 5608 728"
+		Node "-2112 5536 728"
+		Node "-2040 5496 728"
+		Node "-1952 5472 728"
+		Node "-2480 5848 728"
+		Node "-2696 5936 736"
+		Node "-3072 5944 736"
+		Node "-3344 5944 736"
+		Node "-4216 5920 560"
+		Node "-4512 5880 560"
+		Node "-4744 5736 560"
+		Node "-4928 5568 560"
+		Node "-5072 5400 560"
+		Node "-5216 5152 560"
+		Node "-5264 4936 560"
+		Node "-5272 4696 560"
+		Node "-5232 4488 552"
+		Node "-5144 4280 552"
+		Node "-5024 4048 560"
+		Node "-4920 3880 560"
+		Node "-4752 3712 560"
+		Node "-4624 3568 560"
+		Node "-4552 3400 552"
+		Node "-4560 3192 552"
+		Node "-4616 3040 552"
+		Node "-4704 2856 552"
+		Node "-4720 2672 552"
+		Node "-4696 2512 552"
+		Node "-4624 2336 560"
+		Node "-4536 2160 560"
+		Node "-4432 2024 560"
+		Node "-4280 1912 552"
+		Node "-4136 1872 560"
+		Node "-3960 1912 560"
+		Node "-3808 1992 560"
+		Node "-3648 2104 560"
+		Node "-3512 2192 560"
+		Node "-3392 2256 560"
+		Node "-3184 2328 560"
+		Node "-2128 2320 544"
+		Node "-1936 2352 544"
+		Node "-1776 2560 544"
+		Node "-1600 2608 544"
+		Node "-1376 2576 544"
+		Node "-1216 2384 544"
+		Node "-1216 2112 544"
+		Node "-1392 1888 544"
+		Node "-1504 1632 544"
+		Node "-1504 1312 544"
+		Node "-1664 1088 560"
+		Node "-1808 1040 560"
+		Node "-2288 1040 560"
+		Node "-2656 1040 560"
+	}
+
 	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		//// MINIBOSSES ////
+
+		T_TFBot_Heavy_PatrolChief
+        {
+            Name "Patrol Chief H-74"
+			Template T_TFBot_Giant_Heavyweapons
+            ClassIcon heavy_head_nys
+            Skill Normal
+            Scale 2
+            Health 40000
+            Attributes UseBossHealthBar
+            Action Mobber
+
+			UseCustomModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
+			SpawnTemplate "PatrolChiefHeavyPT"
+
+            Item "Lo-Fi Longwave"
+
+            CharacterAttributes
+            {
+                "never gib" 1
+            }
+
+            ItemAttributes
+            {
+				ItemName "TF_WEAPON_MINIGUN"
+				"mod minigun can holster while spinning" 1
+			}
+
+			ChangeAttributes
+			{
+				Name "Intro"
+				Delay 0
+				Repeats 1
+			}
+			ChangeAttributes
+			{
+				Name "Shotgun"
+				Delay 0
+				Repeats 1
+				IfHealthBelow 26501
+			}
+			ChangeAttributes
+			{
+				Name "BackToMini"
+				Delay 0
+				Repeats 1
+				IfHealthBelow 14001
+			}
+
+            EventChangeAttributes
+			{
+				Intro [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target !self
+						Action $SetLocalOrigin
+						Param "-2307 8186 678"
+						Delay -1
+						Repeats 1
+					}
+					WeaponSwitch
+					{
+						Type "Melee"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					InterruptAction
+					{
+						Target "australiumtank"
+						AimTarget "australiumtank"
+						Delay 5
+						Duration 6
+						Repeats 1
+						Cooldown -1  
+					}
+
+					FireInput
+					{
+						Target "PatrolChiefHeavyBeamRelay"
+						Action Trigger
+						Delay 11
+						Repeats 1
+						Cooldown -1
+					}
+
+					AddCond
+					{
+						Index 87
+						Delay 11
+						Duration 2
+					}
+					WeaponSwitch
+					{
+						Type "Primary"
+						Delay 13
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				Shotgun [$SIGSEGV]
+				{
+					Skill Expert
+			    	WeaponRestrictions SecondaryOnly
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_SHOTGUN_HWG"
+						"damage bonus" 1.65
+						"fire rate bonus" 0.15
+						"faster reload rate" 0.55
+						"clip size bonus" 1.5
+						"auto fires when full" 1
+						"auto fires full clip" 1
+					}
+
+					ExtAttr IgnoreNPC // does not target tank
+				}
+				BackToMini [$SIGSEGV]
+				{
+					Skill Hard
+					WeaponRestrictions PrimaryOnly
+					ExtAttr IgnoreNPC // does not target tank
+				}
+			}
+        }
+
+		//// TANKS ////
+
+		Tank_Australium
+		{
+			Name "australiumtank$targetname|australiumtank^model|models/robot_factory/australium_tank.mdl^disablesmokestack|1^disablebomb|1^pingsound|misc/null.wav^teamnum|2"
+			ClassIcon payload_vip
+
+			SpawnTemplate "AustraliumTankPT"
+
+			OnKilledOutput
+			{
+				Target RedLoseRelay
+				Action Trigger
+			}
+		}
+
+		//// MINIGIANTS ////
+
+		T_TFBot_Demoman_Spammer
+        {
+            Name "Rapid Fire Demoman"
+            Class Demoman
+            ClassIcon demo_spammer_package
+            Skill Normal
+            Health 650
+            Scale 1.3
+            WeaponRestrictions PrimaryOnly
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+
+                "fire rate bonus" 0.75
+                "faster reload rate" 0.001
+            }
+        }
+	}
 
 	//// MISSION BOTS ////
 
 	//// WAVES ////
+
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`Wave6PT`, `ForceSpawn`)
+					EntFire(`Wave6AustraliumTankPT`, `ForceSpawn`)
+
+					IncludeScript(`claudz_logic_v3`)
+
+					Convars.SetValue(`tf_playergib`, 0)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`ActStartRelay`, `Trigger`)
+					EntFire(`carrier_lift`, `SetSpeed`, 100)
+
+					EntFire(`Wave6PlayerBarrierPT`, `ForceSpawn`)
+					EntFire(`Wave6BotBarrierPT`, `ForceSpawn`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+
+		CustomWaveNumber 6
+        CustomMaxWaveNumber 7
+
+		// Subwave 1
+		WaveSpawn // 1 Australium Tank
+		{
+			Name "Wave6_Subwave1_AustraliumTank"
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Australium
+				Health 30000
+				Speed 60
+				StartingPathTrackNode "tank_path_australium_1"
+			}
+		}
+
+		WaveSpawn // Heavy Patrol Chief
+        {
+            Name "Wave6_Subwave1_HeavyPatrolChief"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 50
+
+			StartDisabled 1
+
+            TFBot
+            {
+            	Template T_TFBot_Heavy_PatrolChief
+            }
+
+			DoneOutput
+			{
+				Target "PatrolChiefBeamReleaseRelay"
+				Action Trigger
+			}
+        }
+		WaveSpawn // 6 Rapid Demos
+		{
+			Name "Wave6_Subwave1_RapidDemos"
+			WaitForAllSpawned "Wave6_Subwave1_HeavyPatrolChief"
+			Where spawnbot_left
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 1
+			WaitBetweenSpawns 20
+			WaitBeforeStarting 5
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				ExtAttr IgnoreNPC
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+		WaveSpawn // 5 KGB Heavies
+		{
+			Name "Wave6_Subwave1_KGBHeavies"
+			WaitForAllSpawned "Wave6_Subwave1_HeavyPatrolChief"
+			Where spawnbot_right
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 5
+
+			TFBot
+			{
+				Template T_TFBot_Heavyweapons_Heavyweight_Champ
+				Skill Hard
+				Attributes AlwaysCrit
+				Attributes DisableDodge
+				Action Mobber
+
+				Tag flank
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+
+				InterruptAction
+				{
+					Target "australiumtank"
+					Delay 15
+					Repeats 0
+					Duration 25
+					Cooldown 0.3
+					Distance 50
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target "BotBarrierBreakRelay"
+				Action Trigger
+				Delay 5
+			}
+		}
+		WaveSpawn // 20 KGB Heavies
+		{
+			Name "Wave6_Subwave1_KGBHeavies"
+			WaitForAllSpawned "Wave6_Subwave1_HeavyPatrolChief"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 1.5
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+				
+				TFBot
+				{
+					Template T_TFBot_Heavyweapons_Heavyweight_Champ
+					Skill Hard
+					Attributes AlwaysCrit
+					Attributes DisableDodge
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+
+					InterruptAction
+					{
+						Target "australiumtank"
+						Delay 2
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavyweapons_Heavyweight_Champ
+					Skill Hard
+					Attributes AlwaysCrit
+					Attributes DisableDodge
+					Action Mobber
+
+					Tag flank
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+
+					InterruptAction
+					{
+						Target "australiumtank"
+						Delay 15
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 50
+					}
+				}
+			}
+		}
+
+		// Subwave 2
+	}
 }
