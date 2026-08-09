@@ -35,6 +35,10 @@ WaveSchedule
 	PrecacheModel "models/props_mvm/no_entry.mdl"
 
 	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+	PrecacheModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
+
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
 
 	// Precached Sounds //
 
@@ -47,6 +51,9 @@ WaveSchedule
 
 	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs.mp3"
 	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_patrolchiefs2.mp3"
+
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_blastdoor.mp3"
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_turbocharge.mp3"
 
 	// Gray Mann Voicelines
 	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3"
@@ -61,11 +68,68 @@ WaveSchedule
 
 	//// DISABLED SOUNDS ////
 
+    DisableSound "Announcer.MVM_Wave_End"
+	DisableSound "Announcer.MVM_Get_To_Upgrade"
+	DisableSound "Announcer.MVM_Final_Wave_End"	
+	DisableSound "music.mvm_end_last_wave"						
+	DisableSound "music.mvm_end_mid_wave"						
+	DisableSound "music.mvm_end_tank_wave"						
+	DisableSound "music.mvm_end_wave"							
+	DisableSound "music.mvm_lost_wave"							
+	DisableSound "music.mvm_start_last_wave"					
+	DisableSound "music.mvm_start_mid_wave"	
+	DisableSound "music.mvm_start_tank_wave"					
+	DisableSound "music.mvm_start_wave"
+	DisableSound "Announcer.MVM_First_Wave_Start"				
+	DisableSound "Announcer.MVM_Wave_Start"						
+	DisableSound "Announcer.MVM_Wave_End"						
+	DisableSound "Announcer.MVM_Wave_Lose"						
+	DisableSound "Announcer.MVM_Final_Wave_Start"
+	DisableSound "Announcer.MVM_Tank_Planted"
+
 	//// LUA SCRIPTS ////
 
 	LuaScriptFile "tank_repair_script.lua"
 
 	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		//// WEAPONS ////
+
+		"MagmaGun"
+		{
+			OriginalItemName "TF_WEAPON_SHOTGUN_PYRO"
+			
+			"damage bonus" 1.2
+			"add damage type" 2056
+			"remove damage type" 64
+			"fire rate bonus" 1.2
+			"mod max primary clip override" -1
+			"attach particle effect" "704"
+
+			"override projectile type" 2
+			"blast radius decreased" 0.5
+			"projectile speed decreased" 0.65
+			"mult projectile scale" 2
+			"penetrates teammates" 1
+
+			"custom item model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+			"custom projectile model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
+			"projectile trail particle" "~spell_fireball_small_trail_red"
+			"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
+			"custom kill icon" "firedeath"
+		}
+
+		//// COSMETICS ////
+
+		"MercBusterHelmet"
+		{
+			OriginalItemName "The Hellmet"
+
+			"set item tint RGB" "5801378"
+		}
+	}
 
 	//// POINT TEMPLATES ////
 
@@ -141,6 +205,68 @@ WaveSchedule
 				"targetname" "RedLoseRelay"
 				"OnTrigger" "bots_win,RoundWin,,0,-1"
 			}
+
+			filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
 		}
 
 		//// WAVE 6 PTs ////
@@ -176,6 +302,11 @@ WaveSchedule
 				"targetname" "ActSetupRelay"
 
 				"OnTrigger" "tank_path_australium_9,AddOutput,OnPass FirstPatrolChiefAmbushRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "tank_path_australium_17,AddOutput,OnPass SecondPatrolChiefAmbushRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "tank_path_australium_31,AddOutput,OnPass LockdownAmbushRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "tank_path_australium_43,AddOutput,OnPass ThirdPatrolChiefAmbushRelay:Trigger::0:-1,0,-1"
+
+				"OnTrigger" "tank_path_fury_12,AddOutput,OnPass AmbushTankParkRelay:Trigger::0:-1,0,-1"
 			}
 
 			logic_relay
@@ -244,6 +375,12 @@ WaveSchedule
 				"OnTrigger" "ActIntroCardLower,Display,,18,-1"
 				"OnTrigger" "BigNetRunScriptCodeNetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination - Total Teardown`)18-1"
 
+				"OnTrigger" "Player,$DisplayTextHint,PROTECT THE ENGIBOT AT ALL COSTS,20,-1"
+				"OnTrigger" "HUDHintTimer,Enable,,23,-1"
+				"OnTrigger" "HUDHint,$SetKey$message,[OBJECTIVE] PROTECT THE ENGIBOT,23,-1"
+
+				"OnTrigger" "Wave6TeleporterShortcutEntrancePT,ForceSpawn,,23,-1"
+
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3`,channel = 6,special_dsp = 57,filter_type=5})281"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3`,channel = 6,special_dsp = 57,filter_type=5})281"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3`,channel = 6,special_dsp = 57,filter_type=5})281"
@@ -286,6 +423,80 @@ WaveSchedule
 				"channel" "2"
 
 				"spawnflags" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "SecondPatrolChiefAmbushRelay"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave2_PyroPatrolChief,0,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AmbushTankParkRelay"
+
+				"OnTrigger" "!activator,SetSpeed,0,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,doors/heavy_metal_stop1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,hl1/ambience/steamburst1.wav,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "LockdownAmbushRelay"
+
+				"OnTrigger" "04_door,SetSpeed,100,0,-1"
+				"OnTrigger" "05_door,SetSpeed,100,0,-1"
+				"OnTrigger" "04_door_lock_relay,Trigger,,0.1,-1"
+				"OnTrigger" "05_door_lock_relay,Trigger,,0.1,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 5, 2, 50000, 0, true)3.46-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/rottenburg/tunneldoor_closed_loud.wav,3.46,-1"
+
+				"OnTrigger" "PlayerDoor05Forcefield,Kill,,4,-1"
+				"OnTrigger" "PlayerDoor05Sign,Kill,,4,-1"
+				"OnTrigger" "!activator,SetSpeed,0,4,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})71"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_blastdoor.mp3`,channel = 6,special_dsp = 55,filter_type=5})8.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_blastdoor.mp3`,channel = 6,special_dsp = 55,filter_type=5})8.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_blastdoor.mp3`,channel = 6,special_dsp = 55,filter_type=5})8.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: That door's not gonna budge Mercs! We need some real brute force here!,8.4,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave4_EngineerAmbush,10,-1"
+
+				"OnTrigger" "Player,$DisplayTextHint,FIND A WAY TO BREAK THROUGH,15,-1"
+				"OnTrigger" "AustraliumTankGasCanCounterPT,ForceSpawnAtEntityOrigin,australiumtank,15,-1"
+				"OnTrigger" "Wave6TeleporterShortcutExitPT,ForceSpawn,,15,-1"
+				"OnTrigger" "AmbushTeleporterRelay,Trigger,,18,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AmbushTeleporterRelay"
+
+				"OnTrigger" "TeleporterEntranceToolbox,Kill,,0,-1"
+				"OnTrigger" "TeleporterExitToolbox,Kill,,0,-1"
+				"OnTrigger" "TeleporterEntranceProp,Enable,,0,-1"
+				"OnTrigger" "TeleporterExitProp,Enable,,0,-1"
+				"OnTrigger" "TeleporterEntranceParticle,Start,,0,-1"
+				"OnTrigger" "TeleporterExitParticle,Start,,0,-1"
+				"OnTrigger" "TeleporterEntranceTrigger,Enable,,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/teleporter_ready.wav,0,-1"
+				"OnTrigger" "TeleporterAnnotation,Show,,0,-1"
+			}
+			training_annotation
+			{
+			  "targetname" "TeleporterAnnotation"
+			  "origin" "-2390 6913 700"
+			  "display_text" "The Engibot's made a shortcut teleporter!"
+			  "lifetime" "5"
+			}
+
+			logic_relay
+			{
+				"targetname" "ThirdPatrolChiefAmbushRelay"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave6_DemoPatrolChief,0,-1"
 			}
 		}
 
@@ -365,8 +576,14 @@ WaveSchedule
 				"fademindist" "0"
 				"fademaxdist" "500"
 			}
+			info_particle_system
+			{
+				"targetname" "PlayerDoor05ForcefieldParticle"
+				"origin" "-4585 2485 612"
+				"effect_name" "dooms_nuke_ring"
+				"start_active" "0"
+			}
 		}
-
 		Wave6BotBarrierPT
 		{
 			RemoveIfKilled "SpawnBarrierFence"
@@ -451,6 +668,184 @@ WaveSchedule
 			}
 		}
 
+		Wave6TeleporterShortcutEntrancePT
+		{
+			RemoveIfKilled "TeleporterEntranceProp"
+
+			OnSpawnOutput
+			{
+				Target "TeleporterEntranceThrowRelay"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "TeleporterEntranceThrowRelay"
+
+				"OnTrigger" "TeleporterEntranceThrownToolbox,Kill,,1.36,-1"
+				"OnTrigger" "TeleporterEntranceToolbox,Enable,,1.36,-1"
+				"OnTrigger" "TeleporterEntranceNobuild,Enable,,1.36,-1"
+			}
+			func_tracktrain
+			{
+				"targetname" "TeleporterEntranceThrownToolboxPath"
+				"target" "teleporterentrance_1"
+				"velocitytype" "1"
+				"orientationtype" "1"
+				"startspeed" "1000"
+				"speed" "1000"
+			}
+			prop_dynamic
+			{
+				"targetname" "TeleporterEntranceThrownToolbox"
+				"parentname" "TeleporterEntranceThrownToolboxPath"
+				"model" "models/weapons/c_models/c_toolbox/c_toolbox.mdl"
+				"angles" "0 -90 0"
+				"solid" "0"
+			}
+			prop_dynamic
+			{
+				"targetname" "TeleporterEntranceToolbox"
+				"origin" "-2390 6913 700"
+				"model" "models/weapons/c_models/c_toolbox/c_toolbox.mdl"
+				"solid" "0"
+				"startdisabled" "1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "TeleporterEntranceProp"
+				"origin" "-2390 6913 688"
+				"angles" "0 40 0"
+				"model" "models/buildables/teleporter_light.mdl"
+				"defaultanim" "running"
+				"solid" "0"
+				"startdisabled" "1"
+			}
+			trigger_teleport
+			{
+				"targetname" "TeleporterEntranceTrigger"
+				"filtername" "filter_red"
+				"origin" "-2390 6913 688"
+				"mins" "-32 -32 -8"
+				"maxs" "32 32 8"
+				"target" "TeleporterExitTarget"
+				"spawnflags" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "!activator,$Addcond 57 3,0,-1"
+				"OnStartTouch" "!activator,$PlaySoundToSelf,weapons/teleporter_receive.wav,0,-1"
+			}
+			func_nobuild
+			{
+				"targetname" "TeleporterEntranceNobuild"
+				"origin" "-2390 6913 688"
+				"mins" "-128 -128 -64"
+				"maxs" "128 128 64"
+				"teamnum" "2"
+				"startdisabled" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "TeleporterEntranceParticle"
+				"origin" "-2390 6913 688"
+				"effect_name" "teleporter_red_charged_level3"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "TeleporterEntranceParticle"
+				"origin" "-2390 6913 688"
+				"effect_name" "teleporter_red_entrance_disc"
+				"start_active" "0"
+			}
+		}
+		Wave6TeleporterShortcutExitPT
+		{
+			RemoveIfKilled "TeleporterExitProp"
+
+			OnSpawnOutput
+			{
+				Target "TeleporterExitThrowRelay"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "TeleporterExitThrowRelay"
+
+				"OnTrigger" "TeleporterExitThrownToolbox,Kill,,1,-1"
+				"OnTrigger" "TeleporterExitToolbox,Enable,,1,-1"
+				"OnTrigger" "TeleporterExitNobuild,Enable,,1,-1"
+			}
+			func_tracktrain
+			{
+				"targetname" "TeleporterExitThrownToolboxPath"
+				"target" "teleporterexit_1"
+				"velocitytype" "1"
+				"orientationtype" "1"
+				"startspeed" "1000"
+				"speed" "1000"
+			}
+			prop_dynamic
+			{
+				"targetname" "TeleporterExitThrownToolbox"
+				"parentname" "TeleporterExitThrownToolboxPath"
+				"model" "models/weapons/c_models/c_toolbox/c_toolbox.mdl"
+				"angles" "0 -30 0"
+				"solid" "0"
+			}
+			prop_dynamic
+			{
+				"targetname" "TeleporterExitToolbox"
+				"origin" "-3694 3778 620"
+				"angles" "0 180 0"
+				"model" "models/weapons/c_models/c_toolbox/c_toolbox.mdl"
+				"solid" "0"
+				"startdisabled" "1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "TeleporterExitProp"
+				"origin" "-3694 3778 608"
+				"angles" "0 -150 0"
+				"model" "models/buildables/teleporter_light.mdl"
+				"defaultanim" "running"
+				"solid" "0"
+				"startdisabled" "1"
+			}
+			info_target
+			{
+				"targetname" "TeleporterExitTarget"
+				"origin" "-3694 3778 620"
+				"angles" "0 -150 0"
+			}
+			func_nobuild
+			{
+				"targetname" "TeleporterExitNobuild"
+				"origin" "-3694 3778 620"
+				"mins" "-128 -128 -64"
+				"maxs" "128 128 64"
+				"teamnum" "2"
+				"startdisabled" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "TeleporterExitParticle"
+				"origin" "-3694 3778 608"
+				"effect_name" "teleporter_red_charged_level3"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "TeleporterExitParticle"
+				"origin" "-3694 3778 608"
+				"effect_name" "teleporter_red_entrance_disc"
+				"start_active" "0"
+			}
+		}
+
 		//// PLAYER PTs ////
 
 		PlayerVoicelinePT
@@ -507,7 +902,7 @@ WaveSchedule
 				"targetname" "AustraliumTankBeamEffect"
 				"origin" "0 0 0"
 				"model" "models/props_tumb/mvm/tank_shield.mdl"
-				"rendercolor" "0 0 0"
+				"skin" "2"
 				"renderfx" "24"
 
 				"disableshadows" "1"
@@ -526,16 +921,147 @@ WaveSchedule
 				"touch_trigger" "AustraliumTankDispenserZone"
 			}
 		}
+		AustraliumTankGasCanCounterPT
+		{
+			RemoveIfKilled "GasCanCounter"
+
+			logic_relay
+			{
+				"targetname" "AustraliumTankTurboChargeObjectiveRelay"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_turbocharge.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_turbocharge.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_turbocharge.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Now that's what we're looking for! That gas will turbo-charge the Australium Tank! We'll need a lot of that stuff to juice up this tank and PUNCH that door wide open!,1.4,-1"
+
+				"OnTrigger" "Player,$DisplayTextHint,TURBO-CHARGE THE AUSTRALIUM TANK,10,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave4_Trigger,10,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AustraliumTankTurboChargeRelay"
+				"OnTrigger" "GasCanIndicator,Disable,,0,-1"
+				"OnTrigger" "GasCanIndicator,SetColor,255 255 255 0,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_sentrypacking03.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_sentrypacking03.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_gunslingertriplepunchfinal01.mp3,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/norm/engineer_mvm_gunslingertriplepunchfinal01.mp3,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,2,-1"
+
+				"OnTrigger" "australiumtank,SetSpeed,200,5,-1"
+				"OnTrigger" "05_door_unlock_relay,Trigger,,4.6,-1"
+				"OnTrigger" "05_door,Kill,,4.65,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,plats/tram_hit4.wav,4.65,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics/metal/metal_large_debris2.wav,4.65,-1"
+				"OnTrigger" "PlayerDoor05ForcefieldParticle,Start,,4.65,-1"
+				
+				"OnTrigger" "australiumtank,SetSpeed,60,10,-1"
+				"OnTrigger" "PlayerMainForcefield,Kill,,10,-1"
+				"OnTrigger" "GasCanCounter,Kill,,10.1,-1"
+			}
+
+			math_counter
+			{
+				"targetname" "GasCanCounter"
+
+				"startvalue" "0"
+				"min" "0"
+				"max" "12"
+
+				"OutValue" "GasCanCounterDisplay,InValue,,0,-1"
+				"OutValue" "tf_gamerules,PlayVO,ui/killsound_beepo.wav,0,-1"
+
+				"OnHitMax" "AustraliumTankTurboChargeRelay,Trigger,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "GasCanCounterDisplay"
+
+				"Case01" "1"
+				"Case02" "2"
+				"Case03" "3"
+				"Case04" "4"
+				"Case05" "5"
+				"Case06" "6"
+				"Case07" "7"
+				"Case08" "8"
+				"Case09" "9"
+				"Case10" "10"
+				"Case11" "11"
+				"Case12" "12"
+
+				"OnCase01" "AustraliumTankTurboChargeObjectiveRelay,Trigger,,0,-1"
+
+				"OnCase01" "GasCanCounterText,SetText,            x 11,0,-1"
+                "OnCase02" "GasCanCounterText,SetText,            x 10,0,-1"
+                "OnCase03" "GasCanCounterText,SetText,            x 9,0,-1"
+                "OnCase04" "GasCanCounterText,SetText,            x 8,0,-1"
+                "OnCase05" "GasCanCounterText,SetText,            x 7,0,-1"
+                "OnCase06" "GasCanCounterText,SetText,            x 6,0,-1"
+				"OnCase07" "GasCanCounterText,SetText,            x 5,0,-1"
+				"OnCase08" "GasCanCounterText,SetText,            x 4,0,-1"
+				"OnCase09" "GasCanCounterText,SetText,            x 3,0,-1"
+				"OnCase10" "GasCanCounterText,SetText,            x 2,0,-1"
+				"OnCase11" "GasCanCounterText,SetText,            x 1,0,-1"
+			}
+			point_worldtext
+			{
+				"targetname" "GasCanCounterText"
+				"origin" "0 0 170"
+				"message" "            x 12"
+				"font" "1"
+				"textsize" "24"
+				"orientation" "1"
+				"color" "255 255 255 255"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "GasCanIndicator"
+				"parentname" "GasCanRotator"
+				"origin" "0 0 200"
+				"angles" "90 0 0"
+				"model" "models/weapons/c_models/c_gascan/c_gascan.mdl"
+				"modelscale" "1.5"
+				"renderfx" "15"
+			}
+			func_rotating
+			{
+				"targetname" "GasCanRotator"
+				"origin" "0 0 200"
+				"speed" "100"
+				"maxspeed" "100"
+				"fanfriction" "0"
+				"dmg" "0"
+				"spawnflags" "65"
+			}
+
+			func_flagdetectionzone
+			{
+				"targetname" "GasCanDepositZone"
+				"mins" "-300 -200 -60"
+				"maxs" "300 200 60"
+				"OnStartTouchFlag" "GasCanDeposit,Enable,,0,-1"
+				"OnStartTouchFlag" "GasCanDeposit,Disable,,0.1,-1"
+				"OnStartTouchFlag" "!activatorRunScriptCodeClientPrint(self, 4, `YOU DEPOSITED A NITRO CAN!`)0-1"
+				"OnStartTouchFlag" "!activator,$PlaySoundToSelf,gas_can_inspect_movement1.wav,0,-1"
+				"OnStartTouchFlag" "!activator,$PlaySoundToSelf,gas_can_inspect_movement1.wav,0,-1"
+			}
+			func_respawnflag
+			{
+				"targetname" "GasCanDeposit"
+				"mins" "-300 -200 -60"
+				"maxs" "300 200 60"
+				"ReturnTime" "15"
+				"startdisabled" "1"
+			}
+		}
 
 		// Patrol Chief Heavy
 		PatrolChiefHeavyPT
 		{
-			OnParentKilledOutput
-			{
-				Target "BeamReleaseRelay"
-				Action Trigger
-			}
-
 			logic_relay
 			{
 				"targetname" "PatrolChiefHeavyBeamRelay"
@@ -560,7 +1086,6 @@ WaveSchedule
 			env_beam
 			{
 				"targetname" "PatrolChiefHeavyBeam"
-				"origin" "0 0 140"
 				"LightningStart" "PatrolChiefHeavyBeamStart"
 				"LightningEnd" "AustraliumTankBeamPoint"
 				"texture" "sprites/laserbeam.spr"
@@ -577,6 +1102,198 @@ WaveSchedule
 				"origin" "0 0 120"
                 "model" "models/empty.mdl"
             }
+		}
+
+		// Patrol Chief Pyro
+		PatrolChiefPyroPT
+		{
+			logic_relay
+			{
+				"targetname" "PatrolChiefPyroBeamRelay"
+				
+				"OnTrigger" "PatrolChiefPyroBeamSustainRelay,Trigger,,0,-1"
+				"OnTrigger" "australiumtank,SetSpeed,5,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,termination/act4/wave6-7/sfx/patrol_chief_beam.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_supernova.wav,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)0-1"
+				"OnTrigger" "AustraliumTankBeamEffect,Enable,,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_burstchester_pyro,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "PatrolChiefPyroBeamSustainRelay"
+				"OnTrigger" "PatrolChiefPyroBeam,StrikeOnce,,0,-1"
+				"OnTrigger" "PatrolChiefPyroBeamSustainRelay,Trigger,,0.15,-1"
+				"spawnflags" "2"
+			}
+
+			env_beam
+			{
+				"targetname" "PatrolChiefPyroBeam"
+				"LightningStart" "PatrolChiefPyroBeamStart"
+				"LightningEnd" "AustraliumTankBeamPoint"
+				"texture" "sprites/laserbeam.spr"
+				"BoltWidth" "10"
+				"life" "0.16"
+				"renderamt" "200"
+				"rendercolor" "200 200 255"
+				"NoiseAmplitude" "1"
+				"spawnflags" "96"
+			}
+			prop_dynamic
+            {
+                "targetname" "PatrolChiefPyroBeamStart"
+				"origin" "0 0 120"
+                "model" "models/empty.mdl"
+            }
+		}
+
+		// Patrol Chief Demo
+		PatrolChiefDemoPT
+		{
+			logic_relay
+			{
+				"targetname" "PatrolChiefDemoBeamRelay"
+				
+				"OnTrigger" "PatrolChiefDemoBeamSustainRelay,Trigger,,0,-1"
+				"OnTrigger" "australiumtank,SetSpeed,0,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,termination/act4/wave6-7/sfx/patrol_chief_beam.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_supernova.wav,0,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)0-1"
+				"OnTrigger" "AustraliumTankBeamEffect,Enable,,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_burstchester_demo,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_PRIMARY,2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "PatrolChiefDemoBeamSustainRelay"
+				"OnTrigger" "PatrolChiefDemoBeam,StrikeOnce,,0,-1"
+				"OnTrigger" "PatrolChiefDemoBeamSustainRelay,Trigger,,0.15,-1"
+				"spawnflags" "2"
+			}
+
+			env_beam
+			{
+				"targetname" "PatrolChiefDemoBeam"
+				"LightningStart" "PatrolChiefDemoBeamStart"
+				"LightningEnd" "AustraliumTankBeamPoint"
+				"texture" "sprites/laserbeam.spr"
+				"BoltWidth" "10"
+				"life" "0.16"
+				"renderamt" "200"
+				"rendercolor" "200 200 255"
+				"NoiseAmplitude" "1"
+				"spawnflags" "96"
+			}
+			prop_dynamic
+            {
+                "targetname" "PatrolChiefDemoBeamStart"
+				"origin" "0 0 120"
+                "model" "models/empty.mdl"
+            }
+		}
+
+		// Gas Can
+		BotGasCanPT
+		{
+			KeepAlive 1
+
+			OnParentKilledOutput
+			{
+				Target GasCan
+				Action Enable
+			}
+			OnParentKilledOutput
+			{
+				Target GasCan
+				Action SetTeam
+				Param 3
+			}
+			OnParentKilledOutput
+			{
+				Target GasCanGlow
+				Action Enable
+			}
+
+			item_teamflag
+			{
+				"targetname" "GasCan"
+				"origin" "0 0 15"
+				"angles" "-90 0 0"
+				"flag_model" "models/weapons/c_models/c_gascan/c_gascan.mdl"
+				"TeamNum" "2"
+				"StartDisabled" "1"
+				
+				"OnPickup1" "!activatorRunScriptCodeClientPrint(self, 4, `YOU PICKED UP A NITRO CAN!`)01"
+				"OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
+				"OnReturn" "GasCanCounter,Add,1,0,1"
+				"OnReturn" "!self,Kill,,0.1,1"
+			}
+			tf_glow
+            {
+				"targetname" "GasCanGlow"
+				"target" "GasCan"
+                "GlowColor" "0 176 199 255"
+				"startdisabled" "1"
+            }
+		}
+
+		// Magma Pyro
+		MagmaProjectilePT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "MagmaFireTarget"
+
+			OnParentKilledOutput
+			{
+				Target MagmaFirePT
+				Action ForceSpawnAtEntityOrigin
+				Param "MagmaFireTarget"
+			}
+			OnParentKilledOutput
+			{
+				Target MagmaFireTarget
+				Action Kill
+				Delay 0.1
+			}
+
+			info_target
+			{
+				"targetname" "MagmaFireTarget"
+			}
+		}
+		MagmaFirePT
+		{
+			RemoveIfKilled "MagmaFireDamage"
+
+			OnSpawnOutput
+			{
+				Target MagmaFireDamage
+				Action Kill
+				Delay 3
+			}
+
+			trigger_hurt
+			{
+				"targetname" "MagmaFireDamage"
+				"filtername" "filter_redteam_nouber"
+				"mins" "-60 -60 -60"
+				"maxs" "60 60 60"
+				"damage" "40"
+				"damagetype" "8"
+				"$killicon" "firedeath"
+				"spawnflags" "64"
+
+				"OnHurtPlayer" "!activator,$IgnitePlayerDuration,5,0,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "MagmaFireParticle"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
 		}
 	}
 
@@ -656,6 +1373,46 @@ WaveSchedule
 		Node "-2656 1040 560"
 	}
 
+	// Teleporter Throw Paths
+	ExtraTankPath
+	{
+		Name "teleporterentrance"
+		Node "-2177 5763 807"
+		Node "-2215 5982 850"
+		Node "-2259 6190 876"
+		Node "-2298 6390 880"
+		Node "-2342 6640 832"
+		Node "-2390 6913 680"
+	}
+	ExtraTankPath
+	{
+		Name "teleporterexit"
+		Node "-4473 3454 627"
+		Node "-4267 3537 684"
+		Node "-4083 3615 708"
+		Node "-3903 3690 678"
+		Node "-3694 3778 620"
+	}
+
+	// Ambush Tank Path
+    ExtraTankPath
+	{
+		Name "tank_path_fury"
+		Node "-3328 7040 704"
+		Node "-3328 6656 704"
+		Node "-3328 6608 704"
+		Node "-3344 6560 704"
+		Node "-3360 6528 704"
+		Node "-3392 6512 704"
+		Node "-3824 6512 704"
+		Node "-3904 6512 704"
+		Node "-3952 6480 704"
+		Node "-4000 6432 704"
+		Node "-4048 6352 704"
+		Node "-4048 6208 704"
+		Node "-4032 5520 560"
+	}
+
 	//// ROBOT TEMPLATES ////
 
 	Templates
@@ -695,20 +1452,6 @@ WaveSchedule
 				Name "Intro"
 				Delay 0
 				Repeats 1
-			}
-			ChangeAttributes
-			{
-				Name "Shotgun"
-				Delay 0
-				Repeats 1
-				IfHealthBelow 26501
-			}
-			ChangeAttributes
-			{
-				Name "BackToMini"
-				Delay 0
-				Repeats 1
-				IfHealthBelow 14001
 			}
 
             EventChangeAttributes
@@ -763,11 +1506,20 @@ WaveSchedule
 						Repeats 1
 						Cooldown -1
 					}
+
+					ChangeAttributes
+					{
+						Name "Shotgun"
+						Delay 0
+						Repeats 1
+						IfHealthBelow 25001
+					}
 				}
 				Shotgun [$SIGSEGV]
 				{
 					Skill Expert
 			    	WeaponRestrictions SecondaryOnly
+					ExtAttr IgnoreNPC
 
 					ItemAttributes
 					{
@@ -780,16 +1532,308 @@ WaveSchedule
 						"auto fires full clip" 1
 					}
 
-					ExtAttr IgnoreNPC // does not target tank
+					ChangeAttributes
+					{
+						Name "BackToMini"
+						Delay 0
+						Repeats 1
+						IfHealthBelow 15001
+					}
 				}
-				BackToMini [$SIGSEGV]
+				BackToMinigun [$SIGSEGV]
 				{
 					Skill Hard
 					WeaponRestrictions PrimaryOnly
-					ExtAttr IgnoreNPC // does not target tank
+					ExtAttr IgnoreNPC
 				}
 			}
         }
+		T_TFBot_Pyro_PatrolChief
+        {
+            Name "Patrol Chief P-33"
+			Class Pyro
+            ClassIcon pyro_degreaser_flare
+            Skill Expert
+            Scale 2
+            Health 30000
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Action Mobber
+
+			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
+
+			SpawnTemplate "PatrolChiefPyroPT"
+
+            Item "The Degreaser"
+            Item "The Detonator"
+            Item "The Axtinguisher"
+
+            Item "Lo-Fi Longwave"
+
+            CharacterAttributes
+            {
+                "move speed bonus"	0.5
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"override footstep sound set" 6
+				"never gib" 1
+            }
+
+			ChangeAttributes
+			{
+				Name "Intro"
+				Delay 0
+				Repeats 1
+			}
+            
+            EventChangeAttributes
+            {
+				Intro [$SIGSEGV]
+				{
+					WeaponSwitch
+					{
+						Type "Melee"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					InterruptAction
+					{
+						Target "australiumtank"
+						AimTarget "australiumtank"
+						Delay 2
+						Duration 3
+						Repeats 1
+						Cooldown -1  
+					}
+
+					FireInput
+					{
+						Target "PatrolChiefPyroBeamRelay"
+						Action Trigger
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+
+					AddCond
+					{
+						Index 87
+						Delay 5
+						Duration 2
+					}
+					WeaponSwitch
+					{
+						Type "Primary"
+						Delay 7
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "Combo"
+						Delay 7
+						Repeats 1
+					}
+				}
+				Combo [$SIGSEGV]
+				{
+					ItemAttributes // Degreaser
+					{
+						ItemName "The Degreaser"
+						"weapon burn dmg increased"	2
+						"flame_drag" 4
+						"max_flame_reflection_count" 1000
+						"flame_reflect_on_collision" 1000
+						"flame_spread_degree" 5
+						"flame_up_speed" -25
+					}
+					ItemAttributes // Detonator
+					{
+						ItemName "The Detonator"
+						"damage penalty" 0.4
+						"dmg pierces resists absorbs" 1
+						"fire rate penalty" 1.56
+						"reload time decreased" 0.2
+						"projectile speed increased" 0.5
+						"projectile spread angle penalty" 4
+						"mult projectile count" 8
+						"ignores other projectiles" 1
+					}
+					ItemAttributes // Axtinguisher
+					{
+						ItemName "The Axtinguisher"
+						"damage bonus" 1.33
+						"fire rate bonus" 0.9
+						"gesture speed increase" 1.5
+						"crit vs burning players" 1
+						"melee range multiplier" 2
+					}
+
+					ChangeAttributes
+					{
+						Name "GasPasser"
+						Delay 10
+						Repeats 1
+						IfHealthBelow 20001
+					}
+				}
+                GasPasser [$SIGSEGV]
+                {
+                    WeaponRestrictions SecondaryOnly
+
+                    Item "The Gas Passer"
+
+					ItemAttributes
+					{
+						ItemName "The Degreaser"
+						"weapon burn dmg increased"	2
+						"flame_drag" 4
+						"max_flame_reflection_count" 1000
+						"flame_reflect_on_collision" 1000
+						"flame_spread_degree" 5
+						"flame_up_speed" -25
+					}
+
+                    ItemAttributes
+                    {
+                        ItemName "The Gas Passer"
+                        "dmg penalty vs players" 0.25
+                        "fire rate penalty" 1.2
+                        "item_meter_charge_rate" 1
+						"explode_on_ignite" 1
+                        "projectile speed increased" 2
+                    }
+
+					ChangeAttributes
+					{
+						Name "DragonsFuryBurst"
+						Delay 10
+						Repeats 1
+						IfHealthBelow 10001
+					}
+                }
+                DragonsFuryBurst [$SIGSEGV]
+                {
+                    WeaponRestrictions PrimaryOnly
+
+                    MaxVisionRange 1000
+
+                    Item "The Dragon's Fury"
+                    Item "TF_WEAPON_SHOTGUN_PYRO"
+
+                    ItemAttributes
+                    {
+                        ItemName "The Dragon's Fury"
+						"damage bonus" 1.5
+                        "item_meter_charge_rate" 0.125
+                    }
+
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_SHOTGUN_PYRO"
+                        "faster reload rate" 0.25
+                        "fire rate bonus" 0.15
+                        "is_passive_weapon" 1
+                        "auto fires full clip" 1
+                        "auto fires when full" 1
+                        "override projectile type" 27
+                    }
+                }
+            }
+        }
+		T_TFBot_Demo_PatrolChief
+		{
+			Name "Patrol Chief D-96"
+			Class Demoman
+			ClassIcon demo_robot_nys
+			Skill Expert
+			Scale 2
+			Health 33000
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
+			Action Mobber
+
+			UseCustomModel	"models\bots\demo_boss\bot_demo_boss_gibby.mdl"
+
+			SpawnTemplate "PatrolChiefDemoPT"
+
+			Item "Upgradeable TF_WEAPON_GRENADELAUNCHER"
+
+			Item "Lo-Fi Longwave"
+
+			CharacterAttributes
+            {
+                "move speed bonus"	0.5
+                "damage force reduction" 0.5
+                "airblast vulnerability multiplier" 0.5
+                "override footstep sound set" 4
+                "cancel falling damage" 1
+				"never gib" 1
+            }
+
+			ChangeAttributes
+			{
+				Name "Intro"
+				Delay 0
+				Repeats 1
+			}
+
+			EventChangeAttributes
+            {
+				Intro [$SIGSEGV]
+				{
+					WeaponSwitch
+					{
+						Type "Melee"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					InterruptAction
+					{
+						Target "australiumtank"
+						AimTarget "australiumtank"
+						Delay 2
+						Duration 3
+						Repeats 1
+						Cooldown -1  
+					}
+
+					FireInput
+					{
+						Target "PatrolChiefDemoBeamRelay"
+						Action Trigger
+						Delay 5
+						Repeats 1
+						Cooldown -1
+					}
+
+					AddCond
+					{
+						Index 87
+						Delay 5
+						Duration 2
+					}
+					WeaponSwitch
+					{
+						Type "Primary"
+						Delay 7
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "Barrage"
+						Delay 7
+						Repeats 1
+					}
+				}
+            }
+		}
 
 		//// TANKS ////
 
@@ -804,6 +1848,66 @@ WaveSchedule
 			{
 				Target RedLoseRelay
 				Action Trigger
+			}
+		}
+
+		Tank_Combat_DragonFury
+		{
+			Name "combattank_bomb|fireball|fireball$pingsound|npc/combine_gunship/ping_search.wav"
+			ClassIcon tank_combat_dragon_fury_dual_kai
+			Speed 75
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+		
+		//// GIANTS ////
+		
+		T_TFBot_MercenaryBuster
+		{
+			Name "Mercenary Buster"
+			Template T_TFBot_SentryBuster
+			Health 1250
+			Action SuicideBomber
+
+			UseBusterModel 1
+
+			Item "MercBusterHelmet" [$SIGSEGV]
+
+			CharacterAttributes
+			{
+				"move speed bonus" 1.35
+				"head scale" 3
+				"torso scale" 0.1
+				"mult dmg vs tanks" 0.25
+			}
+
+			InterruptAction
+			{
+				AimTarget "ClosestPlayer" 
+				Delay 0
+				Repeats 1
+				Duration 3
+			}
+		}
+
+		T_TFBot_Giant_Pyro_Magma
+		{
+			Name "Giant Magma Pyro"
+			Template T_TFBot_Giant_Pyro
+			ClassIcon pyro_dragon_fury_swordstone_spammer_giant
+			WeaponRestrictions SecondaryOnly
+			
+			Item "MagmaGun" [$SIGSEGV]
+
+			ShootTemplate
+			{
+				Name "MagmaProjectilePT"
+				ItemName "MagmaGun"
+				AttachToProjectile 1
 			}
 		}
 
@@ -826,6 +1930,152 @@ WaveSchedule
                 "fire rate bonus" 0.75
                 "faster reload rate" 0.001
             }
+        }
+
+		T_TFBot_Soldier_Spammer
+        {
+            Name "Rapid Fire Soldier"
+            Class Soldier
+            ClassIcon soldier_spammer
+            Skill Normal
+            Health 600
+            Scale 1.4
+            WeaponRestrictions PrimaryOnly
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.5
+                "faster reload rate" 0.001
+                "projectile speed decreased" 0.65
+            }
+        }
+
+		T_TFBot_Heavy_Steelfist_Fire
+		{
+			Name "Braizen Gauntlet"
+			Template T_TFBot_Heavyweapons_Fist
+			ClassIcon heavy_steelfist_fire_entropy
+			Action Mobber
+
+			Item "The Bunsen Brave"
+
+			ItemAttributes
+			{
+				ItemName "Fists of Steel"
+				"Set DamageType Ignite" 1
+				"weapon burn dmg increased" 3
+				"attach particle effect" "1"
+				"set item tint RGB" "12073019"
+			}
+			ItemAttributes
+			{
+				ItemName "The Bunsen Brave"
+
+				"set item tint RGB" "12073019"
+			}
+		}
+		
+		T_TFBot_Engineer_Homewrecker
+		{
+			Name "Wrecking Crew"
+			Class Engineer
+			ClassIcon pyro_homewrecker_lite
+			Skill Normal
+			Health 500
+			Scale 1.2
+			Attributes DisableDodge
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			ForceRomeVision 1
+
+			Item "Upgradeable TF_WEAPON_WRENCH"
+
+			CharacterAttributes
+			{
+				"voice pitch scale" 0.8
+				"cancel falling damage" 1
+				"never gib" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "Upgradeable TF_WEAPON_WRENCH"
+				"damage bonus" 2.25
+				"fire rate penalty" 1.5
+				"melee cleave attack" 1
+				"custom item model" "models/workshop/weapons/c_models/c_sledgehammer/c_sledgehammer.mdl"
+				"custom kill icon" "sledgehammer"
+			}
+		}
+
+		//// COMMONS ////
+
+		T_TFBot_Pyro_Axtinguisher
+		{
+			Name "Axtinguisher Pyro"
+			Class Pyro
+			ClassIcon pyro_jug_axtinguisher
+			Skill Hard
+			WeaponRestrictions MeleeOnly
+
+			Item "The Axtinguisher"
+		}
+
+		T_TFBot_Engineer_Shotgun
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			ClassIcon heavy_shotgun
+			Skill Normal
+			WeaponRestrictions PrimaryOnly
+			Action Mobber
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+		T_TFBot_Engineer_Ranger
+		{
+			Name "Maintenance Crew"
+			Class Engineer
+			ClassIcon engineer_ranger_nys
+			Skill Normal
+			WeaponRestrictions PrimaryOnly
+			Action Mobber
+
+			Item "The Rescue Ranger"
+
+			Item "The Data Mining Light"
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+
+		T_TFBot_Soldier_Crit
+        {
+            Name "Charged Soldier"
+            Class Soldier
+            ClassIcon soldier_crit
+            Skill Normal
+            Attributes AlwaysCrit
+            WeaponRestrictions PrimaryOnly
+
+            Item "The Original"
+
+            ItemAttributes
+			{
+				ItemName "The Original"
+                "fire rate penalty" 2
+				"faster reload rate" 0.2
+				"projectile speed decreased" 0.5
+			}
         }
 	}
 
@@ -918,7 +2168,7 @@ WaveSchedule
 				Action Trigger
 			}
         }
-		WaveSpawn // 6 Rapid Demos
+		WaveSpawn // 6 Rapid Fire Demos
 		{
 			Name "Wave6_Subwave1_RapidDemos"
 			WaitForAllSpawned "Wave6_Subwave1_HeavyPatrolChief"
@@ -1055,5 +2305,540 @@ WaveSchedule
 		}
 
 		// Subwave 2
+		WaveSpawn // Pyro Patrol Chief
+		{
+			Name "Wave6_Subwave2_PyroPatrolChief"
+			Where spawnbot_side_3
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_PatrolChief
+			}
+
+			DoneOutput
+			{
+				Target "PatrolChiefBeamReleaseRelay"
+				Action Trigger
+			}
+		}
+		WaveSpawn // 1 Dragon's Fury Tank
+		{
+			Name "Wave6_Subwave2_DragonFuryTank"
+			WaitForAllSpawned "Wave6_Subwave2_PyroPatrolChief"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			Tank
+			{
+				Name "combattank|fireball|fireball$pingsound|npc/combine_gunship/ping_search.wav"
+				Template Tank_Combat_DragonFury
+				Health 7500
+				Speed 90
+				StartingPathTrackNode "tank_path_fury_1"
+			}
+		}
+		WaveSpawn // 12 Pyros
+		{
+			Name "Wave6_Subwave2_Pyros"
+			WaitForAllSpawned "Wave6_Subwave2_PyroPatrolChief"
+			Where spawnbot_side_2
+			TotalCount 12
+			MaxActive 5
+			SpawnCount 3
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 5
+			TotalCurrency 25
+
+			TFBot
+			{
+				Class Pyro
+				Skill Easy
+				Attributes AlwaysCrit
+				Attributes DisableDodge
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+		WaveSpawn // 20 Axtinguisher Pyros
+		{
+			Name "Wave6_Subwave2_Pyros"
+			WaitForAllSpawned "Wave6_Subwave2_PyroPatrolChief"
+			Where spawnbot_side_2
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 3
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Axtinguisher
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 3 Mercenary Busters
+		{
+			Name "Wave6_Subwave3_MercenaryBusters"
+			WaitForAllDead "Wave6_Subwave2_PyroPatrolChief"
+			Where spawnbot_side_1
+			TotalCount 3
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+
+			FirstSpawnWarningSound "mvm/sentrybuster/mvm_sentrybuster_intro.wav"
+
+			TFBot
+			{
+				Template T_TFBot_MercenaryBuster
+			}
+		}
+		WaveSpawn // 5 Demoknights, 5 Skullcutter Knights and 5 Claidheamhmor Knights
+		{
+			Name "Wave6_Subwave3_Demoknights"
+			WaitForAllDead "Wave6_Subwave2_PyroPatrolChief"
+			Where spawnbot_side_1
+			TotalCount 15
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 25
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Knight
+					Attributes AlwaysCrit
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"mult dmg vs tanks" 0.5
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Knight
+					Attributes AlwaysCrit
+					Action Mobber
+
+					Item "The Scotsman's Skullcutter"
+
+					CharacterAttributes
+					{
+						"mult dmg vs tanks" 0.5
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Knight
+					Attributes AlwaysCrit
+					Action Mobber
+
+					Item "The Claidheamohmor"
+
+					CharacterAttributes
+					{
+						"mult dmg vs tanks" 0.5
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 1 GHeavy and 3 Rapid Fire Soldiers
+		{
+			Name "Wave6_Subwave3_GHeavy"
+			WaitForAllSpawned "Wave6_Subwave3_MercenaryBusters"
+			Where spawnbot_side_1
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons
+					ExtAttr IgnoreNPC
+					Action Mobber
+					
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+
+		// Subwave 4
+		WaveSpawn // 21 Shotgun Engineers
+		{
+			Name "Wave6_Subwave4_EngineerAmbush"
+			Where spawnbot_side_1
+			TotalCount 21
+			MaxActive 21
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.1
+
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Shotgun
+				Attributes HoldFireUntilFullReload
+				Action Mobber
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+				AddCond
+				{
+					Index 56
+					Duration 5
+				}
+			}
+		}
+		WaveSpawn // 1 Shotgun Engineer
+		{
+			Name "Wave6_Subwave4_EngineerAmbush"
+			Where spawnbot_side_1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.1
+
+			TotalCurrency 5
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Shotgun
+				Attributes HoldFireUntilFullReload
+				Action Mobber
+
+				SpawnTemplate "BotGasCanPT"
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+				AddCond
+				{
+					Index 56
+					Duration 5
+				}
+			}
+		}
+
+		WaveSpawn // Trigger for Post-GasCan Explanation
+		{
+			Name "Wave6_Subwave4_Trigger"
+
+			StartDisabled 1
+		}
+		WaveSpawn // 2 GHeavies
+		{
+			Name "Wave6_Subwave4_GHeavies"
+			WaitForAllSpawned "Wave6_Subwave4_Trigger"
+			Where spawnbot_side_2
+			TotalCount 2
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 15
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweapons
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+		WaveSpawn // 9 Braizen Gauntlets and 9 Big-Heal Medics
+		{
+			Name "Wave6_Subwave4_BraizenGauntlets"
+			WaitForAllSpawned "Wave6_Subwave4_Trigger"
+			Where spawnbot_side_2
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 5
+			TotalCurrency 30
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Heavy_Steelfist_Fire
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 20 Charged Soldiers
+		{
+			Name "Wave6_Subwave4_ChargedSoldiers"
+			WaitForAllSpawned "Wave6_Subwave4_Trigger"
+			Where spawnbot_side_3
+			TotalCount 20
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+
+		// Subwave 5
+		WaveSpawn // 3 GMagma Pyros, 3 Big-Heal Medics and 6 Rapid Fire Soldiers
+		{
+			Name "Wave6_Subwave5_GMagmaPyros"
+			WaitForAllSpawned "Wave6_Subwave4_BraizenGauntlets"
+			Where spawnbot_side_3
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 25
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Magma
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+					Action Mobber
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+					Action Mobber
+					
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 8 Homewrecker Engineers
+		{
+			Name "Wave6_Subwave5_HomewreckerEngineers"
+			WaitForAllSpawned "Wave6_Subwave4_BraizenGauntlets"
+			Where spawnbot_side_3
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 7.5
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Homewrecker
+			}
+		}
+		WaveSpawn // 18 Axtinguisher Pyros
+		{
+			Name "Wave6_Subwave5_AxtinguisherPyros"
+			WaitForAllSpawned "Wave6_Subwave4_BraizenGauntlets"
+			Where spawnbot_side_2
+			TotalCount 18
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 4
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Axtinguisher
+			}
+		}
+		WaveSpawn // 24 Shotgun Engineers
+		{
+			Name "Wave6_Subwave5_Engineers"
+			WaitForAllSpawned "Wave6_Subwave4_BraizenGauntlets"
+			Where spawnbot_side_2
+			TotalCount 24
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 3
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Shotgun
+			}
+		}
+
+		// Subwave 6
+		WaveSpawn // Demo Patrol Chief
+		{
+			Name "Wave6_Subwave6_DemoPatrolChief"
+			Where spawnbot_07
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Demo_PatrolChief
+			}
+
+			DoneOutput
+			{
+				Target "PatrolChiefBeamReleaseRelay"
+				Action Trigger
+			}
+		}
+		WaveSpawn // 2 Merc Busters
+		{
+			Name "Wave6_Subwave6_MercenaryBusters"
+			WaitForAllSpawned "Wave6_Subwave6_DemoPatrolChief"
+			Where spawnbot_07
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+
+			TFBot
+			{ 
+				Template T_TFBot_MercenaryBuster
+			}
+		}
+
+		WaveSpawn // Stops the Wave from Ending
+		{
+			Name "Wave6_RunPreserver"
+			WaitBeforeStarting 99999
+		}
 	}
 }
