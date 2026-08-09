@@ -40,6 +40,8 @@ WaveSchedule
 	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
 	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
 
+	PrecacheModel "models/props_gameplay/cap_circle_768.mdl"
+
 	// Precached Sounds //
 
 	// VOX
@@ -55,9 +57,13 @@ WaveSchedule
 	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_blastdoor.mp3"
 	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_turbocharge.mp3"
 
+	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_aftermath.mp3"
+
 	// Gray Mann Voicelines
 	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3"
 	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3"
+	
+	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_aftermath.mp3"
 
 	// SFX
 	PrecacheSound "termination/act4/wave6-7/sfx/patrol_chief_beam.mp3"
@@ -65,6 +71,10 @@ WaveSchedule
 	// Music
 	PrecacheSound "termination/act4/wave6-7/music/termination_hurricane_of_power.wav"
 	PrecacheSound "termination/act4/wave7-7/music/termination_t_minus.mp3"
+
+	// Precached Particles
+	
+	PrecacheParticle "spell_fireball_small_trail_red"
 
 	//// DISABLED SOUNDS ////
 
@@ -112,13 +122,38 @@ WaveSchedule
 			"blast radius decreased" 0.5
 			"projectile speed decreased" 0.65
 			"mult projectile scale" 2
-			"penetrates teammates" 1
+			"penetrate teammates" 1
 
 			"custom item model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
 			"custom projectile model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
 			"projectile trail particle" "~spell_fireball_small_trail_red"
 			"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
 			"custom kill icon" "firedeath"
+		}
+
+		"NukeLauncher"
+		{
+			OriginalItemName "Upgradeable TF_WEAPON_PIPEBOMBLAUNCHER"
+
+			"damage bonus" 10
+			"damage causes airblast" 1
+			"airblast pushback scale" 5
+			"blast radius increased" 5
+			"no self blast dmg" 1
+			"fire rate penalty" 7
+			"mod max primary clip override" -1
+
+			"mult projectile scale" 3
+			"projectile range decreased" 0.5
+			"max pipebombs decreased" -7
+			"projectile detonate time" 6
+			"sticky arm time penalty" 4.6
+			"use large smoke explosion" 1
+			"projectile no deflect" 1
+
+			"custom weapon fire sound" "MVM.GiantDemoman_GrenadeShoot"
+			"explosion particle" "fireSmokeExplosion"
+			"custom kill icon" "megaton"
 		}
 
 		//// COSMETICS ////
@@ -217,7 +252,7 @@ WaveSchedule
                 "targetname" "filter_is_red_player"
                 "Negated"	"0"
                 "FilterType" "0"			
-                "Filter01"   "filter_redteam"
+                "Filter01"   "red_team_filter"
                 "Filter02"   "filter_is_player"
             }
             filter_tf_condition // Medigun Uber Filter
@@ -249,7 +284,7 @@ WaveSchedule
                 "targetname" "filter_redteam_nouber"
                 "Negated"	"0"
                 "FilterType" "0" //and				
-                "Filter01"   "filter_redteam"
+                "Filter01"   "red_team_filter"
                 "Filter02"   "filter_is_not_ubered"
                 "Filter03"   "filter_is_not_ubered2"
                 "Filter04"   "filter_is_not_ubered3"
@@ -305,6 +340,7 @@ WaveSchedule
 				"OnTrigger" "tank_path_australium_17,AddOutput,OnPass SecondPatrolChiefAmbushRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "tank_path_australium_31,AddOutput,OnPass LockdownAmbushRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "tank_path_australium_43,AddOutput,OnPass ThirdPatrolChiefAmbushRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "tank_path_australium_52,AddOutput,OnPass AustraliumTankRocketSpawnRelay:Trigger::0:-1,0,-1"
 
 				"OnTrigger" "tank_path_fury_12,AddOutput,OnPass AmbushTankParkRelay:Trigger::0:-1,0,-1"
 			}
@@ -497,6 +533,54 @@ WaveSchedule
 				"targetname" "ThirdPatrolChiefAmbushRelay"
 
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave6_DemoPatrolChief,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "PatrolChiefAftermathRelay"
+
+				"OnTrigger" "australiumtank,SetSpeed,80,2,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_aftermath.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_aftermath.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/graymannvoicelines/gray_mann_aftermath.mp3`,channel = 6,special_dsp = 57,filter_type=5})51"
+				"OnTrigger" "Player,$DisplayTextChat,{d9d9d9}Gray Mann{reset}: ARGH! Not even my Patrol Chiefs could stop you?! Fine. If these robots won't do the job then I'll do it myself. Send out the rest of them at once!,5,-1"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})251"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_aftermath.mp3`,channel = 6,special_dsp = 55,filter_type=5})26.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_aftermath.mp3`,channel = 6,special_dsp = 55,filter_type=5})26.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_aftermath.mp3`,channel = 6,special_dsp = 55,filter_type=5})26.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Listen to that senile fool howl! That's how you know we're on the winning side of this battle!,26.4,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "AustraliumTankRocketSpawnRelay"
+
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 5, 5)0-1"
+				"OnTrigger" "HUDHintTimer,Disable,,0,-1"
+				"OnTrigger" "HUDHint,HideHudHint,,0,-1"
+				"OnTrigger" "RedLoseRelay,Disable,,0,-1"
+				"OnTrigger" "red_normal_mission_relay,Trigger,,0,-1"
+				"OnTrigger" "side_red_spawn_door_trigger,Disable,,0.05,-1"
+				"OnTrigger" "side_red_spawn_door_open_relay,Trigger,,0.05,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AustraliumTankRocketSpawnParkRelay"
+
+				"OnTrigger" "!activator,SetSpeed,50,0,-1"
+				"OnTrigger" "!activator,SetSpeed,25,1,-1"
+				"OnTrigger" "!activator,SetSpeed,0,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,doors/heavy_metal_stop1.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,hl1/ambience/steamburst1.wav,2,-1"
+
+				"OnTrigger" "TeleporterEntranceProp,Kill,,2,-1"
+				"OnTrigger" "TeleporterExitProp,Kill,,2,-1"
+				"OnTrigger" "04_door_unlock_relay,Trigger,,2,-1"
+				"OnTrigger" "shortcut_bridge_extend_relay,Trigger,,2,-1"
+				"OnTrigger" "lift_spawn_set_team_blu,Trigger,,2,-1"
+				"OnTrigger" "Player,$DisplayTextHint,INTERACT WITH THE TERMINALS TO LOWER THE ROCKET,2,-1"
 			}
 		}
 
@@ -1295,6 +1379,77 @@ WaveSchedule
 				"start_active" "1"
 			}
 		}
+
+		// Sticky Nuke
+		StickyNukePT
+		{
+			RemoveIfKilled "StickyNukeHitbox"
+
+			OnSpawnOutput
+			{
+				Target "StickyNukeRelay"
+				Action "Trigger"
+			}
+			OnSpawnOutput
+			{
+				Target "StickyNukeIndicator"
+				Action "$SetFakeParent"
+				Param "StickyNukeHitbox"
+			}
+			OnSpawnOutput
+            {
+                Target "StickyNukeIndicator"
+                Action "$SetLocalAngles"
+                Param "0 0 0"
+                Delay 0.05
+            }
+
+			logic_relay
+			{
+				"targetname" "StickyNukeRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,0.5,-1"
+				"OnTrigger" "StickyNukeCharge,Start,,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/bomb_warning.wav,5.3,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,items/bomb_warning.wav,6,-1"
+			}
+
+			obj_sentrygun
+			{
+				"targetname" "StickyNukeHitbox"
+				"TeamNum" "3"
+				"defaultupgrade" "2"
+				"health" "1500"
+				"SolidToPlayer" "0"
+				"rendermode" "10"
+				"$sentrymodelprefix" "models/weapons/w_models/w_stickybomb.mdl"
+
+				"damagefilter" "filter_red"
+
+				"OnDamaged" "Player,$DisplayTextCenter,$$=test(!caller.m_iHealth>1,'Nuke HP: '..string(max(!caller.m_iHealth, 0)),''),0,-1"
+                "OnDamaged" "!parentRunScriptCodetry{if(caller.GetHealth()<1){self.Kill()}}catch(e){}0-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "StickyNukeIndicator"
+				"origin" "0 0 50"
+				"model" "models/props_gameplay/cap_circle_768.mdl"
+				"modelscale" "2"
+				
+				"$modules" "fakeparent"
+				"$fakeparentoffset" "0 0 50"
+			}
+			info_target
+			{
+				"targetname" "StickyNukeCharge"
+				"origin" "0 0 0"
+				"effect_name" "charge_up"
+				"start_active" "0"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -1357,20 +1512,17 @@ WaveSchedule
 		Node "-3512 2192 560"
 		Node "-3392 2256 560"
 		Node "-3184 2328 560"
-		Node "-2128 2320 544"
-		Node "-1936 2352 544"
-		Node "-1776 2560 544"
-		Node "-1600 2608 544"
-		Node "-1376 2576 544"
-		Node "-1216 2384 544"
-		Node "-1216 2112 544"
-		Node "-1392 1888 544"
-		Node "-1504 1632 544"
-		Node "-1504 1312 544"
-		Node "-1664 1088 560"
-		Node "-1808 1040 560"
+		Node "-3000 2328 560"
+		Node "-2848 2264 560"
+		Node "-2744 2128 560"
+		Node "-2696 1984 560"
+		Node "-2684 1885 560"
+		Node "-2025 1224 560"
+		Node "-1979 1196 560"
+		Node "-1946 1149 560"
+		Node "-1982 1085 560"
+		Node "-2050 1040 560"
 		Node "-2288 1040 560"
-		Node "-2656 1040 560"
 	}
 
 	// Teleporter Throw Paths
@@ -1439,6 +1591,7 @@ WaveSchedule
             CharacterAttributes
             {
                 "never gib" 1
+				"voice pitch scale" 0
             }
 
             ItemAttributes
@@ -1576,6 +1729,7 @@ WaveSchedule
 				"damage force reduction" 0.1
 				"airblast vulnerability multiplier" 0.1
 				"override footstep sound set" 6
+				"voice pitch scale" 0
 				"never gib" 1
             }
 
@@ -1674,7 +1828,7 @@ WaveSchedule
 					ChangeAttributes
 					{
 						Name "GasPasser"
-						Delay 10
+						Delay 0
 						Repeats 1
 						IfHealthBelow 20001
 					}
@@ -1709,7 +1863,7 @@ WaveSchedule
 					ChangeAttributes
 					{
 						Name "DragonsFuryBurst"
-						Delay 10
+						Delay 0
 						Repeats 1
 						IfHealthBelow 10001
 					}
@@ -1761,17 +1915,19 @@ WaveSchedule
 			SpawnTemplate "PatrolChiefDemoPT"
 
 			Item "Upgradeable TF_WEAPON_GRENADELAUNCHER"
+			Item "Nuke Launcher" [$SIGSEGV]
 
 			Item "Lo-Fi Longwave"
 
 			CharacterAttributes
             {
-                "move speed bonus"	0.5
+                "move speed bonus" 0.5
                 "damage force reduction" 0.5
                 "airblast vulnerability multiplier" 0.5
                 "override footstep sound set" 4
                 "cancel falling damage" 1
 				"never gib" 1
+				"voice pitch scale" 0
             }
 
 			ChangeAttributes
@@ -1832,6 +1988,114 @@ WaveSchedule
 						Repeats 1
 					}
 				}
+				Barrage [$SIGSEGV]
+				{
+					ItemAttributes
+					{
+						ItemName "Upgradeable TF_WEAPON_GRENADELAUNCHER"
+
+						"damage bonus" 1.5
+						"fire rate bonus" 0.27
+						"faster reload rate" 0.22
+						"clip size upgrade atomic" 26.0
+						"projectile speed decreased" 0.75
+						"projectile spread angle penalty" 5
+					}
+
+					ChangeAttributes
+					{
+						Name "Nuke"
+						Delay 0
+						Repeats 1
+						IfHealthBelow 22001
+					}
+				}
+				Nuke [$SIGSEGV]
+				{
+					Skill Normal
+					WeaponRestrictions SecondaryOnly
+					ExtAttr IgnoreNPC
+
+					Item "NukeLauncher"
+
+					CharacterAttributes
+					{
+						"hand scale" 2.25
+					}
+
+					ItemAttributes
+					{
+						ItemName "Upgradeable TF_WEAPON_GRENADELAUNCHER"
+						"fire rate penalty" 100
+						"is_passive_weapon" 1
+						"override projectile type" 27
+					}
+
+					ShootTemplate
+					{
+						Name "StickyNukePT"
+						ItemName "NukeLauncher"
+						AttachToProjectile 1
+					}
+
+					ChangeAttributes
+					{
+						Name "Rage"
+						Delay 0
+						Repeats 1
+						IfHealthBelow 11001
+					}
+				}
+				Rage [$SIGSEGV]
+				{
+					Skill Expert
+					WeaponRestrictions MeleeOnly
+
+					Item "The Splendid Screen"
+					Item "Upgradeable TF_WEAPON_FISTS"
+
+					CharacterAttributes
+					{
+						"move speed bonus" 0.75
+						"gesture speed increase" 2.5
+					}
+					ItemAttributes
+                    {
+                        ItemName "The Splendid Screen"
+                        "Attack not cancel charge" 1
+                        "charge impact damage increased" 10
+                        "dmg taken from fire reduced" 1
+                        "dmg taken from blast reduced" 1
+                        "weapon always gib" 1
+
+						"custom item model" "models/empty.mdl"
+						"custom kill icon" "hale_charge"
+                    }
+					ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_FISTS"
+						"damage bonus" 3
+                        "fire rate bonus" 0.6
+                        "weapon always gib" 1
+
+						"custom kill icon" "hale_punch"
+                    }
+
+					Taunt
+					{
+						Name "Taunt: Unleashed Rage"
+						Delay 0
+						Duration 1
+						Repeats 1
+						Cooldown -1
+					}
+					AddCond
+					{
+						Index 51
+						Delay 0
+						Duration 5.5
+					}
+				}
             }
 		}
 
@@ -1870,6 +2134,7 @@ WaveSchedule
 		{
 			Name "Mercenary Buster"
 			Template T_TFBot_SentryBuster
+			ClassIcon sentrybuster_mercenary
 			Health 1250
 			Action SuicideBomber
 
@@ -2818,7 +3083,7 @@ WaveSchedule
 				Action Trigger
 			}
 		}
-		WaveSpawn // 2 Merc Busters
+		WaveSpawn // 2 Mercenary Busters
 		{
 			Name "Wave6_Subwave6_MercenaryBusters"
 			WaitForAllSpawned "Wave6_Subwave6_DemoPatrolChief"
@@ -2835,10 +3100,27 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn
+		{
+			Name "Wave6_Subwave6_Check"
+			WaitForAllDead "Wave6_Subwave6_DemoPatrolChief"
+
+			FirstSpawnOutput
+			{
+				Target "PatrolChiefAftermathRelay"
+				Action Trigger
+			}
+		}
+
 		WaveSpawn // Stops the Wave from Ending
 		{
 			Name "Wave6_RunPreserver"
 			WaitBeforeStarting 99999
 		}
+	}
+	Wave
+	{
+		CustomWaveNumber 7
+        CustomMaxWaveNumber 7
 	}
 }
