@@ -1085,6 +1085,18 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_goliathfootsteps.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Wait, what's that crashing? Are you saying those are footsteps?!,1.4,-1"
 			}
+
+			logic_relay
+			{
+				"targetname" "ParachuteRelay"
+
+				"OnTrigger" "breakable_window_1,Break,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,physics\glass\glass_largesheet_break1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons\buff_banner_flag.wav,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items\para_open.wav,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\soldier_mvm_battlecry06.mp3,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\soldier_mvm_battlecry06.mp3,2.5,-1"
+			}
 		}
 
 		//// PLAYER PTs ////
@@ -1722,6 +1734,29 @@ WaveSchedule
 		Node "-4032 5520 560"
 	}
 
+	// Drill Tank Path
+	ExtraTankPath
+	{
+		Name "tank_path_drill"
+		Node "-5872 4176 576"
+		Node "-5344 4304 576"
+		Node "-5152 4176 576"
+		Node "-4992 3984 560"
+		Node "-4800 3776 560"
+		Node "-4608 3568 560"
+		Node "-4576 3152 560"
+		Node "-4688 2976 560"
+		Node "-4672 2352 560"
+		Node "-4560 2080 560"
+		Node "-4368 1920 560"
+		Node "-4160 1824 560"
+		Node "-3872 1888 560"
+		Node "-3664 2032 544"
+		Node "-3456 2240 544"
+		Node "-3152 2304 544"
+		Node "-1680 2304 560"
+	}
+
 	//// ROBOT TEMPLATES ////
 
 	Templates
@@ -2303,6 +2338,30 @@ WaveSchedule
 				Action Trigger
 			}
 		}
+		Tank_Combat_Railgun_Rocket
+		{
+			Name "combattank_bomb|railgun|rocketpod$pingsound|npc/combine_gunship/ping_search.wav"
+			ClassIcon tank_combat_railgun_rocket_kai
+			Speed 75
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+		Tank_Combat_Minigun_DragonFury
+		{
+			Name "combattank_bomb|minigun|fireball$pingsound|npc/combine_gunship/ping_search.wav"
+			ClassIcon tank_combat_minigun_dragon_fury_kai
+			Speed 75
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
 		
 		//// GIANTS ////
 		
@@ -2387,6 +2446,51 @@ WaveSchedule
 				"projectile speed decreased" 0.9
 			}
 		}
+
+		T_TFBot_Giant_Heavy_HealOnKill_Modded
+		{
+			Name "Giant Heal-On-Kill Deflector"
+			Template T_TFBot_Giant_Heavyweapons_HealOnKill
+			
+			Item "Deflector"
+			Item "Officer's Ushanka"
+
+			CharacterAttributes
+			{
+				"fire input on kill" "tf_gamerules^PlayVO^vo/sandwicheat09.mp3"
+			}
+		}
+
+		T_TFBot_Giant_Heavy_SteelFist
+        {
+            Name "Super Steel Gauntlet"
+            Class Heavy
+            ClassIcon heavy_steelfist_giant
+            Health 5000
+            Skill Expert
+            Attributes MiniBoss
+            WeaponRestrictions MeleeOnly
+
+            Item "Fists of Steel"
+
+			Item "Pugilist's Protector"
+			Item "The Heavy-Weight Champ"
+
+			CharacterAttributes
+			{
+				"move speed penalty"	0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+			ItemAttributes
+			{
+				ItemName "Fists of Steel"
+				"damage bonus" 1.2
+				"fire rate bonus" 0.6
+			}
+        }
 
 		//// MINIGIANTS ////
 
@@ -2486,6 +2590,21 @@ WaveSchedule
 				"custom kill icon" "sledgehammer"
 			}
 		}
+		T_TFBot_Engineer_Widowmaker
+		{
+			Name "Widowmaker Engineer"
+			Class Engineer
+			ClassIcon engineer_widowmaker_nys
+			Skill Expert
+			Health 375
+			Scale 1.4
+			WeaponRestrictions PrimaryOnly
+			Action FetchFlag
+
+			Item "The Widowmaker"
+
+			Item "The Data Mining Light"
+		}
 
 		//// COMMONS ////
 
@@ -2508,24 +2627,6 @@ WaveSchedule
 			Skill Normal
 			WeaponRestrictions PrimaryOnly
 			Action Mobber
-
-			Item "The Data Mining Light"
-
-			CharacterAttributes
-			{
-				"never gib" 1
-			}
-		}
-		T_TFBot_Engineer_Ranger
-		{
-			Name "Maintenance Crew"
-			Class Engineer
-			ClassIcon engineer_ranger_nys
-			Skill Normal
-			WeaponRestrictions PrimaryOnly
-			Action Mobber
-
-			Item "The Rescue Ranger"
 
 			Item "The Data Mining Light"
 
@@ -2580,6 +2681,94 @@ WaveSchedule
 				Duration 999
 				KillAimTarget 1
 				Distance 50
+			}
+		}
+
+		T_TFBot_Engineer_Ranger_Crit
+		{
+			Name "Charged Rescue Ranger Engineer"
+			Class Engineer
+			ClassIcon engineer_ranger_nys
+			Skill Normal
+			Attributes AlwaysCrit
+			WeaponRestrictions PrimaryOnly
+
+			Item "The Rescue Ranger"
+
+			Item "The Data Mining Light"
+
+			ItemAttributes
+			{
+				ItemName "The Rescue Ranger"
+
+				"dmg bonus vs buildings" 2
+				"faster reload rate" 0.001
+			}
+
+			CharacterAttributes
+			{
+				"never gib" 1
+			}
+		}
+
+		T_TFBot_Demoman_Stickybomb
+        {
+            Name "Stickybomb Demoman"
+            Class Demoman
+            ClassIcon demo_sticky_daan
+            Skill Hard
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions SecondaryOnly
+
+            Item "The Shrapnel Shell"
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+                "is_passive_weapon" 1
+                "override projectile type" 27.0
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+                "faster reload rate" 0.35
+                "stickybomb charge rate" 0.01
+                "projectile range decreased" 0.35
+                "max pipebombs decreased" -7
+            }
+        }
+
+		T_TFBot_Pyro_Backburner
+		{
+			Name "Backburner Pyro"
+			Class Pyro
+			ClassIcon pyro_backburner_nys
+			Skill Easy
+			Attributes AlwaysFireWeapon
+			WeaponRestrictions PrimaryOnly
+
+			Item "The Backburner"
+		}
+
+		T_TFBot_Soldier_Parachute
+		{
+			Name "Para-Soldier"
+			Class Soldier
+			ClassIcon soldier_para
+			Skill Expert
+			Attributes Parachute
+			
+			Item "The B.A.S.E. Jumper"
+
+			FireInput
+			{
+				Target "!self"
+				Action "$SetLocalOrigin"
+				Param "-2203 3948 1568"
+				Delay 0
+				Repeats 1
+				Cooldown -1
 			}
 		}
 	}
@@ -3687,7 +3876,437 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Combat_Rocket_Minigun
+				Health 35000
+				StartingPathTrackNode "boss_path_right"
 			}
+		}
+		WaveSpawn // 7 Widowmaker Engineers, 7 Full-Uber Medics and 7 Charged Ranger Engineers
+		{
+			Name "Wave7_Subwave3_EngineerSquads"
+			WaitForAllSpawned "Wave7_Subwave3_RocketMinigunTank"
+			Where spawnbot
+			Where spawnbot_right
+			TotalCount 35
+			MaxActive 25
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 6
+			TotalCurrency 50
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Widowmaker
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Crit
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Crit
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Ranger_Crit
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+
+		// Subwave 4
+		WaveSpawn // 2 GHoK Deflectors and 4 Super Steel Gauntlets
+		{
+			Name "Wave7_Subwave4_GHeavies"
+			WaitForAllSpawned "Wave7_Subwave3_RocketMinigunTank"
+			Where spawnbot_right
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 20
+			TotalCurrency 50
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_HealOnKill_Modded
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_SteelFist
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_SteelFist
+					Attributes AlwaysCrit
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 30 Sticky Demos
+		{
+			Name "Wave7_Subwave4_StickyDemos"
+			WaitForAllSpawned "Wave7_Subwave3_RocketMinigunTank"
+			Where spawnbot_left
+			TotalCount 30
+			MaxActive 9
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 2
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+		WaveSpawn // 30 Shotgun Heavies
+		{
+			Name "Wave7_Subwave4_ShotgunHeavies"
+			WaitForAllSpawned "Wave7_Subwave3_RocketMinigunTank"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 9
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 2
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Heavyweapons_Shotgun
+				Attributes AlwaysCrit
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+
+		// Subwave 5
+		WaveSpawn // 1 Drill Tank
+		{
+			Name "Wave7_Subwave5_DrillTank"
+			WaitForAllDead "Wave7_Subwave4_GHeavies"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Drill
+				Health 23000
+				Speed 75
+				StartingPathTrackNode "tank_path_drill_1"
+			}
+			FirstSpawnOutput
+			{
+				Target SubwaveWarningRelay
+				Action Trigger
+			}
+		}
+		WaveSpawn // 20 Backburner Pyros
+		{
+			Name "Wave7_Subwave5_BackburnerPyros"
+			WaitForAllSpawned "Wave7_Subwave5_DrillTank"
+			Where spawnbot_side_2
+			TotalCount 20
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Backburner
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 Railgun-Rocket Tank
+		{
+			Name "Wave7_Subwave5_RailgunRocketTank"
+			WaitForAllSpawned "Wave7_Subwave5_DrillTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Railgun_Rocket
+				Health 40000
+				StartingPathTrackNode "boss_path_right"
+			}
+		}
+		WaveSpawn // 30 Scouts
+		{
+			Name "Wave7_Subwave5_Scouts"
+			WaitForAllSpawned "Wave7_Subwave5_RailgunRocketTank"
+			Where spawnbot
+			TotalCount 30
+			MaxActive 15
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+
+		// Subwave 6
+		WaveSpawn // 5 GMagma Pyros and 20 Full-Uber Medics
+		{
+			Name "Wave7_Subwave6_GMagmaPyros"
+			WaitForAllSpawned "Wave7_Subwave5_RailgunRocketTank"
+			Where spawnbot
+			TotalCount 25
+			MaxActive 15
+			SpawnCount 5
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 20
+			TotalCurrency 50
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Magma
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic
+
+					CharacterAttributes
+					{
+						"never gib" 1
+					}
+				}
+			}
+		}
+		WaveSpawn // 20 Sticky Demos
+		{
+			Name "Wave7_Subwave6_StickyDemos"
+			WaitForAllSpawned "Wave7_Subwave5_RailgunRocketTank"
+			Where spawnbot_left
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 2
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Stickybomb
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+		WaveSpawn // 20 Para-Soldiers
+		{
+			Name "Wave7_Subwave6_ParaSoldiers"
+			WaitForAllSpawned "Wave7_Subwave5_RailgunRocketTank"
+			Where spawnbot
+			TotalCount 20
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 35
+			WaitBetweenSpawns 8
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Parachute
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+			FirstSpawnOutput
+			{
+				Target ParachuteRelay
+				Action Trigger
+			}
+		}
+
+		// Subwave 7
+		WaveSpawn // 1 Minigun-DragonFury Tank
+		{
+			Name "Wave7_Subwave7_MinigunDragonsFuryTank"
+			WaitForAllSpawned "Wave7_Subwave6_GMagmaPyros"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Template Tank_Combat_Minigun_DragonFury
+				Health 35000
+				StartingPathTrackNode "boss_path_right"
+			}
+		}
+		WaveSpawn // 25 Spies
+		{
+			Name "Wave7_Subwave7_Spies"
+			WaitForAllSpawned "Wave7_Subwave7_MinigunDragonsFuryTank"
+			Where spawnbot
+			TotalCount 25
+			MaxActive 15
+			SpawnCount 5
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 7
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+
+				CharacterAttributes
+				{
+					"never gib" 1
+				}
+			}
+		}
+		WaveSpawn // 24 Backburner Pyros
+		{
+			Name "Wave7_Subwave7_BackburnerPyros"
+			WaitForAllSpawned "Wave7_Subwave7_MinigunDragonsFuryTank"
+			Where spawnbot
+			TotalCount 24
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 5
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Backburner
+			}
+		}
+
+		WaveSpawn // Stops the Wave from Ending
+		{
+			Name "Wave7_RunPreserver"
+			WaitBeforeStarting 99999
 		}
 	}
 }
