@@ -59,6 +59,8 @@ WaveSchedule
 
 	PrecacheSound "termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_aftermath.mp3"
 
+	PrecacheSound "termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_rocketfuelling.mp3"
+
 	// Gray Mann Voicelines
 	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs.mp3"
 	PrecacheSound "termination/act4/wave6-7/graymannvoicelines/gray_mann_patrolchiefs2.mp3"
@@ -308,6 +310,8 @@ WaveSchedule
 
 		Wave6PT
 		{
+			RemoveIfKilled "ActSetupRelay"
+
 			OnSpawnOutput
 			{
 				Target BigNet
@@ -928,6 +932,110 @@ WaveSchedule
 				"origin" "-3694 3778 608"
 				"effect_name" "teleporter_red_entrance_disc"
 				"start_active" "0"
+			}
+		}
+
+		Wave6RocketTerminalsPT
+		{
+			RemoveIfKilled "RocketTerminalButton"
+
+			func_button
+			{
+				"targetname" "RocketTerminalButton"
+				"origin" "-2367 1214 559"
+				"mins" "-24 -24 -24"
+				"maxs" "24 24 24"
+				"wait" "-1"
+
+				"spawnflags" "512"
+
+				"OnPressed" "tf_gamerules,PlayVO,ui/quest_decode.wav,0,-1"
+				"OnPressed" "RocketTerminalButton2,Unlock,,0,-1"
+			}
+			func_button
+			{
+				"targetname" "RocketTerminalButton2"
+				"origin" "-2413 1373 559"
+				"mins" "-24 -24 -24"
+				"maxs" "24 24 24"
+				"wait" "-1"
+
+				"spawnflags" "2560"
+
+				"OnPressed" "tf_gamerules,PlayVO,ui/quest_decode.wav,0,-1"
+				"OnPressed" "RocketTerminalButton3,Unlock,,0,-1"
+			}
+			func_button
+			{
+				"targetname" "RocketTerminalButton3"
+				"origin" "-2413 1373 559"
+				"mins" "-24 -24 -24"
+				"maxs" "24 24 24"
+				"wait" "-1"
+
+				"spawnflags" "2560"
+
+				"OnPressed" "tf_gamerules,PlayVO,ui/quest_decode.wav,0,-1"
+				"OnPressed" "rocket_lower_relay,Trigger,,0,-1"
+				"OnPressed" "australiumtank,Kill,,33.9,-1"
+				"OnPressed" "tf_gamerules,$FinishWave,,34,-1"
+			}
+		}
+
+		//// WAVE 7 PTs ////
+
+		Wave7PT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						IncludeScript(`textualtimer_v3`)
+						TextualTimer.SetParams({
+							minutes = 7
+							seconds = 30
+							x = -1
+							y = 0.77
+							text_prepend = `ROCKET FUELING: `
+							color = `0 255 255`
+							relayname = `HoldoutVictoryRelay`
+						})
+					  "
+			}
+
+			logic_relay
+			{
+				"targetname" "Wave7SetupRelay"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})31"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_rocketfuelling.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_rocketfuelling.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_rocketfuelling.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: We're on the home stretch now boys! Our Engibot's getting the rocket fuelled and ready to transport our Australium.,4.4,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: It's an estimated 7 and a half minutes until it's prepped so use that time to clear out the meagre cannon fodder Gray Mann's throwing at you!,9.4,-1"
+			}
+			logic_relay
+			{
+				"targetname" "Wave7StartRelay"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#termination/act4/wave7-7/music/termination_t_minus.mp3`),0,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{yellow}[ Now Playing: {6383ff} T-Minus - OrangeGlazer {yellow}],0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "SubwaveWarningRelay"
+				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,0,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,0,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0.05,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0.75,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,1.45,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,2.15,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 0, 0, 20, 0.3, 0.25, 1)0.05-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 0, 0, 20, 0.3, 0.25, 1)0.75-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 0, 0, 20, 0.3, 0.25, 1)1.45-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 0, 0, 20, 0.3, 0.25, 1)2.15-1"
 			}
 		}
 
@@ -3121,6 +3229,36 @@ WaveSchedule
 	}
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`bombpath_right_relay`, `Trigger`)
+
+					EntFire(`Wave7SetupRelay`, `Trigger`)
+
+					EntFire(`ActSetupRelay`, `Kill`)
+					EntFire(`RocketTerminalButton`, `Kill`)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+
 		CustomWaveNumber 7
         CustomMaxWaveNumber 7
 	}
