@@ -1,0 +1,103 @@
+// I HATE SHIT POPFILE FORMATTING - Kai
+
+#base       robot_standard.pop
+#base       robot_giant.pop
+
+WaveSchedule
+{
+	StartingCurrency 800
+	RespawnWaveTime 2
+	CanBotsAttackWhileInSpawnRoom No
+
+	FlagEscortCountOffset -2
+
+	WaveStartCountdown 5
+	TextPrintTime 0
+	UseOriginalAnimsForUnintendedClassWeapons 1
+	SniperAllowHeadshots 1
+
+	//// PRECACHES ////
+
+	//// LUA SCRIPTS ////
+
+	LuaScriptFile "scripts/impasse_mechanic.lua"
+	LuaScriptFile "scripts/snurperweapons.lua"
+
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		//// PLAYER WEAPONS ////
+	}
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	//// EXTRA TANK PATHS ////
+
+	//// EXTRA SPAWN POINTS ////
+	
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	//// WAVES ////
+
+	Wave
+	{
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finish_relay`, `Trigger`)
+				  "
+		}
+
+		Explanation
+        {
+            Line    "{Green}Management : Glad to have you back, Team Fortress. Once again, we have another extraterrestrial scheme to dispatch of."
+            Line    "{Green}Management : For unknown reasons, third-party anomalies keep localizing to this place. First were those aliens months ago and now this."
+            Line    "{Green}Management : Whatever comes, you know the drill."
+            Line    " "
+            Line    "{RED}MVM MECHANIC NOTICE : WHENEVER THE BOMB ACTIVATES THE HATCH WARNING. BOTS GET TO PICK AND FLANK ON ANY ROUTE. STAY ALERT!"
+        }
+
+		CustomWaveNumber 1
+		CustomMaxWaveNumber 5
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_GFANScouts"
+			Where spawnbot_left
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 200
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN
+				Skill Normal
+				Attributes DisableDodge
+			}
+		}
+	}
+}

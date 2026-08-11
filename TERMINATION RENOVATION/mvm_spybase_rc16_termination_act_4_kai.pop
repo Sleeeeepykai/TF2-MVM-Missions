@@ -1072,7 +1072,7 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_holdoutthirdquarter.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_holdoutthirdquarter.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_holdoutthirdquarter.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
-				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Three quarters of the way lads! Drinks are on me for this heist!.,1.4,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Three quarters of the way lads! Drinks are on me for this heist!,1.4,-1"
 			}
 
 			logic_relay
@@ -1096,6 +1096,48 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,items\para_open.wav,2.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\soldier_mvm_battlecry06.mp3,2.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\norm\soldier_mvm_battlecry06.mp3,2.5,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "HoldoutVictoryRelay"
+
+				"OnTrigger" "pop_interface,PauseBotSpawning,,0,-1"
+				"OnTrigger" "RobotStunTrigger,Enable,,0,-1"
+				"OnTrigger" "RobotStunTrigger,Disable,,0.1,-1"
+				"OnTrigger" "pop_interface,$CollectCash,,5,-1"
+				"OnTrigger" "tf_gamerules,$FinishWave,,5,-1"
+				"OnTrigger" "pop_interface,UnpauseBotSpawning,,5,-1"
+			}
+			trigger_multiple
+			{
+				"targetname" "RobotStunTrigger"
+				"filtername" "blue_team_filter"
+				"origin" "0 0 0"
+				"mins" "-15000 -15000 -15000"
+				"maxs" "15000 15000 15000"
+				"spawnflags" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "RobotStunRelay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "RobotStunRelay"
+
+				"OnTrigger" "!activator,$Stun,100,0,-1"
+				"OnTrigger" "RobotDeathCase,PickRandomShuffle,,2,-1"
+			}
+			logic_case
+			{
+				"targetname" "RobotDeathCase"
+
+				"OnCase01" "!activator,$Suicide,,0,-1"
+				"OnCase02" "!activator,$Suicide,,0.33,-1"
+				"OnCase02" "!activator,$Suicide,,0.66,-1"
+				"OnCase02" "!activator,$Suicide,,0.99,-1"
+				"OnCase02" "!activator,$Suicide,,1.33,-1"
 			}
 		}
 
