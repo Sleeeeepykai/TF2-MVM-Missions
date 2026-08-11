@@ -1,7 +1,7 @@
 // I HATE SHIT POPFILE FORMATTING - Kai
 
-#base       robot_standard.pop
-#base       robot_giant.pop
+#base robot_standard.pop
+#base robot_giant.pop
 
 WaveSchedule
 {
@@ -28,8 +28,14 @@ WaveSchedule
 	PrecacheModel "models/props_mvm/indicator/indicator_circle_long.mdl"
 
 	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
 
 	// Precached Sounds //
+
+	// SFX
+
+	PrecacheSound "impasse/tank_park.mp3"
+	PrecacheSound "impasse/tank_startup.mp3"
 
 	// Music
 
@@ -43,6 +49,8 @@ WaveSchedule
 
 	PrecacheSound "impasse/break_expectations.wav"
 	PrecacheSound "impasse/reaching_for_a_finality.wav"
+
+	PrecacheSound "impasse/the_end.mp3"
 
 	// Colour Correction
 
@@ -76,6 +84,67 @@ WaveSchedule
 		}
 
 		//// PLAYER WEAPONS ////
+		"The Primal Protector"
+        {
+            OriginalItemName                "Ali Baba's Wee Booties"
+            "cannot be upgraded"            1
+            "custom item model"             models/empty.mdl
+            "max health additive bonus"     5
+            "special item description"      "Trade being raw DPS to be more of a Supportive Burst Tank That Eats Crits For Breakfast!"
+            "special item description 3"    "Buffs : +65% Damage Bonus For Shotguns | Always Mini-Crit using melees. | Melee Kills Drops Small Health Packs | Steak Grants Crits Instead"
+        }
+
+        "The Broken Oath"
+        {
+            OriginalItemName                "The Quick-Fix"
+            "medigun attack enemy"          1.25
+            "fire input on hit"             popscript^$brokenAttack
+            // "fire input on hit ally"    popscript^$fixup
+            "medigun particle"              passtime_beam
+            "medigun particle enemy"        ~bombonomicon_spell_trail
+            "uber duration bonus"           -2
+            "special item description"      "Become a medic of death by dealing damage with your medigun!"
+            "special item description 2"    "Dealing damage will fill up your thresholds which when reached, will grant you buffs/Super Uber!"
+            "special item description 3"    "BUT! Don't forget your duties as a medic! Be decisive between damaging and healing."
+        }
+
+        //
+        "The Power-Player"
+        {
+            OriginalItemName                TF_WEAPON_PDA_ENGINEER_BUILD
+            "special item description"      "The Power-Player grants strong power ups when activated"
+            "special item description 2"    "To activate a power up, simply [TAUNT] when reaching a tier"
+            "special item description 3"    "Every Building starts at lvl 2 in compensation of losing your Build Canteens."
+        }
+
+        //
+        "THE BLAST-BASH DASH-BACK"
+        {
+            OriginalItemName                    "The Tide Turner"
+            "fire input on hit"                 popscript^$blastBash
+            "item color rgb"                    223424
+            "dmg taken from blast reduced"      0.90
+            "dmg taken from fire reduced"       0.90
+            "special item description"          "A Custom Weapon made with [hybrid-knight] in mind!"
+            "special item description 2"        "You gain 3 [SUPERCHARGES] under your crosshair. Bashing with an available [SUPERCHARGE] will grant you powerful buffs"
+            "special item description 3"        "[BUFFS] : [UBERCHARGE | SPEEDBOOST | INSTANTLY RELOAD YOUR PRIMARY]"
+            "special item description 4"        "If the meter is empty, Wait for 30 seconds to get a free [SUPERCHARGE] or kill 6 enemies!"
+        }
+
+        "^^^ Warning: Cannot Use Power Up Canteens"
+        {
+            OriginalItemName    "Battery Canteens"
+        }
+
+        "The Doppelsapper"
+        {
+            OriginalItemName                "Festive Sapper"
+            "fire input on effect"          popscript^$sapperCopy
+            mod_disguise_consumes_cloak     1
+            "special item description"      "Sap a target and when the target dies, you'll become the target."
+            "special item description 2"    "This weapon desires patience and dependent to your target, you'll be powerfully rewarded!"
+            "special item description 3"    "TIP: Although Giants are very strong, Commons can be as effective! Ex. having an extra heavy on your team!"
+        }
 	}
 
 	//// POINT TEMPLATES ////
@@ -413,7 +482,181 @@ WaveSchedule
                 "display_text" "Eradicate the fodder quickly to spawn in THE MAINTAINER!"
                 "lifetime" "5"
             }
+
+			logic_relay
+			{
+				"targetname" "EncoreWave3CompleteRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,EncoreWave1_Subwave2_SandmanScouts,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,EncoreWave1_Subwave2_SandmanScouts,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,EncoreWave1_Subwave3_GRUHeavies,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,EncoreWave1_Subwave3_GRUHeavies,0,-1"
+
+				"OnTrigger" "route_middle,Trigger,,0,-1"
+				"OnTrigger" "EncoreWave4Warning,Show,,0,-1"
+
+				"OnTrigger" "BigNet,RunScriptCode,AlternateWaves.ClearWaveIcons(),0,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Mission-name. Wave3.pop {red}EXPURGATED-//,0,-1"
+
+				"OnTrigger" "BigNet,RunScriptCode,AlternateWavebars(3),10,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Loading {red}Mission-name. Wave4.pop...,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/giant_heavy/giant_heavy_entrance.wav,10,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_warning.wav`);EmitSoundEx({sound_name=`mvm/mvm_warning.wav`,pitch = 85,filter_type=5})10-1"
+			}
+			training_annotation
+            {
+                "targetname" "EncoreWave4Warning"
+				"origin" "-305 -1899 681"
+                "display_text" "The bots have switched routes! They're approaching at the bridge!"
+                "lifetime" "5"
+            }
+
+			logic_relay
+			{
+				"targetname" "EncoreWave4CompleteRelay"
+
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,EncoreWave4_Subwave1_BlastSquads,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,EncoreWave4_Subwave1_BlastSquads,0,-1"
+				
+				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management : All of that... You still stand.,3,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management : You have exceeded my expectations. You have dwindled my numbers. You... won. Well done.,6,-1"
+				"OnTrigger" "popscript,$theEndofImpasse,,10,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ui/quest_alert.wav,15,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFA500}---HIGHER CONNECTION ESTABLISHED---,15,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFA500}TF Industries : Mercenaries. The contract has finally been initiated.,17,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,impasse/the_end.mp3,19.2,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFA500}TF Industries : It's time to get a hold of that island.,21,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFA500}TF Industries : Rewards and funding have been set. It's time to end this war once and for all.,24,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFA500}TF Industries : Get ready.,28,-1"
+				"OnTrigger" "popscript,$itstimefortermination,,30,-1"
+				"OnTrigger" "Player,speakresponseconcept,TLK_PLAYER_GOODJOB,30,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 2, 2, 2)33-1"
+				"OnTrigger" "tf_gamerules,$FinishWave,,35.5,-1"
+			}
 		}
+
+		//// PLAYER PTs ////
+
+		//////////////Custom Weapons Tempaltes///////////////
+        HeavyWeaponsTemplate
+        {
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $strongestMannVariables
+                Delay       0.0
+            }
+        }
+
+        SpyVariablesTemplate
+        {
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $spyVariables
+                Delay       0.0
+            }
+        }
+
+        demo_explosive_shield
+        {
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $demoShieldVariables
+                Delay       0.2
+            }
+        }
+
+        medic_offense
+        {
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $setVariablesMedic
+                Param       !activator
+                Delay       0.2
+            }
+        }
+
+        engineer_action_template
+        {
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $disableCanteens
+                Param       !activator
+                Delay       0.0
+            }
+
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $pointsChecker
+                Param       !activator
+                Delay       0.6
+            }
+
+            OnSpawnOutput
+            {
+                Target      popscript
+                Action      $powerhouseAction
+                Param       !activator
+                Delay       0.4
+            }
+
+            OnSpawnOutput
+            {
+                Target      !activator
+                Action      $DisplayTextChat
+                Param       "{blue}INFO : Kill Enemies with your weapons or sentry to increase your power meter."
+                Delay       3
+            }
+
+            OnSpawnOutput
+            {
+                Target      !activator
+                Action      $DisplayTextChat
+                Param       "{blue}INFO : {red}Taunt {blue}To Use A Power-Up. There are {yellow}3 tiers {blue}of powerups."
+                Delay       6
+            }
+
+            OnSpawnOutput
+            {
+                Target      triggerrefresh
+                Action      Open
+            }
+
+            func_door	// From Encounter BSP! Cause how the hell does that work????
+            {
+                targetname          triggerrefresh
+                rendermode          10
+                spawnflags          4108
+                speed               1
+                wait                0.01
+                onfullyclosed       !self,open,,0,-1
+            }
+
+            trigger_multiple	// From Encounter BSP! Cause how the hell does that work???? why you need a damn door for this to work?
+            {
+                targetname      sentryDetect
+                parentname      triggerrefresh
+                mins            "-96 -96 -96"
+                maxs            "96 96 96"
+                // "filtername" "sentrygun"
+                spawnflags      64
+                // "StartDisabled" "1"
+                onstarttouch    popscript,$sentry_Detection,,0,-1
+            }
+            // filter_activator_class
+            // {
+            // "targetname" "sentrygun"
+            // "filterclass" "obj_sentrygun"
+            // }
+        }
 
 		//// ROBOT PTs ////
 
@@ -788,15 +1031,225 @@ WaveSchedule
 				"GlowColor" "64 0 255 255"
 			}
 		}
+
+		CombatTankBombPT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "CombatTankBombProp"
+
+			OnSpawnOutput
+            {
+                Target popscript
+                Action $location
+                Param !activator
+            }
+			OnSpawnOutput
+            {
+                Target path_tank_barn3
+                Action AddOutput
+                Param "OnPass popscript:$CustomBombDeploy::0:-1"
+            }
+
+			OnSpawnOutput
+            {
+                Target CombatTankTarget
+                Action SetParent
+                Param !activator
+            }
+			OnSpawnOutput
+            {
+                Target CombatTankBombProp
+                Action SetParent
+                Param !activator
+            }
+			OnSpawnOutput
+            {
+                Target CombatTankBombProp
+                Action SetParentAttachmentMaintainOffset
+                Param "turret"
+				Delay 0.2
+            }
+
+			OnParentKilledOutput
+			{
+				Target CombatTankBombDeployRelay
+				Action CancelPending
+				Delay 0
+			}
+			OnParentKilledOutput
+			{
+				Target CombatTankBombProp
+				Action Kill
+				Delay 0.2
+			}
+
+			info_target
+			{
+				"targetname" "CombatTankTarget"
+				"origin" "0 0 0"
+			}
+
+			logic_relay
+			{
+				"targetname" "CombatTankBombRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/merasmus_appear.wav,0,-1"
+				"OnTrigger" "popscript,$fixup,,0,-1"
+				"OnTrigger" "CombatTankBombPortal,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,impasse/tank_startup.mp3,0,-1"
+				"OnTrigger" "CombatTankBombCharge,Start,,3,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 8, 2, 50000, 0, true)5.5-1"
+				"OnTrigger" "CombatTankBombPortal,Stop,,5.5,-1"
+				"OnTrigger" "CombatTankBombCharge,Stop,,5.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_bomb_warning.wav,5.5,-1"
+				"OnTrigger" "CombatTankBombProp,Enable,,5.5,-1"
+				"OnTrigger" "CombatTankBombAnnotation,Show,,5.5,-1"
+
+				"OnTrigger" "@p@CombatTankTarget,SetSpeed,10,2,-1"
+				"OnTrigger" "@p@CombatTankTarget,SetSpeed,30,3,-1"
+				"OnTrigger" "@p@CombatTankTarget,SetSpeed,50,4,-1"
+				"OnTrigger" "@p@CombatTankTarget,SetSpeed,80,5,-1"
+			}
+			logic_relay
+			{
+				"targetname" "CombatTankBombDeployRelay"
+
+				"OnTrigger" "CombatTankBombCharge,Start,,2,-1"
+				"OnTrigger" "boss_deploy_relay,Trigger,,8,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "CombatTankBombProp"
+				"origin" "0 0 781"
+                "model" "models/props_trainyard/cart_bomb_separate.mdl"
+                "modelscale" "1.5"
+				"solid" "0"
+
+				"disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+			info_particle_system
+            {
+                "targetname" "CombatTankBombCharge"
+                "origin" "0 0 205"
+                "effect_name" "charge_up"
+            }
+            info_particle_system
+            {
+                "targetname" "CombatTankBombPortal"
+                "origin" "0 0 210"
+                "effect_name" "eyeboss_tp_vortex"
+            }
+
+			training_annotation
+            {
+                "targetname" "CombatTankBombAnnotation"
+				"origin" "0 0 10"
+                "display_text" "THE COMBAT TANK HAS BEEN GIVEN A BOMB!"
+                "lifetime" "5"
+            }
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "CorePT"
 
-	//// EXTRA TANK PATHS ////
+	PlayerItemEquipSpawnTemplate
+    {
+        Name        medic_offense
+        ItemName    "The Broken Oath"
+    }
+    PlayerItemEquipSpawnTemplate
+    {
+        Name        demo_explosive_shield
+        ItemName    "THE BLAST-BASH DASH-BACK"
+    }
+    PlayerItemEquipSpawnTemplate
+    {
+        Name        engineer_action_template
+        ItemName    "The Power-Player"
+    }
+    PlayerItemEquipSpawnTemplate
+    {
+        Name    HeavyWeaponsTemplate
+        ItemName    "The Primal Protector"
+    }
+    PlayerItemEquipSpawnTemplate
+    {
+        Name    SpyVariablesTemplate
+        ItemName    "The Doppelsapper"
+    }
 
-	//// EXTRA SPAWN POINTS ////
+	//// EXTRA WEAPONS ////
+
+	ExtraLoadoutItems
+    {
+        Engineer
+        {
+            PDA         "The Power-Player"
+            Action      "^^^ Warning: Cannot Use Power Up Canteens"
+        }
+
+        Medic
+        {
+            Secondary       "The Broken Oath"
+        }
+
+        Demoman
+        {
+            Secondary       "THE BLAST-BASH DASH-BACK"
+        }
+
+        HeavyWeapons
+        {
+            Primary     "The Primal Protector"
+        }
+
+        // Spy
+        // {
+        //     Building    "The Doppelsapper"
+        //     // Melee       testknife
+        // }
+    }
+
+	//// DISABLED UPGRADES ////
+
+	DisallowUpgrade
+    {
+        Upgrade             "generate rage on heal"
+        MaxLevel            0
+        CheckAllSlots       1
+        ItemName            "The Broken Oath"
+    }
+
+    DisallowUpgrade
+    {
+        Upgrade             "charge recharge rate increased"
+        MaxLevel            0
+        CheckAllSlots       1
+        ItemName            "THE BLAST-BASH DASH-BACK"
+    }
+
+    DisallowUpgrade
+    {
+        Upgrade             "robo sapper"
+        MaxLevel            0
+        CheckAllSlots       1
+        ItemName            "The Doppelsapper"
+    }
+
+    DisallowUpgrade
+    {
+        Upgrade             "robo sapper"
+        MaxLevel            0
+        CheckAllSlots       1
+        ItemName            "The Doppelganger"
+    }
 	
 	//// ROBOT TEMPLATES ////
 
@@ -1577,6 +2030,8 @@ WaveSchedule
 
 			UseHumanAnimations 1
 
+			UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
 			SpawnTemplate "VoidOppressionistPT"
 
 			Item "Chieftain's Challenge"
@@ -1651,6 +2106,240 @@ WaveSchedule
 				}
 			}
 		}
+		T_TFBot_Encore_Heavy_VoidOpportunist
+		{
+			Name "Damaged Void-Opportunist"
+			Class Heavy
+			ClassIcon heavy_robot_nys
+			Skill Expert
+			Health 30000
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Attributes DisableDodge
+			WeaponRestrictions MeleeOnly
+
+			UseHumanAnimations 1
+			UseCustomModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
+			SpawnTemplate "VoidOpportunistPT"
+			SpawnTemplate "RobotUberGenPT"
+
+			Item "Deflector"
+			Item "The Mantreads"
+
+			Item "The Aztec Aggressor"
+			Item "Horror Shawl"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+				"cancel falling damage" 1
+				"mod minigun can holster while spinning" 1
+				"gesture speed increase" 1.25
+				"hand scale" 1.8
+			}
+
+			ItemAttributes
+			{
+				ItemName "Deflector"
+				"damage bonus" 1.2
+				"attack projectiles" 2
+				"heal on kill" 2000
+			}
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_FISTS"
+				"damage bonus" 3
+				"is_a_sword" 1
+			}
+
+			AddCond
+			{
+				Index 71
+				Duration 0.5
+			}
+
+			FireInput
+			{
+				Target popscript
+				Action $fistIcon
+				Delay 0
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target "VoidOpportunistAttackCase"
+				Action PickRandomShuffle
+				Delay 20
+				Repeats 1
+				Cooldown -1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $ChangeAttributes
+				Param PanicMode
+				Delay 0
+				Repeats 1
+				Cooldown -1
+				IfHealthBelow 10001
+			}
+
+			EventChangeAttributes
+			{
+				VoidOpportunistMelee [$SIGSEGV]
+				{
+					WeaponRestrictions MeleeOnly
+
+					CharacterAttributes
+					{
+						"increased jump height" 1
+						"move speed penalty" 0.5
+					}
+
+					FireInput
+					{
+						Target popscript
+						Action $fistIcon
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target "VoidOpportunistAttackCase"
+						Action PickRandomShuffle
+						Delay 7
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				VoidOpportunistMinigun [$SIGSEGV]
+				{
+					WeaponRestrictions PrimaryOnly
+
+					Item "The B.A.S.E. Jumper"
+
+					CharacterAttributes
+					{
+						"increased jump height" 3
+						"move speed penalty" 0.35
+					}
+
+					FireInput
+					{
+						Target popscript
+						Action $HoKIcon
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireWeapon
+					{
+						Type "Jump"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireWeapon
+					{
+						Type "Jump"
+						Delay 1.2
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param VoidOpportunistMelee
+						Delay 8
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				VoidOpportunistStickies [$SIGSEGV]
+				{
+					Taunt
+					{
+						Name "Taunt: The Proletariat Showoff"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target popscript
+						Action $BurstIcon
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target "VoidOpportunistStickiesRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param VoidOpportunistMelee
+						Delay 4
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				VoidOpportunistPanic [$SIGSEGV]
+				{
+					Attributes HoldFireUntilFullReload
+					WeaponRestrictions SecondaryOnly
+
+					FireInput
+					{
+						Target Player
+						Action $DisplayTextChat
+						Delay 0.5
+						Param "{FFC0CB}Damaged Void-Opportunist {reset}has entered {red}PANIC MODE"
+						Repeats 1
+					}
+					FireInput
+					{
+						Target Player
+						Action $PlaySoundToSelf
+						Delay 0.5
+						Param "mvm\mvm_used_powerup.wav"
+						Repeats 1
+					}
+					AddCond
+					{
+						Index 11
+						Duration 99
+					}
+					
+					AddCond
+					{
+						Index 32
+						Duration 99
+					}
+				}
+			}
+		}
 
 		//// TANKS ////
 		Tank_Harvester
@@ -1663,6 +2352,19 @@ WaveSchedule
 				Target relay_harvester_destroy
 				Action Trigger
 			}
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+
+		Tank_Combat_Minigun_DragonFury
+		{
+			Name "combattank|minigun|fireball$pingsound|npc/combine_gunship/ping_search.wav"
+			ClassIcon tank_combat_minigun_dragon_fury_kai
+			Speed 75
+
 			OnBombDroppedOutput
 			{
 				Target boss_deploy_relay
@@ -1810,6 +2512,50 @@ WaveSchedule
                 "uber duration bonus" -9
 			}
         }
+		T_TFBot_Giant_Heavyweapons_HealOnKill_Modded
+		{
+			Name "Giant Heal-on-Kill Deflector"
+			Class Heavy
+			ClassIcon heavy_deflector_healonkill
+			Skill Expert
+			Health 5500
+			Attributes MiniBoss
+			Attributes AlwaysCrit
+			WeaponRestrictions PrimaryOnly
+
+			MaxVisionRange 1600
+
+			Item "Deflector"
+			Item "The Tungsten Toque"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+			ItemAttributes
+			{
+				ItemName "Deflector"
+				"damage bonus" 1.2
+				"attack projectiles" 2
+				"heal on kill" 5000
+			}
+		}
+		T_TFBot_Giant_Soldier_Hyper
+		{
+			Name "Giant Hyper Soldier"
+			Template T_TFBot_Giant_Soldier
+			ClassIcon soldier_hyper_lite
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+				"damage bonus" 2
+			}
+		}
 
 		//// MINIGIANTS ////
 		T_TFBot_Heavy_Armored
@@ -2005,6 +2751,41 @@ WaveSchedule
 				"faster reload rate" 0.2
 				"projectile speed decreased" 0.5
 			}
+        }
+
+		T_TFBot_Pyro_Dragon_Fury
+        {
+            Name "Dragon's Fury Pyro"
+            Class Pyro
+            ClassIcon pyro_dragon_fury_swordstone
+            Skill Normal
+            WeaponRestrictions PrimaryOnly
+
+            MaxVisionRange 900
+
+            Item "The Dragon's Fury"
+        }
+
+		T_TFBot_Soldier_DirectHit
+        {
+            Name "Direct Hit Soldier"
+            Class Soldier
+            ClassIcon soldier_directhit_lite
+            Skill Normal
+            WeaponRestrictions PrimaryOnly
+
+            Item "The Direct Hit"
+        }
+
+		T_TFBot_Demoman_LochnLoad
+        {
+            Name "Loch-n-Load Demoman"
+            Class Demoman
+            ClassIcon demo_loch_nys
+            Skill Normal
+            WeaponRestrictions PrimaryOnly
+            
+            Item "The Loch-n-Load"
         }
 	}
 
@@ -4705,14 +5486,14 @@ WaveSchedule
 		//// ENCORE WAVE 3 ////
 
 		// Subwave 1
-		WaveSpawn
+		WaveSpawn // 1 Uber Tank
 		{
 			Name "EncoreWave3_Subwave1_UberTank"
 			WaitForAllSpawned "EncoreWave2_Complete"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 40
+			WaitBeforeStarting 45
 			WaitBetweenSpawns 0
 			TotalCurrency 200
 
@@ -4724,6 +5505,7 @@ WaveSchedule
 				Speed 48
 				StartingPathTrackNode "path_tank_left"
 			}
+
 			FirstSpawnOutput
 			{
 				Target BigNet
@@ -4731,9 +5513,639 @@ WaveSchedule
 				Param "
 						EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}Manage : ...But the maintainer isn't here yet now, is he? :)`, 6)
 						EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}Manage : Better finish off the fodder. {red}FAST.`, 10)
-						EntFire(`EncoreWave3Warning`, `Show`)
+						EntFire(`EncoreWave3Warning`, `Show`, null, 10)
 					  "
 			}
+		}
+		WaveSpawn // 4 GCharged Mangler Soldiers and 8 DFury Pyros
+		{
+			Name "EncoreWave3_Subwave1_GChargedManglerSoldier"
+			WaitForAllSpawned "EncoreWave2_Complete"
+			Where spawnbot_center
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 45
+			WaitBetweenSpawns 6.5
+			TotalCurrency 50
+
+			Squad
+			{
+				TFBot
+				{
+					Name "Giant Critical Mangler Soldier"
+					Template T_TFBot_Giant_Soldier_ChargeShots
+					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "The Cow Mangler 5000"
+						"faster reload rate" 0.001
+						"aiming aiming movespeed increased" 1.75
+						"crits_become_minicrits" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+			}
+		}
+		WaveSpawn // 40 Sandman Scouts
+		{
+			Name "EncoreWave3_Subwave1_SandmanScouts"
+			WaitForAllSpawned "EncoreWave2_Complete"
+			Where spawnbot_main
+			TotalCount 40
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 45
+			WaitBetweenSpawns 1
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Sandman_FastCharge
+				Skill Normal
+				Attributes AlwaysCrit
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 3 GBurst Demos, 3 Quick-Uber Medics, 3 Kritzkrieg Medics and 6 Demomen
+		{
+			Name "EncoreWave3_Subwave2_GBurstDemos"
+			WaitForAllDead "EncoreWave3_Subwave1_GChargedManglerSoldier"
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 4.5
+			TotalCurrency 50
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demo_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+			}
+		}
+		WaveSpawn // 15 DFury Pyros and 15 Quick-Fix Medics
+		{
+			Name "EncoreWave3_Subwave2_DFuryPyros"
+			WaitForAllDead "EncoreWave3_Subwave1_GChargedManglerSoldier"
+			Where spawnbot_main
+			TotalCount 30
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+					Skill Easy
+					AimTrackingInterval 0.5
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickFix
+					ClassIcon medic_quickfix_seel2
+					Attributes SpawnWithFullCharge
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // Void-Opportunist and 3 Heavies
+		{
+			Name "EncoreWave3_Subwave3_VoidOpportunist"
+			WaitForAllDead "EncoreWave3_Subwave2_GBurstDemos"
+			Where spawnbot_center
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Encore_Heavy_VoidOpportunist
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Easy
+					Attributes AlwaysCrit
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`tf_gamerules`, `PlayVO`, `vo/mvm/mght/heavy_mvm_m_jeers08.mp3`)
+						EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}Damaged Void Opportunist {reset}: Tell me... Where did we go so wrong?!`)
+					  "
+			}
+		}
+		WaveSpawn // Support Direct Hit Soldiers
+		{
+			Name "EncoreWave3_Subwave3_DirectHitSoldiers"
+			WaitForAllDead "EncoreWave3_Subwave2_GBurstDemos"
+			Where spawnbot_main
+			Support 1
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 8
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DirectHit
+				Skill Hard
+			}
+		}
+		WaveSpawn // Support Demomen
+		{
+			Name "EncoreWave3_Subwave3_Demomen"
+			WaitForAllDead "EncoreWave3_Subwave2_GBurstDemos"
+			Where spawnbot_main
+			Support 1
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 0
+
+			TFBot
+			{
+				Class Demoman
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GDeflector Heavy, 1 GRegen Medic and 1 GConch Soldier
+		{
+			Name "EncoreWave3_Subwave3_GiantSquad"
+			WaitForAllDead "EncoreWave3_Subwave3_VoidOpportunist"
+			Where spawnbot_center
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Regen
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Extended_Concheror
+					Attributes AlwaysCrit
+				}
+			}
+		}
+
+		// Wave 3 Complete
+		WaveSpawn
+		{
+			Name "EncoreWave3_Complete"
+			WaitForAllDead "EncoreWave3_Subwave3_GiantSquad"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target EncoreWave3CompleteRelay
+				Action Trigger
+			}
+		}
+
+		//// ENCORE WAVE 4 ////
+
+		// Subwave 1
+		WaveSpawn // 1 Tank
+		{
+			Name "EncoreWave4_Subwave1_Tank"
+			WaitForAllSpawned "EncoreWave3_Complete"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			Tank
+			{
+				Template Tank_Harvester
+				Health 26000
+				Speed 100
+				StartingPathTrackNode "tank_start_harvester"
+			}
+
+			FirstSpawnOutput
+            {
+                Target      relay_tankboss_harvester
+                Action      Trigger
+            }
+		}
+		WaveSpawn // 3 GSandman Scouts and 3 Quick-Uber Medics
+		{
+			Name "EncoreWave4_Subwave1_GSandmanScouts"
+			WaitForAllSpawned "EncoreWave3_Complete"
+			Where spawnbot_center
+			Where spawnbot_right
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 14
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Scout_Baseball_Armored
+					Skill Normal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 2 GShotgun Heavies
+		{
+			Name "EncoreWave4_Subwave1_GShotgunHeavies"
+			WaitForAllSpawned "EncoreWave3_Complete"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 16
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweapons_Shotgun
+				Skill Normal
+			}
+		}
+		WaveSpawn // Support Soldiers and Loch Demos
+		{
+			Name "EncoreWave4_Subwave1_BlastSquads"
+			WaitForAllSpawned "EncoreWave3_Complete"
+			Where spawnbot_main
+			Support 1
+			TotalCount 30
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			Squad
+			{
+				TFBot
+				{
+					Class Soldier
+					Skill Hard
+					AimAt Feet
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Attributes AlwaysCrit
+				}
+			}
+		}
+
+		WaveSpawn // 5 GRapid Soldiers and 5 Quick-Uber Medics
+		{
+			Name "EncoreWave4_Subwave1_GRapidSoldiers"
+			WaitForAllSpawned "EncoreWave4_Subwave1_GShotgunHeavies"
+			Where spawnbot_left
+			TotalCount 10
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 13
+			WaitBetweenSpawns 4
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tank
+		{
+			Name "EncoreWave4_Subwave2_Tank"
+			WaitForAllDead "EncoreWave4_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			Tank
+			{
+				Template Tank_Harvester
+				Health 30000
+				Speed 90
+				StartingPathTrackNode "tank_start_harvester"
+			}
+
+			FirstSpawnOutput
+            {
+                Target      relay_tankboss_harvester
+                Action      Trigger
+            }
+		}
+		WaveSpawn // 3 GShotgun Heavies and 3 GRapid Soldiers
+		{
+			Name "EncoreWave4_Subwave2_GShotgunHeavies"
+			WaitForAllSpawned "EncoreWave4_Subwave2_Tank"
+			Where spawnbot_right
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 16
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons_Shotgun
+					Skill Easy
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+				}
+			}
+		}
+		WaveSpawn // 2 GSandman Scouts and 2 Quick-Uber Medics
+		{
+			Name "EncoreWave4_Subwave2_GSandmanScouts"
+			WaitForAllSpawned "EncoreWave4_Subwave2_Tank"
+			Where spawnbot_center
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 4
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Scout_Baseball_Armored
+					Skill Normal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 Minigun-DragonFury Tank
+		{
+			Name "EncoreWave4_Subwave3_MinigunDragonFuryTank"
+			WaitForAllDead "EncoreWave4_Subwave2_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 75
+
+			Tank
+			{
+				Template Tank_Combat_Minigun_DragonFury
+				Health 30000
+				Speed 80
+				StartingPathTrackNode "path_tank_left"
+
+				SpawnTemplate "CombatTankBombPT"
+			}
+		}
+		WaveSpawn // 1 GSandman Scout and 1 Quick-Uber Medic
+		{
+			Name "EncoreWave4_Subwave3_GSandmanScout"
+			WaitForAllDead "EncoreWave4_Subwave2_Tank"
+			Where spawnbot_center
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Scout_Baseball_Armored
+					Skill Normal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 1 GShotgun Heavy and 1 GRegen Medic
+		{
+			Name "EncoreWave4_Subwave3_GShotgunHeavy"
+			WaitForAllDead "EncoreWave4_Subwave2_Tank"
+			Where spawnbot_center
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Regen
+				}
+			}
+		}
+		WaveSpawn // 10 Bowmen and 10 Pyros
+		{
+			Name "EncoreWave4_Subwave3_HuntsmanSquads"
+			WaitForAllDead "EncoreWave4_Subwave2_Tank"
+			Where spawnbot_main
+			TotalCount 20
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 3
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Class Pyro
+					Skill Easy
+					Attributes AlwaysFireWeapon
+				}
+			}
+		}
+
+		WaveSpawn // 3 GHoK Deflector Heavies and 3 GHyper Soldiers
+		{
+			Name "EncoreWave4_Subwave3_GDeflectorSquads"
+			WaitForAllSpawned "EncoreWave4_Subwave3_GShotgunHeavy"
+			Where spawnbot_right
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 15.5
+			WaitBetweenSpawns 10
+			TotalCurrency 25
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavyweapons_HealOnKill_Modded
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Hyper
+				}
+			}
+			DoneOutput
+			{
+				Target "CombatTankBombRelay"
+				Action Trigger
+			}
+		}
+
+		// Wave 4 Check
+		WaveSpawn
+		{
+			Name "EncoreWave4_Check"
+			WaitForAllDead "EncoreWave4_Subwave3_MinigunDragonFuryTank"
+		}
+		WaveSpawn
+		{
+			Name "EncoreWave4_Check"
+			WaitForAllDead "EncoreWave4_Subwave3_GDeflectorSquads"
+		}
+
+		// Wave 4 Complete
+		WaveSpawn
+		{
+			Name "EncoreWave4_Complete"
+			WaitForAllSpawned "EncoreWave4_Check"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target EncoreWave4CompleteRelay
+				Action Trigger
+			}
+		}
+	}
+
+	// Dud Wave for Encore Mechanic
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`popscript`, `$killCycle`)
+					EntFire(`tf_gamerules`, `$FinishWave`)
+				  "
 		}
 	}
 }

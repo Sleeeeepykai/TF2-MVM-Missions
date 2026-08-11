@@ -621,7 +621,7 @@ function StopWarTank(_, activator)
                     tankCheck:AcceptInput("SetSpeed", "1")
 
                     for _, player in pairs(ents.GetAllPlayers()) do
-                        player:AcceptInput("$PlaySoundToSelf", "tank_park.mp3")
+                        player:AcceptInput("$PlaySoundToSelf", "impasse/tank_park.mp3")
                     end
                 end)
             end
@@ -634,7 +634,7 @@ end
 
 function CustomBombDeploy(_, activator)
     local tankCheck = activator
-    local bombdeployrelay = ents.FindByName("custom_bomb_deploy")
+    local bombdeployrelay = ents.FindByName("CombatTankDeployRelay")
 
     if tankCheck:GetName("combattank|minigun|fireball") then 
         bombdeployrelay:AcceptInput("Trigger")
