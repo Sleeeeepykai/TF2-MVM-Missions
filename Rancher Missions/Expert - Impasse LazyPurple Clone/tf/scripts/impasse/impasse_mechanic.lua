@@ -494,8 +494,7 @@ end
 function encoreCheck()
     if encoreCapable == 0 then
 
-        ents.FindByName("failedEncore"):AcceptInput("Trigger")
-        ents.FindByName("stopMusic"):AcceptInput("Trigger")
+        ents.FindByName("EncoreFailRelay"):AcceptInput("Trigger")
 
         for _, player in pairs(ents.GetAllPlayers()) do
             player:AcceptInput("$DisplayTextChat", "{FFC0CB}Management : Your results have been recorded... Do Better Next Time.")
@@ -524,30 +523,6 @@ function BurstIcon(_, activator)
     activator.m_iszClassIcon = "demo_sticky_daan"
 end
 
--- Note: Deprecated because its for some reason fucking inconsistent
--- function fakeHealthBots(_, activator)
---     activator:RemoveAllCallbacks(ON_DEATH)
-
---     local bobodacious = ents.FindByName("@p@broadsideofabarn")
-
---     util.PrintToChatAll(bobodacious:GetPlayerName())
---     util.PrintToChatAll(activator:GetPlayerName())
-
---     timer.Simple(0.22, function()
-        
---         activator:AddCallback(ON_DEATH, function()
-
---             bobodacious:AcceptInput("$TakeDamage", 1000)
-            
---             util.PrintToChatAll("beugh")
---             util.PrintToChatAll(bobodacious.m_iHealth)
-
---             activator:RemoveAllCallbacks(ON_DEATH)
---         end)
---     end)
--- end
-
--------------------------------------------------------------
 waveIndex = 1
 alreadyWaved = 0
 function encoreWaveCycler()
