@@ -273,14 +273,13 @@ function bombThem(_, activator)
     local mapInfo = {
         translation = "0 0 0"
     }
-    ents.SpawnTemplate("barragezone_sound", playerInfo)
     for _, player in pairs(ents.FindInSphere(activator:GetAbsOrigin(), 800, "player")) do
 
         if player:IsRealPlayer() and player:IsAlive() and player.m_iTeamNum == 2 and not player:InCond(6) then
             local playerInfo = {
                         translation = player:GetAbsOrigin()
                     }
-            ents.SpawnTemplate("barragezone", playerInfo)
+            ents.SpawnTemplate("CommanderAirstrikePT", playerInfo)
         end
     end
 end
@@ -289,14 +288,13 @@ function bombThemVoid(_, activator)
     local mapInfo = {
         translation = "0 0 0"
     }
-    ents.SpawnTemplate("barragezone_sound", playerInfo)
     for _, player in pairs(ents.FindInSphere(activator:GetAbsOrigin(), 800, "player")) do
 
         if player:IsRealPlayer() and player:IsAlive() and player.m_iTeamNum == 2 and not player:InCond(6) then
             local playerInfo = {
                         translation = player:GetAbsOrigin()
                     }
-            ents.SpawnTemplate("barragezone_void", playerInfo)
+            ents.SpawnTemplate("VoidOpportunistAirstrikePT", playerInfo)
         end
     end
 end
@@ -402,7 +400,7 @@ function VoteForEncore()
                 ents.FindByName("point_populator_interface"):AcceptInput("$JumpToWave", 7)
             elseif encoreYes > encoreNo then
 
-                ents.FindByName("fadeToEncore"):AcceptInput("Trigger")
+                ents.FindByName("EncoreTransitionRelay"):AcceptInput("Trigger")
 
                 timer.Simple(9, function()
                     ents.FindByName("point_populator_interface"):AcceptInput("$FinishWave")
@@ -417,7 +415,7 @@ function VoteForEncore()
                     end
 
                     timer.Simple(4, function()
-                        ents.FindByName("fadeToEncore"):AcceptInput("Trigger")
+                        ents.FindByName("EncoreTransitionRelay"):AcceptInput("Trigger")
 
                         timer.Simple(9, function()
 							-- Fix W5 completion tracking.
