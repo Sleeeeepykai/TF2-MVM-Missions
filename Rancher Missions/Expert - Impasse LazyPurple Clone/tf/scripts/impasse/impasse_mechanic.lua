@@ -376,7 +376,7 @@ function failedCondition()
     end
 end
 
-function setUpEncoreRequiremts()
+function setUpEncoreRequirements()
     if encoreCapable == 1 then
         for _, player in pairs(ents.GetAllPlayers()) do
 
@@ -490,7 +490,7 @@ function encoreWaveCycler()
 end
 
 function killCycle()
-	if donavan then
+	if donavan ~= nil then
     	timer.Stop(donavan)
 	end
     alreadyWaved = 0
