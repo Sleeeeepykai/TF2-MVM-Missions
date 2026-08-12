@@ -203,6 +203,7 @@ WaveSchedule
 			{
 				"targetname" "Wave5CompleteRelay"
 
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
 				"OnTrigger" "popscript,$encoreCheck,,0,-1"
 				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave5_Subwave2_Engineers,0,-1"
 				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave5_Subwave2_Engineers,0,-1"
@@ -524,8 +525,11 @@ WaveSchedule
 				"targetname" "EncoreWave4CompleteRelay"
 
 				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
-				"OnTrigger" "pop_interface,$KillWaveSpawn,EncoreWave4_Subwave1_BlastSquads,0,-1"
-				"OnTrigger" "pop_interface,$PauseWaveSpawn,EncoreWave4_Subwave1_BlastSquads,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,EncoreWave4_Subwave1_Soldiers,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,EncoreWave4_Subwave1_Soldiers,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,EncoreWave4_Subwave1_LochDemos,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,EncoreWave4_Subwave1_LochDemos,0,-1"
+				"OnTrigger" "pop_interface,PauseBotSpawning,0,-1"
 				
 				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management : All of that... You still stand.,3,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management : You have exceeded my expectations. You have dwindled my numbers. You... won. Well done.,6,-1"
@@ -541,7 +545,7 @@ WaveSchedule
 				"OnTrigger" "popscript,$itstimefortermination,,30,-1"
 				"OnTrigger" "Player,speakresponseconcept,TLK_PLAYER_GOODJOB,30,-1"
 
-				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 2, 2, 2)33-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 2, 10, 2)33-1"
 				"OnTrigger" "tf_gamerules,$FinishWave,,35.5,-1"
 			}
 		}
@@ -804,13 +808,13 @@ WaveSchedule
 				"spawnflags" "1"
 				"startdisabled" "1"
 
-				"OnStartTouch" "!activator,$AddCond,32 4,0,-1"
+				"OnStartTouch" "!activator,$AddCond,5 2,0,-1"
 				"OnStartTouch" "!activator,$AddCond,71 0.5,0,-1"
 			}
 			info_target
 			{
 				"targetname" "VoidOppressionistTeleportTarget"
-				"origin" "60 0 60"
+				"origin" "50 0 60"
 			}
 			point_push
 			{
@@ -1001,6 +1005,8 @@ WaveSchedule
 
 		EncoreSVChiefHealthMeterPT
 		{
+			NoFixUp 1
+
 			OnSpawnOutput
 			{
 				Target "SVChiefHealthMeterTarget"
@@ -1032,8 +1038,9 @@ WaveSchedule
 		{
 			OnParentKilledOutput
 			{
-				Target SVChiefSelfDamageRelay
+				Target "SVChiefSelfDamageRelay"
 				Action Trigger
+				Delay 0
 			}
 
 			tf_glow
@@ -2054,6 +2061,9 @@ WaveSchedule
 
 			SpawnTemplate "VoidOppressionistPT"
 
+			Tag dontdoublehp
+			Tag dontdoublehp_damageres
+
 			Item "Chieftain's Challenge"
 			Item "The Diplomat"
 			Item "Fancy Dress Uniform"
@@ -2143,6 +2153,9 @@ WaveSchedule
 
 			SpawnTemplate "VoidOpportunistPT"
 			SpawnTemplate "RobotUberGenPT"
+
+			Tag dontdoublehp
+			Tag dontdoublehp_damageres
 
 			Item "Deflector"
 			Item "The Mantreads"
@@ -5045,6 +5058,8 @@ WaveSchedule
 
 				SpawnTemplate "EncoreSVChiefHealthMeterPT"
 
+				Tag dontdoublehp
+
 				CharacterAttributes
 				{
 					"move speed penalty" 0.001
@@ -5882,32 +5897,43 @@ WaveSchedule
 				Skill Normal
 			}
 		}
-		WaveSpawn // Support Soldiers and Loch Demos
+		WaveSpawn // Support Soldiers
 		{
-			Name "EncoreWave4_Subwave1_BlastSquads"
+			Name "EncoreWave4_Subwave1_Soldiers"
 			WaitForAllSpawned "EncoreWave3_Complete"
 			Where spawnbot_main
 			Support 1
-			TotalCount 30
-			MaxActive 8
-			SpawnCount 2
+			TotalCount 25
+			MaxActive 4
+			SpawnCount 1
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 4
-			TotalCurrency 50
+			TotalCurrency 25
 
-			Squad
+			TFBot
 			{
-				TFBot
-				{
-					Class Soldier
-					Skill Hard
-					AimAt Feet
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_LochnLoad
-					Attributes AlwaysCrit
-				}
+				Class Soldier
+				Skill Hard
+				AimAt Feet
+			}
+		}
+		WaveSpawn // Support Loch Demos
+		{
+			Name "EncoreWave4_Subwave1_LochDemos"
+			WaitForAllSpawned "EncoreWave3_Complete"
+			Where spawnbot_main
+			Support 1
+			TotalCount 25
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 4
+			TotalCurrency 25
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_LochnLoad
+				Attributes AlwaysCrit
 			}
 		}
 
