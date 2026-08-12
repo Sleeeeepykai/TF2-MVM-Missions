@@ -765,6 +765,11 @@ WaveSchedule
 			{
 				"targetname" "PrototypeDeathRelay"
 
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave6_Subwave1_GRapidDemos,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave6_Subwave1_GRapidDemos,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave6_Subwave1_SuperchargedPyros,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave6_Subwave1_SuperchargedPyros,0,-1"
+
 				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm\mght\heavy_mvm_m_painsevere01.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,player\invulnerable_off.wav,0,-1"
 				"OnTrigger" "Heded,Enable,,0,-1"
@@ -937,7 +942,7 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_statue_evileye
 			Skill Expert
-			Health 100000
+			Health 750000
 			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
@@ -4671,19 +4676,40 @@ WaveSchedule
 					  "
 			}
 		}
-		WaveSpawn // 30 Supercharged Pyros
+		WaveSpawn // Support GRapid Demos
+		{
+			Name "Wave6_Subwave1_GRapidDemos"
+			WaitForAllSpawned "Wave6_Subwave1_Prototype"
+			Where spawnbot_left
+			Where spawnbot_right
+			Support 1
+			TotalCount 10
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Spammer
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // Support Supercharged Pyros
 		{
 			Name "Wave6_Subwave1_SuperchargedPyros"
 			WaitForAllSpawned "Wave6_Subwave1_Prototype"
 			Where spawnbot
 			Where spawnbot_left
 			Where spawnbot_right
-			TotalCount 30
+			Support 1
+			TotalCount 40
 			MaxActive 5
 			SpawnCount 2
 			WaitBeforeStarting 8
 			WaitBetweenSpawns 2
-			TotalCurrency 100
+			TotalCurrency 40
 
 			RandomChoice
 			{
@@ -4693,11 +4719,25 @@ WaveSchedule
 				{
 					Template T_TFBot_Pyro_Supercharged
 					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Supercharged
 					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
 				}
 				TFBot
 				{
@@ -4705,6 +4745,534 @@ WaveSchedule
 					Attributes AlwaysCrit
 					Attributes AlwaysFireWeapon
 				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave6_Subwave2_TinyTank"
+			WaitForAllDead "Wave6_Subwave1_Prototype"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 25000
+				StartingPathTrackNode "tank_path_a_1"
+			}
+		}
+		WaveSpawn // Support GRapid Demos
+		{
+			Name "Wave6_Subwave2_GRapidDemos"
+			WaitForAllSpawned "Wave6_Subwave2_TinyTank"
+			Where spawnbot_left
+			Where spawnbot_right
+			Support 1
+			TotalCount 10
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Spammer
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // Support Supercharged Pyros
+		{
+			Name "Wave6_Subwave2_SuperchargedPyros"
+			WaitForAllSpawned "Wave6_Subwave2_TinyTank"
+			Where spawnbot
+			Where spawnbot_left
+			Where spawnbot_right
+			Support 1
+			TotalCount 40
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+					Attributes AlwaysCrit
+					Attributes AlwaysFireWeapon
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+					Attributes AlwaysCrit
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
+				}
+			}
+		}
+
+		WaveSpawn // 1 GSpreadshot Soldier and 2 Full-Uber Medics
+		{
+			Name "Wave6_Subwave2_GSpreadshotSoldier"
+			WaitForAllSpawned "Wave6_Subwave2_TinyTank"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_SpreadShot
+					
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 8 Burst Pomson Engineers
+		{
+			Name "Wave6_Subwave2_PomsonEngineers"
+			WaitForAllSpawned "Wave6_Subwave2_GSpreadshotSoldier"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Pomson_Burst
+			}
+		}
+		WaveSpawn // 16 Heavies
+		{
+			Name "Wave6_Subwave2_Heavies"
+			WaitForAllSpawned "Wave6_Subwave2_GSpreadshotSoldier"
+			Where spawnbot_left
+			TotalCount 16
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0.5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave6_Subwave2_TinyTank2"
+			WaitForAllSpawned "Wave6_Subwave2_GSpreadshotSoldier"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 25000
+				StartingPathTrackNode "tank_path_a_1"
+			}
+		}
+		WaveSpawn // 1 GSpreadshot Soldier and 3 Full-Uber Medics
+		{
+			Name "Wave6_Subwave2_GSpreadshotSoldier2"
+			WaitForAllSpawned "Wave6_Subwave2_TinyTank2"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_SpreadShot
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 8 Burst Pomson Engineers
+		{
+			Name "Wave6_Subwave2_PomsonEngineers2"
+			WaitForAllSpawned "Wave6_Subwave2_GSpreadshotSoldier2"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Engineer_Pomson_Burst
+			}
+		}
+		WaveSpawn // 16 Heavies
+		{
+			Name "Wave6_Subwave2_Heavies"
+			WaitForAllSpawned "Wave6_Subwave2_GSpreadshotSoldier"
+			Where spawnbot_left
+			TotalCount 16
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0.5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Expert
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave6_Subwave3_TinyTank"
+			WaitForAllSpawned "Wave6_Subwave2_GSpreadshotSoldier2"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 25000
+				StartingPathTrackNode "tank_path_a_1"
+			}
+		}
+		WaveSpawn // 1 GSpreadshot Soldier and 2 Supercharged Medics
+		{
+			Name "Wave6_Subwave3_GSpreadshotSoldier"
+			WaitForAllSpawned "Wave6_Subwave3_TinyTank"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_SpreadShot
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 2 Burst Pomson Engineers and 4 Full-Uber Medics
+		{
+			Name "Wave6_Subwave3_PomsonEngineers"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier"
+			Where spawnbot_left
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Pomson_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 Burst Pomson Engineers and 4 Full-Uber Medics
+		{
+			Name "Wave6_Subwave3_PomsonEngineers"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier"
+			Where spawnbot_right
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Pomson_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 15 Fireball Cannon Demos
+		{
+			Name "Wave6_Subwave3_FireballCannonDemos"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier"
+			Where spawnbot
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Fireball_Cannon
+			}
+		}
+
+		WaveSpawn // 1 Tiny Tank
+		{
+			Name "Wave6_Subwave3_TinyTank2"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Tiny
+				Health 25000
+				StartingPathTrackNode "tank_path_a_1"
+			}
+		}
+		WaveSpawn // 1 GSpreadshot Soldier, 1 GCharged Medic and 3 Supercharged Medics
+		{
+			Name "Wave6_Subwave3_GSpreadshotSoldier2"
+			WaitForAllSpawned "Wave6_Subwave3_TinyTank2"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_SpreadShot
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 2 Burst Pomson Engineers and 4 Full-Uber Medics
+		{
+			Name "Wave6_Subwave3_PomsonEngineers2"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier2"
+			Where spawnbot_left
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Pomson_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 Burst Pomson Engineers and 4 Full-Uber Medics
+		{
+			Name "Wave6_Subwave3_PomsonEngineers2"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier2"
+			Where spawnbot_right
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Pomson_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 15 Fireball Cannon Demos
+		{
+			Name "Wave6_Subwave3_FireballCannonDemos2"
+			WaitForAllSpawned "Wave6_Subwave3_GSpreadshotSoldier2"
+			Where spawnbot
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Fireball_Cannon
 			}
 		}
 	}
