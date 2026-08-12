@@ -937,7 +937,7 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_statue_evileye
 			Skill Expert
-			Health 75000
+			Health 100000
 			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
@@ -4644,5 +4644,68 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		// Subwave 1
+		WaveSpawn // 1 Prototype
+		{
+			Name "Wave6_Subwave1_Prototype"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_Heavy_MegaLaser
+			}
+
+			DoneOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`PrototypeDeathRelay`, `Trigger`)
+					  "
+			}
+		}
+		WaveSpawn // 30 Supercharged Pyros
+		{
+			Name "Wave6_Subwave1_SuperchargedPyros"
+			WaitForAllSpawned "Wave6_Subwave1_Prototype"
+			Where spawnbot
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 30
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 2
+			TotalCurrency 100
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+					Attributes AlwaysCrit
+					Attributes AlwaysFireWeapon
+				}
+			}
+		}
 	}
 }
