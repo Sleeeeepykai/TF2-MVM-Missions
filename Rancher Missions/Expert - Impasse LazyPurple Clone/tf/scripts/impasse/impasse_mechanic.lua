@@ -96,7 +96,7 @@ function OnWaveInit(wave)
         end
     elseif wave == 5 and encoreCapable == 1  then
         for _, player in pairs(ents.GetAllPlayers()) do
-            player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@geMENT : Dear High Priority Targets. Your Data Experiment Result has brought immense satisfaction beyond. This time, there will is no cohesion.")
+            player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@geMENT : Dear High Priority Targets. Your Data Experiment Result has brought immense satisfaction beyond. This time, there will be no cohesion.")
             timer.Simple(5, function()
                 player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@geMENT : You are not to win this time. If you beat the odds, we plan to intervene. You will prove yourself to us...")
             end)
@@ -153,85 +153,7 @@ function OnWaveInit(wave)
 end
 
 function OnWaveStart(wave)
-    -- print (test)
     retconfixupshenanigans = 0
-
-    if wave == 1 then
-        ents.FindByName("music1"):AcceptInput("Trigger")
-
-        for _, player in pairs(ents.GetAllPlayers()) do
-            player:AcceptInput("$DisplayTextChat", "{FFC0CB}-NOW PLAYING : The Asparagus Beyond The Obscure (By: SlungerBlob)")
-        end
-
-
-    elseif wave == 2 then
-
-        ents.FindByName("music2"):AcceptInput("Trigger")
-        -- ents.FindByName("spawnbot_health*"):AcceptInput("Kill")
-
-        for _, player in pairs(ents.GetAllPlayers()) do
-            if player:IsRealPlayer() then
-            player:AcceptInput("$DisplayTextChat", "{FFC0CB}? {fbeccb}: BOMB THEM. BOMB THEM. AIRSTRIKES ALL AROUND! ")
-            player:AcceptInput("$DisplayTextChat", "{yellow}-NOW PLAYING : T-Error On The Dance Floor (By: ShinyBod)")
-            end
-        end
-
-    elseif wave == 3 then
-        ents.FindByName("music3"):AcceptInput("Trigger")
-        -- ents.FindByName("spawnbot_health*"):AcceptInput("Kill")
-
-        for _, player in pairs(ents.GetAllPlayers()) do
-            if player:IsRealPlayer() then
-            player:AcceptInput("$DisplayTextChat", "{yellow}-NOW PLAYING : Sky-Fall Trigger (By: SingerBrob)")
-            end
-        end
-
-    elseif wave == 4 then
-        ents.FindByName("music4"):AcceptInput("Trigger")
-        -- ents.FindByName("spawnbot_health*"):AcceptInput("Kill")
-
-        for _, player in pairs(ents.GetAllPlayers()) do
-            if player:IsRealPlayer() then
-            player:AcceptInput("$DisplayTextChat", "{yellow}-NOW PLAYING : Hard-Struck (By: SimpleShop FEAT. Tungsten-Scrub)")
-            end
-        end
-    elseif wave == 5 then
-        ents.FindByName("music5"):AcceptInput("Trigger")
-        -- ents.FindByName("spawnbot_health*"):AcceptInput("Kill")
-
-        for _, player in pairs(ents.GetAllPlayers()) do
-            if player:IsRealPlayer() then
-            player:AcceptInput("$DisplayTextChat", "{FFC0CB}-Yet Here We Are At An Impasse...")
-            end
-        end
-    elseif wave == 6 then
-
-        ents.FindByName("musicEncore"):AcceptInput("Trigger")
-        -- ents.FindByName("spawnbot_health*"):AcceptInput("Kill")
-
-        for _, player in pairs(ents.GetAllPlayers()) do
-
-            if player:IsRealPlayer() then
-
-                player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@gement : You have accepted to face The Void.")
-
-                timer.Simple(5, function()
-                    player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@gement : My deepest gratitude, Team Fortress.")
-                end)
-                timer.Simple(10, function()
-                    player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@gement : We will put our Data Experiment Result to the test.")
-                end)
-                timer.Simple(16, function()
-                    player:AcceptInput("$DisplayTextChat", "{FFC0CB}M@n@gement : Good luck. Let us receive the fruits of our labor. :)")
-                end)
-
-                timer.Simple(13.8, function()
-                    player:AcceptInput("$DisplayTextChat", "{FFC0CB}Loading {red}Mission.File Wave1.pop -//")
-                    player:AcceptInput("$DisplayTextChat", "{FFC0CB}-NOW PLAYING : BREAK EXPECTATIONS (By: {yellow}Snurper_Bob)")
-                end)
-            end
-        end
-    end
 end
 --
 function OnWaveSpawnTank(tank, wave)
@@ -572,38 +494,6 @@ function killCycle()
     	timer.Stop(donavan)
 	end
     alreadyWaved = 0
-end
-
-function showBossHealthBar(_, activator)
-    activator.m_bUseBossHealthBar = 1
-end
-
-function check(_, activator)
-    util.PrintToChatAll(activator:GetPlayerName())
-end
-
-function laserOfDoom() --Simply put... fuck you beam
-    local beamEndPoint = ents.FindByName("beam_end_pos")
-    local vision = ents.FindByName("rotator")
-
-    updateLaserPosition = timer.Create(-1, function()
-        local beamLocation = 
-        {
-            start = vision,
-            angles = ents.FindByName("rotator"):GetAbsAngles(),
-            mask = MASK_NPCWORLDSTATIC
-        }
-
-        local beamAttack = util.Trace(beamLocation)
-        -- PrintTable(beamAttack)
-        -- util.PrintToChatAll(tostring(beamAttack.HitPos))
-
-        beamEndPoint:SetAbsOrigin(beamAttack.HitPos)
-    end,0)
-end
-
-function stopLaser()
-    timer.Stop(updateLaserPosition)
 end
 
 retconfixupshenanigans = 0
