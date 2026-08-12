@@ -373,6 +373,8 @@ WaveSchedule
 
 				"OnTrigger" "red_lift_door_left_trigger,Enable,,5,-1"
 				"OnTrigger" "red_lift_door_right_trigger,Enable,,5,-1"
+				"OnTrigger" "lift_door_left,Close,,5,-1"
+				"OnTrigger" "lift_door_right,Close,,5,-1"
 
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})51"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro3.mp3`,channel = 6,special_dsp = 55,filter_type=5})6.41"
@@ -496,11 +498,11 @@ WaveSchedule
 
 				"OnTrigger" "04_door,SetSpeed,400,0,-1"
 				"OnTrigger" "05_door,SetSpeed,400,0,-1"
-				"OnTrigger" "04_door_lock_relay,Trigger,,0.1,-1"
-				"OnTrigger" "05_door_lock_relay,Trigger,,0.1,-1"
+				"OnTrigger" "04_door_lock_relay,Trigger,,3,-1"
+				"OnTrigger" "05_door_lock_relay,Trigger,,3,-1"
 
-				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 5, 2, 50000, 0, true)3.46-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/rottenburg/tunneldoor_closed_loud.wav,3.46,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 5, 2, 50000, 0, true)3.45-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/rottenburg/tunneldoor_closed_loud.wav,3.45,-1"
 
 				"OnTrigger" "PlayerDoor05Forcefield,Kill,,4,-1"
 				"OnTrigger" "PlayerDoor05Sign,Kill,,4,-1"
@@ -1018,6 +1020,7 @@ WaveSchedule
 			{
 				"targetname" "Wave7SetupRelay"
 
+				"OnTrigger" "BigNetRunScriptCodeNetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `Termination - Total Teardown`)0-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})31"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_rocketfuelling.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave7-7/saxtonhalevoicelines/saxton_hale_rocketfuelling.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
@@ -1025,6 +1028,16 @@ WaveSchedule
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: We're on the home stretch now boys! Our Engibot's getting the rocket fuelled and ready to transport our Australium.,4.4,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: It's an estimated 7 and a half minutes until it's prepped so use that time to clear out the meagre cannon fodder {d9d9d9}Gray Mann{reset}'s throwing at you!,9.4,-1"
 			}
+
+			logic_timer
+			{
+				"targetname" "VoicelineSuppressorTimer"
+				"RefireTime" "0.5"
+				
+				"OnTimer" "Act4IntroVoicelineRelay*,CancelPending,,0,-1"
+				"OnTimer" "Act4IntroVoicelineRelay*,Kill,,0.1,-1"
+			}
+
 			logic_relay
 			{
 				"targetname" "Wave7StartRelay"
@@ -1188,23 +1201,22 @@ WaveSchedule
 			{
 				Target Act4IntroVoicelineRelay
 				Action Trigger
-				Delay 3
 			}
 
 			logic_relay
 			{
 				"targetname" "Act4IntroVoicelineRelay"
 
-				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})01"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
-				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Great work taking out that prototype! I don't think {d9d9d9}Gray Mann{reset}'s got anything up his sleeve now.,1.4,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})31"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro1.mp3`,channel = 6,special_dsp = 55,filter_type=5})4.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Great work taking out that prototype! I don't think {d9d9d9}Gray Mann{reset}'s got anything up his sleeve now.,4.4,-1"
 
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})11.41"
-				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: It'll be smooth sailing from here! With this Australium we'll load it onto that ol' rocket on the other end and send it packing to a safe location.,11.4,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})14.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})14.41"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_intro2.mp3`,channel = 6,special_dsp = 55,filter_type=5})14.41"
+				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: It'll be smooth sailing from here! With this Australium we'll load it onto that ol' rocket on the other end and send it packing to a safe location.,14.4,-1"
 			}
 		}
 
@@ -1269,8 +1281,8 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act4/wave6-7/saxtonhalevoicelines/saxton_hale_turbocharge.mp3`,channel = 6,special_dsp = 55,filter_type=5})1.41"
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Now that's what we're looking for! That gas will turbo-charge the Australium Tank! We'll need a lot of that stuff to juice up this tank and PUNCH that door wide open!,1.4,-1"
 
-				"OnTrigger" "Player,$DisplayTextHint,TURBO-CHARGE THE AUSTRALIUM TANK,10,-1"
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave4_Trigger,10,-1"
+				"OnTrigger" "Player,$DisplayTextHint,TURBO-CHARGE THE AUSTRALIUM TANK,5,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave4_Trigger,5,-1"
 			}
 			logic_relay
 			{
@@ -2962,6 +2974,8 @@ WaveSchedule
             WaitBetweenSpawns 0
             TotalCurrency 50
 
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
 			StartDisabled 1
 
             TFBot
@@ -2983,8 +2997,8 @@ WaveSchedule
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 1
-			WaitBetweenSpawns 20
-			WaitBeforeStarting 5
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 5
 			TotalCurrency 25
 
 			TFBot
@@ -3123,6 +3137,8 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 50
 
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
 			StartDisabled 1
 
 			TFBot
@@ -3193,7 +3209,7 @@ WaveSchedule
 			MaxActive 8
 			SpawnCount 1
 			WaitBeforeStarting 10
-			WaitBetweenSpawns 3
+			WaitBetweenSpawns 2
 			TotalCurrency 25
 
 			TFBot
@@ -3421,7 +3437,7 @@ WaveSchedule
 		{
 			Name "Wave6_Subwave4_GHeavies"
 			WaitForAllSpawned "Wave6_Subwave4_Trigger"
-			Where spawnbot_side_2
+			Where spawnbot_side_3
 			TotalCount 2
 			MaxActive 1
 			SpawnCount 1
@@ -3432,6 +3448,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweapons
+				Action Mobber
 
 				CharacterAttributes
 				{
@@ -3439,12 +3456,12 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 9 Braizen Gauntlets and 9 Big-Heal Medics
+		WaveSpawn // 8 Braizen Gauntlets and 8 Big-Heal Medics
 		{
 			Name "Wave6_Subwave4_BraizenGauntlets"
 			WaitForAllSpawned "Wave6_Subwave4_Trigger"
-			Where spawnbot_side_2
-			TotalCount 18
+			Where spawnbot_side_3
+			TotalCount 16
 			MaxActive 6
 			SpawnCount 2
 			WaitBeforeStarting 0
@@ -3456,6 +3473,9 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Heavy_Steelfist_Fire
+					Action Mobber
+
+					SpawnTemplate "BotGasCanPT"
 
 					CharacterAttributes
 					{
@@ -3488,6 +3508,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Soldier_Crit
+				Action Mobber
 
 				CharacterAttributes
 				{
@@ -3517,6 +3538,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Pyro_Magma
 					Action Mobber
+
+					SpawnTemplate "BotGasCanPT"
 
 					CharacterAttributes
 					{
@@ -3569,13 +3592,14 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Homewrecker
+				Action Mobber
 			}
 		}
 		WaveSpawn // 18 Axtinguisher Pyros
 		{
 			Name "Wave6_Subwave5_AxtinguisherPyros"
 			WaitForAllSpawned "Wave6_Subwave4_BraizenGauntlets"
-			Where spawnbot_side_2
+			Where spawnbot_side_3
 			TotalCount 18
 			MaxActive 8
 			SpawnCount 2
@@ -3586,13 +3610,14 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Pyro_Axtinguisher
+				Action Mobber
 			}
 		}
 		WaveSpawn // 24 Shotgun Engineers
 		{
 			Name "Wave6_Subwave5_Engineers"
 			WaitForAllSpawned "Wave6_Subwave4_BraizenGauntlets"
-			Where spawnbot_side_2
+			Where spawnbot_side_3
 			TotalCount 24
 			MaxActive 8
 			SpawnCount 2
@@ -3603,6 +3628,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Shotgun
+				Action Mobber
 			}
 		}
 
@@ -3617,6 +3643,8 @@ WaveSchedule
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 50
+
+			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
 
 			StartDisabled 1
 
@@ -3756,6 +3784,7 @@ WaveSchedule
 			Param "
 					EntFire(`bombpath_right_relay`, `Trigger`)
 
+					EntFire(`Wave7PT`, `ForceSpawn`)
 					EntFire(`Wave7SetupRelay`, `Trigger`)
 
 					EntFire(`ActSetupRelay`, `Kill`)
