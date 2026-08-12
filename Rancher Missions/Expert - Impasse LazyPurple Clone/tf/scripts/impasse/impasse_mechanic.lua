@@ -452,10 +452,10 @@ function encoreWaveCycler()
     end
 
     local cycleLogic = {
-        ents.FindByName("wave1"),
-        ents.FindByName("wave2"),
-        ents.FindByName("wave3"),
-        ents.FindByName("wave4")
+        ents.FindByName("EncoreWave1"),
+        ents.FindByName("EncoreWave2"),
+        ents.FindByName("EncoreWave3"),
+        ents.FindByName("EncoreWave4")
     }
 
     -- print(waveIndex)
@@ -496,32 +496,6 @@ function killCycle()
     alreadyWaved = 0
 end
 
-retconfixupshenanigans = 0
-function StopWarTank(_, activator)
-    -- util.PrintToChatAll(activator)
-    local tankCheck = activator
-
-    if retconfixupshenanigans == 0 then
-
-        if tankCheck:GetName("combattank|minigun|fireball") then 
-            -- util.PrintToChatAll(tankCheck:GetName())
-
-            if tankCheck:GetName() == "combattank|minigun|fireball" then
-                timer.Simple(4, function()
-                    tankCheck:AcceptInput("SetSpeed", "1")
-
-                    for _, player in pairs(ents.GetAllPlayers()) do
-                        player:AcceptInput("$PlaySoundToSelf", "impasse/tank_park.mp3")
-                    end
-                end)
-            end
-
-        else
-            util.PrintToChatAll("This Is NOT A WAR TANK >:(")
-        end
-    end
-end
-
 function CustomBombDeploy(_, activator)
     local tankCheck = activator
     local bombdeployrelay = ents.FindByName("CombatTankDeployRelay")
@@ -533,15 +507,6 @@ end
 
 function fixup()
     retconfixupshenanigans = 1
-end
-
-function fillchatwithspace()
-    timer.Create(-1, function()
-        for _, player in pairs(ents.GetAllPlayers()) do
-            player:AcceptInput("$DisplayTextChat", " ")
-
-        end
-    end, 8)
 end
 
 function theEndofImpasse()
