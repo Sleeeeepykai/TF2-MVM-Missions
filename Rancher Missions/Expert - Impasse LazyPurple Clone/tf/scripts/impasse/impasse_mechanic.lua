@@ -216,7 +216,7 @@ function bombThemVoid(_, activator)
             local playerInfo = {
                         translation = player:GetAbsOrigin()
                     }
-            ents.SpawnTemplate("VoidOpportunistAirstrikePT", playerInfo)
+            ents.SpawnTemplate("VoidOppressionistAirstrikePT", playerInfo)
         end
     end
 end
@@ -280,8 +280,8 @@ NoVoteMenu = {
 function VoteForEncore()
 
     local encore = timer.Create(0.22, function()
-        EncoreMenu[1] = {text = "Deny. Live To See Another Day. " ..encoreNo.."/6"}
-        EncoreMenu[2] = {text = "Accept. One Last Time (Encore Mode) "..encoreYes.."/6"}
+        EncoreMenu[1] = {text = "Deny. Live To See Another Day. " ..encoreNo..""}
+        EncoreMenu[2] = {text = "Accept. One Last Time (Encore Mode) "..encoreYes..""}
 
         for _, player in pairs(ents.GetAllPlayers()) do
             if player:IsRealPlayer() and player.m_iTeamNum == 2 then
@@ -319,13 +319,13 @@ function VoteForEncore()
 				FireEvent("mvm_wave_complete", {
 					advanced = true
 				})
-                ents.FindByName("point_populator_interface"):AcceptInput("$JumpToWave", 7)
+                ents.FindByName("pop_interface"):AcceptInput("$JumpToWave", 7)
             elseif encoreYes > encoreNo then
 
                 ents.FindByName("EncoreTransitionRelay"):AcceptInput("Trigger")
 
                 timer.Simple(9, function()
-                    ents.FindByName("point_populator_interface"):AcceptInput("$FinishWave")
+                    ents.FindByName("pop_interface"):AcceptInput("$FinishWave")
                 end)
             elseif encoreYes == encoreNo and novoteEnding == 0 then 
 
@@ -344,7 +344,7 @@ function VoteForEncore()
 							FireEvent("mvm_wave_complete", {
 								advanced = true
 							})
-                            ents.FindByName("point_populator_interface"):AcceptInput("$JumpToWave", 7)
+                            ents.FindByName("pop_interface"):AcceptInput("$JumpToWave", 7)
                         end)
                     end)
                 end
@@ -361,7 +361,7 @@ function VoteForEncore()
 						FireEvent("mvm_wave_complete", {
 							advanced = true
 						})
-                        ents.FindByName("point_populator_interface"):AcceptInput("$JumpToWave", 7)
+                        ents.FindByName("pop_interface"):AcceptInput("$JumpToWave", 7)
                     end)
                 end
             end
@@ -421,10 +421,10 @@ function encoreCheck()
         end
 
         timer.Simple(5,function()        
-            ents.FindByName("point_populator_interface"):AcceptInput("$FinishWave")
+            ents.FindByName("pop_interface"):AcceptInput("$FinishWave")
 
             timer.Simple(-1, function()
-                ents.FindByName("point_populator_interface"):AcceptInput("$FinishWave")
+                ents.FindByName("pop_interface"):AcceptInput("$FinishWave")
             end)
         end)
     end
@@ -500,7 +500,7 @@ function CustomBombDeploy(_, activator)
     local tankCheck = activator
     local bombdeployrelay = ents.FindByName("CombatTankDeployRelay")
 
-    if tankCheck:GetName("combattank|minigun|fireball") then 
+    if tankCheck:GetName("combattank|minigun|fireball$pingsound|npc/combine_gunship/ping_search.wav") then 
         bombdeployrelay:AcceptInput("Trigger")
     end
 end
@@ -512,7 +512,7 @@ end
 function theEndofImpasse()
     for _, player in pairs(ents.GetAllPlayers()) do
         if IsTeamAssignedHuman(player) then
-			util.PrintToChatAll("\x07eb2326" .. player:GetPlayerName() .. " \x078ff347LISTED FOR FUTURE INTERESTS.")
+			util.PrintToChatAll("\x07FF3F3F" .. player:GetPlayerName() .. " \x078ff347LISTED FOR FUTURE INTERESTS.")
         end
     end
 end

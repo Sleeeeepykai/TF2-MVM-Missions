@@ -160,6 +160,20 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
+						IncludeScript(`tankextensions_main`)
+						IncludeScript(`tankextensions/ubertank`)
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/minigun`)
+                		IncludeScript(`tankextensions/combattank_weapons/fireball`)
+
+						TankExt.SetValueOverrides({
+							COMBATTANK_ROTATE_SPEED_DEFAULT = 0.85
+							COMBATTANK_MAX_RANGE = 2000
+							COMBATTANK_MINIGUN_SPREAD_MULTIPLIER = 1.25
+						})
+
+						IncludeScript(`alternatewaves`)
+						
 						IncludeScript(`music_system_ment`)
 						PrecacheSound(`#impasse/the_asparagus_beyond_the_obscure.wav`)
 						PrecacheSound(`#impasse/t_error_on_the_dance_floor.wav`)
@@ -171,20 +185,6 @@ WaveSchedule
 
 						MusicSystemMent.ResetAll()
 						MusicSystemMent.HookByName(`bignet`)
-						
-						IncludeScript(`tankextensions_main`)
-						IncludeScript(`tankextensions/ubertank`)
-						IncludeScript(`tankextensions/combattank`, getroottable())
-						IncludeScript(`tankextensions/combattank_weapons/minigun`, getroottable())
-                		IncludeScript(`tankextensions/combattank_weapons/fireball`, getroottable())
-
-						TankExt.SetValueOverrides({
-							COMBATTANK_ROTATE_SPEED_DEFAULT = 0.85
-							COMBATTANK_MAX_RANGE = 2000
-							COMBATTANK_MINIGUN_SPREAD_MULTIPLIER = 1.25
-						})
-
-						IncludeScript(`alternatewaves`)
 					  "
 			}
 
@@ -220,7 +220,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,#impasse/encore_interlude.mp3,5,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management of the Void {reset}: Highest Priority Set - Team Fortress,5,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management of the Void {reset}: Condition for High Resourced Invasion : {green} VALIDATED.,9,-1"
-				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management of the Void : But... I'll let you decide, Mercenaries. {red}Shall we?,13,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{FFC0CB}Management of the Void : But... I'll let you decide Mercenaries. {red}Shall we?,13,-1"
 				"OnTrigger" "popscript,$VoteForEncore,,12,-1"
 			}
 			logic_relay
@@ -2845,8 +2845,8 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay`, `Trigger`)
-					MusicSystemMent.SetMusicTrack(`#impasse/the_asparagus_beyond_the_obscure.wav`)
 					EntFire(`Player`, `$DisplayTextChat`, `{yellow}-NOW PLAYING : The Asparagus Beyond The Obscure (By: SlungerBlob)`)
+					MusicSystemMent.SetMusicTrack(`#impasse/the_asparagus_beyond_the_obscure.wav`)
 				  "
 		}
 		DoneOutput
@@ -3177,9 +3177,9 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay`, `Trigger`)
-					MusicSystemMent.SetMusicTrack(`#impasse/t_error_on_the_dance_floor.wav`)
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}? {fbeccb}: BOMB THEM. BOMB THEM. AIRSTRIKES ALL AROUND!`)
 					EntFire(`Player`, `$DisplayTextChat`, `{yellow}-NOW PLAYING : T-Error On The Dance Floor (By: ShinyBod)`)
+					MusicSystemMent.SetMusicTrack(`#impasse/t_error_on_the_dance_floor.wav`)
 				  "
 		}
 		DoneOutput
@@ -3522,8 +3522,8 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay`, `Trigger`)
-					MusicSystemMent.SetMusicTrack(`#impasse/sky_fall_trigger.wav`)
 					EntFire(`Player`, `$DisplayTextChat`, `{yellow}-NOW PLAYING : Sky-Fall Trigger (By: SingerBrob)`)
+					MusicSystemMent.SetMusicTrack(`#impasse/sky_fall_trigger.wav`)
 				  "
 		}
 		DoneOutput
@@ -3892,8 +3892,8 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay`, `Trigger`)
-					MusicSystemMent.SetMusicTrack(`#impasse/hard_struck.wav`)
 					EntFire(`Player`, `$DisplayTextChat`, `{yellow}-NOW PLAYING : Hard-Struck (By: SimpleShop FEAT. Tungsten-Scrub)`)
+					MusicSystemMent.SetMusicTrack(`#impasse/hard_struck.wav`)
 				  "
 		}
 		DoneOutput
@@ -3939,7 +3939,7 @@ WaveSchedule
 			Where spawnbot_left
 			TotalCount 2
 			MaxActive 2
-			SpawnCount 2
+			SpawnCount 1
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 6
 			TotalCurrency 50
@@ -4264,8 +4264,8 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay`, `Trigger`)
-					MusicSystemMent.SetMusicTrack(`#impasse/yet_here_we_are_at_an_impasse.wav`)
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}-Yet Here We Are At An Impasse...`)
+					MusicSystemMent.SetMusicTrack(`#impasse/yet_here_we_are_at_an_impasse.wav`)
 				  "
 		}
 		DoneOutput
@@ -4855,9 +4855,6 @@ WaveSchedule
 			Param "
 					EntFire(`WaveStartEncoreRelay`, `Trigger`, null, 1)
 					EntFire(`wave_start_relay`, `Trigger`)
-					AlternateWaves.ClearWaveIcons()
-					
-					MusicSystemMent.SetMusicTrack(`#impasse/break_expectations.wav`)
 
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}M@n@gement : You have accepted to face The Void.`)
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}M@n@gement : My deepest gratitude, Team Fortress.`, 5)
@@ -4865,6 +4862,10 @@ WaveSchedule
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}Loading {red}Mission.File Wave1.pop -//`, 13.8)
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}-NOW PLAYING : BREAK EXPECTATIONS (By: {yellow}Snurper_Bob)`, 13.8)
 					EntFire(`Player`, `$DisplayTextChat`, `{FFC0CB}M@n@gement : Good luck. Let us receive the fruits of our labor.`, 16)
+
+					AlternateWaves.ClearWaveIcons()
+					
+					MusicSystemMent.SetMusicTrack(`#impasse/break_expectations.wav`)
 				  "
 		}
 
