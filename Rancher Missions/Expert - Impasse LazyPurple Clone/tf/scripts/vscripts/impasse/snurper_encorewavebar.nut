@@ -97,7 +97,7 @@ switch (wave_num)
                 ["scout_stun_giant_armored", 6, MVM_CLASS_FLAG_MINIBOSS],
                 ["heavy_shotgun", 6, MVM_CLASS_FLAG_MINIBOSS],
                 ["soldier_spammer", 8,  MVM_CLASS_FLAG_MINIBOSS],
-                ["tank_combat_minigun", 1, MVM_CLASS_FLAG_MINIBOSS],
+                ["tank_combat_minigun_dragon_fury_kai", 1, MVM_CLASS_FLAG_MINIBOSS],
                 ["medic_giant", 1, MVM_CLASS_FLAG_MINIBOSS],
                 ["heavy_deflector_healonkill", 3, MVM_CLASS_FLAG_MINIBOSS | MVM_CLASS_FLAG_ALWAYSCRIT],
                 ["soldier_hyper_lite", 3, MVM_CLASS_FLAG_MINIBOSS],
@@ -107,7 +107,7 @@ switch (wave_num)
                 ["pyro", 10, MVM_CLASS_FLAG_NORMAL],
 
                 ["soldier", 75, MVM_CLASS_FLAG_SUPPORT],
-                ["demo_loch", 75, MVM_CLASS_FLAG_SUPPORT | MVM_CLASS_FLAG_ALWAYSCRIT]
+                ["demo_loch_nys", 75, MVM_CLASS_FLAG_SUPPORT | MVM_CLASS_FLAG_ALWAYSCRIT]
             ])
         break
         //BOSS TIME SHENANIGANS YIPPE DAPPY DO
