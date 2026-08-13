@@ -2,6 +2,8 @@ WaveSchedule
 {
 	PointTemplates
 	{
+		//// DIVE-BOMBER SOLDIER ////
+
 		//// MORTAR DEMOMAN ////
 
 		MortarDemo_PT
@@ -29,6 +31,96 @@ WaveSchedule
 	}
 	Templates
 	{
+		//// SOLDIER TEMPLATES ////
+
+		T_TFBot_Soldier_DiveBomber
+		{
+			Name "Dive-Bomber Soldier"
+			Class Soldier
+			ClassIcon soldier_airstrike_lite
+			Skill Expert
+			Health 600
+			Scale 1.4
+			Attributes SuppressFire
+			Attributes Parachute
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+			
+			Item "The Air Strike"
+			Item "The B.A.S.E. Jumper"
+
+			CharacterAttributes
+			{
+				"cancel falling damage" 1
+				"no self blast dmg" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Air Strike"
+				"damage penalty" 0.33
+				"faster reload rate" 0.5
+				"clip size upgrade atomic" 4
+				"mult projectile count" 3
+				"ignores other projectiles" 1
+				"projectile spread angle penalty" 2
+			}
+
+			FireInput
+			{
+				Target !self
+				Action $ChangeAttributes
+				Param DiveBombInit
+				Delay 0
+				Repeats 0
+				Cooldown 8
+				IfLeftSpawn 1
+			}
+
+			EventChangeAttributes
+			{
+				DiveBombInit [$SIGSEGV]
+				{
+					AimOffset "0 0 -10000"
+
+					FireWeapon
+					{
+						Type "Jump"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 0.2
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param DiveBomb
+						Delay 1
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				DiveBomb [$SIGSEGV]
+				{
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 0
+						Duration 7
+						Repeats 1
+						Cooldown -1
+					}
+				}
+			}
+		}
+
 		//// DEMOMAN TEMPLATES ////
 
 		T_TFBot_Demoman_Mortar
