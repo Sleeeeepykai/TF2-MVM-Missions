@@ -51,6 +51,8 @@ WaveSchedule
 	PrecacheModel "models/robot_factory/australium_tank_build_chunk_7.mdl"
 
 	PrecacheModel "models/robot_factory/australium_tank.mdl"
+	PrecacheModel "models/bots/boss_bot/tankred_track_l.mdl"
+	PrecacheModel "models/bots/boss_bot/tankred_track_r.mdl"
 
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
 
@@ -1765,7 +1767,6 @@ WaveSchedule
 
 				"OnTrigger" "OfficeCamera,CallScriptFunction,DisableAll,9,-1"
 				"OnTrigger" "OfficeAnnotation,Show,,9,-1"
-				"OnTrigger" "OfficeCheck,Enable,,9,-1"
 				"OnTrigger" "red_normal_mission_relay,Trigger,,9,-1"
 
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/graymannvoicelines/gray_mann_generatorbreak.mp3`,channel = 6,special_dsp = 57,filter_type=5})101"
@@ -1778,6 +1779,8 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_generatorbreak.mp3`,channel = 6,special_dsp = 55,filter_type=5})21.41"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act2/wave3-7/saxtonhalevoicelines/saxton_hale_generatorbreak.mp3`,channel = 6,special_dsp = 55,filter_type=5})21.41"
 				"OnTrigger" "Player,$DisplayTextChat,{ffb84d}Saxton Hale{reset}: Oh bloody brilliant! You boys have done an excellent job thrashing up the place! With that generator outta commission the Australium is as good as ours!,21.4,-1"
+
+				"OnTrigger" "OfficeCheck,Enable,,30,-1"
 			}
 			point_viewcontrol
             {
@@ -2060,7 +2063,7 @@ WaveSchedule
 				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_Subwave4_AustraliumTank,0,-1"
 				"OnTrigger" "RedLoseRelay,Disable,,0,-1"
 				"OnTrigger" "@p@EngiBotTarget,$Suicide,0.1,-1"
-				"OnTrigger" "RedLoseRelay,Enable,,0,-1"
+				"OnTrigger" "RedLoseRelay,Enable,,1,-1"
 
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ui/quest_alert.wav`);EmitSoundEx({sound_name=`ui/quest_alert.wav`,special_dsp = 55,filter_type=5})51"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`termination/act3/saxtonhalevoicelines/saxton_hale_australiumtankready.mp3`,channel = 6,special_dsp = 55,filter_type=5})6.41"
@@ -2275,7 +2278,7 @@ WaveSchedule
 			{
 				"targetname" "AustraliumTankTrack"
 				"InitialOwner" "AustraliumTankProp"
-				"model" "models/bots/boss_bot/tank_track_l.mdl"
+				"model" "models/bots/boss_bot/tankred_track_r.mdl"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
@@ -2284,7 +2287,7 @@ WaveSchedule
 			{
 				"targetname" "AustraliumTankTrack"
 				"InitialOwner" "AustraliumTankProp"
-				"model" "models/bots/boss_bot/tank_track_r.mdl"
+				"model" "models/bots/boss_bot/tankred_track_r.mdl"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
@@ -2299,6 +2302,7 @@ WaveSchedule
 				"OnTrigger" "door_front_r,Close,,0,-1"
 				"OnTrigger" "HUDHintTimer,Disable,,0,-1"
 				"OnTrigger" "HUDHint,HideHudHint,,0,-1"
+				"OnTrigger" "Player,$TeleportToEntity,red_spawn_point_rev,0,-1"
 
 				"OnTrigger" "bomb,ForceResetSilent,,0,-1"
 				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Subwave4_ShotgunHeavies,,0,-1"
@@ -2397,7 +2401,7 @@ WaveSchedule
 				"color" "255 255 255"
 				"fxtime" "0.05"
 				"fadein" "0.05"
-				"holdtime" "1.75"
+				"holdtime" "1.85"
 				"fadeout" "0.2"
 				"channel" "2"
 
@@ -2982,6 +2986,11 @@ WaveSchedule
 			{
 				SelfDestruct [$SIGSEGV]
 				{
+					CharacterAttributes
+					{
+						"dmg from melee increased" 0.4
+						"dmg from ranged reduced" 0.4
+					}
 					AddCond
 					{
 						Index 87
@@ -3120,6 +3129,11 @@ WaveSchedule
 			{
 				SelfDestruct [$SIGSEGV]
 				{
+					CharacterAttributes
+					{
+						"dmg from melee increased" 0.4
+						"dmg from ranged reduced" 0.4
+					}
 					AddCond
 					{
 						Index 87
@@ -3219,6 +3233,11 @@ WaveSchedule
 			{
 				SelfDestruct [$SIGSEGV]
 				{
+					CharacterAttributes
+					{
+						"dmg from melee increased" 0.4
+						"dmg from ranged reduced" 0.4
+					}
 					AddCond
 					{
 						Index 87
@@ -5371,6 +5390,9 @@ WaveSchedule
 					EntFire(`wave_finished_relay`, `Trigger`)
 				  "
 		}
+
+		CustomWaveNumber 4
+		CustomMaxWaveNumber 7
 
 		// Subwave 1
 		WaveSpawn // 1 Engibot
