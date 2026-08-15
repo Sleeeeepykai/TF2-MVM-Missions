@@ -99,7 +99,7 @@ WaveSchedule
 	{
 		//// Core PTs ////
 
-		Core_PT
+		CorePT
 		{
 			OnSpawnOutput
 			{
@@ -120,7 +120,7 @@ WaveSchedule
 						IncludeScript(`tankextensions_main`)
 						IncludeScript(`tankextensions/combattank`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
-						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/hammertank`)
 
 						::DispatchParticleAttached <- function(entity, name, attachment)
 						{
@@ -145,11 +145,35 @@ WaveSchedule
 
 				"OnTrigger" "item_teamflag*,SetReturnTime,60,5,-1"
 			}
+			logic_relay
+			{
+				"targetname" "PathSwitchUpperRelay"
+
+				"OnTrigger" "wave_prepare_relay_upper,Trigger,,0,-1"
+				"OnTrigger" "PathSwitchChangeAnnotation,Show,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})21"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})21"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})41"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})41"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})61"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm\mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})61"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_warning.wav`);EmitSoundEx({sound_name=`mvm\mvm_warning.wav`,channel = 6,pitch = 90,filter_type=5})81"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm\mvm_warning.wav`);EmitSoundEx({sound_name=`mvm\mvm_warning.wav`,channel = 6,pitch = 90,filter_type=5})81"
+			}
+			training_annotation
+			{
+				"targetname" "PathSwitchChangeAnnotation"
+				"origin" "208 370 676"
+				"display_text" "The paths have changed! Follow the holograms!"
+				"lifetime" "5"
+			}
 		}
 
 		//// Masquerade PTs ////
 
-		Masquerade_Boss_Cinematics_PT
+		MasqueradeBossCinematicsPT
 		{
 			OnSpawnOutput
 			{
@@ -906,7 +930,7 @@ WaveSchedule
 
 		//// Summoner PTs ////
 
-		SummonerRapidSoldier_PT
+		SummonerRapidSoldierPT
 		{
 			RemoveIfKilled "SummonerTarget"
 
@@ -1006,7 +1030,7 @@ WaveSchedule
 				"OnTrigger" "SummonerSummonIndicator,Enable,,0.5,-1"
 				"OnTrigger" "SummonerSummonIndicator,SetAnimation,Start,,0.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
-				"OnTrigger" "SummonerMinionSpawn_PT,ForceSpawn,,2.3,-1"
+				"OnTrigger" "SummonerMinionSpawnPT,ForceSpawn,,2.3,-1"
 				"OnTrigger" "@p@SummonerTarget,RunScriptCode,SummonerScript.SummonerMinionTrace(self),2.3,-1"
 				"OnTrigger" "SummonerMinionGenerator1,SpawnBot,,2.33,-1"
 				"OnTrigger" "SummonerMinionGenerator2,SpawnBot,,2.33,-1"
@@ -1036,7 +1060,7 @@ WaveSchedule
 
 			math_counter
 			{
-				"targetname" "SummonerSummonCounter"
+				"targetname" "SummonerMinionCounter"
 				"startvalue" "0"
 				"min" "0"
 				"max" "8"
@@ -1164,7 +1188,7 @@ WaveSchedule
 			}
 		}
 
-		SummonerMinionSpawn_PT
+		SummonerMinionSpawnPT
 		{
 			RemoveIfKilled "SummonerNode"
 
@@ -1184,8 +1208,8 @@ WaveSchedule
 
 	//// SPAWNED POINT TEMPLATES ////
 
-	SpawnTemplate "Core_PT"
-	SpawnTemplate "Masquerade_Boss_Cinematics_PT"
+	SpawnTemplate "CorePT"
+	SpawnTemplate "MasqueradeBossCinematicsPT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -1226,7 +1250,7 @@ WaveSchedule
 
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
-			SpawnTemplate "SummonerRapidSoldier_PT"
+			SpawnTemplate "SummonerRapidSoldierPT"
 
 			Item "The Dragon's Fury"
 
@@ -1311,7 +1335,7 @@ WaveSchedule
 		{
 			Line ""
 			Line "{12E8EE}This mission will feature music potentially protected by copyright."
-			Line "{12E8EE}Those tracks include: Ultrakill OST by Arsi Hakita Patala."
+			Line "{12E8EE}This music comes from the Ultrakill OST by Arsi Hakita Patala."
 			Line "{12E8EE}Opt in/out with the Music Volume Slider in the settings."
 			Line ""
 		}
@@ -1665,7 +1689,7 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss"
+				Name "hammertank"
 				Health 40000
 				Speed 75
 				StartingPathTrackNode "path_tank_lower"
@@ -1977,9 +2001,21 @@ WaveSchedule
 		// Cutscene
 		WaveSpawn
 		{
+			Name "Wave1_Subwave4_PathSwitch"
+			WaitForAllSpawned "Wave1_Subwave3_Check"
+			WaitBeforeStarting 2
+
+			FirstSpawnOutput
+			{
+				Target PathSwitchUpperRelay
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
 			Name "Wave1_Subwave4_MasqueradeCutscene1"
 			WaitForAllSpawned "Wave1_Subwave3_Check"
-			WaitBeforeStarting 3
+			WaitBeforeStarting 11
 
 			FirstSpawnOutput
 			{
@@ -1989,7 +2025,7 @@ WaveSchedule
 		}
 
 		// Subwave 4
-		WaveSpawn // 1 Deathcatcher and 1 Full-Uber Medic
+		WaveSpawn // 1 Deathcatcher and 1 Shield Medic
 		{
 			Name "Wave1_Subwave4_Deathcatcher"
 			WaitForAllSpawned "Wave1_Subwave4_MasqueradeCutscene1"
@@ -1997,7 +2033,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 11
+			WaitBeforeStarting 22
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
@@ -2009,12 +2045,57 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Uber
+					Template T_TFBot_Medic_Shield
+				}
+			}
+		}
+		WaveSpawn // 4 Steel Gauntlets
+		{
+			Name "Wave1_Subwave4_SteelGauntlets"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Heavy_SteelFist
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 10 Spies
+		{
+			Name "Wave1_Subwave4_Spies"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher"
+			Where spawnbot
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes IgnoreFlag
+
+				FireInput
+				{
+					Target !self
+					Action $Suicide
+					Delay 20
 				}
 			}
 		}
 
-		WaveSpawn // 1 Deathcatcher and 1 Full-Uber Medic
+		WaveSpawn // 1 Deathcatcher and 1 Shield Medic
 		{
 			Name "Wave1_Subwave4_Deathcatcher2"
 			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher"
@@ -2034,12 +2115,57 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Uber
+					Template T_TFBot_Medic_Shield
+				}
+			}
+		}
+		WaveSpawn // 4 Steel Gauntlets
+		{
+			Name "Wave1_Subwave4_SteelGauntlets2"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher2"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Heavy_SteelFist
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 10 Spies
+		{
+			Name "Wave1_Subwave4_Spies2"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher2"
+			Where spawnbot
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes IgnoreFlag
+
+				FireInput
+				{
+					Target !self
+					Action $Suicide
+					Delay 20
 				}
 			}
 		}
 
-		WaveSpawn // 1 Deathcatcher and 1 Full-Uber Medic
+		WaveSpawn // 1 Deathcatcher and 1 Shield Medic
 		{
 			Name "Wave1_Subwave4_Deathcatcher3"
 			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher2"
@@ -2059,9 +2185,282 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Medic_Uber
+					Template T_TFBot_Medic_Shield
 				}
 			}
+		}
+		WaveSpawn // 4 Steel Gauntlets
+		{
+			Name "Wave1_Subwave4_SteelGauntlets3"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher3"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Heavy_SteelFist
+				Attributes AlwaysCrit
+			}
+		}
+		WaveSpawn // 10 Spies
+		{
+			Name "Wave1_Subwave4_Spies3"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher3"
+			Where spawnbot
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes IgnoreFlag
+
+				FireInput
+				{
+					Target !self
+					Action $Suicide
+					Delay 20
+				}
+			}
+		}
+
+		// Subwave 5
+		WaveSpawn // 1 Hammer Tank
+		{
+			Name "Wave1_Subwave5_HammerTank"
+			WaitForAllDead "Wave1_Subwave4_Deathcatcher3"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Tank
+			{
+				Name "hammertank"
+				ClassIcon tank_mallet
+				Health 40000
+				Speed 75
+				StartingPathTrackNode "path_tank_upper"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+
+		WaveSpawn // 1 GRapid Demo
+		{
+			Name "Wave1_Subwave5_GRapidDemo"
+			WaitForAllSpawned "Wave1_Subwave5_HammerTank"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Spammer
+			}
+		}
+		WaveSpawn // 6 Burst Demos and 6 Kritzkrieg Medics
+		{
+			Name "Wave1_Subwave5_BurstDemos"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 12 Supercharged Scouts
+		{
+			Name "Wave1_Subwave5_SuperchargedScouts"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
+
+				Tag bot_flank_l
+			}
+		}
+
+		WaveSpawn // 1 GRapid Demo
+		{
+			Name "Wave1_Subwave5_GRapidDemo2"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Spammer
+			}
+		}
+		WaveSpawn // 6 Burst Demos and 6 Kritzkrieg Medics
+		{
+			Name "Wave1_Subwave5_BurstDemos2"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo2"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 12 Supercharged Scouts
+		{
+			Name "Wave1_Subwave5_SuperchargedScouts2"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo2"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
+
+				Tag bot_flank_l
+			}
+		}
+
+		WaveSpawn // 1 GRapid Demo
+		{
+			Name "Wave1_Subwave5_GRapidDemo3"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo2"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Spammer
+			}
+		}
+		WaveSpawn // 8 Burst Demos and 8 Kritzkrieg Medics
+		{
+			Name "Wave1_Subwave5_BurstDemos3"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo3"
+			Where spawnbot
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 8
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 12 Supercharged Scouts
+		{
+			Name "Wave1_Subwave5_SuperchargedScouts3"
+			WaitForAllSpawned "Wave1_Subwave5_GRapidDemo3"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
+
+				Tag bot_flank_l
+			}
+		}
+
+		// Subwave 5 Check
+		WaveSpawn
+		{
+			Name "Wave1_Subwave5_Check"
+			WaitForAllDead "Wave1_Subwave5_HammerTank"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave5_Check"
+			WaitForAllDead "Wave1_Subwave5_GRapidDemo3"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave5_Check"
+			WaitForAllDead "Wave1_Subwave5_BurstDemos3"
 		}
 	}
 	// Wave 2 Notes
