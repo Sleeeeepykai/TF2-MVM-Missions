@@ -41,7 +41,7 @@ WaveSchedule
 	{
 		//// Core PTs ////
 
-		CorePTs
+		CorePT
 		{
 			logic_auto
 			{
@@ -178,7 +178,7 @@ WaveSchedule
             }
 		}
 
-		ControlPointPTs
+		ControlPointPT
 		{
 			logic_auto
 			{
@@ -401,13 +401,34 @@ WaveSchedule
 				"OnCapTeam1" "ControlPointCBase,Skin,1,0,-1"
 				"OnCapTeam2" "ControlPointCBase,Skin,2,0,-1"
 			}
+			trigger_multiple
+			{
+				"targetname" "ControlPointCTrigger"
+				"filtername" "ControlPointBotFilter"
+				"origin" "0 0 0"
+				"mins" "-15000 -15000 -15000"
+				"maxs" "15000 15000 15000"
+				"spawnflags" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "ControlPointCTriggerCase,PickRandom,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "ControlPointCTriggerCase"
+
+				"OnCase01" "!activator,$ChangeAttributes,ControlPointA"
+			}
 		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
-	SpawnTemplate "CorePTs"
-	SpawnTemplate "ControlPointPTs"
+	SpawnTemplate "CorePT"
+	SpawnTemplate "ControlPointPT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -431,7 +452,7 @@ WaveSchedule
 	Templates
 	{
 		//// GIANTS ////
-		T_TFBot_Giant_Soldier_PointB
+		T_TFBot_Giant_Soldier_CaptureBot
 		{
 			Template T_TFBot_Giant_Soldier
 			Action Mobber
@@ -452,7 +473,7 @@ WaveSchedule
 		}
 
 		//// MINIGIANTS ////
-		T_TFBot_Demoman_Spammer_PointA
+		T_TFBot_Demoman_Spammer_CaptureBot
 		{
 			Template T_TFBot_Demoman_Spammer
 			Action Mobber
@@ -461,38 +482,10 @@ WaveSchedule
 
 			Item "MvM GateBot Light Demoman"
 
-			InterruptAction
-			{
-				Target "ControlPointA"
-				Delay 0.1
-				Repeats 0
-				Cooldown 5
-				Duration 5
-				Distance 100
-			}
-		}
-		T_TFBot_Demoman_Spammer_PointC
-		{
-			Template T_TFBot_Demoman_Spammer
-			Action Mobber
-
-			Tag ArenaCaptureBot
-
-			Item "MvM GateBot Light Demoman"
-
-			InterruptAction
-			{
-				Target "ControlPointC"
-				Delay 0.1
-				Repeats 0
-				Cooldown 5
-				Duration 5
-				Distance 100
-			}
 		}
 
 		//// COMMONS ////
-		T_TFBot_Heavy_Lightweight_Champ_PointC
+		T_TFBot_Heavy_Lightweight_Champ_CaptureBot
 		{
 			Name "Lightweight Champ"
 			Class Heavy
