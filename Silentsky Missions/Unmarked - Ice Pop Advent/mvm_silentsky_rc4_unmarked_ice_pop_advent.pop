@@ -112,9 +112,28 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
+                        EntFire(`routes`, `Kill`)
+
 						IncludeScript(`tankextensions_main`)
 					  "
 			}
+
+            logic_relay
+            {
+                "targetname" "wave_init_left_relay"
+
+                "OnTrigger" "route1Holos,Enable,,0,-1"
+                "OnTrigger" "route1,Enable,,0,-1"
+                "OnTrigger" "route2,Disable,,0,-1"
+            }
+            logic_relay
+            {
+                "targetname" "wave_init_right_relay"
+
+                "OnTrigger" "route2Holos,Enable,,0,-1"
+                "OnTrigger" "route2,Enable,,0,-1"
+                "OnTrigger" "route1,Disable,,0,-1"
+            }
 
 			logic_relay
 			{
@@ -340,8 +359,27 @@ WaveSchedule
 				"override footstep sound set" 4
 			}
 
+            ChangeAttributes
+            {
+                Name "HammerRequiemIntro"
+                Delay 0
+                Repeats 1
+            }
+
             EventChangeAttributes
             {
+                HammerRequiemIntro [$SIGSEGV]
+                {
+                    FireInput
+                    {
+                        Target !activator
+                        Action $SetLocalOrigin
+                        Param "-5824 -832 232"
+                        Delay 0
+                        Repeats 1
+                    }
+                }
+
                 HammerRequiemDefault [$SIGSEGV]
                 {
                     CharacterAttributes
@@ -416,6 +454,47 @@ WaveSchedule
 
     Wave
     {
-        
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_init_right_relay`, `Trigger`)
+                  "
+        }
+        StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay`, `Trigger`)
+				  "
+		}
+        DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+
+        // Subwave 1
+        WaveSpawn // THE HAMMER - REQUIEM
+        {
+            Name "Wave1_Subwave1_THEHAMMERREQUIEM"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 0
+
+            TFBot
+            {
+                Template T_TFBot_Boss_Demoman_THEHAMMERREQUIEM
+            }
+        }
     }
 }
