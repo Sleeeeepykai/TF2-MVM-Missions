@@ -43,8 +43,8 @@ switch (wave_num)
             AlternateWaves.ClearWaveIcons()
             AlternateWaves.AddWaveIcons([
                 ["soldier_barrage", 2, MVM_CLASS_FLAG_MINIBOSS | MVM_CLASS_FLAG_ALWAYSCRIT],
-                ["pyro_dragon_fury_swordstone", 3, MVM_CLASS_FLAG_MINIBOSS],
-                ["demo_spammer", 3, MVM_CLASS_FLAG_MINIBOSS],
+                ["pyro_dragon_fury_giant_swordstone", 3, MVM_CLASS_FLAG_MINIBOSS],
+                ["demo_spammer_package_giant", 3, MVM_CLASS_FLAG_MINIBOSS],
                 ["soldier_commander", 1, MVM_CLASS_FLAG_MINIBOSS],
                 ["medic_giant", 1, MVM_CLASS_FLAG_MINIBOSS],
                 ["medic_kritz_lite_giant", 1, MVM_CLASS_FLAG_MINIBOSS],
@@ -55,7 +55,7 @@ switch (wave_num)
                 ["heavy", 24, MVM_CLASS_FLAG_NORMAL],
                 ["heavy_armored", 9, MVM_CLASS_FLAG_NORMAL],
                 ["medic_uber", 9, MVM_CLASS_FLAG_NORMAL],
-                ["pyro_reflect", 20, MVM_CLASS_FLAG_NORMAL | MVM_CLASS_FLAG_ALWAYSCRIT],
+                ["pyro_reflect_daan_nolod", 20, MVM_CLASS_FLAG_NORMAL | MVM_CLASS_FLAG_ALWAYSCRIT],
                 ["scout_milk", 20, MVM_CLASS_FLAG_NORMAL],
 
                 ["pyro", 1, MVM_CLASS_FLAG_SUPPORT | MVM_CLASS_FLAG_ALWAYSCRIT],
@@ -78,7 +78,7 @@ switch (wave_num)
                 ["pyro_dragon_fury_swordstone" 23, MVM_CLASS_FLAG_NORMAL],
                 ["scout_stun", 40, MVM_CLASS_FLAG_NORMAL | MVM_CLASS_FLAG_ALWAYSCRIT],
                 ["medic_uber", 3, MVM_CLASS_FLAG_NORMAL],
-                ["medic_kritz", 3, MVM_CLASS_FLAG_NORMAL],
+                ["medic_kritz_lite", 3, MVM_CLASS_FLAG_NORMAL],
                 ["demo", 6, MVM_CLASS_FLAG_NORMAL],
                 ["medic_quickfix_seel2", 15, MVM_CLASS_FLAG_NORMAL],
                 ["heavy", 3, MVM_CLASS_FLAG_NORMAL | MVM_CLASS_FLAG_ALWAYSCRIT],
