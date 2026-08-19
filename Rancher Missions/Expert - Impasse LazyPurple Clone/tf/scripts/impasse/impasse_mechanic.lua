@@ -163,7 +163,7 @@ function OnWaveSpawnTank(tank, wave)
             timer.Simple(3, function()
                 player:AcceptInput("$DisplayTextChat", "{FFC0CB}Management : Destroy{red} The Maintainer With A {BLUE}BOSS HEALTH BAR. {red}To Invalidate Invincibility")
             end)
-        elseif tank:GetName() ~= "combattank|minigun|fireball" then
+        elseif tank:GetName() ~= "combattank|minigun|fireball$pingsound|npc/combine_gunship/ping_search.wav" then
             player:AcceptInput("$DisplayTextChat", "{FFC0CB}Manage : Unstoppable Force Materialized. {blue}" .. tank.m_iHealth.. " {fbeccb}Damage Requirement.")
         else
             player:AcceptInput("$DisplayTextChat", "{FFC0CB}Manage : Unstoppable {RED}WAR MACHINE {FFC0CB}Materialized. {blue}" .. tank.m_iHealth.. " {fbeccb}Damage Requirement.")
