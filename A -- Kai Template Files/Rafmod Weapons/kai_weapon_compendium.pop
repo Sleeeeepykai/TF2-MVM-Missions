@@ -2,7 +2,18 @@ WaveSchedule
 {
 	//// PRECACHES ////
 
-	// Precached Sounds
+	// Precached Models //
+
+	// Soul of Infernal Hailstorm
+
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
+	PrecacheModel "models/weapons/c_models/c_pyro_cryo_gun_animations.mdl"
+	PrecacheModel "models/weapons/c_models/c_pyro_cryo_gun_arms.mdl"
+
+	// Precached Sounds //
+
+	// The Dumpster Fire
 	PrecacheSound "polishcannon.wav"
 
 	//// CUSTOM WEAPONS ////
@@ -10,24 +21,61 @@ WaveSchedule
 	CustomWeapon
 	{
 		//// SOLDIER WEAPONS ////
+
 		"The Dumpster Fire"
 		{
 			OriginalItemName "The Beggar's Bazooka"
 			"damage penalty" 0.33
 			"blast radius increased" 1.5
+
 			"reload time increased" 5
 			"clip size penalty" 0.25
 			"maxammo primary reduced" 0.5
+
 			"mult projectile count" 50
 			"projectile spread angle penalty" 20
 			"ignores other projectiles" 1
 			"projectile gravity" 750
+
 			"can overload" 0
 			"crit mod disabled" 1
 			"custom weapon fire sound" "DumpsterFire.Fire"
 		}
 
+		//// PYRO WEAPONS ////
+
+		"Soul of Infernal Hailstorm"
+		{
+			OriginalItemName "TF_WEAPON_SHOTGUN_PYRO"
+			
+			"damage bonus" 1.2
+			"add damage type" 2056
+			"remove damage type" 64
+			"fire rate bonus" 1.2
+			"attach particle effect" "704"
+
+			"override projectile type" 2
+			"blast radius decreased" 0.5
+			"projectile speed decreased" 0.65
+			"mult projectile scale" 2
+			"penetrate teammates" 1
+
+			"custom item model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+			"custom projectile model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
+			"projectile trail particle" "~spell_fireball_small_trail_red"
+			"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
+			"custom kill icon" "firedeath"
+
+			"max health additive bonus" 350
+			"model scale" 1.5
+			"maxammo primary reduced" 0
+
+			"special item description" "Imbue yourself with the soul of Infernal Hailstorm."
+			"special item description 2" "You gain a mighty Fireball Cannon, at the cost of your Flamethrower."
+		}
+
 		//// HEAVY WEAPONS ////
+
 		"Soul of Dave"
 		{
 			OriginalItemName "The Killing Gloves of Boxing"
@@ -37,27 +85,31 @@ WaveSchedule
 			"maxammo primary reduced" 0
 			"maxammo secondary reduced" 0
 
-			"special item description" "You have been imbued with the soul of Overclocked Dave."
-			"special item description 2" "You now gain powerful rocket gloves, at the cost of your other weapons."
+			"special item description" "Imbue yourself with the soul of Overclocked Dave."
+			"special item description 2" "You gain powerful rocket gloves, at the cost of your other weapons."
 		}
-		"SoulOfDave_Weapon"
+		"SoulOfDaveWeapon"
         {
             OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
 			"damage bonus" 0.65
+			"blast radius decreased" 0.2
 			"no damage falloff" 1
+
+			"mult projectile scale" 1.5
+			"projectile speed decreased" 0.9
+			"projectile detonate time" 1
+
+			"mod projectile heat seek power" 10000
+			"mod projectile heat aim time" 0.05
+			"mod projectile heat follow crosshair" 1
+
 			"custom item model" "models/weapons/c_models/c_boxing_gloves/c_boxing_gloves.mdl"
 			"custom projectile model" "models/props_halloween/hwn_spell_boxing_glove.mdl"
 			"custom weapon fire sound" "Weapon_BoxingGloves.Miss"
 			"custom impact sound" "Weapon_BoxingGloves.HitWorld"
 			"explosion particle" "mvm_soldier_shockwave"
 			"custom kill icon" "gloves"
-			"mult projectile scale" 1.5
-			"projectile speed decreased" 0.9
-			"blast radius decreased" 0.2
-			"projectile detonate time" 1
-			"mod projectile heat seek power" 10000
-			"mod projectile heat aim time" 0.05
-			"mod projectile heat follow crosshair" 1
+
         }
 
 		//// ALL CLASS WEAPONS ////
@@ -65,9 +117,11 @@ WaveSchedule
 		{
 			OriginalItemName "The Conscientious Objector"
 			"damage penalty" 0.01
+			"melee cleave attack" 1
+
 			"apply look velocity on damage" 50000
 			"apply z velocity on damage" 50000
-			"melee cleave attack" 1
+			
 			"custom texture hi" "x804cea54"
   			"custom texture lo" "x518f832b"
 		}
@@ -90,7 +144,166 @@ WaveSchedule
 
 	PointTemplates
 	{
-		SoulOfDave_PT
+		//// PYRO WEAPONS ////
+
+		// Filter PT
+		FilterPTs
+		{
+			filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+			filter_activator_tfteam // Is on RED
+			{
+				"targetname" "filter_redteam"
+				"teamnum" "2"
+			}
+			filter_activator_tfteam // Is on BLU
+			{
+				"targetname" "filter_bluteam"
+				"teamnum" "3"
+			}
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+			filter_multi // Is an Un-Ubered Blu Player
+            {
+                "targetname" "filter_bluteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_bluteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
+		}
+
+		// Soul of Infernal Hailstorm
+		
+		MagmaProjectilePT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "MagmaFireTarget"
+
+			OnParentKilledOutput
+			{
+				Target MagmaFirePT
+				Action ForceSpawnAtEntityOrigin
+				Param "MagmaFireTarget"
+			}
+			OnParentKilledOutput
+			{
+				Target MagmaFireTarget
+				Action Kill
+				Delay 0.1
+			}
+
+			info_target
+			{
+				"targetname" "MagmaFireTarget"
+			}
+		}
+		MagmaFirePT
+		{
+			RemoveIfKilled "MagmaFireDamage"
+
+			OnSpawnOutput
+			{
+				Target MagmaFireParticle
+				Action Start
+			}
+			OnSpawnOutput
+			{
+				Target MagmaFireDamage
+				Action Kill
+				Delay 8
+			}
+
+			trigger_hurt
+			{
+				"targetname" "MagmaFireDamage"
+				"filtername" "filter_bluteam_nouber"
+				"mins" "-60 -60 -60"
+				"maxs" "60 60 60"
+				"damage" "40"
+				"damagetype" "8"
+				"$killicon" "firedeath"
+				"spawnflags" "64"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+
+				"OnHurtPlayer" "!activator,$IgnitePlayerDuration,5,0,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "MagmaFireParticle"
+				"effect_name" "lava_fireball_01"
+				"start_active" "0"
+			}
+		}
+
+		//// HEAVY WEAPONS ////
+
+		// Soul of Dave
+		SoulOfDavePT
 		{
 			OnSpawnOutput
 			{
@@ -118,7 +331,7 @@ WaveSchedule
 				"origin"           "0 20 100"
 				"angles"           "0 0 0"
 				"teamnum"          "3"
-				"$weaponname"    "SoulOfDave_Weapon"
+				"$weaponname"    "SoulOfDaveWeapon"
 				"$firetime"      "1.0"
 			}
 		}
@@ -129,10 +342,17 @@ WaveSchedule
 	//PlayerItemEquipSpawnTemplate
 	PlayerShootTemplate
 	{
-		Name "SoulOfDave_PT"
+		Name "SoulOfDavePT"
 		ItemName "Soul of Dave"
 		Offset "0 0 -100"
 		//Bone bip_spine_2
+	}
+
+	PlayerShootTemplate
+	{
+		Name "InfernalHailstormProjectilePT"
+		ItemName "Soul of Infernal Hailstorm"
+		AttachToProjectile 1
 	}
 
 	//// EXTRA PLAYER WEAPONS ////
@@ -144,6 +364,16 @@ WaveSchedule
 			Primary
 			{
 				Item "The Dumpster Fire"
+				Cost 0
+				AllowedMinWave 1
+				AllowRefund 1
+			}
+		}
+		Pyro
+		{
+			Secondary
+			{
+				Item "Soul of Infernal Hailstorm"
 				Cost 0
 				AllowedMinWave 1
 				AllowRefund 1
