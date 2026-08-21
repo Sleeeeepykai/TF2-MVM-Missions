@@ -654,8 +654,10 @@ WaveSchedule
                 "targetname" "warningaboutthisb"
                 "OnTrigger"  "ambush_gate_a_enable,trigger,,-1,1"
                 "OnTrigger"  "ambush_gate_b_enable,trigger,,-1,1"
-                "OnTrigger"  "pop_interface,$KillWavespawn,w2da,0,-1"
-                "OnTrigger"  "pop_interface,$FinishWavespawn,w2da,0.1,-1"
+                "OnTrigger"  "pop_interface,$KillWaveSpawn,w2da,0,-1"
+                "OnTrigger"  "pop_interface,$FinishWaveSpawn,w2da,0.1,-1"
+                "OnTrigger" "pop_interface,$KillWaveSpawn,Wave2_Spies,0,-1"
+                "OnTrigger" "pop_interface,$FinishWaveSpawn,Wave2_Spies,0.1,-1"
                 "OnTrigger"  "player,$DisplayTextChat,{99C2D8}???{reset}: ENGAGE PERIMETER SECURITY RELAYS,0,-1"
                 "OnTrigger" "playerRunScriptCodeself.ViewPunch(QAngle(-30,-30,-30))4.751"
                 "OnTrigger"  "playerrunscriptcodeScreenFade(null, 64, 119, 158, 150, 0.9, 0.1, 1)51"
@@ -8134,23 +8136,6 @@ WaveSchedule
             Template T_TFBot_Spy
         }
     }
-    Mission // Spy (Wave 2)
-    {
-        Where spawnbot_scattered0
-        Where spawnbot_main_slow1
-        Objective Spy
-        BeginAtWave 2
-        RunForThisManyWaves 1
-        DesiredCount 3
-    
-        InitialCooldown 15
-        CooldownTime 75
-    
-        TFBot
-        { 
-            Template T_TFBot_Spy
-        }
-    }
     Mission // Engineer (Wave 2)
     {
         Where spawnbot_scattered0
@@ -8926,6 +8911,27 @@ WaveSchedule
         }
 
         CustomMaxWaveNumber 3
+
+        // Support
+        WaveSpawn
+        {
+            Name "Wave2_Spies"
+            Where spawnbot_scattered0
+            Where spawnbot_main_slow1
+            Support 1
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 75
+            TotalCurrency 0
+
+            TFBot
+            {
+                Template T_TFBot_Spy
+                Attributes IgnoreFlag
+            }
+        }
 
         // Subwave 1
         WaveSpawn // 1 Super Vortex Champ
