@@ -11,6 +11,12 @@ WaveSchedule
 	PrecacheModel "models/weapons/c_models/c_pyro_cryo_gun_animations.mdl"
 	PrecacheModel "models/weapons/c_models/c_pyro_cryo_gun_arms.mdl"
 
+	// Precached Particles //
+
+	PrecacheParticle "spell_fireball_small_trail_red"
+
+	// Soul of Infernal Hailstorm
+
 	// Precached Sounds //
 
 	// The Dumpster Fire
@@ -48,11 +54,10 @@ WaveSchedule
 		{
 			OriginalItemName "TF_WEAPON_SHOTGUN_PYRO"
 			
-			"damage bonus" 1.2
-			"add damage type" 2056
+			"damage bonus" 10
+			"add damage type" 8
 			"remove damage type" 64
-			"fire rate bonus" 1.2
-			"attach particle effect" "704"
+			"fire rate penalty" 1.2
 
 			"override projectile type" 2
 			"blast radius decreased" 0.5
@@ -61,6 +66,7 @@ WaveSchedule
 			"penetrate teammates" 1
 
 			"custom item model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+			"custom view model" "models/weapons/c_models/c_pyro_cryo_gun_arms.mdl"
 			"custom projectile model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
 			"projectile trail particle" "~spell_fireball_small_trail_red"
 			"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
@@ -236,11 +242,18 @@ WaveSchedule
 
 		// Soul of Infernal Hailstorm
 		
-		MagmaProjectilePT
+		InfernalHailstormProjectilePT
 		{
 			KeepAlive 1
 
 			RemoveIfKilled "MagmaFireTarget"
+
+			OnSpawnOutput
+			{
+				Target MagmaFireDamage
+				Action $InheritOwner
+				Param !parent
+			}
 
 			OnParentKilledOutput
 			{
@@ -262,18 +275,22 @@ WaveSchedule
 		}
 		MagmaFirePT
 		{
+			KeepAlive 1
+
 			RemoveIfKilled "MagmaFireDamage"
 
 			OnSpawnOutput
 			{
-				Target MagmaFireParticle
-				Action Start
+				Target MagmaFireDamage
+				Action $InheritOwner
+				Param !parent
 			}
+
 			OnSpawnOutput
 			{
 				Target MagmaFireDamage
 				Action Kill
-				Delay 8
+				Delay 5
 			}
 
 			trigger_hurt
@@ -296,7 +313,7 @@ WaveSchedule
 			{
 				"targetname" "MagmaFireParticle"
 				"effect_name" "lava_fireball_01"
-				"start_active" "0"
+				"start_active" "1"
 			}
 		}
 
@@ -339,7 +356,8 @@ WaveSchedule
 
 	//// SPAWNED POINT TEMPLATES ////
 
-	//PlayerItemEquipSpawnTemplate
+	SpawnTemplate "FilterPTs"
+
 	PlayerShootTemplate
 	{
 		Name "SoulOfDavePT"
