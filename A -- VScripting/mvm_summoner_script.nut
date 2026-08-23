@@ -40,6 +40,35 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) CleanUp() }
 
+	//// MISC. FUNCTIONS ////
+
+	function GivePlayerWeapon(Player, ClassName, ItemID)
+	{
+		local Weapon = CreateByClassname(ClassName)
+		SetPropInt(Weapon, "m_AttributeManager.m_Item.m_iItemDefinitionIndex", ItemID)
+		SetPropBool(Weapon, "m_AttributeManager.m_Item.m_bInitialized", true)
+		SetPropBool(Weapon, "m_bValidatedAttachedEntity", true)
+		Weapon.SetTeam(Player.GetTeam())
+		Weapon.DispatchSpawn()
+
+		for (local i = 0; i < MAX_WEAPONS; i++)
+		{
+			local HeldWeapon = GetPropEntityArray(Player, "m_hMyWeapons", i)
+			if (HeldWeapon == null)
+				continue
+			if (HeldWeapon.GetSlot() != Weapon.GetSlot())
+				continue
+			HeldWeapon.Destroy()
+			SetPropEntityArray(Player, "m_hMyWeapons", null, i)
+			break
+		}
+
+		Player.Weapon_Equip(Weapon)
+		Player.Weapon_Switch(Weapon)
+
+		return Weapon
+	}
+
 	//// SUMMONER FUNCTIONS ////
 
 	function SummonerMinionTrace(Target)
@@ -137,7 +166,7 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Target.AddBotAttribute(2048)
 
 		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
-		Target.AddCustomAttribute("max health additive bonus", 125, 0)
+		Target.AddCustomAttribute("max health additive bonus", 150, 0)
 
 		Target.SetHealth(450)
 		Target.SetModelScale(1.3, 0.0)
@@ -171,6 +200,32 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		Primary.AddAttribute("fire rate bonus", 0.5, 0)
 		Primary.AddAttribute("faster reload rate", 0.001, 0)
 		Primary.AddAttribute("projectile speed decreased", 0.65, 0)
+	}
+	function SummonerBrassBeastHeavyMinionInit(Target)
+	{
+		Target.RemoveWeaponRestriction(7)
+		Target.ClearAllBotAttributes()
+		Target.ClearAllBotTags()
+		Target.SetCustomModelWithClassAnimations(null)
+		Target.SetDifficulty(1)
+		Target.SetMaxVisionRangeOverride(9999)
+
+		SetFakeClientConVarValue(Target, "name", "Resurrected Brass Beast Heavy")
+		Target.SetCustomModelWithClassAnimations("models/bots/heavy/bot_heavy_gibby.mdl")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "heavy_brass_beast_summoner")
+
+		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(16)
+		Target.AddBotAttribute(32)
+		Target.AddBotAttribute(2048)
+
+		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
+		Target.AddCustomAttribute("max health additive bonus", 600, 0)
+
+		Target.SetHealth(900)
+		Target.SetModelScale(1.5, 0.0)
+
+		GivePlayerWeapon(Target, "tf_weapon_minigun", 312)
 	}
 }
 

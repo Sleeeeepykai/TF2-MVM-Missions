@@ -179,6 +179,8 @@ WaveSchedule
 			{
 				"targetname" "PathSwitchUpperRelay"
 
+				"OnTrigger" "item_teamflag*,ForceReset,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
 				"OnTrigger" "wave_prepare_relay_upper,Trigger,,0,-1"
 				"OnTrigger" "PathSwitchChangeAnnotation,Show,,0,-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})01"
@@ -1168,7 +1170,7 @@ WaveSchedule
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
-				"maxActive" "2"
+				"maxActive" "999"
 				"spawnOnlyWhenTriggered" "1"
 
 				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerRapidFireSoldierMinionInit(self),0,-1"
@@ -1181,7 +1183,7 @@ WaveSchedule
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
-				"maxActive" "2"
+				"maxActive" "999"
 				"spawnOnlyWhenTriggered" "1"
 
 				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerRapidFireSoldierMinionInit(self),0,-1"
@@ -1194,7 +1196,7 @@ WaveSchedule
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
-				"maxActive" "2"
+				"maxActive" "999"
 				"spawnOnlyWhenTriggered" "1"
 
 				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerRapidFireSoldierMinionInit(self),0,-1"
@@ -1207,10 +1209,267 @@ WaveSchedule
 				"team" "blue"
 				"class" "soldier"
 				"count" "0"
-				"maxActive" "2"
+				"maxActive" "999"
 				"spawnOnlyWhenTriggered" "1"
 
 				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerRapidFireSoldierMinionInit(self),0,-1"
+				"OnBotKilled" "SummonerMinionCounter,Subtract,1,0,-1"
+			}
+		}
+		SummonerBrassBeastHeavyPT
+		{
+			RemoveIfKilled "SummonerTarget"
+
+			KeepAlive 1
+			
+			OnSpawnOutput
+			{
+				Target "SummonerTarget"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SummonerMinionGenerator1"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SummonerMinionGenerator2"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SummonerMinionGenerator3"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SummonerMinionGenerator4"
+				Action SetParent
+				Param "!activator"
+				Delay 0.1
+			}
+			OnSpawnOutput
+			{
+				Target "SummonerMinionTimer"
+				Action "Enable"
+				Delay 6.9
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "SummonerMinionTimer"
+				Action "FireTimer"
+				Delay 7
+				Repeats 1
+				Cooldown -1
+			}
+
+			OnParentKilledOutput
+			{
+				Target "SummonerClearRelay"
+				Action "Trigger"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+			OnParentKilledOutput
+			{
+				Target "SummonerTarget"
+				Action "Kill"
+				Delay 1
+				Repeats 1
+				Cooldown -1
+			}
+
+			info_target
+			{
+				"targetname" "SummonerTarget"
+				"origin" "0 0 50"
+			}
+
+			logic_timer
+			{
+				"targetname" "SummonerMinionTimer"
+				"RefireTime" "10"
+				"StartDisabled" 1
+
+				"OnTimer" "SummonerSummonRelay,Trigger,,0,-1"
+			}
+			logic_relay
+			{
+				"targetname" "SummonerSummonRelay"
+
+				"OnTrigger" "@p@SummonerTarget,$AddPlayerAttribute,dmg from ranged reduced|0.25,0,-1"
+				"OnTrigger" "@p@SummonerTarget,$AddPlayerAttribute,dmg from melee increased|0.25,0,-1"
+				"OnTrigger" "@p@SummonerTarget,$TauntFromItem,Taunt: Second Rate Sorcery,0,-1"
+				"OnTrigger" "@p@SummonerTarget,$TauntFromItem,Taunt: Second Rate Sorcery,0.1,-1"
+				"OnTrigger" "SummonerSummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "SummonerSummonIndicator,SetAnimation,Start,,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "SummonerMinionSpawnPT,ForceSpawn,,2.3,-1"
+				"OnTrigger" "@p@SummonerTarget,RunScriptCode,SummonerScript.SummonerMinionTrace(self),2.3,-1"
+				"OnTrigger" "SummonerMinionGenerator1,SpawnBot,,2.33,-1"
+				"OnTrigger" "SummonerMinionGenerator2,SpawnBot,,2.33,-1"
+				"OnTrigger" "SummonerMinionGenerator3,SpawnBot,,2.33,-1"
+				"OnTrigger" "SummonerMinionGenerator4,SpawnBot,,2.33,-1"
+				"OnTrigger" "SummonerMinionCounter,Add,4,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.33,-1"
+				"OnTrigger" "SummonerSummonIndicator,SetAnimation,end,2.5,-1"
+				"OnTrigger" "@p@SummonerTarget,$RemovePlayerAttribute,dmg from ranged reduced,3.5,-1"
+				"OnTrigger" "@p@SummonerTarget,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
+				"OnTrigger" "SummonerSummonIndicator,Disable,,3.5,-1"
+				"OnTrigger" "@p@SummonerTarget,$RemoveCond,7,3.5,-1"
+			}
+			logic_relay
+			{
+				"targetname" "SummonerClearRelay"
+
+				"OnTrigger" "SummonerMinionGenerator1,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator1,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator2,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator2,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator3,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator3,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator4,RemoveBots,,0,-1"
+				"OnTrigger" "SummonerMinionGenerator4,RemoveBots,,0,-1"
+			}
+
+			math_counter
+			{
+				"targetname" "SummonerMinionCounter"
+				"startvalue" "0"
+				"min" "0"
+				"max" "8"
+
+				"OutValue" "SummonerCounterCompare,SetValueCompare,,0,-1"
+			}
+			logic_compare
+			{
+				"targetname" "SummonerCounterCompare"
+				"CompareValue" "4"
+
+				"OnLessThan" "SummonerSummonRelay,Enable,,0,-1"
+				"OnEqualTo" "SummonerSummonRelay,Enable,,0,-1"
+				"OnGreaterThan" "SummonerSummonRelay,Disable,,0,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "SummonerSummonIndicator"
+                "origin" "200 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "SummonerSummonIndicator"
+                "origin" "-200 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "SummonerSummonIndicator"
+                "origin" "0 200 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "SummonerSummonIndicator"
+                "origin" "0 -200 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				"startdisabled" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+
+			bot_generator
+			{
+				"targetname" "SummonerMinionGenerator1"
+				"origin" "200 0 10"
+				"team" "blue"
+				"class" "soldier"
+				"count" "0"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerBrassBeastHeavyMinionInit(self),0,-1"
+				"OnBotKilled" "SummonerMinionCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "SummonerMinionGenerator2"
+				"origin" "-200 0 10"
+				"team" "blue"
+				"class" "soldier"
+				"count" "0"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerBrassBeastHeavyMinionInit(self),0,-1"
+				"OnBotKilled" "SummonerMinionCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "SummonerMinionGenerator3"
+				"origin" "0 200 10"
+				"team" "blue"
+				"class" "soldier"
+				"count" "0"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerBrassBeastHeavyMinionInit(self),0,-1"
+				"OnBotKilled" "SummonerMinionCounter,Subtract,1,0,-1"
+			}
+			bot_generator
+			{
+				"targetname" "SummonerMinionGenerator4"
+				"origin" "0 -200 10"
+				"team" "blue"
+				"class" "soldier"
+				"count" "0"
+				"maxActive" "2"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerBrassBeastHeavyMinionInit(self),0,-1"
 				"OnBotKilled" "SummonerMinionCounter,Subtract,1,0,-1"
 			}
 		}
@@ -1278,6 +1537,39 @@ WaveSchedule
 			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
 
 			SpawnTemplate "SummonerRapidSoldierPT"
+
+			Item "The Dragon's Fury"
+
+			Item "The Wraith Wrap"
+			Item "Hard-Headed Hardware"
+			Item "Forgotten King's Pauldrons"
+			Item "SummonerArmour" [$SIGSEGV]
+			Item "The Coffin Kit"
+
+			Item "Taunt: Second Rate Sorcery"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+				"voice pitch scale" 0
+			}
+		}
+		T_TFBot_Giant_Pyro_Necromancer_BrassBeastHeavy
+		{
+			Name "Giant Deathcatcher Pyro"
+			Class Pyro
+			ClassIcon pyro_dragon_fury_summoner
+			Skill Expert
+			Health 3500
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
+
+			SpawnTemplate "SummonerBrassBeastHeavyPT"
 
 			Item "The Dragon's Fury"
 
@@ -1385,6 +1677,23 @@ WaveSchedule
 			{
 				Class Scout
 				ClassIcon soldier_spammer_summoner
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_Dummy"
+			Support 1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 9999
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Class Scout
+				ClassIcon heavy_brass_summoner
 			}
 		}
 
@@ -1827,7 +2136,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1844,7 +2153,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1861,7 +2170,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1917,7 +2226,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1934,7 +2243,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -1951,7 +2260,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 20
+			WaitBeforeStarting 24
 			WaitBetweenSpawns 0
 			TotalCurrency 20
 
@@ -2066,7 +2375,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 22
+			WaitBeforeStarting 12
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
@@ -2100,15 +2409,32 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 10 Spies
+		WaveSpawn // 12 Burst Demos
+		{
+			Name "Wave1_Subwave4_BurstDemos"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 5 Spies
 		{
 			Name "Wave1_Subwave4_Spies"
 			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher"
 			Where spawnbot_left
 			Support Limited
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 0
@@ -2169,15 +2495,32 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 10 Spies
+		WaveSpawn // 12 Burst Demos
+		{
+			Name "Wave1_Subwave4_BurstDemos2"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher2"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 5 Spies
 		{
 			Name "Wave1_Subwave4_Spies2"
 			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher2"
 			Where spawnbot_left
 			Support Limited
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 0
@@ -2238,15 +2581,32 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 10 Spies
+		WaveSpawn // 12 Burst Demos
+		{
+			Name "Wave1_Subwave4_BurstDemos3"
+			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher3"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 5 Spies
 		{
 			Name "Wave1_Subwave4_Spies3"
 			WaitForAllSpawned "Wave1_Subwave4_Deathcatcher3"
 			Where spawnbot_left
 			Support Limited
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 10
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
 			TotalCurrency 0
@@ -2493,6 +2853,145 @@ WaveSchedule
 		{
 			Name "Wave1_Subwave5_Check"
 			WaitForAllDead "Wave1_Subwave5_BurstDemos3"
+		}
+
+		// Subwave 6
+		WaveSpawn // 1 Deathcatcher and 1 GCharged Medic
+		{
+			Name "Wave1_Subwave6_Deathcatcher"
+			WaitForAllSpawned "Wave1_Subwave5_Check"
+			Where spawnbot_chief
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Necromancer_BrassBeastHeavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+			}
+		}
+		WaveSpawn // 4 Rocket Shotgun Soldiers
+		{
+			Name "Wave1_Subwave6_RocketShotgunSoldiers"
+			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher"
+			Where spawnbot_left
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+
+				Tag bot_flank_l
+			}
+		}
+		WaveSpawn // 12 Pyros
+		{
+			Name "Wave1_Subwave6_Pyros"
+			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher"
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+				
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 Deathcatcher and 1 GCharged Medic
+		{
+			Name "Wave1_Subwave6_Deathcatcher2"
+			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher"
+			Where spawnbot_chief
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Necromancer_BrassBeastHeavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+			}
+		}
+		WaveSpawn // 4 Rocket Shotgun Soldiers
+		{
+			Name "Wave1_Subwave6_RocketShotgunSoldiers2"
+			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher2"
+			Where spawnbot_left
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+
+				Tag bot_flank_l
+			}
+		}
+		WaveSpawn // 12 Pyros
+		{
+			Name "Wave1_Subwave6_Pyros2"
+			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher2"
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+				
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
 		}
 	}
 	// Wave 2 Notes
