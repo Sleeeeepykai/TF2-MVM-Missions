@@ -97,6 +97,17 @@ WaveSchedule
 	DisableSound "Announcer.RoundBegins2Seconds"
 	DisableSound "Announcer.RoundBegins1Seconds"
 
+	DisableSound "music.mvm_start_wave"
+	DisableSound "music.mvm_start_mid_wave"
+	DisableSound "music.mvm_start_tank_wave"
+	DisableSound "music.mvm_start_last_wave"
+	
+	DisableSound "music.mvm_end_wave"
+	DisableSound "music.mvm_end_mid_wave"
+	DisableSound "music.mvm_end_tank_wave"
+	DisableSound "music.mvm_end_last_wave"
+	DisableSound "music.mvm_lost_wave"
+
 	//// LUA SCRIPTS ////
 
 	LuaScriptFile "tank_repair_script.lua"
@@ -843,6 +854,15 @@ WaveSchedule
 				"disableshadows" "1"
 			}
 
+			logic_timer
+			{
+				"targetname" "BlockerCrateBombTimer"
+				"RefireTime" "15"
+				"startdisabled" "1"
+
+				"OnTimer" "BlockerCrateBomb,ForceReset,,0,-1"
+			}
+
 			prop_dynamic
 			{
 				"targetname" "BlockerCrateBombPlantHint"
@@ -899,6 +919,7 @@ WaveSchedule
 
 				"OnStartTouchFlag" "BlockerCrateBomb,ForceDrop,,0,-1"
 
+				"OnDroppedFlag" "BlockerCrateBombTimer,Disable,,0,-1"
 				"OnDroppedFlag" "BlockerCrateBombPlantHint,Disable,,0,-1"
 				"OnDroppedFlag" "BlockerCrateBomb,SetTeam,2,0,-1"
 				"OnDroppedFlag" "BlockerCrateBomb,SetReturnTime,12,0,-1"
@@ -1245,6 +1266,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/weld1.wav,0,-1"
 				"OnTrigger" "ElevatorBreakerButtonGlowTimer,Disable,,0,-1"
 				"OnTrigger" "red_normal_mission_relay,Trigger,,0,-1"
+				"OnTrigger" "blu_spawn,SetTeam,3,0.1,-1"
 				"OnTrigger" "red_lift_door_left_trigger,Disable,,1,-1"
 				"OnTrigger" "red_lift_door_right_trigger,Disable,,1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_lift_warning.wav,2,-1"
@@ -1939,6 +1961,7 @@ WaveSchedule
 				"startdisabled" "1"
 
 				"OnPickup1" "!activator,$PlaySoundToSelf,items/gunpickup2.wav,0,-1"
+				"OnPickup1" "BlockerCrateBombTimer,Enable,,0,-1"
 				"OnPickup1" "BlockerCrateBombArrow,HideSprite,,0,-1"
 				"OnPickup1" "BlockerCrateBombPlantHint,Enable,,0,-1"
 				"OnPickup1" "!activatorRunScriptCodeClientPrint(self, 4, `YOU PICKED UP THE BOMB! PLACE IT NEXT TO THE CONTAINERS!`)0-1"
