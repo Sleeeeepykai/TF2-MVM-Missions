@@ -51,6 +51,7 @@ WaveSchedule
 	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
 	PrecacheModel "models/bots/soldier/bot_soldier_gibby.mdl"
 	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
 
 	// Precached Sounds
@@ -829,9 +830,45 @@ WaveSchedule
                 "spawnflags" "28"
                 "vscripts" "point_viewcontrol_fix"
 			}
+			
+			// Masquerade End-wave Cutscene (Wave 2)
+
+			logic_relay
+			{
+				"targetname" "MasqueradeWave1EndCutscene"
+
+				"OnTrigger" "item_teamflag*,ForceReset,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
+				"OnTrigger" "FireRainTimer,Kill,,0,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)2-1"
+				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,EnableAll,2,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_commending_clap_scout,2.1,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Reeeal smooth dummy!,5.32,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,5.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_stunballhit16.mp3,5.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_stunballhit16.mp3,5.33,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,5.33,-1"
+				
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,1,7.33,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Hey, lotta' good that gun did you!,8.32,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,8.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_taunts09.mp3,8.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_taunts09.mp3,8.33,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,8.33,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
+				"OnTrigger" "MasqueradeIntroCamera7,CallScriptFunction,DisableAll,11,-1"
+				"OnTrigger" "MasqueradeIdleRelay,Trigger,,11,-1"
+			}
 		}
 		MasqueradeFireRainStageHazardPT
 		{
+			NoFixUp 1
+
 			RemoveIfKilled "FireRainTimer"
 
 			logic_timer
@@ -1656,7 +1693,7 @@ WaveSchedule
 		{
 			Line ""
 			Line "{12E8EE}This mission will feature music potentially protected by copyright."
-			Line "{12E8EE}This music comes from the Ultrakill OST by Arsi 'Hakita' Patala."
+			Line "{12E8EE}This music comes from the Ultrakill OST by Arsi 'Hakita' Patala, under the alias 'Heaven Pierce Her'."
 			Line "{12E8EE}Opt in/out with the Music Volume Slider in the Audio Settings."
 			Line ""
 		}
@@ -2355,7 +2392,7 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "Wave1_Subwave4_MasqueradeCutscene1"
+			Name "Wave1_Subwave4_MasqueradeCutscene"
 			WaitForAllSpawned "Wave1_Subwave3_Check"
 			WaitBeforeStarting 11
 
@@ -2370,7 +2407,7 @@ WaveSchedule
 		WaveSpawn // 1 Deathcatcher and 1 Shield Medic
 		{
 			Name "Wave1_Subwave4_Deathcatcher"
-			WaitForAllSpawned "Wave1_Subwave4_MasqueradeCutscene1"
+			WaitForAllSpawned "Wave1_Subwave4_MasqueradeCutscene"
 			Where spawnbot_left
 			TotalCount 2
 			MaxActive 2
@@ -2856,15 +2893,71 @@ WaveSchedule
 		}
 
 		// Subwave 6
+		WaveSpawn // 2 GSlug Shotgun Heavies
+		{
+			Name "Wave1_Subwave6_GSlugShotguns"
+			WaitForAllSpawned "Wave1_Subwave5_Check"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_Shotgun_Slug
+			}
+		}
+		WaveSpawn // 4 Rocket Shotgun Soldiers
+		{
+			Name "Wave1_Subwave6_RocketShotgunSoldiers"
+			WaitForAllSpawned "Wave1_Subwave6_GSlugShotguns"
+			Where spawnbot_left
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+
+				Tag bot_flank_l
+			}
+		}
+		WaveSpawn // 12 Bowmen
+		{
+			Name "Wave1_Subwave6_Bowmen2"
+			WaitForAllSpawned "Wave1_Subwave6_GSlugShotguns"
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Huntsman
+				Attributes AlwaysCrit
+			}
+		}
+
 		WaveSpawn // 1 Deathcatcher and 1 GCharged Medic
 		{
 			Name "Wave1_Subwave6_Deathcatcher"
-			WaitForAllSpawned "Wave1_Subwave5_Check"
+			WaitForAllSpawned "Wave1_Subwave6_GSlugShotguns"
 			Where spawnbot_chief
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 2
+			WaitBeforeStarting 20
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
@@ -2882,7 +2975,7 @@ WaveSchedule
 		}
 		WaveSpawn // 4 Rocket Shotgun Soldiers
 		{
-			Name "Wave1_Subwave6_RocketShotgunSoldiers"
+			Name "Wave1_Subwave6_RocketShotgunSoldiers2"
 			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher"
 			Where spawnbot_left
 			TotalCount 4
@@ -2925,10 +3018,66 @@ WaveSchedule
 			}
 		}
 
+		WaveSpawn // 2 GSlug Shotgun Heavies
+		{
+			Name "Wave1_Subwave6_GSlugShotguns2"
+			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_Shotgun_Slug
+			}
+		}
+		WaveSpawn // 4 Rocket Shotgun Soldiers
+		{
+			Name "Wave1_Subwave6_RocketShotgunSoldiers3"
+			WaitForAllSpawned "Wave1_Subwave6_GSlugShotguns2"
+			Where spawnbot_left
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_RocketShotgun
+
+				Tag bot_flank_l
+			}
+		}
+		WaveSpawn // 12 Bowmen
+		{
+			Name "Wave1_Subwave6_Bowmen2"
+			WaitForAllSpawned "Wave1_Subwave6_GSlugShotguns2"
+			Where spawnbot_right
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Huntsman
+				Attributes AlwaysCrit
+			}
+		}
+
 		WaveSpawn // 1 Deathcatcher and 1 GCharged Medic
 		{
 			Name "Wave1_Subwave6_Deathcatcher2"
-			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher"
+			WaitForAllSpawned "Wave1_Subwave6_GSlugShotguns2"
 			Where spawnbot_chief
 			TotalCount 2
 			MaxActive 2
@@ -2951,7 +3100,7 @@ WaveSchedule
 		}
 		WaveSpawn // 4 Rocket Shotgun Soldiers
 		{
-			Name "Wave1_Subwave6_RocketShotgunSoldiers2"
+			Name "Wave1_Subwave6_RocketShotgunSoldiers4"
 			WaitForAllSpawned "Wave1_Subwave6_Deathcatcher2"
 			Where spawnbot_left
 			TotalCount 4
@@ -2993,6 +3142,68 @@ WaveSchedule
 				}
 			}
 		}
+
+		// Subwave 6 Check
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_GSlugShotguns"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_GSlugShotguns2"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_Deathcatcher"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_Deathcatcher2"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_RocketShotgunSoldiers3"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_RocketShotgunSoldiers4"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_Pyros2"
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_Check"
+			WaitForAllDead "Wave1_Subwave6_Bowmen2"
+		}
+
+		// Cutscene
+		WaveSpawn
+		{
+			Name "Wave1_Subwave6_MasqueradeCutscene"
+			WaitForAllSpawned "Wave1_Subwave6_Check"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target MasqueradeWave1EndCutscene
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_End"
+			WaitForAllSpawned "Wave1_Subwave6_Check"
+			WaitBeforeStarting 11
+		}
 	}
 	// Wave 2 Notes
 	Wave
@@ -3003,6 +3214,10 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_init_upper_relay`, `Trigger`)
+					EntFire(`MasqueradeIdleRelay`, `Trigger`)
+
+					local bomb = Entities.FindByName(null, `intel_35`)
+					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
 				  "
 		}
 		StartWaveOutput
