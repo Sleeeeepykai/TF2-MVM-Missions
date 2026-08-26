@@ -29,6 +29,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 	}
 }
 
+const MAX_WEAPONS = 8
+
 ::SummonerScript <-
 {
 	//// CLEANUP FUNCTIONS ////
