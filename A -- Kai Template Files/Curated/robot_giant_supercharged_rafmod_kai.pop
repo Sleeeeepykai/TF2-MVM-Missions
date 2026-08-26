@@ -7,10 +7,10 @@ WaveSchedule
 
 	// Precached Sounds //
 
-	PrecacheSound "sound/bazooks/giant_heavy_gunwindup_brassbeast.wav"
-	PrecacheSound "sound/bazooks/giant_heavy_gunwinddown_brassbeast.wav"
-	PrecacheSound "sound/bazooks/giant_heavy_gunspin_brassbeast.wav"
-	PrecacheSound "sound/bazooks/giant_heavy_gunfire_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunwindup_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunwinddown_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunspin_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunfire_brassbeast.wav"
 
 	//// CUSTOM WEAPONS ////
 
@@ -22,11 +22,6 @@ WaveSchedule
 
 			"damage bonus" 2.5
 			"minigun spinup time increased" 3.5
-
-			"custom wind up sound" "=120|sound/bazooks/giant_heavy_gunwindup_brassbeast.wav"
-			"custom wind down sound" "=120|sound/bazooks/giant_heavy_gunwinddown_brassbeast.wav"
-			"custom minigun spin sound" "=120|sound/bazooks/giant_heavy_gunspin_brassbeast.wav"
-			"custom weapon fire sound" "=120|sound/bazooks/giant_heavy_gunfire_brassbeast.wav"
 		}
 	}
 
@@ -41,12 +36,56 @@ WaveSchedule
 			KeepAlive 1
 			
 			RemoveIfKilled "BrassBeastMimic"
-
+			
+			OnSpawnOutput
+			{
+				Target "BrassBeastCircle"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
 			OnSpawnOutput
 			{
 				Target "BrassBeastChargeParticle"
 				Action "SetParentAttachment"
 				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastFireParticle"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastFireParticle2"
+				Action "SetParentAttachment"
+				Param "eject_brass"
+			}
+			OnParentKilledOutput
+			{
+				Target !activator
+				Action RunScriptCode
+				Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunspin_brassbeast.wav`, channel = 6, filter_type = 5, entity = self, flags = 4})"
+				Delay -1
+			}
+			OnParentKilledOutput
+			{
+				Target !activator
+				Action RunScriptCode
+				Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunfire_brassbeast.wav`, channel = 6, filter_type = 5, entity = self, flags = 4})"
+				Delay -1
+			}
+			OnParentKilledOutput
+			{
+				Target BrassBeastMimic
+				Action TurnOff
+				Delay -1
+			}
+			OnParentKilledOutput
+			{
+				Target BrassBeastMimic
+				Action Kill
+				Delay 0.1
 			}
 
 			prop_dynamic_ornament
@@ -64,24 +103,17 @@ WaveSchedule
 				"parentname" "BrassBeastMimic"
 				"effect_name" "projectile_fireball_ring_fire"
 			}
-			point_tesla
+			info_particle_system
 			{
-				"targetname" "BrassBeastChargeParticle"
+				"targetname" "BrassBeastFireParticle"
 				"parentname" "BrassBeastMimic"
-
-				"m_SoundName" "misc/null.wav"
-				"texture" "sprites/physbeam.vmt"
-				"m_Color" "255 219 38"
-				"m_flRadius" "64"
-				"beamcount_min" "3"
-				"beamcount_max" "9"
-				"thick_min" "4"
-				"thick_max" "10"
-				"lifetime_min" "0.15"
-				"lifetime_max" "0.15"
-				"interval_min" "0.05"
-				"interval_max" "0.05"
-				"m_bOn" "0"
+				"effect_name" "h2013_corpse_flame"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastFireParticle2"
+				"parentname" "BrassBeastMimic"
+				"effect_name" "h2013_corpse_flame"
 			}
 		}
 
@@ -300,6 +332,7 @@ WaveSchedule
 			Name "Giant Brass Beast Heavy"
 			Class Heavy
 			ClassIcon heavy_brass_nys_giant
+			Skill Expert
 			Health 5000
 			Attributes MiniBoss
 			Attributes SuppressFire
@@ -307,7 +340,9 @@ WaveSchedule
 
 			SpawnTemplate "BrassBeastPT"
 
-			Item "BrassBeastModded" [$SIGSEGV]
+			MaxVisionRange 1200
+
+			Item "The Brass Beast"
 
 			CharacterAttributes
 			{
@@ -317,36 +352,33 @@ WaveSchedule
 				"override footstep sound set" 2
 			}
 
+			ItemAttributes
+			{
+				ItemName "The Brass Beast"
+
+				"damage bonus" 2.5
+				"minigun spinup time increased" 3.5
+			}
+
 			ChangeAttributes
 			{
-				Name "BrassBeastIdle"
+				Name "BrassBeastInit"
 				Delay 0
 				Repeats 1
+				Cooldown -1
 			}
 
 			EventChangeAttributes
 			{
-				BrassBeastFire
+				BrassBeastInit
 				{
-					FireInput
-					{
-						Target "BrassBeastChargeParticle"
-						Action Start
-						Delay 1.5
-					}
-					FireInput
-					{
-						Target "BrassBeastChargeParticle"
-						Action TurnOn
-						Delay 1.5
-					}
-
 					ChangeAttributes
 					{
-						Name "BrassBeastIdle"
+						Name "BrassBeastFire"
 						Delay 0
 						Repeats 1
-						IfNoTarget 1
+						Cooldown -1
+						IfSeeTarget 1
 						IfLeftSpawn 1
 					}
 				}
@@ -354,13 +386,51 @@ WaveSchedule
 				{
 					FireInput
 					{
-						Target "BrassBeastChargeParticle"
-						Action Stop
+						Target !activator
+						Action RunScriptCode
+						Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunwinddown_brassbeast.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
 					}
 					FireInput
 					{
 						Target "BrassBeastChargeParticle"
-						Action TurnOff
+						Action Stop
+						Delay 0
+						Repeats 1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle"
+						Action Stop
+						Delay 0
+						Repeats 1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2"
+						Action Stop
+						Delay 0
+						Repeats 1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunspin_brassbeast.wav`, channel = 6, filter_type = 5, entity = self, flags = 4})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunfire_brassbeast.wav`, channel = 6, filter_type = 5, entity = self, flags = 4})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
 					}
 
 					ChangeAttributes
@@ -368,8 +438,81 @@ WaveSchedule
 						Name "BrassBeastFire"
 						Delay 0
 						Repeats 1
+						Cooldown -1
 						IfSeeTarget 1
 						IfLeftSpawn 1
+					}
+				}
+				BrassBeastFire
+				{
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 0
+						Duration 1
+						Repeats 0
+						Cooldown 1
+					}
+
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunwindup_brassbeast.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastChargeParticle"
+						Action Start
+						Delay 1.5
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunspin_brassbeast.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "EmitSoundEx({sound_name = `bazooks/giant_heavy_gunfire_brassbeast.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle"
+						Action Start
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2"
+						Action Start
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BrassBeastIdle"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfNoTarget 1
 					}
 				}
 			}
