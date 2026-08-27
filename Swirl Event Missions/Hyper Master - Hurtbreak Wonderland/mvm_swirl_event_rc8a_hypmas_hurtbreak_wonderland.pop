@@ -152,6 +152,19 @@ WaveSchedule
 
 						IncludeScript(`mvm_summoner_script`)
 
+						::DispatchParticleEffectOn <- function(hEntity, sName)
+						{
+							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = Entities.CreateByClassname(`trigger_particle`)
+							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromString(`particle_name`, sName)
+							hParticle.KeyValueFromInt(`attachment_type`, 1)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
+							hParticle.Kill()
+						}
+
 						::DispatchParticleAttached <- function(entity, name, attachment)
 						{
 							if(entity == null) return
@@ -216,6 +229,11 @@ WaveSchedule
 			OnSpawnOutput
 			{
 				Target MasqueradeFit
+				Action TurnOff
+			}
+			OnSpawnOutput
+			{
+				Target MasqueradeSword
 				Action TurnOff
 			}
 
@@ -806,9 +824,6 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,10.33,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,10.66,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,11,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,11.33,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,11.66,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,player/fall_damage_indicator.wav,12,-1"
 
 				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
 				"OnTrigger" "MasqueradeIntroCamera7,CallScriptFunction,DisableAll,11,-1"
@@ -862,7 +877,97 @@ WaveSchedule
 
 				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
 				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,11,-1"
-				"OnTrigger" "MasqueradeIdleRelay,Trigger,,11,-1"
+			}
+
+			// Masquerade Intro Cutscene (Wave 2)
+
+			logic_relay
+			{
+				"targetname" "MasqueradeWave2IntroRelay"
+
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)0-1"
+				"OnTrigger" "MasqueradeIntroCamera2,CallScriptFunction,EnableAll,0,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_come_and_get_me,0.1,-1"
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,C'mon tough guy!,0,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare06.mp3,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare06.mp3,0.1,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Is that all you got moron?,2.4,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination17.mp3,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination17.mp3,2.5,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,2.5,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_bat_man,4.5,-1"
+				"OnTrigger" "MasqueradeSword,TurnOn,,4.5,-1"
+				"OnTrigger" "MasqueradeSwordRunScriptCodeDispatchParticleEffectOn(self, `utaunt_glowyplayer_purple_parent`,)4.5-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/batsaber_swing2.wav,5.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/batsaber_swing3.wav,5.7,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/batsaber_swing1.wav,5.9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/batsaber_swing3.wav,6.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/batsaber_swing_crit1.wav,6.3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/batsaber_swing_crit2.wav,6.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,6.5,-1"
+
+				"OnTrigger" "MasqueradeSwordRunScriptCodeDispatchParticleEffectOn(self, null,)8.5-1"
+				"OnTrigger" "MasqueradeSword,TurnOff,,8.5,-1"
+				"OnTrigger" "MasqueradeIdleRelay,Trigger,,8.5,-1"
+				
+				"OnTrigger" "MasqueradeIntroCamera2,CallScriptFunction,DisableAll,8.5,-1"
+				"OnTrigger" "MasqueradeSummonCamera,CallScriptFunction,EnableAll,8.5,-1"
+				"OnTrigger" "MasqueradeSummonPortalParticle,Start,,8.5,-1"
+
+				"OnTrigger" "MasqueradeSummonCamera,CallScriptFunction,DisableAll,10.5,-1"
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)10.5-1"
+
+				"OnTrigger" "MasqueradeSummonPortalParticle,Stop,,13.5,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 1.5, 1)13.5-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`vo\mvm\mght\demoman_mvm_m_paincrticialdeath05.mp3`,channel = 6,pitch = 60,filter_type=5})13.51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`vo\mvm\mght\demoman_mvm_m_paincrticialdeath05.mp3`,channel = 6,pitch = 60,filter_type=5})13.51"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/hurtbreakwonderland/no_devil_lived_on.wav`),15,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}No Devil Lived On - Heaven Pierce Her,15,-1"
+			}
+
+			prop_dynamic_ornament
+            {
+                "targetname" "MasqueradeSword"
+                "InitialOwner" "MasqueradeMan"
+                "model" "models/weapons/c_models/c_scout_sword/c_scout_sword.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			point_viewcontrol
+			{
+				"targetname" "MasqueradeSummonCamera"
+				"origin" "-64 290 276"
+
+				"target" "MasqueradeSummonPortalParticle"
+                "acceleration" "0"
+                "deceleration" "0"
+				"trackspeed" "50"
+
+                "spawnflags" "28"
+                "vscripts" "point_viewcontrol_fix"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSummonPortalParticle"
+				"origin" "-64 16 -48"
+				"effect_name" "halloween_boss_summon"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSummonPortalParticle"
+				"origin" "-64 16 -48"
+				"effect_name" "hwn_cart_cap_red"
+				"start_active" "0"
 			}
 		}
 		MasqueradeFireRainStageHazardPT
@@ -1563,7 +1668,7 @@ WaveSchedule
 		{
 			Name "Deathcatcher"
 			Template T_TFBot_Giant_Pyro_Necromancer_RapidSoldier
-			Health 40000
+			Health 35000
 			Scale 2
 			Attributes UseBossHealthBar
 		}
@@ -2887,11 +2992,6 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave1_Subwave5_Check"
-			WaitForAllDead "Wave1_Subwave5_HammerTank"
-		}
-		WaveSpawn
-		{
-			Name "Wave1_Subwave5_Check"
 			WaitForAllDead "Wave1_Subwave5_GRapidDemo3"
 		}
 		WaveSpawn
@@ -3234,7 +3334,39 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_boss_relay`, `Trigger`)
+					EntFire(`MasqueradeWave2IntroRelay`, `Trigger`)
 				  "
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 Supercharged Demoknight
+		{
+			Name "Wave2_Subwave1_GKnight"
+			Where spawnbot_flank
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 13.5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Knight_Supercharged
+				Health 12500
+				Attributes UseBossHealthBar
+				Action Mobber
+
+				FireInput
+				{
+					Target !self
+					Action $SetLocalOrigin
+					Param "-64 16 -12"
+					Delay 0
+					Repeats 1
+					Cooldown -1
+				}
+			}
 		}
 	}
 }
