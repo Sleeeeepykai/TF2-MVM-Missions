@@ -688,6 +688,142 @@ WaveSchedule
 			}
 		}
 
+		//// MEDIC TEMPLATES ////
+
+		T_TFBot_Giant_Medic_Vaccinator_Cycler
+		{
+			Name "Giant Vaccinator-Cycle Medic"
+			Class Medic
+			ClassIcon medic_vac_trio_nys_giant
+			Skill Expert
+			Health 4500
+			Attributes MiniBoss
+			WeaponRestrictions SecondaryOnly
+
+			UseHumanAnimations 1
+			
+			Item "The Vaccinator"
+
+			CharacterAttributes
+			{
+				"bot medic uber health threshold" 50000
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"health regen" 40
+				"mod weapon blocks healing" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_SYRINGEGUN_MEDIC"
+				"damage penalty" 0.1
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Vaccinator"
+				"heal rate bonus" 200
+				"ubercharge rate bonus" 100
+			}
+			
+			ChangeAttributes
+            {
+                Name "BulletResistStage"
+                Delay 0
+                Repeats 1
+				IfLeftSpawn 1
+            }
+
+			EventChangeAttributes
+			{
+				BulletResistStage [$SIGSEGV]
+				{
+					Attributes VaccinatorBullets
+
+					ItemAttributes
+					{
+						ItemName "The Vaccinator"
+
+						"medigun bullet resist passive" 1
+						"medigun bullet resist deployed" 1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "PrecacheSound(`weapons/vaccinator_toggle.wav`);EmitSoundEx({sound_name = `weapons/vaccinator_toggle.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BlastResistStage"
+						Delay 3
+						Repeats 1
+					}
+				}
+				BlastResistStage [$SIGSEGV]
+				{
+					Attributes VaccinatorBlast
+
+					ItemAttributes
+					{
+						ItemName "The Vaccinator"
+
+						"medigun blast resist passive" 1
+						"medigun blast resist deployed" 1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "PrecacheSound(`weapons/vaccinator_toggle.wav`);EmitSoundEx({sound_name = `weapons/vaccinator_toggle.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "FireResistStage"
+						Delay 3
+						Repeats 1
+					}
+				}
+				FireResistStage [$SIGSEGV]
+				{
+					Attributes VaccinatorFire
+
+					ItemAttributes
+					{
+						ItemName "The Vaccinator"
+
+						"medigun fire resist passive" 1
+						"medigun fire resist deployed" 1
+					}
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "PrecacheSound(`weapons/vaccinator_toggle.wav`);EmitSoundEx({sound_name = `weapons/vaccinator_toggle.wav`, channel = 6, filter_type = 5, entity = self})"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BulletResistStage"
+						Delay 3
+						Repeats 1
+					}
+				}
+			}
+		}
+
 		//// SNIPER TEMPLATES ////
 
 		T_TFBot_Giant_Sniper
