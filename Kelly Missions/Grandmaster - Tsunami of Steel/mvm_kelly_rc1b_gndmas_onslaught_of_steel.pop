@@ -1,0 +1,859 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 0
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+	MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+	//// PRECACHES ////
+
+	// Precached Sounds //
+
+	PrecacheSound "bazooks/giant_heavy_gunwindup_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunwinddown_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunspin_brassbeast.wav"
+	PrecacheSound "bazooks/giant_heavy_gunfire_brassbeast.wav"
+
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		"HomewreckerRangedWeapon"
+		{
+			OriginalItemName "The Rescue Ranger"
+			"damage bonus" 1.5
+			"no damage falloff" 1
+			"add damage type" 128
+			"remove damage type" 2
+
+			"fire rate penalty" 2
+			"faster reload rate" 0.001
+
+			"penetrate teammates" 1
+			"projectile speed decreased" 0.65
+			"projectile gravity" 750
+			"arrow hit kill time" 0.1
+
+			"custom item model" "models/weapons/c_models/c_sledgehammer/c_sledgehammer.mdl"
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+			"custom weapon fire sound" "common/null.wav"
+			"custom kill icon" "sledgehammer"
+		}
+	}
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
+
+                        Convars.SetValue(`tf_playergib`, 0)
+
+						EntFire(`saucer`, `Kill`)
+						EntFire(`saucer_sound`, `Kill`)
+
+						IncludeScript(`tankextensions_main`)
+
+						IncludeScript(`tankextensions/blimp`)
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/cannon`)
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
+						IncludeScript(`tankextensions/combattank_weapons/minigun`)
+						IncludeScript(`tankextensions/combattank_weapons/fireball`)
+						IncludeScript(`tankextensions/combattank_weapons/railgun`)
+						IncludeScript(`tankextensions/helicopter`)
+						IncludeScript(`tankextensions/teletank`)
+						IncludeScript(`tankextensions/ubertank`)
+					  "
+			}
+
+			// Universal Filters
+            filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
+		}
+
+		MissionPT
+		{
+
+			logic_relay
+			{
+				"targetname" "TankMoveRelay"
+
+				"OnTrigger" "tank_boss*,SetSpeed,25,0,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,50,1.5,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,75,3,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
+			}
+			logic_relay
+			{
+				"targetname" "TankCleanupRelay"
+
+				"OnTrigger" "tank_boss*,RemoveHealth,100000,0,-1"
+			}
+		}
+
+		//// ROBOT PTs ////
+
+		RotatingHomewreckerPT
+        {
+			KeepAlive 1
+
+			RemoveIfKilled "HomewreckerProjectile"
+
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+			OnParentKilledOutput
+			{
+				Target "HomewreckerRotator"
+				Action Stop
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerShake"
+				Action StartShake
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerProjectile"
+				Action RunScriptCode
+				Param "ScreenShake(self.GetOrigin(), 10, 10, 2, 800, 0, true)"
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerProjectile"
+				Action RunScriptCode
+				Param "EmitSoundEx({sound_name = `misc/halloween/strongman_fast_impact_01.wav`, channel = 6, sound_level = 100, entity = self})"
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerProjectile"
+				Action Kill
+				Delay 3
+			}
+
+            prop_dynamic
+            {
+                "targetname" "HomewreckerProjectile"
+                "parentname" "HomewreckerRotator"
+				"origin" "-10 0 -50"
+				"angles" "0 0 0"
+				"skin" "1"
+                "model" "models/weapons/c_models/c_sledgehammer/c_sledgehammer.mdl"
+				"modelscale" "1.5"
+            }
+            func_rotating
+            {
+                "targetname" "HomewreckerRotator"
+				"origin" "0 0 0"
+                "spawnflags" "73"
+                "maxspeed" "500"
+            }
+        }
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+	SpawnTemplate "MissionPT"
+
+	PlayerShootTemplate
+	{
+		Name "RotatingHomewreckerPT"
+		AttachToProjectile 1
+		ItemName "HomewreckerRangedWeapon"
+	}
+
+	//// EXTRA TANK PATHS ////
+
+	ExtraTankPath // Tank Path B (Right Path)
+	{
+		Name "tank_path_b"
+
+		Node "-128 2688 -60"
+		Node "-128 256 36"
+		Node "-320 64 36"
+		Node "-704 64 36"
+		Node "-896 -192 36"
+		Node "-960 -448 36"
+		Node "-960 -1344 36"
+		Node "-896 -1536 36"
+		Node "-896 -2432 36"
+		Node "-768 -2560 36"
+		Node "-320 -2560 68"
+		Node "-152 -2456 68"
+	}
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		//// GIANTS ////
+
+		T_TFBot_Giant_Pyro_Homewrecker_Launcher
+		{
+			Name "Giant Sledgethrower Pyro"
+			Class Pyro
+			ClassIcon pyro_homewrecker_lite_giant
+			Skill Expert
+			Health 3000
+			Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			UseMeleeThreatPrioritization 1
+			AimAt Head
+
+			Item "HomewreckerRangedWeapon" [$SIGSEGV]
+			Item "The Homewrecker"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Homewrecker"
+				"fire rate penalty" 1.5625
+
+				"is_passive_weapon" 1
+			}
+
+			ShootTemplate
+			{
+				Name "RotatingHomewreckerPT"
+				AttachToProjectile 1
+				ItemName "HomewreckerRangedWeapon"
+			}
+		}
+		//// MINIGIANTS ////
+		T_TFBot_Scout_Sandman_Armored
+		{
+			Name "Armor League Scout"
+			Template T_TFBot_Scout_Sandman_Spammer
+			ClassIcon scout_stun_armored
+			Skill Expert
+			Health 650
+			Scale 1.4
+		}
+
+		T_TFBot_Heavy_Forceweight_Champ
+		{
+			Name "Forceweight Champ"
+			Class Heavy
+			ClassIcon heavy_steelfist_pusher
+			Skill Expert
+			Health 900
+			Scale 1.5
+			WeaponRestrictions MeleeOnly
+
+			Item "Fists of Steel"
+
+			Item "Pugilist's Protector"
+
+			ItemAttributes
+			{
+				ItemName "Fists of Steel"
+				
+				"apply z velocity on damage" 10000
+				"apply look velocity on damage" 10000
+
+				"weapon always gib" 1
+			}
+
+			ChangeAttributes
+			{
+				Name "PitbullMode"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+				IfSeeTarget 1
+				IfLeftSpawn 1
+			}
+
+			EventChangeAttributes
+			{
+				PitbullMode [$SIGSEGV]
+				{
+					Attributes DisableDodge
+
+					ActionOverride Mobber
+
+					CustomEyeGlowColor "255 0 0"
+
+					CharacterAttributes
+					{
+						"move speed bonus" 5
+						"cannot pick up intelligence" 1
+					}
+				}
+			}
+		}
+	}
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 GBrassBeast Heavy and 2 GCharged Medics
+		{
+			Name "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 400
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_BrassBeast [$SIGSEGV]
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+			}
+		}
+		WaveSpawn // 6 Armor League Scouts
+		{
+			Name "Wave1_Subwave1_ArmoredSandmanScouts"
+			WaitForAllSpawned "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Sandman_Armored
+			}
+		}
+		WaveSpawn // 15 Loch Demos
+		{
+			Name "Wave1_Subwave1_LochDemos"
+			WaitForAllSpawned "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_LochnLoad
+				Skill Expert
+
+				AimAt Head
+			}
+		}
+		
+		WaveSpawn // 3 GBarrage Soldiers
+		{
+			Name "Wave1_Subwave1_GBarrageSoldier"
+			WaitForAllDead "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 16
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+					Tag nav_prefer_flank_left
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+					Tag nav_prefer_flank_left
+				}
+			}
+		}
+		WaveSpawn // 3 GBarrage Soldiers
+		{
+			Name "Wave1_Subwave1_GBarrageSoldier"
+			WaitForAllDead "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 16
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+					Tag nav_prefer_flank_right
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Barrage
+					Tag nav_prefer_flank_right
+				}
+			}
+		}
+		WaveSpawn // 30 Scouts
+		{
+			Name "Wave1_Subwave1_Scouts"
+			WaitForAllDead "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot_any
+			TotalCount 30
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 1
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // 8 Engineers and 8 Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_Engineers"
+			WaitForAllDead "Wave1_Subwave1_GBrassBeastHeavy"
+			Where spawnbot_any
+			Support Limited
+			TotalCount 16
+			MaxActive 16
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0.5
+			TotalCurrency 0
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Sentry_Teleporter_WalkIn
+					TeleportWhere spawnbot_left
+					TeleportWhere spawnbot_right
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBrassBeast Heavy and 2 GCharged Medics
+		{
+			Name "Wave1_Subwave1_GBrassBeastHeavy2"
+			WaitForAllSpawned "Wave1_Subwave1_GBarrageSoldier"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 400
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_BrassBeast [$SIGSEGV]
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+			}
+		}
+		WaveSpawn // 4 Armor League Scouts
+		{
+			Name "Wave1_Subwave1_ArmoredSandmanScouts2"
+			WaitForAllSpawned "Wave1_Subwave1_GBrassBeastHeavy2"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0.5
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Sandman_Armored
+			}
+		}
+		WaveSpawn // 5 Loch Demos
+		{
+			Name "Wave1_Subwave1_LochDemos2"
+			WaitForAllSpawned "Wave1_Subwave1_GBrassBeastHeavy2"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_LochnLoad
+				Skill Expert
+
+				AimAt Head
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave2_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tank_boss"
+				Health 26000
+				Speed 75
+				StartingPathTrackNode "tank_path_a_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave2_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tank_boss"
+				Health 26000
+				Speed 75
+				StartingPathTrackNode "tank_path_b_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+
+		WaveSpawn // 25 Forceweight Champs (Send in the Pitbulls)
+		{
+			Name "Wave2_Subwave1_ForceweightChamps"
+			WaitForAllSpawned "Wave2_Subwave1_Tank"
+			Where spawnbot_any
+			TotalCount 25
+			MaxActive 25
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0.1
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Forceweight_Champ
+			}
+		}
+
+		WaveSpawn // 2 GBurst Loch Demomen and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave1_GBurstLochDemo"
+			WaitForAllSpawned "Wave2_Subwave1_ForceweightChamps"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 16
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_LochnLoad_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+
+		WaveSpawn // 25 Forceweight Champs (Send in the Pitbulls the Sequel)
+		{
+			Name "Wave2_Subwave1_ForceweightChamps2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstLochDemo"
+			Where spawnbot_any
+			TotalCount 25
+			MaxActive 25
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0.1
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Forceweight_Champ
+			}
+		}
+
+		WaveSpawn // Jimmy Sledgehammer
+		{
+			Name "Wave2_Subwave1_SledgeThrower"
+			WaitForAllSpawned "Wave2_Subwave1_ForceweightChamps2"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "vo/mvm/mght/pyro_mvm_m_battlecry01.mp3"
+
+			TFBot
+			{
+				Name "Jimmy Sledgehammer"
+				Template T_TFBot_Giant_Pyro_Homewrecker_Launcher
+				Health 12500
+				Scale 2
+				Attributes UseBossHealthBar
+			}
+		}
+	}
+	Wave
+	{
+	}
+}
