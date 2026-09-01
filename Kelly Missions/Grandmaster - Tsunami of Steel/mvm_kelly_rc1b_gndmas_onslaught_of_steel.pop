@@ -325,7 +325,45 @@ WaveSchedule
 				ItemName "HomewreckerRangedWeapon"
 			}
 		}
+
+		T_TFBot_Giant_Demoman_Burst_Ricochet
+		{
+			Name "Giant Burst Ricochet Demoman"
+			Class Demoman
+			ClassIcon demo_burst_ricochet_giant
+			Skill Expert
+			Health 3300
+			Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			AimOffset "25 0 200"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 4
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+				"fire rate bonus" 0.1
+				"faster reload rate" 0.65
+				"clip size upgrade atomic" 7.0
+				"projectile speed increased" 1.1
+				"projectile spread angle penalty" 5
+
+				"fuse bonus" 1.5
+				"grenade bounce speed" 0.8
+				"grenade bounce damage" 0.75
+			}
+		}
+
 		//// MINIGIANTS ////
+
 		T_TFBot_Scout_Sandman_Armored
 		{
 			Name "Armor League Scout"
@@ -388,6 +426,29 @@ WaveSchedule
 				}
 			}
 		}
+
+		//// COMMONS ////
+
+		T_TFBot_Heavy_Shotgun_Statless
+        {
+            Name "Shotgun Heavy"
+            Class Heavy
+            ClassIcon heavy_shotgun
+            WeaponRestrictions SecondaryOnly
+        }
+		T_TFBot_Engineer_Shotgun
+        {
+            Name "I Forgor my Shotgun"
+            Class Engineer
+            ClassIcon heavy_shotgun
+            WeaponRestrictions SecondaryOnly
+			Action FetchFlag
+
+			CharacterAttributes
+			{
+				"voice pitch scale" 0
+			}
+        }
 	}
 
 	//// MISSION BOTS ////
@@ -529,11 +590,15 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Barrage
+
+					BehaviorModifiers Push
 					Tag nav_prefer_flank_left
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Barrage
+
+					BehaviorModifiers Push
 					Tag nav_prefer_flank_left
 				}
 			}
@@ -561,11 +626,15 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Barrage
+
+					BehaviorModifiers Push
 					Tag nav_prefer_flank_right
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Soldier_Barrage
+
+					BehaviorModifiers Push
 					Tag nav_prefer_flank_right
 				}
 			}
@@ -784,16 +853,16 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 2 GBurst Loch Demomen and 2 Full-Uber Medics
+		WaveSpawn // 1 GBurst Loch Demoman and 1 Full-Uber Medic
 		{
 			Name "Wave2_Subwave1_GBurstLochDemo"
 			WaitForAllSpawned "Wave2_Subwave1_ForceweightChamps"
 			Where spawnbot
-			TotalCount 4
-			MaxActive 4
-			SpawnCount 4
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 16
+			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			Squad
@@ -801,6 +870,36 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_LochnLoad_Burst
+
+					BehaviorModifiers Push
+					Tag nav_prefer_flank_left
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 1 GBurst Loch Demoman and 1 Full-Uber Medic
+		{
+			Name "Wave2_Subwave1_GBurstLochDemo"
+			WaitForAllSpawned "Wave2_Subwave1_ForceweightChamps"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_LochnLoad_Burst
+
+					BehaviorModifiers Push
+					Tag nav_prefer_flank_right
 				}
 				TFBot
 				{
@@ -848,6 +947,327 @@ WaveSchedule
 				Health 12500
 				Scale 2
 				Attributes UseBossHealthBar
+			}
+		}
+
+		WaveSpawn // 28 Shotgun Men
+		{
+			Name "Wave2_Subwave1_ShotgunCrew"
+			WaitForAllSpawned "Wave2_Subwave1_SledgeThrower"
+			Where spawnbot_any
+			TotalCount 28
+			MaxActive 12
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 40
+
+			RandomChoice
+            {
+				Shuffle 1 [$SIGSEGV]
+
+                TFBot
+                {
+					Template T_TFBot_Heavy_Shotgun_Statless
+					Skill Easy
+				}
+				TFBot
+                {
+					Template T_TFBot_Engineer_Shotgun
+					Skill Easy
+                }
+                TFBot
+                {
+					Template T_TFBot_Soldier_Shotgun
+					Skill Easy
+                }
+                TFBot
+                {
+					Template T_TFBot_Pyro_Shotgun
+					Skill Easy
+                }
+            }
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo"
+			WaitForAllDead "Wave2_Subwave1_SledgeThrower"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave2_Subwave2_Heavies"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo"
+			Where spawnbot_left
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_left
+			}
+		}
+
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo2"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave2_Subwave2_Heavies2"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo2"
+			Where spawnbot_right
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_right
+			}
+		}
+
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo3"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo2"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave2_Subwave2_Heavies3"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo3"
+			Where spawnbot_left
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_left
+			}
+		}
+
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo4"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo3"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 10 Heavies
+		{
+			Name "Wave2_Subwave2_Heavies4"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo4"
+			Where spawnbot_right
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_right
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn
+		{
+			Name "Wave2_Subwave3_"
+		}
+	}
+	Wave 
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+		WaveSpawn // Tank # HP
+		{
+			Name ""
+			WaitForAllDead ""
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+		
+			TotalCurrency 0
+		
+			Tank
+			{
+				Name "combattank|railgun|railgun"
+				StartingPathTrackNode "tank_path_a_1"
+				Health 0
+				Speed 75
+				Skin 0
+		
+				OnKilledOutput {}
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // Dummy
+		{
+			TotalCount 1
+			SpawnCount 1
+			WaitBeforeStarting 10
+			FirstSpawnOutput
+			{
+				Target wave_start_relay
+				Action RunScriptCode
+				Param "
+					COMBATTANK_RAILGUN_COOLDOWN_TIME        = 3
+					COMBATTANK_RAILGUN_BULLET_DAMAGE        = 20
+					COMBATTANK_RAILGUN_CLIP_SIZE            = 10
+					COMBATTANK_ROTATE_SPEED_DEFAULT 		= 6
+					COMBATTANK_MAX_RANGE					= 2000
+				"
 			}
 		}
 	}
