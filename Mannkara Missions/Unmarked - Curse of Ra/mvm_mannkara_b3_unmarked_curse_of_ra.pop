@@ -1,0 +1,378 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 750
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+    BodyPartScaleSpeed 10
+
+    MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+	//// PRECACHES ////
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+
+                        Convars.SetValue(`tf_playergib`, 0)
+
+						IncludeScript(`tankextensions_main`)
+
+						IncludeScript(`tankextensions/blimp`)
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/cannon`)
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
+						IncludeScript(`tankextensions/combattank_weapons/minigun`)
+						IncludeScript(`tankextensions/combattank_weapons/fireball`)
+						IncludeScript(`tankextensions/combattank_weapons/railgun`)
+						IncludeScript(`tankextensions/helicopter`)
+						IncludeScript(`tankextensions/teletank`)
+						IncludeScript(`tankextensions/ubertank`)
+					  "
+			}
+
+			// Universal Filters
+            filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
+		}
+
+		MissionPT
+		{
+
+			logic_relay
+			{
+				"targetname" "TankMoveRelay"
+
+				"OnTrigger" "tank_boss*,SetSpeed,25,0,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,50,1.5,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,75,3,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
+			}
+			logic_relay
+			{
+				"targetname" "TankCleanupRelay"
+
+				"OnTrigger" "tank_boss*,RemoveHealth,100000,0,-1"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+	SpawnTemplate "MissionPT"
+
+	//// ROBOT TEMPLATES ////
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Mission // Razorback Sniper (Wave 1)
+	{
+		Objective Sniper
+		Where spawnbot_mission_sniper
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Sniper_Razorback
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 10 Scatter-Bonk Scouts
+		{
+			Name "Wave1_Subwave1_ScatterBonks"
+			Where spawnbot_main
+			TotalCount 30
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Action Mobber
+			}
+		}
+
+		WaveSpawn // 12 Demomen and 12 Quick-Uber Medics
+		{
+			Name "Wave1_Subwave1_Demomen"
+			Where spawnbot_main
+			TotalCount 24
+			MaxActive 9
+			SpawnCount 6
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Class Demoman
+					Skill Hard
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+
+		WaveSpawn // 8 Dive-Bomber Soldiers
+		{
+			Name "Wave1_Subwave1_DiveBombers"
+			Where spawnbot_flank
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 8
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DiveBomber [$SIGSEGV]
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 2 GCharged Soldiers
+		{
+			Name "Wave1_Subwave2_GChargedSoldier"
+			WaitForAllSpawned "Wave1_Subwave1_Demomen"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Crit
+			}
+		}
+		WaveSpawn // 21 Fury Pyros
+		{
+			Name "Wave1_Subwave2_FuryPyros"
+			WaitForAllSpawned "Wave1_Subwave1_Demomen"
+			Where spawnbot_flank
+			TotalCount 21
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 2 GCharged Soldiers
+		{
+			Name "Wave1_Subwave2_GChargedSoldier2"
+			WaitForAllSpawned "Wave1_Subwave2_GChargedSoldier"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 16
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Crit
+			}
+		}
+		WaveSpawn // 21 Fury Pyros
+		{
+			Name "Wave1_Subwave2_FuryPyros"
+			WaitForAllSpawned "Wave1_Subwave2_GChargedSoldier"
+			Where spawnbot_flank
+			TotalCount 21
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury
+				Skill Easy
+			}
+		}
+		WaveSpawn // 6 Demoknights and 12 Big-Heal Medics
+		{
+			Name "Wave1_Subwave2_Demoknights"
+			WaitForAllSpawned "Wave1_Subwave2_GChargedSoldier"
+			Where spawnbot_main
+			TotalCount 18
+			MaxActive 12
+			SpawnCount 9
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 16
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Knight
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+	}
+}
