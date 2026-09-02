@@ -172,6 +172,24 @@ WaveSchedule
 
 		MissionPT
 		{
+			func_nav_prefer
+			{
+				"targetname" "nav_prefer_lowerleft"
+				"origin" "692 -1128 72"
+				"mins" "-313 -1368 -72"
+				"maxs" "313 1368 72"
+				"team" "3"
+				"tags" "nav_prefer_flank_lower_left"
+			}
+			func_nav_prefer
+			{
+				"targetname" "nav_prefer_lowerright"
+				"origin" "-1076 -1128 72"
+				"mins" "-313 -1368 -72"
+				"maxs" "313 1368 72"
+				"team" "3"
+				"tags" "nav_prefer_flank_lower_right"
+			}
 
 			logic_relay
 			{
@@ -1673,18 +1691,26 @@ WaveSchedule
         }
 
 		// Subwave 1
+		WaveSpawn // Big Bad Warning
+		{
+			Name "Wave3_Subwave1_WarningCall"
+			WaitBeforeStarting 0
+		
+			StartWaveWarningSound "npc\strider\striderx_alert5.wav"
+			FirstSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+		}
+
 		WaveSpawn // 1 Rocket Tank
 		{
 			Name "Wave3_Subwave1_RocketTank"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
-			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
 		
 			Tank
 			{
@@ -1696,12 +1722,11 @@ WaveSchedule
 				SpawnTemplate "CombatTankBossPT"
 			}
 		}
-
 		WaveSpawn // 1 GShield Medic
 		{
 			Name "Wave3_Subwave1_GShieldMedic"
 			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
-			Where spawnbot_left
+			Where spawnbot_right
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1735,7 +1760,6 @@ WaveSchedule
                 }
 			}
 		}
-
 		WaveSpawn // 30 Repairman Engineers
 		{
 			Name "Wave3_Subwave1_Repairmen"
@@ -1797,38 +1821,104 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 2 GHeavies
+		WaveSpawn // 1 GHeavy
 		{
 			Name "Wave3_Subwave1_GHeavy"
 			WaitForAllSpawned "Wave3_Subwave1_BurstPomsonEngineers"
 			Where spawnbot_left
-			TotalCount 2
-			MaxActive 2
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 4
-			WaitBetweenSpawns 6
-			TotalCurrency 40
+			WaitBetweenSpawns 0
+			TotalCurrency 20
 
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_left
+
+				CharacterAttributes
+				{
+					"cannot pick up intelligence" 1
+				}
 			}
 		}
-		WaveSpawn // 2 GHeavies
+		WaveSpawn // 1 GHeavy
 		{
 			Name "Wave3_Subwave1_GHeavy"
 			WaitForAllSpawned "Wave3_Subwave1_BurstPomsonEngineers"
-			Where spawnbot_right
-			TotalCount 2
-			MaxActive 2
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 4
-			WaitBetweenSpawns 6
-			TotalCurrency 40
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
 
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_lower_left
+
+				CharacterAttributes
+				{
+					"cannot pick up intelligence" 1
+				}
+			}
+		}
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave1_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave1_BurstPomsonEngineers"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_right
+
+				CharacterAttributes
+				{
+					"cannot pick up intelligence" 1
+				}
+			}
+		}
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave1_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave1_BurstPomsonEngineers"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_lower_right
+
+				CharacterAttributes
+				{
+					"cannot pick up intelligence" 1
+				}
 			}
 		}
 	}
