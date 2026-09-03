@@ -146,9 +146,10 @@ WaveSchedule
 
 						EntFire(`snd_wavestart`, `Kill`)
 
+						PrecacheSound(`misc/halloween/spell_stealth.wav`)
+						PrecacheSound(`ambient/energy/zap9.wav`)
+
 						IncludeScript(`tankextensions_main`)
-						IncludeScript(`tankextensions/combattank`)
-						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
 						IncludeScript(`tankextensions/hammertank`)
 
 						IncludeScript(`mvm_summoner_script`)
@@ -209,6 +210,27 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})61"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_warning.wav`);EmitSoundEx({sound_name=`mvm/mvm_warning.wav`,channel = 6,pitch = 90,filter_type=5})81"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_warning.wav`);EmitSoundEx({sound_name=`mvm/mvm_warning.wav`,channel = 6,pitch = 90,filter_type=5})81"
+				"OnTrigger" "wave_start_relay,Trigger,,8,-1"
+			}
+			logic_relay
+			{
+				"targetname" "PathSwitchLowerRelay"
+
+				"OnTrigger" "item_teamflag*,ForceReset,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
+				"OnTrigger" "wave_prepare_relay_lower,Trigger,,0,-1"
+				"OnTrigger" "PathSwitchChangeAnnotation,Show,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})01"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})21"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})21"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})41"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})41"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})61"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_cpoint_klaxon.wav`);EmitSoundEx({sound_name=`mvm/mvm_cpoint_klaxon.wav`,channel = 6, pitch = 90,filter_type=5})61"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_warning.wav`);EmitSoundEx({sound_name=`mvm/mvm_warning.wav`,channel = 6,pitch = 90,filter_type=5})81"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_warning.wav`);EmitSoundEx({sound_name=`mvm/mvm_warning.wav`,channel = 6,pitch = 90,filter_type=5})81"
+				"OnTrigger" "wave_start_relay,Trigger,,8,-1"
 			}
 			training_annotation
 			{
@@ -217,12 +239,76 @@ WaveSchedule
 				"display_text" "The paths have changed! Follow the holograms!"
 				"lifetime" "5"
 			}
+
+			filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_red"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_red_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_red"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
 		}
 
 		//// Masquerade PTs ////
 
-		MasqueradeBossCinematicsPT
+		MasqueradeCinematicsPT
 		{
+			RemoveIfKilled "MasqueradeMan"
+
 			OnSpawnOutput
 			{
 				Target MasqueradeManBot
@@ -670,6 +756,13 @@ WaveSchedule
 
 			info_particle_system
 			{
+				"targetname" "KeepThisManRendered"
+				"parentname" "MasqueradeMan"
+				"effect_name" "hwn_cart_cap_neutral"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
 				"targetname" "MasqueradeParticle"
 				"origin" "208 -336 992"
 				"effect_name" "hwn_cart_drips_blue"
@@ -1104,6 +1197,194 @@ WaveSchedule
 				"origin" "-2288 -160 1536"
 			}
 		}
+		MasqueradeElectricFieldStageHazardPT
+		{
+			NoFixUp 1
+
+			RemoveIfKilled "ElectricFieldTimer"
+
+			logic_timer
+			{
+				"targetname" "ElectricFieldTimer"
+				"RefireTime" "20"
+
+				"OnTimer" "ElectricFieldDetector,$TargetTest,,0,-1"
+			}
+
+			$trigger_detector
+			{
+				"targetname" "ElectricFieldDetector"
+				"filtername" "filter_red"
+				"origin" "200 640 96"
+				"mins" "-984 -1024 -176"
+				"maxs" "984 1024 176"
+
+				"$fov" "360"
+
+				"spawnflags" "1"
+
+				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			$trigger_detector
+			{
+				"targetname" "ElectricFieldDetector"
+				"filtername" "filter_red"
+				"origin" "-1312 2528 96"
+				"mins" "-1040 -608 -176"
+				"maxs" "1040 608 176"
+
+				"$fov" "360"
+
+				"spawnflags" "1"
+
+				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			$trigger_detector
+			{
+				"targetname" "ElectricFieldDetector"
+				"filtername" "filter_red"
+				"origin" "256 2552 344"
+				"mins" "-496 -568 -280"
+				"maxs" "496 568 280"
+
+				"$checklineofsight" "0"
+				"$radius" "65000"
+				"$fov" "360"
+				"$keeptarget" "0"
+
+				"spawnflags" "1"
+
+				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			$trigger_detector
+			{
+				"targetname" "ElectricFieldDetector"
+				"filtername" "filter_red"
+				"origin" "-1472 2776 600"
+				"mins" "-976 -600 -200"
+				"maxs" "976 600 200"
+
+				"$checklineofsight" "0"
+				"$radius" "65000"
+				"$fov" "360"
+				"$keeptarget" "0"
+
+				"spawnflags" "1"
+
+				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			$trigger_detector
+			{
+				"targetname" "ElectricFieldDetector"
+				"filtername" "filter_red"
+				"origin" "-2632 2680 261"
+				"mins" "-184 -504 -280"
+				"maxs" "184 504 280"
+
+				"$checklineofsight" "0"
+				"$radius" "65000"
+				"$fov" "360"
+				"$keeptarget" "0"
+
+				"spawnflags" "1"
+
+				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			$trigger_detector
+			{
+				"targetname" "ElectricFieldDetector"
+				"filtername" "filter_red"
+				"origin" "-2312 1176 600"
+				"mins" "-504 -648 -280"
+				"maxs" "504 648 280"
+
+				"$checklineofsight" "0"
+				"$radius" "65000"
+				"$fov" "360"
+				"$keeptarget" "0"
+
+				"spawnflags" "1"
+
+				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+		}
+		MasqueradeElectricFieldPT
+		{
+			RemoveIfKilled "ElectricFieldIndicator"
+
+			OnSpawnOutput
+			{
+				Target "ElectricFieldRelay"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "ElectricFieldRelay"
+
+				"OnTrigger" "ElectricFieldIndicator,Enable,,0,-1"
+				"OnTrigger" "ElectricFieldIndicator,SetAnimation,start,0,-1"
+				"OnTrigger" "ElectricFieldIndicatorRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_stealth.wav`, channel = 6, sound_level = 90, origin = self.GetOrigin() + Vector(0, 0, 40)})0-1"
+				"OnTrigger" "ElectricFieldIndicator,Skin,0,2,-1"
+			
+				"OnTrigger" "ElectricFieldIndicatorRunScriptCodeEmitSoundEx({sound_name = `ambient/energy/zap9.wav`, channel = 6, sound_level = 90, origin = self.GetOrigin() + Vector(0, 0, 40)})3-1"
+				"OnTrigger" "ElectricFieldIndicator,Disable,,3,-1"
+				"OnTrigger" "ElectricFieldParticle,Start,,3,-1"
+				"OnTrigger" "ElectricFieldDamage,Enable,,3,-1"
+				"OnTrigger" "ElectricFieldParticle,Disable,,3.1,-1"
+				"OnTrigger" "ElectricFieldIndicator,Kill,,3.5,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "ElectricFieldIndicator"
+				"origin" "0 0 20"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "ElectricFieldParticle"
+				"origin" "40 0 40"
+				"effect_name" "drg_cow_explosioncore_charged_blue"
+			}
+			info_particle_system
+			{
+				"targetname" "ElectricFieldParticle"
+				"origin" "-64 -32 40"
+				"effect_name" "drg_cow_explosioncore_charged_blue"
+			}
+			info_particle_system
+			{
+				"targetname" "ElectricFieldParticle"
+				"origin" "64 -32 40"
+				"effect_name" "drg_cow_explosioncore_charged_blue"
+			}
+
+			trigger_hurt
+			{
+				"targetname" "ElectricFieldDamage"
+				"filtername" "filter_red_nouber"
+				"origin" "0 0 20"
+				"mins" "-80 -80 -80"
+				"maxs" "80 80 80"
+
+				"damagetype" "1048576"
+                "damage" "90"
+                "spawnflags" "64"
+
+				"disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+		}
 
 		//// Summoner PTs ////
 
@@ -1167,14 +1448,6 @@ WaveSchedule
 
 			OnParentKilledOutput
 			{
-				Target "SummonerClearRelay"
-				Action "Trigger"
-				Delay 0.1
-				Repeats 1
-				Cooldown -1
-			}
-			OnParentKilledOutput
-			{
 				Target "SummonerTarget"
 				Action "Kill"
 				Delay 1
@@ -1220,19 +1493,6 @@ WaveSchedule
 				"OnTrigger" "@p@SummonerTarget,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "SummonerSummonIndicator,Disable,,3.5,-1"
 				"OnTrigger" "@p@SummonerTarget,$RemoveCond,7,3.5,-1"
-			}
-			logic_relay
-			{
-				"targetname" "SummonerClearRelay"
-
-				"OnTrigger" "SummonerMinionGenerator1,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator1,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator2,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator2,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator3,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator3,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator4,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator4,RemoveBots,,0,-1"
 			}
 
 			math_counter
@@ -1428,14 +1688,6 @@ WaveSchedule
 
 			OnParentKilledOutput
 			{
-				Target "SummonerClearRelay"
-				Action "Trigger"
-				Delay 0.1
-				Repeats 1
-				Cooldown -1
-			}
-			OnParentKilledOutput
-			{
 				Target "SummonerTarget"
 				Action "Kill"
 				Delay 1
@@ -1481,19 +1733,6 @@ WaveSchedule
 				"OnTrigger" "@p@SummonerTarget,$RemovePlayerAttribute,dmg from melee increased,3.5,-1"
 				"OnTrigger" "SummonerSummonIndicator,Disable,,3.5,-1"
 				"OnTrigger" "@p@SummonerTarget,$RemoveCond,7,3.5,-1"
-			}
-			logic_relay
-			{
-				"targetname" "SummonerClearRelay"
-
-				"OnTrigger" "SummonerMinionGenerator1,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator1,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator2,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator2,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator3,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator3,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator4,RemoveBots,,0,-1"
-				"OnTrigger" "SummonerMinionGenerator4,RemoveBots,,0,-1"
 			}
 
 			math_counter
@@ -1651,7 +1890,7 @@ WaveSchedule
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "CorePT"
-	SpawnTemplate "MasqueradeBossCinematicsPT"
+	SpawnTemplate "MasqueradeCinematicsPT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -1674,7 +1913,7 @@ WaveSchedule
 		{
 			Name "Deathcatcher"
 			Template T_TFBot_Giant_Pyro_Necromancer_RapidSoldier
-			Health 35000
+			Health 30000
 			Scale 2
 			Attributes UseBossHealthBar
 		}
@@ -2185,7 +2424,7 @@ WaveSchedule
 			Tank
 			{
 				Name "tank_boss"
-				Health 35000
+				Health 30000
 				Speed 75
 				StartingPathTrackNode "path_tank_lower"
 
@@ -2801,7 +3040,7 @@ WaveSchedule
 			{
 				Name "hammertank"
 				ClassIcon tank_mallet
-				Health 35000
+				Health 30000
 				Speed 75
 				StartingPathTrackNode "path_tank_upper"
 
@@ -3898,6 +4137,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Soldier_Supercharged
+				Attributes AlwaysCrit
 			}
 		}
 		WaveSpawn // 12 Heavies
@@ -3965,6 +4205,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Soldier_Supercharged
+				Attributes AlwaysCrit
 			}
 		}
 		WaveSpawn // 12 Heavies
@@ -4029,14 +4270,14 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 13 Supercharged Pyros (Oh my goodness gracious)
+		WaveSpawn // 11 Supercharged Pyros (Oh my goodness gracious)
 		{
 			Name "Wave2_Subwave3_SuperchargedPyros"
 			WaitForAllSpawned "Wave2_Subwave3_GKnight"
 			Where spawnbot_flank
-			TotalCount 13
-			MaxActive 13
-			SpawnCount 13
+			TotalCount 11
+			MaxActive 11
+			SpawnCount 11
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -4094,11 +4335,12 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 0
 
+			FirstSpawnWarningSound "mvm/mvm_tele_activate.wav"
+
 			TFBot
 			{
 				Template T_TFBot_Giant_Engineer_MasterWeapons
 				Attributes UseBossHealthBar
-				Attributes TeleportToHint
 				TeleportWhere spawnbot
 				TeleportWhere spawnbot_left
 				TeleportWhere spawnbot_right
@@ -4107,14 +4349,14 @@ WaveSchedule
 				AlwaysGlow 1
 			}
 		}
-		WaveSpawn // 13 Supercharged Pyros (Oh my goodness gracious)
+		WaveSpawn // 11 Supercharged Pyros (Oh my goodness gracious)
 		{
 			Name "Wave2_Subwave3_SuperchargedPyros2"
 			WaitForAllSpawned "Wave2_Subwave3_GEngineer"
 			Where spawnbot_flank
-			TotalCount 13
-			MaxActive 13
-			SpawnCount 13
+			TotalCount 11
+			MaxActive 11
+			SpawnCount 11
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -4191,39 +4433,14 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 4 Shortstop Scouts and 4 Full-Uber Medics
-		{
-			Name "Wave2_Subwave3_ShortstopScouts"
-			WaitForAllSpawned "Wave2_Subwave3_GBarrageSoldier"
-			Where spawnbot_flank
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
-			TotalCurrency 40
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Scout_Shortstop
-					Skill Normal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
-		WaveSpawn // 15 Scatter-Bonk Scouts
+		WaveSpawn // 12 Scatter-Bonk Scouts
 		{
 			Name "Wave2_Subwave3_ScatterbonkScouts"
 			WaitForAllSpawned "Wave2_Subwave3_GBarrageSoldier"
 			Where spawnbot_left
-			TotalCount 15
-			MaxActive 10
-			SpawnCount 5
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 6
 			TotalCurrency 40
@@ -4235,14 +4452,14 @@ WaveSchedule
 				Attributes AlwaysCrit
 			}
 		}
-		WaveSpawn // 13 Supercharged Pyros (Oh my goodness gracious)
+		WaveSpawn // 11 Supercharged Pyros (Oh my goodness gracious)
 		{
 			Name "Wave2_Subwave3_SuperchargedPyros3"
 			WaitForAllSpawned "Wave2_Subwave3_GBarrageSoldier"
 			Where spawnbot_flank
-			TotalCount 13
-			MaxActive 13
-			SpawnCount 13
+			TotalCount 11
+			MaxActive 11
+			SpawnCount 11
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			TotalCurrency 40
@@ -4319,31 +4536,6 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 4 Shortstop Scouts and 4 Full-Uber Medics
-		{
-			Name "Wave2_Subwave3_ShortstopScouts2"
-			WaitForAllSpawned "Wave2_Subwave3_GBarrageSoldier2"
-			Where spawnbot_flank
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
-			TotalCurrency 40
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Scout_Shortstop
-					Skill Normal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
-				}
-			}
-		}
 		WaveSpawn // 15 Scatter-Bonk Scouts
 		{
 			Name "Wave2_Subwave3_ScatterbonkScouts2"
@@ -4393,31 +4585,6 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Kritzkrieg
-				}
-			}
-		}
-		WaveSpawn // 4 Shortstop Scouts and 4 Full-Uber Medics
-		{
-			Name "Wave2_Subwave3_ShortstopScouts3"
-			WaitForAllSpawned "Wave2_Subwave3_GBarrageSoldier3"
-			Where spawnbot_flank
-			TotalCount 8
-			MaxActive 8
-			SpawnCount 4
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 8
-			TotalCurrency 40
-
-			Squad
-			{
-				TFBot
-				{
-					Template T_TFBot_Scout_Shortstop
-					Skill Normal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_Uber
 				}
 			}
 		}

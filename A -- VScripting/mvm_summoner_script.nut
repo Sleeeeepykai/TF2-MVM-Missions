@@ -115,8 +115,8 @@ const MAX_WEAPONS = 8
 		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "demo_summoner")
 
 		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(1)
 		Target.AddBotAttribute(16)
-		Target.AddBotAttribute(32)
 		Target.AddBotAttribute(2048)
 
 		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
@@ -139,8 +139,8 @@ const MAX_WEAPONS = 8
 		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "soldier_summoner")
 
 		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(1)
 		Target.AddBotAttribute(16)
-		Target.AddBotAttribute(32)
 		Target.AddBotAttribute(2048)
 
 		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
@@ -163,8 +163,8 @@ const MAX_WEAPONS = 8
 		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "heavy_summoner")
 
 		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(1)
 		Target.AddBotAttribute(16)
-		Target.AddBotAttribute(32)
 		Target.AddBotAttribute(2048)
 
 		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
@@ -188,8 +188,8 @@ const MAX_WEAPONS = 8
 		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "soldier_spammer")
 
 		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(1)
 		Target.AddBotAttribute(16)
-		Target.AddBotAttribute(32)
 		Target.AddBotAttribute(2048)
 
 		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
@@ -217,8 +217,8 @@ const MAX_WEAPONS = 8
 		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "heavy_brass_beast_summoner")
 
 		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(1)
 		Target.AddBotAttribute(16)
-		Target.AddBotAttribute(32)
 		Target.AddBotAttribute(2048)
 
 		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
