@@ -947,7 +947,7 @@ WaveSchedule
                 "vscripts" "point_viewcontrol_fix"
 			}
 			
-			// Masquerade End-wave Cutscene (Wave 2)
+			// Masquerade End-wave Cutscene (Wave 1)
 
 			logic_relay
 			{
@@ -1124,6 +1124,44 @@ WaveSchedule
 
 				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/hurtbreakwonderland/the_break.wav`),11,-1"
 				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}The Break - Heaven Pierce Her,11,-1"
+			}
+
+			// Masquerade End-wave Cutscene (Wave 2)
+
+			logic_relay
+			{
+				"targetname" "MasqueradeWave2EndCutscene"
+
+				"OnTrigger" "item_teamflag*,ForceReset,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
+				"OnTrigger" "ElectricFieldTimer,Kill,,0,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)2-1"
+				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,EnableAll,2,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_commending_clap_scout,2.1,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,That's what I'm talking about!,5.32,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,5.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob02.mp3,5.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob02.mp3,5.33,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,5.33,-1"
+				
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Let's do this.,7.32,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,7.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare03.mp3,7.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare03.mp3,7.33,-1"
+
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,1,7.33,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,8.33,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,You and me!,8.82,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,8.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_meleedare04.mp3,8.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_meleedare04.mp3,8.83,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
+				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,11,-1"
 			}
 		}
 		MasqueradeFireRainStageHazardPT
@@ -2157,9 +2195,9 @@ WaveSchedule
 		}
 		T_TFBot_Giant_Soldier_Providence
 		{
-			Name "Providence"
+			Name "Giant Providence Soldier"
 			Class Soldier
-			ClassIcon soldier_accel_spammer_giant
+			ClassIcon soldier_accel_crossbeam_giant
 			Health 4000
 			Attributes MiniBoss
 			Attributes AlwaysCrit
@@ -3846,6 +3884,11 @@ WaveSchedule
 
 					local bomb = Entities.FindByName(null, `intel_35`)
 					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_CANNON_ROCKET_SPEED = 2000
+						COMBATTANK_CANNON_ROCKET_DAMAGE = 400
+					})
 				  "
 		}
 		StartWaveOutput
@@ -5085,6 +5128,518 @@ WaveSchedule
 
 				Tag bot_flank_l
 			}
+		}
+
+		// Subwave 5
+		WaveSpawn // 1 Cannon Tank
+		{
+			Name "Wave2_Subwave5_CannonTank"
+			WaitForAllDead "Wave2_Subwave4_Providence"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Template Tank_Combat_Cannon
+				Health 40000
+				Speed 75
+				Skin 1
+				StartingPathTrackNode "path_tank_lower"
+			}
+		}
+		WaveSpawn // 3 Rapid Fire Battalion Soldiers and 9 Supercharged Soldiers
+		{
+			Name "Wave2_Subwave5_BattalionSquads"
+			WaitForAllSpawned "Wave2_Subwave5_CannonTank"
+			Where spawnbot_left
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+			}
+		}
+
+		WaveSpawn // 1 GDeflector Heavy and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave5_GDeflectorHeavy"
+			WaitForAllSpawned "Wave2_Subwave5_BattalionSquads"
+			Where spawnbot_chief
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 3 Rapid Fire Battalion Soldiers and 9 Supercharged Soldiers
+		{
+			Name "Wave2_Subwave5_BattalionSquads2"
+			WaitForAllSpawned "Wave2_Subwave5_GDeflectorHeavy"
+			Where spawnbot_left
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+			}
+		}
+
+		WaveSpawn // 1 GDeflector Heavy and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave5_GDeflectorHeavy2"
+			WaitForAllSpawned "Wave2_Subwave5_BattalionSquads2"
+			Where spawnbot_chief
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 Rapid Fire Battalion Soldiers and 6 Supercharged Soldiers
+		{
+			Name "Wave2_Subwave5_BattalionSquads3"
+			WaitForAllSpawned "Wave2_Subwave5_GDeflectorHeavy2"
+			Where spawnbot_flank
+			Where spawnbot_right
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0.5
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.8
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Attributes AlwaysCrit
+				}
+			}
+		}
+
+		// Subwave 5 Check
+		WaveSpawn
+		{
+			Name "Wave2_Subwave5_Check"
+			WaitForAllDead "Wave2_Subwave5_CannonTank"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave5_Check"
+			WaitForAllDead "Wave2_Subwave5_GDeflectorHeavy"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave5_Check"
+			WaitForAllDead "Wave2_Subwave5_GDeflectorHeavy2"
+		}
+
+		// Subwave 6
+		WaveSpawn // 1 Providence Soldier
+		{
+			Name "Wave2_Subwave6_Providence"
+			WaitForAllSpawned "Wave2_Subwave5_Check"
+			Where spawnbot_chief
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Providence
+			}
+		}
+		WaveSpawn // 5 Rapid Demos and 5 Kritzkrieg Medics
+		{
+			Name "Wave2_Subwave6_RapidDemos"
+			WaitForAllSpawned "Wave2_Subwave6_Providence"
+			Where spawnbot_left
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 12 Scatter-Bonk Scouts
+		{
+			Name "Wave2_Subwave6_ScatterbonkScouts"
+			WaitForAllSpawned "Wave2_Subwave6_Providence"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Expert
+				Attributes AlwaysCrit
+
+				Tag bot_flank_l
+			}
+		}
+
+		WaveSpawn // 1 Providence Soldier
+		{
+			Name "Wave2_Subwave6_Providence2"
+			WaitForAllSpawned "Wave2_Subwave6_Providence"
+			Where spawnbot_chief
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Providence
+			}
+		}
+		WaveSpawn // 5 Rapid Demos and 5 Kritzkrieg Medics
+		{
+			Name "Wave2_Subwave6_RapidDemos2"
+			WaitForAllSpawned "Wave2_Subwave6_Providence2"
+			Where spawnbot_left
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 12 Scatter-Bonk Scouts
+		{
+			Name "Wave2_Subwave6_ScatterbonkScouts2"
+			WaitForAllSpawned "Wave2_Subwave6_Providence2"
+			Where spawnbot_flank
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Expert
+				Attributes AlwaysCrit
+
+				Tag bot_flank_l
+			}
+		}
+
+		WaveSpawn // 1 Providence Soldier and 1 GCharged Medic
+		{
+			Name "Wave2_Subwave6_Providence3"
+			WaitForAllSpawned "Wave2_Subwave6_Providence2"
+			Where spawnbot_chief
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Providence
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+				}
+			}
+		}
+		WaveSpawn // 3 Rapid Demos and 3 Kritzkrieg Medics
+		{
+			Name "Wave2_Subwave6_RapidDemos3"
+			WaitForAllSpawned "Wave2_Subwave6_Providence3"
+			Where spawnbot_left
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 6 Scatter-Bonk Scouts
+		{
+			Name "Wave2_Subwave6_ScatterbonkScouts3"
+			WaitForAllSpawned "Wave2_Subwave6_Providence3"
+			Where spawnbot_flank
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Expert
+				Attributes AlwaysCrit
+
+				Tag bot_flank_l
+			}
+		}
+
+		// Subwave 6 Check
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_Providence"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_Providence2"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_Providence3"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_RapidDemos"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_RapidDemos2"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_RapidDemos3"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_ScatterbonkScouts"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_ScatterbonkScouts2"
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_Check"
+			WaitForAllDead "Wave2_Subwave6_ScatterbonkScouts3"
+		}
+
+		// Cutscene
+		WaveSpawn
+		{
+			Name "Wave2_Subwave6_MasqueradeCutscene"
+			WaitForAllSpawned "Wave2_Subwave6_Check"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target MasqueradeWave2EndCutscene
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave2_End"
+			WaitForAllSpawned "Wave2_Subwave6_Check"
+			WaitBeforeStarting 11
+		}
+	}
+	// Wave 3 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_init_lower_relay`, `Trigger`)
+					EntFire(`MasqueradeIdleRelay`, `Trigger`)
+
+					local bomb = Entities.FindByName(null, `intel_35`)
+					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
+				  "
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_boss_relay`, `Trigger`)
+				  "
 		}
 	}
 }
