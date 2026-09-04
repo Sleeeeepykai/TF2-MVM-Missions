@@ -54,13 +54,12 @@ WaveSchedule
 
                         Convars.SetValue(`tf_playergib`, 0)
 
+						EntFire(`tf_gamerules`, `$StopVO`, `music/curseofra/penultimatum.mp3`)
+
 						IncludeScript(`tankextensions_main`)
 
 						IncludeScript(`tankextensions/combattank`)
-						IncludeScript(`tankextensions/combattank_weapons/cannon`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
-						IncludeScript(`tankextensions/combattank_weapons/minigun`)
-						IncludeScript(`tankextensions/combattank_weapons/fireball`)
 						IncludeScript(`tankextensions/combattank_weapons/railgun`)
 						IncludeScript(`tankextensions/helicopter`)
 					  "
@@ -132,7 +131,13 @@ WaveSchedule
 
 		MissionPT
 		{
-
+			logic_relay
+			{
+				"targetname" "TankStopRelay"
+				"OnTrigger" "tank_boss*,SetSpeed,0,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`doors/heavy_metal_stop1.wav`);EmitSoundEx({sound_name=`doors/heavy_metal_stop1.wav`,pitch = 85,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`hl1/ambience/steamburst1`);EmitSoundEx({sound_name=`hl1/ambience/steamburst1`,pitch = 100,filter_type=5})0-1"
+			}
 			logic_relay
 			{
 				"targetname" "TankMoveRelay"
@@ -157,6 +162,51 @@ WaveSchedule
 			logic_relay
 			{
 				"targetname" "BossSetupRelay"
+
+				"OnTrigger" "tank_path_b_33,AddOutput,OnPass TankStopRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "CombatTankBoss,AddOutput,OnHealthBelow90Percent TankMoveRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "CombatTankBoss,AddOutput,OnHealthBelow60Percent TankPhase2Relay:Trigger::0:-1,0,-1"
+				"OnTrigger" "CombatTankBoss,AddOutput,OnHealthBelow30Percent TankPhase3Relay:Trigger::0:-1,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "TankPhase2Relay"
+
+				"OnTrigger" "CombatTankBoss,SetSpeed,0,0,1"
+				"OnTrigger" "tf_point_weapon_mimic*,AddOutput,Crits 1,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`hl1/ambience/steamburst1`);EmitSoundEx({sound_name=`hl1/ambience/steamburst1`,pitch = 100,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.3})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_SND_FIRE = `MVM.GiantSoldierRocketShootCrit`});TankExt.PrecacheSound(COMBATTANK_ROCKETPOD_SND_FIRE)0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROTATE_SPEED_DEFAULT = 1.4})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 1})0-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_crits.wav,3,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`npc/strider/striderx_alert6.wav`);EmitSoundEx({sound_name=`npc/strider/striderx_alert6.wav`,pitch = 75,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 2000})4-1"
+				"OnTrigger" "CombatTankBoss,SetSpeed,50,5,1"
+			}
+
+			logic_relay
+			{
+				"targetname" "TankPhase3Relay"
+				"OnTrigger" "CombatTankBoss,SetSpeed,0,0,1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`hl1/ambience/steamburst1`);EmitSoundEx({sound_name=`hl1/ambience/steamburst1`,pitch = 100,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 180})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_ROCKET_SPEED = 1350})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_RELOAD_DELAY = 0.5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_PARTICLE_TRAIL = `scorchshot_trail_crit_blue`})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROTATE_SPEED_DEFAULT = 2})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 1})0-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_knockout.wav,3,-1"
+				"OnTrigger" "CombatTankBoss,Color,192 0 0,4,1"
+				"OnTrigger" "CombatTankBoss,Color,192 0 0,4,1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`npc\combine_gunship\ping_patrol.wav`);EmitSoundEx({sound_name=`npc\combine_gunship\ping_patrol.wav`,pitch = 85,filter_type=5})4-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`ambient/alarms/razortrain_horn1.wav`);EmitSoundEx({sound_name=`ambient/alarms/razortrain_horn1.wav`,pitch = 85,filter_type=5})4-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 2000})4-1"
+				"OnTrigger" "CombatTankBoss,SetSpeed,75,5,1"
 			}
 		}
 	}
@@ -2024,6 +2074,21 @@ WaveSchedule
 	}
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.4
+						COMBATTANK_ROCKETPOD_RELOAD_DELAY = 0.0001
+						COMBATTANK_RAILGUN_COOLDOWN_TIME = 5
+						COMBATTANK_RAILGUN_SND_FIRE1 = `)weapons/csgo_awp_shoot_crit.wav`
+					})
+
+					TankExt.PrecacheSound(COMBATTANK_RAILGUN_SND_FIRE1)
+				  "
+		}
 		StartWaveOutput
         {
             Target BigNet
@@ -2439,7 +2504,7 @@ WaveSchedule
 		}
 		
 		// Subwave 3
-		WaveSpawn
+		WaveSpawn // Final Boss Combat Tank
 		{
 			Name "Wave5_Subwave3_RocketRailgunTank"
 			WaitForAllDead "Wave5_Subwave2_GRapidStickyDemo2"
@@ -2459,6 +2524,63 @@ WaveSchedule
 				Skin 1
 
 				SpawnTemplate "CombatTankBossPT"
+			}
+		}
+
+		WaveSpawn // Support Rapid Fire Soldiers
+		{
+			Name "Wave5_Subwave3_RapidFireSoldiers"
+			WaitForAllSpawned "Wave5_Subwave3_RocketRailgunTank"
+			Where spawnbot_flank
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Spammer
+			}
+		}
+		WaveSpawn // Support Heavies
+		{
+			Name "Wave5_Subwave3_Heavies"
+			WaitForAllSpawned "Wave5_Subwave3_RocketRailgunTank"
+			Where spawnbot_flank
+			Support 1
+			TotalCount 40
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Expert
+			}
+		}
+		WaveSpawn // Support Scout
+		{
+			Name "Wave5_Subwave3_Scouts"
+			WaitForAllSpawned "Wave5_Subwave3_RocketRailgunTank"
+			Where spawnbot_flank
+			Support 1
+			TotalCount 40
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Scout
+				Skill Expert
 			}
 		}
 	}
