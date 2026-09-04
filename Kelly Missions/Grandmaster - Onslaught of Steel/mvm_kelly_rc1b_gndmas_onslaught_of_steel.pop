@@ -214,6 +214,78 @@ WaveSchedule
 
 		//// ROBOT PTs ////
 
+		BrassBeastPT
+		{
+			KeepAlive 1
+			
+			RemoveIfKilled "BrassBeastMimic"
+			
+			OnSpawnOutput
+			{
+				Target "BrassBeastCircle"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastChargeParticle"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastFireParticle"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastFireParticle2"
+				Action "SetParentAttachment"
+				Param "eject_brass"
+			}
+			OnParentKilledOutput
+			{
+				Target BrassBeastMimic
+				Action TurnOff
+				Delay -1
+			}
+			OnParentKilledOutput
+			{
+				Target BrassBeastMimic
+				Action Kill
+				Delay 0.1
+			}
+
+			prop_dynamic_ornament
+			{
+				"targetname" "BrassBeastMimic"
+				"InitialOwner" "!parent"
+				"model" "models/weapons/c_models/c_gatling_gun/c_gatling_gun.mdl"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastChargeParticle"
+				"parentname" "BrassBeastMimic"
+				"effect_name" "projectile_fireball_ring_fire"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastFireParticle"
+				"parentname" "BrassBeastMimic"
+				"effect_name" "h2013_corpse_flame"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastFireParticle2"
+				"parentname" "BrassBeastMimic"
+				"effect_name" "h2013_corpse_flame"
+			}
+		}
+
 		RotatingHomewreckerPT
         {
 			KeepAlive 1
@@ -395,6 +467,146 @@ WaveSchedule
 	Templates
 	{
 		//// GIANTS ////
+
+				T_TFBot_Giant_Heavy_BrassBeast
+		{
+			Name "Giant Brass Beast Heavy"
+			Class Heavy
+			ClassIcon heavy_brass_nys_giant
+			Skill Expert
+			Health 5000
+			Attributes MiniBoss
+			Attributes SuppressFire
+			WeaponRestrictions PrimaryOnly
+
+			SpawnTemplate "BrassBeastPT"
+
+			MaxVisionRange 1200
+
+			Item "The Brass Beast"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Brass Beast"
+
+				"damage bonus" 2.5
+				"minigun spinup time increased" 3.5
+			}
+
+			ChangeAttributes
+			{
+				Name "BrassBeastInit"
+				Delay 0
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				BrassBeastInit [$SIGSEGV]
+				{
+					ChangeAttributes
+					{
+						Name "BrassBeastFire"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+				}
+				BrassBeastIdle [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "BrassBeastChargeParticle"
+						Action Stop
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle"
+						Action Stop
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2"
+						Action Stop
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BrassBeastFire"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+				}
+				BrassBeastFire [$SIGSEGV]
+				{
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 0
+						Duration 1
+						Repeats 0
+						Cooldown 1
+					}
+
+					FireInput
+					{
+						Target "BrassBeastChargeParticle"
+						Action Start
+						Delay 1.5
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle"
+						Action Start
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2"
+						Action Start
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BrassBeastIdle"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfNoTarget 1
+					}
+				}
+			}
+		}
 
 		T_TFBot_Giant_Pyro_Homewrecker_Launcher
 		{
