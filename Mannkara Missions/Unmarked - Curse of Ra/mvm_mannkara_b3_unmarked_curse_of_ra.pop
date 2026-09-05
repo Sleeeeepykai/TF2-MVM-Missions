@@ -144,9 +144,9 @@ WaveSchedule
 			{
 				"targetname" "TankMoveRelay"
 
-				"OnTrigger" "tank_boss*,SetSpeed,25,0,-1"
-				"OnTrigger" "tank_boss*,SetSpeed,50,1.5,-1"
-				"OnTrigger" "tank_boss*,SetSpeed,75,3,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,15,0,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,35,1.5,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,50,3,-1"
 				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
 			}
 			logic_relay
@@ -161,11 +161,17 @@ WaveSchedule
 
 		CombatTankBossPT
 		{
+			OnSpawnOutput
+			{
+				Target BossSetupRelay
+				Action Trigger
+			}
+
 			logic_relay
 			{
 				"targetname" "BossSetupRelay"
 
-				"OnTrigger" "tank_path_b_33,AddOutput,OnPass TankStopRelay:Trigger::0:-1,0,-1"
+				"OnTrigger" "TankStopRelay,Trigger,,2,-1"
 				"OnTrigger" "CombatTankBoss,AddOutput,OnHealthBelow90Percent TankMoveRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "CombatTankBoss,AddOutput,OnHealthBelow60Percent TankPhase2Relay:Trigger::0:-1,0,-1"
 				"OnTrigger" "CombatTankBoss,AddOutput,OnHealthBelow30Percent TankPhase3Relay:Trigger::0:-1,0,-1"
@@ -906,7 +912,7 @@ WaveSchedule
 			Tank
 			{
 				Name "tankboss"
-				Health 27000
+				Health 21000
 				Speed 75
 				StartingPathTrackNode "tank_path_a_1"
 
@@ -2524,8 +2530,8 @@ WaveSchedule
 			{
 				Name "combattank_bomb|rocketpod|railgun$targetname|CombatTankBoss^pingsound|npc/combine_gunship/ping_search.wav"
 				Template Tank_Combat_Rocket_Railgun
-				Health 50000
-				Speed 200
+				Health 40000
+				Speed 250
 				Skin 1
 
 				SpawnTemplate "CombatTankBossPT"
