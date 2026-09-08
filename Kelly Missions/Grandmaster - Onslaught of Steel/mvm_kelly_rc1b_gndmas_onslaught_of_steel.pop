@@ -216,6 +216,7 @@ WaveSchedule
 
 		BrassBeastPT
 		{
+			NoFixUp 1
 			KeepAlive 1
 			
 			RemoveIfKilled "BrassBeastMimic"
@@ -282,6 +283,79 @@ WaveSchedule
 			{
 				"targetname" "BrassBeastFireParticle2"
 				"parentname" "BrassBeastMimic"
+				"effect_name" "h2013_corpse_flame"
+			}
+		}
+
+		BrassBeastPT2
+		{
+			NoFixUp 1
+			KeepAlive 1
+			
+			RemoveIfKilled "BrassBeastMimic2"
+			
+			OnSpawnOutput
+			{
+				Target "BrassBeastCircle2"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastChargeParticle2"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastFireParticle2"
+				Action "SetParentAttachment"
+				Param "muzzle"
+			}
+			OnSpawnOutput
+			{
+				Target "BrassBeastFireParticle2_2"
+				Action "SetParentAttachment"
+				Param "eject_brass"
+			}
+			OnParentKilledOutput
+			{
+				Target BrassBeastMimic2
+				Action TurnOff
+				Delay -1
+			}
+			OnParentKilledOutput
+			{
+				Target BrassBeastMimic2
+				Action Kill
+				Delay 0.1
+			}
+
+			prop_dynamic_ornament
+			{
+				"targetname" "BrassBeastMimic2"
+				"InitialOwner" "!parent"
+				"model" "models/weapons/c_models/c_gatling_gun/c_gatling_gun.mdl"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastChargeParticle2"
+				"parentname" "BrassBeastMimic2"
+				"effect_name" "projectile_fireball_ring_fire"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastFireParticle2"
+				"parentname" "BrassBeastMimic2"
+				"effect_name" "h2013_corpse_flame"
+			}
+			info_particle_system
+			{
+				"targetname" "BrassBeastFireParticle2_2"
+				"parentname" "BrassBeastMimic2"
 				"effect_name" "h2013_corpse_flame"
 			}
 		}
@@ -358,14 +432,39 @@ WaveSchedule
 				"targetname" "BigBadSetupRelay"
 
 				"OnTrigger" "tf_gamerules,PlayVO,music/onslaughtofsteel/abandoned_in_place.mp3,0,-1"
+				
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,0,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictTank,0,-1"
 
-				"OnTrigger" "BenedictTank,AddOutput,OnHealthBelow50Percent TheTankIsAggressive:Trigger::0:-1,0,-1"
+				"OnTrigger" "BenedictTank,AddOutput,OnHealthBelow50Percent TheTankIsAggressive:Trigger::0:1,0,-1"
+				"OnTrigger" "BenedictTank,AddOutput,OnHealthBelow10Percent MyPlanetNeedsMe:Trigger::0:1,0,-1"
+			}
+			logic_relay
+			{
+				"targetname" "MyPlanetNeedsMe"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_Repairmen,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_Repairmen,0,-1"
+				"OnTrigger" "BenedictTank,CallScriptFunction,ToggleUber,0,-1"
+				"OnTrigger" "BenedictTank,SetSpeed,0,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROTATE_SPEED_DEFAULT = 0.4})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 1})0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_pain2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_pain2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/scanner/scanner_siren1.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/scanner/scanner_siren1.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/charging.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,4.99,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,4.99,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictTank,4.99,-1"
+				"OnTrigger" "BenedictTank,Kill,,5,1"
 			}
 			logic_relay
 			{
 				"targetname" "TheTankIsAggressive"
 
 				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_alert2.wav,0,-1"
+				"OnTrigger"  "tf_gamerules,PlayVO,npc/strider/charging.wav,2,1"
 				"OnTrigger" "BenedictTank,SetSpeed,0,0,1"
 				"OnTrigger" "tf_point_weapon_mimic*,AddOutput,Crits 1,0,-1"
 				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.4})0-1"
@@ -375,11 +474,12 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 1})0-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_crits.wav,3,-1"
-				"OnTrigger" "HesSoFuckingMad,Start,,3.8,1"
+				"OnTrigger" "HesSoFuckingMad,Start,,3.5,1"
+				"OnTrigger" "HesSoFuckingMad,Stop,,4.5,1"
 				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_alert6.wav,4,1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,4,-1"
-				"OnTrigger" "BenedictTank,Color,255 0 0,4,1"
-				"OnTrigger" "@c@BenedictTank,Color,255 0 0,4,1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,3.6,-1"
+				"OnTrigger" "BenedictTank,Color,255 128 128,4,1"
+				"OnTrigger" "@c@BenedictTank,Color,255 128 128,4,1"
 				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 2000})4-1"
 				"OnTrigger" "BenedictTank,SetSpeed,50,5,1"
 			}
@@ -428,6 +528,32 @@ WaveSchedule
 				"origin" "225 0 128"
 			}
 		}
+		CombatTankBossTeleportPT
+		{
+			RemoveIfKilled "CheckThisMagicTrick"
+
+			OnSpawnOutput
+			{
+				Target CheckThisMagicTrick
+				Action Kill
+				Delay 1
+			}
+			
+			info_particle_system
+            {
+                "targetname"   "CheckThisMagicTrick"
+                "origin"       "0 0 100"
+                "effect_name"  "hammer_lock_vanish01"
+                "start_active" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "CheckThisMagicTrick"
+                "origin"       "0 0 0"
+                "effect_name"  "hammer_lock_vanish01"
+                "start_active" "1"
+            }
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -468,7 +594,7 @@ WaveSchedule
 	{
 		//// GIANTS ////
 
-				T_TFBot_Giant_Heavy_BrassBeast
+		T_TFBot_Giant_Heavy_BrassBeast
 		{
 			Name "Giant Brass Beast Heavy"
 			Class Heavy
@@ -590,6 +716,145 @@ WaveSchedule
 					FireInput
 					{
 						Target "BrassBeastFireParticle2"
+						Action Start
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BrassBeastIdle"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfNoTarget 1
+					}
+				}
+			}
+		}
+		T_TFBot_Giant_Heavy_BrassBeast2
+		{
+			Name "Giant Brass Beast Heavy"
+			Class Heavy
+			ClassIcon heavy_brass_nys_giant
+			Skill Expert
+			Health 5000
+			Attributes MiniBoss
+			Attributes SuppressFire
+			WeaponRestrictions PrimaryOnly
+
+			SpawnTemplate "BrassBeastPT2"
+
+			MaxVisionRange 1200
+
+			Item "The Brass Beast"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Brass Beast"
+
+				"damage bonus" 2.5
+				"minigun spinup time increased" 3.5
+			}
+
+			ChangeAttributes
+			{
+				Name "BrassBeastInit"
+				Delay 0
+				Repeats 1
+				Cooldown -1
+			}
+
+			EventChangeAttributes
+			{
+				BrassBeastInit [$SIGSEGV]
+				{
+					ChangeAttributes
+					{
+						Name "BrassBeastFire"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+				}
+				BrassBeastIdle [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "BrassBeastChargeParticle2"
+						Action Stop
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2"
+						Action Stop
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2_2"
+						Action Stop
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+
+					ChangeAttributes
+					{
+						Name "BrassBeastFire"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+				}
+				BrassBeastFire [$SIGSEGV]
+				{
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 0
+						Duration 1
+						Repeats 0
+						Cooldown 1
+					}
+
+					FireInput
+					{
+						Target "BrassBeastChargeParticle2"
+						Action Start
+						Delay 1.5
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2"
+						Action Start
+						Delay 2.75
+						Repeats 1
+						Cooldown -1
+					}
+					FireInput
+					{
+						Target "BrassBeastFireParticle2_2"
 						Action Start
 						Delay 2.75
 						Repeats 1
@@ -777,11 +1042,14 @@ WaveSchedule
 		{
 			Name "Repairman Engineer"
 			Class Engineer
+			ClassIcon engineer_jag_lite
 			Skill Expert
 			Health 275
 			Attributes AlwaysFireWeapon
 			WeaponRestrictions MeleeOnly
 			Action Mobber
+
+			Item "The Jag"
 
 			Item "The Data Mining Light"
 
@@ -813,6 +1081,22 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
+		}
+	}
+
+	Mission // Spy (Wave 3)
+	{
+		Objective Spy
+		Where spawnbot_mission_spy
+		BeginAtWave 3
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 40
+		DesiredCount 3
+
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -1118,7 +1402,7 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Heavy_BrassBeast [$SIGSEGV]
+					Template T_TFBot_Giant_Heavy_BrassBeast2 [$SIGSEGV]
 
 					CharacterAttributes
 					{
@@ -1979,6 +2263,54 @@ WaveSchedule
 			FirstSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
 		}
 
+		WaveSpawn // Support GPyros (Up here for wavebar purposes)
+		{
+			Name "Wave3_Subwave2_GPyro"
+			WaitForAllDead "Wave3_Subwave1_RocketTank"
+			Where spawnbot_any
+			Support 1
+			TotalCount 10
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 100
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					BehaviorModifiers Push
+					Tag nav_prefer_flank_left
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"airblast disabled" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					BehaviorModifiers Push
+					Tag nav_prefer_flank_right
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+						"airblast disabled" 1
+					}
+				}
+			}
+		}
+
 		WaveSpawn // 1 Rocket Tank
 		{
 			Name "Wave3_Subwave1_RocketTank"
@@ -1987,7 +2319,7 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
-			TotalCurrency 100
+			TotalCurrency 0
 
 			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
 		
@@ -2017,9 +2349,12 @@ WaveSchedule
 
 			TFBot
 			{
+				Name "C-69_SHIELD_COMPONENT"
 				Template T_TFBot_Giant_Medic_Shield
-				WeaponRestrictions SecondaryOnly
+				Health 8000
+				Attributes UseBossHealthBar
 				Attributes IgnoreEnemies
+				WeaponRestrictions SecondaryOnly
 				Action Mobber
 
 				CharacterAttributes
@@ -2046,6 +2381,7 @@ WaveSchedule
 			Name "Wave3_Subwave1_Repairmen"
 			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
 			Where spawnbot
+			Support Limited
 			TotalCount 30
 			MaxActive 10
 			SpawnCount 1
@@ -2200,6 +2536,213 @@ WaveSchedule
 				{
 					"cannot pick up intelligence" 1
 				}
+			}
+		}
+
+		// Subwave 2
+		
+		WaveSpawn // 4 GRapid Soldiers
+		{
+			Name "Wave3_Subwave2_GRapidSoldier"
+			WaitForAllDead "Wave3_Subwave1_RocketTank"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 6
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // 15 Burst Demos
+		{
+			Name "Wave3_Subwave2_BurstDemos"
+			WaitForAllDead "Wave3_Subwave1_RocketTank"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 12 Supercharged Blaster Scouts
+		{
+			Name "Wave3_Subwave2_SuperchargedScouts"
+			WaitForAllDead "Wave3_Subwave1_RocketTank"
+			Where spawnbot_any
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
+			}
+		}
+
+		WaveSpawn // 4 GRapid Soldiers
+		{
+			Name "Wave3_Subwave2_GRapidSoldier2"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 6
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // 15 Burst Demos
+		{
+			Name "Wave3_Subwave2_BurstDemos2"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 15
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 12 Supercharged Blaster Scouts
+		{
+			Name "Wave3_Subwave2_SuperchargedScouts2"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot_any
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Blaster_Supercharged
+			}
+		}
+
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 30
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_left
+			}
+		}
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot_left
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 30
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_lower_left
+			}
+		}
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 30
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_right
+			}
+		}
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave2_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier"
+			Where spawnbot_right
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 7
+			WaitBetweenSpawns 0
+			TotalCurrency 30
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+
+				BehaviorModifiers Push
+				Tag nav_prefer_flank_lower_right
+			}
+		}
+		WaveSpawn // 8 Burst Demos
+		{
+			Name "Wave3_Subwave2_BurstDemos3"
+			WaitForAllSpawned "Wave3_Subwave2_GRapidSoldier2"
+			Where spawnbot_left
+			Where spawnbot_right
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
 			}
 		}
 	}
