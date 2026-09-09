@@ -1,0 +1,1714 @@
+WaveSchedule
+{
+    PointTemplates
+    {
+        //// MAIN BOSSES ////
+
+        //// MASTER MECHANIC POINTTEMPLATES ////
+        MasterMechanicCoreLogic
+        {
+            // Main Boss Phases
+            logic_relay // Attack Initialiser
+            {
+                "targetname" "MasterMechanic_AttackInit"
+
+                "OnTrigger" "MasterMechanic_Phase1AttackPoolRelay,Trigger,,0,-1"
+                "OnTrigger" "MasterMechanic_Phase2AttackPoolRelay,Trigger,,0,-1"
+                "OnTrigger" "MasterMechanic_Phase3AttackPoolRelay,Trigger,,0,-1"
+            }
+
+            logic_relay // Phase 1 Relay
+            {
+                "targetname" "MasterMechanic_Phase1AttackPoolRelay"
+                "spawnflags" "2"
+
+                "OnTrigger" "MasterMechanic_Phase1AttackPool,PickRandomShuffle,,0,-1"
+            }
+            logic_relay // Phase 2 Relay
+            {
+                "targetname" "MasterMechanic_Phase2AttackPoolRelay"
+                "spawnflags" "2"
+                "startdisabled" "1"
+
+                "OnTrigger" "MasterMechanic_Phase2AttackPool,PickRandomShuffle,,0,-1"
+            }
+            logic_relay // Phase 3 Relay
+            {
+                "targetname" "MasterMechanic_Phase3AttackPoolRelay"
+                "spawnflags" "2"
+                "startdisabled" "1"
+
+                "OnTrigger" "MasterMechanic_Phase3AttackPool,PickRandomShuffle,,0,-1"
+            }
+
+            logic_case // Phase 1 Attack Pool
+            {
+                "targetname" "MasterMechanic_Phase1AttackPool"
+                "OnCase01" "pop_interface,ChangeBotAttributes,MasterMechanic_RescueRangerShotgun,0,-1"
+                "OnCase02" "pop_interface,ChangeBotAttributes,MasterMechanic_Capper,0,-1"
+            }
+
+            logic_case // Phase 2 Attack Pool
+            {
+                "targetname" "MasterMechanic_Phase2AttackPool"
+                "OnCase01" "pop_interface,ChangeBotAttributes,MasterMechanic_Pomson,0,-1"
+                "OnCase02" "pop_interface,ChangeBotAttributes,MasterMechanic_RescueRangerShotgun,0,-1"
+                "OnCase03" "pop_interface,ChangeBotAttributes,MasterMechanic_ShortCircuit,0,-1"
+            }
+
+            logic_case // Phase 3 Attack Pool
+            {
+                "targetname" "MasterMechanic_Phase3AttackPool"
+                "OnCase01" "pop_interface,ChangeBotAttributes,MasterMechanic_Pomson,0,-1"
+                "OnCase02" "pop_interface,ChangeBotAttributes,MasterMechanic_ShortCircuit,0,-1"
+                "OnCase03" "pop_interface,ChangeBotAttributes,MasterMechanic_NuclearShotgun,0,-1"
+            }
+
+            // Tank Phases
+            logic_relay // Rocket Tank
+            {
+                "targetname" "MasterMechanic_RocketTankPhase"
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave9_Boss-RocketTank,0,-1"
+                "OnTrigger" "pop_interface,ChangeBotAttributes,MasterMechanic_TankPowered,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,0,-1"
+                "OnTrigger" "MasterMechanic_TankSummonFade,Fade,,0,-1"
+                "OnTrigger" "!activator,$TeleportToEntity,tank_rodeo_target,0.55,-1"
+            }
+
+            logic_relay // Minigun Tank
+            {
+                "targetname" "MasterMechanic_MinigunTankPhase"
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave9_Boss-MinigunTank,0,-1"
+                "OnTrigger" "pop_interface,ChangeBotAttributes,MasterMechanic_TankPowered,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,0,-1"
+                "OnTrigger" "MasterMechanic_TankSummonFade,Fade,,0,-1"
+                "OnTrigger" "!activator,$TeleportToEntity,tank_rodeo_target,0.55,-1"
+            }
+
+            logic_relay // Railgun Tank
+            {
+                "targetname" "MasterMechanic_RailgunTankPhase"
+                "OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave9_Boss-RailgunTank,0,-1"
+                "OnTrigger" "pop_interface,ChangeBotAttributes,MasterMechanic_TankPowered,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,0,-1"
+                "OnTrigger" "MasterMechanic_TankSummonFade,Fade,,0,-1"
+                "OnTrigger" "!activator,$TeleportToEntity,tank_rodeo_target,0.55,-1"
+            }
+        }
+        MasterMechanicCoreEffects
+        {
+            OnSpawnOutput
+            {
+                Target "MasterMechanic_Shield"
+                Action "SetAttached"
+                Param !self
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "MasterMechanic_Shield"
+                "model" "models/effects/resist_shield/resist_shield.mdl"
+                "modelscale" "1.5"
+                "skin" "1"
+                "solid" "0"
+
+                "startdisabled" "1"
+            }
+        }
+        MasterMechanicArenaEffects
+        {
+            point_clientcommand
+            {
+                "targetname" "clientcommand"
+            }
+            info_target
+            {
+                "targetname" "tank_rodeo_target"
+                "origin" "-6143 -5249 -512"
+            }
+            env_fade
+            {
+                "targetname" "MasterMechanic_TankSummonFade"
+                "rendercolor" "0 128 255"
+                "renderamt" "192"
+                "duration" "0.5"
+                "spawnflags" "1"
+            }
+        }
+
+        //// OUROBOROS POINTTEMPLATES ////
+
+        OuroborosCoreAppearance
+        {
+            prop_dynamic
+            {
+                "targetname" "ouroboros_snake_test"
+                "origin" "-12925 -11049 1873"
+                "angles" "45 15 90"
+                "model" "models/workshop/player/items/heavy/hwn2023_bare_bear_bones/hwn2023_bare_bear_bones.mdl"
+                "modelscale" "5"
+                "solid" "0"
+                "disableshadows" "1"
+                "rendercolor" "32 32 32"
+            }
+        }
+
+        //// MINI BOSSES ////
+
+        //// DECIMATOR POINTTEMPLATES ////
+        DecimatorRocketRain
+        {
+            OnSpawnOutput
+            {
+                Target "rocketrainfaketaxi"
+                Action $SetOwner
+                Param "!activator"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+            OnSpawnOutput
+            {
+                Target "rocketrainfaketaxi"
+                Action $SetFakeParent
+                Param "!activator"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+            OnSpawnOutput
+            {
+                Target "rocketrainfaketaxi"
+                Action "SetParent"
+                Param ""
+                Delay -1
+                Repeats 1
+                Cooldown -1
+            }
+
+            info_target // Rocket Rain Fake Parent
+			{
+				"targetname" "rocketrainfaketaxi"
+				"origin" "0 0 0"
+				"mins" "0"
+				"maxs" "0"
+				"$modules" "fakeparent"
+       			"$positiononly" "1"
+			}
+            func_rotating // Rocket Rain Rotator
+            {
+                "targetname" "rocketraincirclerotator"
+                "parentname" "rocketrainfaketaxi"
+                "maxspeed" "60"
+                "origin" "0 0 0"
+                "spawnflags" "80"
+            }
+
+            prop_dynamic // Rocket Rain Circle
+            {
+                "targetname" "rocketraincircle1"
+                "parentname" "rocketraincirclerotator"
+                "origin" "500 0 900"
+                "angles" "0 0 180"
+                "model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "modelscale" "3"
+                "defaultanim" "start"
+                "solid" "0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Rocket Rain Circle
+            {
+                "targetname" "rocketraincircle2"
+                "parentname" "rocketraincirclerotator"
+                "origin" "-500 0 900"
+                "angles" "0 0 180"
+                "model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "modelscale" "3"
+                "defaultanim" "start"
+                "solid" "0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Rocket Rain Circle
+            {
+                "targetname" "rocketraincircle3"
+                "parentname" "rocketraincirclerotator"
+                "origin" "0 500 900"
+                "angles" "0 0 180"
+                "model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "modelscale" "3"
+                "defaultanim" "start"
+                "solid" "0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+            prop_dynamic // Rocket Rain Circle
+            {
+                "targetname" "rocketraincircle4"
+                "parentname" "rocketraincirclerotator"
+                "origin" "0 -500 900"
+                "angles" "0 0 180"
+                "model" "models/props_mvm/indicator/indicator_circle_long.mdl"
+                "modelscale" "3"
+                "defaultanim" "start"
+                "solid" "0"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname" "rocketrainlauncher1"
+                "parentname" "rocketraincircle1"
+                "origin" "500 0 1200"
+                "angles" "90 0 0"
+                "$weaponname" "RocketRain"
+                "$firetime" "0.5"
+                "modelscale" "1"
+                "$preventshootparent" "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname" "rocketrainlauncher2"
+                "parentname" "rocketraincircle2"
+                "origin" "-500 0 1200"
+                "angles" "90 0 0"
+                "$weaponname" "RocketRain"
+                "$firetime" "0.5"
+                "modelscale" "1"
+                "$preventshootparent" "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname" "rocketrainlauncher3"
+                "parentname" "rocketraincircle3"
+                "origin" "0 500 1200"
+                "angles" "90 0 0"
+                "$weaponname" "RocketRain"
+                "$firetime" "0.5"
+                "modelscale" "1"
+                "$preventshootparent" "1"
+            }
+            tf_point_weapon_mimic // Rocket Rain Launcher
+            {
+                "targetname" "rocketrainlauncher4"
+                "parentname" "rocketraincircle4"
+                "origin" "0 -500 1200"
+                "angles" "90 0 0"
+                "$weaponname" "RocketRain"
+                "$firetime" "0.5"
+                "modelscale" "1"
+                "$preventshootparent" "1"
+            }
+        }
+    }
+
+    CustomWeapon
+    {
+        "RocketRain"
+        {
+            OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+            "projectile speed decreased" 0.65
+            "projectile spread angle penalty" 15
+        }
+    }
+
+    Templates
+    {
+        //// MAIN BOSSES ////
+
+        T_TFBot_Mainboss_MasterMechanic_Kai
+        {
+            Name "The Master Mechanic"
+            Class Engineer
+            ClassIcon engineer_beepboy
+            Skill Expert
+            Health 50000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Action Mobber
+            WeaponRestrictions PrimaryOnly
+            ExtAttr IgnoreBuildings
+            UseMeleeThreatPrioritization 1
+
+            UseHumanAnimations 1
+
+            SpawnTemplate MasterMechanicCoreLogic
+            SpawnTemplate MasterMechanicCoreEffects
+
+            Item "Beep Man"
+            Item "The Beep Boy"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.4
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+                "override footstep sound set" 4
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            // Intro Taunt
+            Addcond
+            {
+                Index 51
+                Duration 5
+            }
+            Taunt
+            {
+                Delay 0.1
+                Repeats 1
+                Cooldown -1
+            }
+            FireInput
+            {
+                Target tf_gamerules
+                Action PlayVO
+                Param vo/mvm/norm/engineer_mvm_gunslingertriplepunchfinal01.mp3
+                Delay 0.1
+                Repeats 1
+                Cooldown -1
+            }
+
+            // Begin Attack Patterns (This will be the main relay that's called upon for initiating a phase or changing attacks in a phase)
+            FireInput
+            {
+                Target "MasterMechanic_AttackInit"
+                Action Trigger
+                Delay 3.5
+                Repeats 1
+                Cooldown -1
+            }
+
+            // Rocket Tank
+            ChangeAttributes
+            {
+                Name "MasterMechanic_RocketTankSummonBegin"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 35001
+            }
+
+            // Minigun Tank
+            ChangeAttributes
+            {
+                Name "MasterMechanic_MinigunTankSummonBegin"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 25001
+            }
+
+            // Phase 2 Init
+            FireInput
+            {
+                Target "MasterMechanic_Phase1AttackPoolRelay"
+                Action "Disable"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 25001
+            }
+            FireInput
+            {
+                Target "MasterMechanic_Phase2AttackPoolRelay"
+                Action "Enable"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 25001
+            }
+
+            // Railgun Tank
+            ChangeAttributes
+            {
+                Name "MasterMechanic_RailgunTankSummonBegin"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 15001
+            }
+
+            // Phase 3 Init
+            FireInput
+            {
+                Target "MasterMechanic_Phase2AttackPoolRelay"
+                Action "Disable"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 15001
+            }
+            FireInput
+            {
+                Target "MasterMechanic_Phase3AttackPoolRelay"
+                Action "Enable"
+                Delay -1
+                Repeats 1
+                Cooldown -1
+                IfHealthBelow 15001
+            }
+
+            EventChangeAttributes
+            {
+                // General EventChangeAttributes
+                MasterMechanic_RocketTankSummonBegin [$SIGSEGV] // Interrupt actions to the middle of the arena while having some damage resistance
+                {
+                    Item "The Eureka Effect"
+                    WeaponRestrictions MeleeOnly
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 2
+                        "dmg from ranged reduced" 0.25
+                        "dmg from melee increased" 0.25
+                    }
+
+                    InterruptAction
+                    {
+                        Target "-6143 -5249 -712"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                        Distance 100
+                        Duration 0.1
+                        WaitUntilDone 0.1
+                        OnDoneChangeAttributes "MasterMechanic_RocketTankSummonReal"
+                    }
+                }
+                MasterMechanic_RocketTankSummonReal [$SIGSEGV]
+                {
+                    WeaponRestrictions MeleeOnly
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 0.001
+                        "no_attack" 1
+                        "no_jump" 1
+                        "dmg from ranged reduced" 0.25
+                        "dmg from melee increased" 0.25
+                    }
+
+                    ClientCommand
+                    {
+                        Name "eureka_teleport 1"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_RocketTankPhase"
+                        Action "Trigger"
+                        Delay 2.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                MasterMechanic_MinigunTankSummonBegin [$SIGSEGV] // Interrupt actions to the middle of the arena while having some damage resistance
+                {
+                    Item "The Eureka Effect"
+                    WeaponRestrictions MeleeOnly
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 2
+                        "dmg from ranged reduced" 0.25
+                        "dmg from melee increased" 0.25
+                    }
+
+                    InterruptAction
+                    {
+                        Target "-6143 -5249 -712"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                        Distance 100
+                        Duration 0.1
+                        WaitUntilDone 0.1
+                        OnDoneChangeAttributes "MasterMechanic_MinigunTankSummonReal"
+                    }
+                }
+                MasterMechanic_MinigunTankSummonReal [$SIGSEGV]
+                {
+                    WeaponRestrictions MeleeOnly
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 0.001
+                        "no_attack" 1
+                        "no_jump" 1
+                        "dmg from ranged reduced" 0.25
+                        "dmg from melee increased" 0.25
+                    }
+
+                    ClientCommand
+                    {
+                        Name "eureka_teleport 1"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_MinigunTankPhase"
+                        Action "Trigger"
+                        Delay 2.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                MasterMechanic_RailgunTankSummonBegin [$SIGSEGV] // Interrupt actions to the middle of the arena while having some damage resistance
+                {
+                    Item "The Eureka Effect"
+                    WeaponRestrictions MeleeOnly
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 2
+                        "dmg from ranged reduced" 0.25
+                        "dmg from melee increased" 0.25
+                    }
+
+                    InterruptAction
+                    {
+                        Target "-6143 -5249 -712"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                        Distance 100
+                        Duration 0.1
+                        WaitUntilDone 0.1
+                        OnDoneChangeAttributes "MasterMechanic_RailgunTankSummonReal"
+                    }
+                }
+                MasterMechanic_RailgunTankSummonReal [$SIGSEGV]
+                {
+                    WeaponRestrictions MeleeOnly
+
+                    CharacterAttributes
+                    {
+                        "move speed bonus" 0.001
+                        "no_attack" 1
+                        "no_jump" 1
+                        "dmg from ranged reduced" 0.25
+                        "dmg from melee increased" 0.25
+                    }
+
+                    ClientCommand
+                    {
+                        Name "eureka_teleport 1"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_RailgunTankPhase"
+                        Action "Trigger"
+                        Delay 2.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                MasterMechanic_TankPowered [$SIGSEGV] // When he calls a tank in, he gains a vac bubble and becomes highly resistant to damage
+                {
+                    Item "The Wrangler"
+                    WeaponRestrictions SecondaryOnly
+
+                    CharacterAttributes
+                    {
+                        "dmg from ranged reduced" 0.1
+                        "dmg from melee increased" 0.1
+                    }
+
+                    InterruptAction
+                    {
+                        Target "-6143 -5249 -712"
+                        Delay 0
+                        Repeats 99999
+                        Distance 8
+                        Duration 4
+                        Cooldown 0.5
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_Shield"
+                        Action "Enable"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                MasterMechanic_Stun [$SIGSEGV] // He becomes stunned for 5 seconds when a tank is killed; after this, the attack init is called
+                {
+                    CharacterAttributes
+                    {
+                        "dmg from ranged reduced" 1
+                        "dmg from melee increased" 1
+                    }
+                    Addcond
+                    {
+                        Index 71
+                        Duration 5
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_Shield"
+                        Action "Disable"
+                        Delay 0.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_AttackInit"
+                        Action Trigger
+                        Delay 6
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                // Phase 1 Attack Pool
+                MasterMechanic_RescueRangerShotgun [$SIGSEGV]
+                {
+                    Item "The Rescue Ranger"
+                    Attributes HoldFireUntilFullReload
+                    WeaponRestrictions PrimaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The Rescue Ranger"
+
+                        "damage bonus" 1.5
+                        "faster reload rate" 0.6
+                        "projectile spread angle penalty" 5
+                        "mult projectile count" 9
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_AttackInit"
+                        Action "Trigger"
+                        Delay 8
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                MasterMechanic_Capper [$SIGSEGV]
+                {
+                    Item "The C.A.P.P.E.R"
+                    WeaponRestrictions SecondaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The C.A.P.P.E.R"
+
+                        "damage bonus" 1.25
+                        "fire rate bonus" 1.25
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_AttackInit"
+                        Action "Trigger"
+                        Delay 8
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                // Phase 2 Attack Pool
+                MasterMechanic_Pomson [$SIGSEGV]
+                {
+                    Item "The Pomson 6000"
+                    WeaponRestrictions PrimaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The Pomson 6000"
+
+                        "damage bonus" 1.5
+                        "fire rate bonus" 0.8
+                        "faster reload rate" -1
+                        "clip size bonus upgrade" 50
+                    }
+
+                    ChangeAttributes
+                    {
+                        Name "MasterMechanic_PomsonStage2"
+                        Delay 1.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                MasterMechanic_PomsonStage2 [$SIGSEGV]
+                {
+                    Item "The Pomson 6000"
+                    WeaponRestrictions PrimaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The Pomson 6000"
+
+                        "damage bonus" 1.5
+                        "fire rate bonus" 0.6
+                        "faster reload rate" -1
+                        "projectile speed increased" 1.2
+                        "particle color rgb" 33023
+                        "clip size bonus upgrade" 50
+                    }
+
+                    ChangeAttributes
+                    {
+                        Name "MasterMechanic_PomsonStage3"
+                        Delay 1.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                MasterMechanic_PomsonStage3 [$SIGSEGV]
+                {
+                    Item "The Pomson 6000"
+                    WeaponRestrictions PrimaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The Pomson 6000"
+
+                        "damage bonus" 1.5
+                        "fire rate bonus" 0.4
+                        "faster reload rate" -1
+                        "projectile speed increased" 1.4
+                        "particle color rgb" 16744448
+                        "clip size bonus upgrade" 50
+                    }
+
+                    ChangeAttributes
+                    {
+                        Name "MasterMechanic_PomsonStage4"
+                        Delay 1.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                MasterMechanic_PomsonStage4 [$SIGSEGV]
+                {
+                    Item "The Pomson 6000"
+                    WeaponRestrictions PrimaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The Pomson 6000"
+
+                        "damage bonus" 1.5
+                        "fire rate bonus" 0.2
+                        "faster reload rate" -1
+                        "projectile speed increased" 1.6
+                        "particle color rgb" 16776960
+                        "clip size bonus upgrade" 50
+                    }
+
+                    ChangeAttributes
+                    {
+                        Name "MasterMechanic_PomsonStage5"
+                        Delay 1.5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                MasterMechanic_PomsonStage5 [$SIGSEGV]
+                {
+                    Item "The Pomson 6000"
+                    WeaponRestrictions PrimaryOnly
+
+                    ItemAttributes
+                    {
+                        ItemName "The Pomson 6000"
+
+                        "damage bonus" 1.5
+                        "fire rate bonus" 0.1
+                        "faster reload rate" -1
+                        "projectile speed increased" 2
+                        "particle color rgb" 16777215
+                        "clip size bonus upgrade" 50
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_AttackInit"
+                        Action Trigger
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                MasterMechanic_ShortCircuit [$SIGSEGV]
+                {
+                    Item "TF_WEAPON_PISTOL"
+                    WeaponRestrictions SecondaryOnly
+                    Attributes AlwaysFireWeapon
+
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_PISTOL"
+                        "custom item model" "models/weapons/c_models/c_dex_arm/c_dex_arm.mdl"
+                        "custom weapon fire sound" "Weapon_BarretsArm.Shot"
+                        "damage bonus" 1.25
+                        "clip size bonus" 50
+                        "override projectile type extra" "mechanicalarmorb"
+                        "spread angle pattern" "0 0 0 | 0 15 0 | 0 30 0 | 0 45 0 | 0 60 0 | 0 75 0 | 0 90 0 | 0 105 0 | 0 120 0 | 0 135 0 | 0 150 0 | 0 165 0 | 0 180 0 | 0 195 0 | 0 210 0 | 0 225 0 | 0 240 0 | 0 255 0 | 0 270 0 | 0 285 0 | 0 300 0 | 0 315 0 | 0 330 0 | 0 345 0"
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_AttackInit"
+                        Action Trigger
+                        Delay 8
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                // Phase 3 Attack Pool
+                MasterMechanic_NuclearShotgun [$SIGSEGV]
+                {
+                    Item "Panic Attack Shotgun"
+                    WeaponRestrictions PrimaryOnly
+                    Attributes HoldFireUntilFullReload
+
+                    ItemAttributes
+                    {
+                        ItemName "Panic Attack Shotgun"
+
+                        "damage bonus" 15
+                        "fire rate bonus" 2
+                        "faster reload rate" 0.2
+                        "override projectile type" 12
+                        "mult projectile count" 15
+                        "ignores other projectiles" 1
+                        "projectile spread angle penalty" 3
+                        "projectile acceleration" 50000
+                        "projectile acceleration start time" 2
+                    }
+
+                    FireInput
+                    {
+                        Target "MasterMechanic_AttackInit"
+                        Action Trigger
+                        Delay 8
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }
+
+        //// MINI BOSSES ////
+
+        T_TFBot_Miniboss_Decimator_Kai
+        {
+            Name "The Decimator"
+            Class Soldier
+            ClassIcon soldier_barrage
+            Skill Expert
+            Health 40000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+            ExtAttr IgnoreBuildings
+            UseMeleeThreatPrioritization 1
+
+            UseHumanAnimations 1
+
+            Item "The Buff Banner"
+
+            Item "The Hellmet"
+            Item "Potato of Labor" // Bunsen Brave
+            ItemModel
+            {
+                ItemName "Potato of Labor"
+                Model "models/workshop/player/items/heavy/robo_heavy_chief/robo_heavy_chief.mdl"
+            }
+            Item "The Shogun's Shoulder Guard"
+            Item "Delldozer"
+            Item "Hog Heels"
+
+            SpawnTemplate "DecimatorRocketRain"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+                "override footstep sound set" 3
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.4
+                "faster reload rate" 0.001
+                "projectile speed decreased" 0.65
+                "mod mod rage on hit penalty" -100
+            }
+
+            ChangeAttributes
+            {
+                Name "RocketRainPrelude"
+                Delay 10
+                Repeats 0
+                Cooldown 40
+            }
+
+            EventChangeAttributes
+            {
+                RocketRainPrelude [$SIGSEGV]
+                {
+                    WeaponRestrictions SecondaryOnly
+                    FireInput // Set Banner to Empty
+                    {
+                        Target "!self"
+                        Action "RunScriptCode"
+                        Param "self.SetRageMeter(0)"
+                        Delay 0.2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Set Banner to Full
+                    {
+                        Target "!self"
+                        Action "RunScriptCode"
+                        Param "self.SetRageMeter(100)"
+                        Delay 0.4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Play Loud Banner Sound
+                    {
+                        Target "tf_gamerules"
+                        Action "playvo"
+                        Param weapons/buff_banner_horn_blue.wav
+                        Delay 1
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Play Warning Sound
+                    {
+                        Target "tf_gamerules"
+                        Action "playvo"
+                        Param ui/rd_2base_alarm.wav
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle1"
+                        Action "Enable"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Skin
+                    {
+                        Target "rocketraincircle1"
+                        Action "Skin"
+                        Param "1"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Anim
+                    {
+                        Target "rocketraincircle1"
+                        Action "SetAnimation"
+                        Param "start"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Enable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle2"
+                        Action "Enable"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Skin
+                    {
+                        Target "rocketraincircle2"
+                        Action "Skin"
+                        Param "1"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Anim
+                    {
+                        Target "rocketraincircle2"
+                        Action "SetAnimation"
+                        Param "start"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Enable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle3"
+                        Action "Enable"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Skin
+                    {
+                        Target "rocketraincircle3"
+                        Action "Skin"
+                        Param "1"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Anim
+                    {
+                        Target "rocketraincircle3"
+                        Action "SetAnimation"
+                        Param "start"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Enable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle4"
+                        Action "Enable"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Skin
+                    {
+                        Target "rocketraincircle4"
+                        Action "Skin"
+                        Param "1"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Enable Rocket Rain Circle Anim
+                    {
+                        Target "rocketraincircle4"
+                        Action "SetAnimation"
+                        Param "start"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Play Final Warning Sound
+                    {
+                        Target "tf_gamerules"
+                        Action "playvo"
+                        Param "misc/rd_finale_beep01.wav"
+                        Delay 4
+                        Repeats 3
+                        Cooldown 0.75
+                    }
+                    FireInput // Set Rocket Rain Skin
+                    {
+                        Target "rocketraincircle1"
+                        Action "Skin"
+                        Param "0"
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Set Rocket Rain Skin
+                    {
+                        Target "rocketraincircle2"
+                        Action "Skin"
+                        Param "0"
+                        Delay 4.75
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Set Rocket Rain Skin
+                    {
+                        Target "rocketraincircle3"
+                        Action "Skin"
+                        Param "0"
+                        Delay 5.50
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Set Rocket Rain Skin
+                    {
+                        Target "rocketraincircle4"
+                        Action "Skin"
+                        Param "0"
+                        Delay 6.25
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    ChangeAttributes
+                    {
+                        Name "RocketRainReal"
+                        Delay 6.25
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+
+                RocketRainReal [$SIGSEGV]
+                {
+                    FireInput // Rotator Start
+                    {
+                        Target "rocketraincirclerotator"
+                        Action "Start"
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Start Firing Rockets
+                    {
+                        Target "rocketrainlauncher1"
+                        Action "$StartFiring"
+                        Delay 0
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Start Firing Rockets
+                    {
+                        Target "rocketrainlauncher2"
+                        Action "$StartFiring"
+                        Delay 0.2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Start Firing Rockets
+                    {
+                        Target "rocketrainlauncher3"
+                        Action "$StartFiring"
+                        Delay 0.4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Start Firing Rockets
+                    {
+                        Target "rocketrainlauncher4"
+                        Action "$StartFiring"
+                        Delay 0.6
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle1"
+                        Action "SetAnimation"
+                        Param "End"
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle1"
+                        Action "Disable"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Stop Firing Rockets
+                    {
+                        Target "rocketrainlauncher1"
+                        Action "$StopFiring"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle2"
+                        Action "SetAnimation"
+                        Param "End"
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle2"
+                        Action "Disable"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Stop Firing Rockets
+                    {
+                        Target "rocketrainlauncher2"
+                        Action "$StopFiring"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle3"
+                        Action "SetAnimation"
+                        Param "End"
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle3"
+                        Action "Disable"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Stop Firing Rockets
+                    {
+                        Target "rocketrainlauncher3"
+                        Action "$StopFiring"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle4"
+                        Action "SetAnimation"
+                        Param "End"
+                        Delay 10
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Disable Rocket Rain Circles
+                    {
+                        Target "rocketraincircle4"
+                        Action "Disable"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    FireInput // Stop Firing Rockets
+                    {
+                        Target "rocketrainlauncher4"
+                        Action "$StopFiring"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput // Rotator Stop
+                    {
+                        Target "rocketraincirclerotator"
+                        Action "Stop"
+                        Delay 11
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }
+
+        T_TFBot_Miniboss_DragonKing_Kai
+        {
+            Name "The Dragon King"
+            Class Pyro
+            ClassIcon pyro_dragon_crown
+            Skill Expert
+            Health 25000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+            ExtAttr IgnoreBuildings
+            UseMeleeThreatPrioritization 1
+
+            Item "The Dragon's Fury"
+            Item "The Flare Gun"
+
+            Item "Prince Tavish's Crown"
+            Item "Hard-Headed Hardware"
+            Item "Forgotten King's Pauldrons"
+            Item "The Scoped Spartan"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+				"override footstep sound set" 6
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Flare Gun"
+                "override projectile type extra" "spellmeteorshower" 
+            }
+
+            WeaponSwitch
+            {
+                Type "Secondary"
+                Delay 15
+                Repeats 0
+                Cooldown 15
+            }
+            WeaponSwitch
+            {
+                Type "Primary"
+                Delay 16
+                Repeats 0
+                Cooldown 15
+            }
+        }
+
+        T_TFBot_MiniBoss_HowitzerMachination_Kai
+        {
+            Name "Howitzer Machination"
+            Class Demoman
+            ClassIcon demo_burst_giant
+            Skill Expert
+            Health 25000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+            ExtAttr IgnoreBuildings
+            UseMeleeThreatPrioritization 1
+
+            Item "The Iron Bomber"
+
+            Item "Hazard Headgear"
+            Item "The Hurt Locher"
+
+            AimOffset "0 0 1000"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+				"override footstep sound set" 4
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Iron Bomber"
+
+                "fire rate bonus" 2.5
+                "faster reload rate" 0.001
+                "mult projectile count" 24
+                "self dmg push force decreased" 0.001
+                "no self blast dmg" 1
+                "spread angle pattern" "0 0 0|0 15 0|0 30 0|0 45 0|0 60 0|0 75 0|0 90 0|0 105 0|0 120 0|0 135 0|0 150 0|0 165 0|0 180 0|0 195 0|0 210 0|0 225 0|0 240 0|0 255 0|0 270 0|0 285 0|0 300 0|0 315 0|0 330 0|0 345 0"
+            }
+        }
+
+        T_TFBot_Miniboss_Immolator_Kai
+        {
+            Name "The Immolator"
+            Class Pyro
+            ClassIcon pyro_giant
+            Skill Expert
+            Health 25000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+            ExtAttr IgnoreBuildings
+            UseMeleeThreatPrioritization 1
+
+            UseMeleeThreatPrioritization 1
+
+            Item "The Backburner"
+
+            Item "The Flare Gun"
+            
+            Item "The Axtinguisher"
+
+            Item "The Special Eyes"
+            Item "The Wraith Wrap"
+            Item "The Hot Case"
+            Item "The Bonedolier"
+            Item "The Maniac's Manacles"
+            Item "The Coffin Kit"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "deploy time decreased" 0.75
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0.75
+                "override footstep sound set" 6
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            ItemAttributes // Backburner
+            {
+                ItemName "The Backburner"
+                "afterburn duration bonus" 3
+            }
+            ItemAttributes // Flare Gun
+            {
+                ItemName "The Flare Gun"
+                "projectile speed decreased" 0.75
+                "projectile spread angle penalty" 5
+                "projectile count" 9
+            }
+            ItemAttributes // Axtinguisher
+            {
+                ItemName "The Axtinguisher"
+                "crit vs burning players" 1
+            }
+            
+            ItemAttributes
+            {
+                ItemName "The Hot Case"
+                "SPELL: set item tint RGB" 1
+                "set item tint RGB" 16711680
+            }
+            ItemAttributes
+            {
+                ItemName "The Special Eyes"
+                "SPELL: set item tint RGB" 1
+                "set item tint RGB" 16711680
+            }
+
+            WeaponSwitch
+            {
+                Type "Primary"
+                MaxTargetRange 349
+                MinTargetRange 100
+                Delay 0.1
+                Repeats 0
+                Cooldown 0
+                IfSeeTarget 1
+            }
+            WeaponSwitch
+            {
+                Type "Primary"
+                MaxTargetRange 9999
+                MinTargetRange 700
+                Delay 0.1
+                Repeats 0
+                Cooldown 0
+                IfSeeTarget 1
+            }
+            WeaponSwitch
+            {
+                Type "Secondary"
+                MaxTargetRange 700
+                MinTargetRange 350
+                Delay 0.1
+                Repeats 0
+                Cooldown 0
+                IfSeeTarget 1
+            }
+            WeaponSwitch
+            {
+                Type "Melee"
+                MaxTargetRange 100
+                MinTargetRange 1
+                Delay 0.1
+                Repeats 0
+                Cooldown 0
+                IfSeeTarget 1
+            }
+        }
+
+        T_TFBot_Miniboss_PrismaticDiffractor_Kai
+        {
+            Name "Prismatic Diffractor"
+            Class Soldier
+            ClassIcon soldier_bison_prismatic
+            Skill Expert
+            Health 25000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+            ExtAttr IgnoreBuildings
+            UseMeleeThreatPrioritization 1
+
+            Item "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+
+            Item "The Space Bracers"
+            Item "The Jupiter Jumpers"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "damage force reduction" 0.1
+                "airblast vulnerability multiplier" 0.1
+                "voice pitch scale" 0
+                "override footstep sound set" 3
+                "always allow taunt" 1
+                "displace touched enemies" 1
+            }
+
+            ItemAttributes
+            {
+                ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                "fire rate bonus" 0.1
+                "faster reload rate" 0.0001
+                "reload full clip at once" 1
+                "clip size upgrade atomic" 196
+                "override projectile type" 13
+                "energy weapon penetration" 1
+                "particle color rainbow" 1000
+                "projectile lifetime" 1
+
+                "paintkit_proto_def_index" 257
+                "set_item_texture_wear" 0
+            }
+
+            ChangeAttributes
+            {
+                Name "BarrageStage1"
+                Delay 1
+                Repeats 1
+                Cooldown -1
+            }
+
+            EventChangeAttributes
+            {
+                BarrageCooldown [$SIGSEGV]
+                {
+                    CharacterAttributes
+                    {
+                        "no_attack" 1
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage1"
+                        Delay 5
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage1 [$SIGSEGV]
+                {
+                    CharacterAttributes
+                    {
+                        "no_attack" 0
+                    }
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 10
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage2"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage2 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 8
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage3"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage3 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 6
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage4"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage4 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 3
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageStage5"
+                        Delay 2
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+                BarrageStage5 [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+                        "projectile spread angle penalty" 0
+                    }
+                    ChangeAttributes
+                    {
+                        Name "BarrageCooldown"
+                        Delay 4
+                        Repeats 1
+                        Cooldown -1
+                    }
+                }
+            }
+        }
+    }
+}
