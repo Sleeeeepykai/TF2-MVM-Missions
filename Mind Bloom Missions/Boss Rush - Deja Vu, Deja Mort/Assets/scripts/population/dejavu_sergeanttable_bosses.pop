@@ -8455,12 +8455,9 @@ WaveSchedule
                 "OnTrigger" "tf_gamerules,PlayVO,major_shocks_spin.mp3,1.16,-1"
                 "OnTrigger" "VortexPush,Enable,,2,-1"
                 "OnTrigger" "VortexEffect,Start,,2,-1"
-                "OnTrigger" "LightningRainLauncher2,FireMultiple,8,0,-1"
-                "OnTrigger" "LightningRainLauncher3,FireMultiple,8,0,-1"
-                "OnTrigger" "LightningRainLauncher2,FireMultiple,8,2,-1"
-                "OnTrigger" "LightningRainLauncher3,FireMultiple,8,2,-1"
-                "OnTrigger" "LightningRainLauncher2,FireMultiple,8,4,-1"
-                "OnTrigger" "LightningRainLauncher3,FireMultiple,8,4,-1"
+                "OnTrigger" "!activatorRunScriptCodeforeach(player in CzUtil.GetClosestPlayersToBot(activator,6))EntFireByHandle(`MegalaserRain`, `ForceSpawnAtEntityOrigin`, player, null, null)2-1"
+                "OnTrigger" "!activatorRunScriptCodeforeach(player in CzUtil.GetClosestPlayersToBot(activator,6))EntFireByHandle(`MegalaserRain`, `ForceSpawnAtEntityOrigin`, player, null, null)4-1"
+                "OnTrigger" "!activatorRunScriptCodeforeach(player in CzUtil.GetClosestPlayersToBot(activator,6))EntFireByHandle(`MegalaserRain`, `ForceSpawnAtEntityOrigin`, player, null, null)6-1"
                 "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_kaboomalts01.mp3,7,-1"
                 "OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/thunder_04.wav,7,-1"
                 "OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)7-1"
@@ -8475,6 +8472,145 @@ WaveSchedule
                 "OnTrigger" "TheShocksBehindTheSlaughter,Disable,,8.55,-1"
                 "OnTrigger" "pop_interface,ChangeBotAttributes,FallenShocks_PanicDefault,8.55,-1"
             }
+		}
+        MegalaserRain
+		{
+			KeepAlive 1
+			RemoveIfKilled "MegaLaserAttackPoint"
+
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackPoint"
+				Action "$setkey$angles"
+                Param "180 0 0"
+                Delay 0.1
+			}
+			prop_dynamic
+            {
+                "targetname" "MegaLaserAttackPoint"
+                "origin" "0 0 25"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "3"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            info_particle_system
+            {
+                "targetname" "MegalaserRainParticle"
+                "origin" "0 0 1500"
+                "effect_name" "dxhr_lightningball_parent_blue"
+                "start_active" "1"
+            }
+			prop_dynamic
+			{
+				"targetname" "MegaLaserRainAttack"
+                "origin" "0 0 1500"
+                "angles" "90 0 0"
+
+                "model" "models/props_mindbloom/megalaser_beam.mdl"
+                "rendermode" "1"
+                "renderamt" "110"
+                "modelscale" "0.75"
+                "solid" "0"
+                "rendermode" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+			trigger_hurt
+			{
+				"targetname" "MegaLaserRainDamage"
+				"origin" "0 0 500"
+				"mins" "-96 -96 -996"
+                "maxs" "96 96 996"
+
+                "damagetype" "1048576"
+                "damage" "333"
+                "filtername" "filter_is_red_not_ubered"
+                "spawnflags" "64"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+            ambient_generic
+			{
+				"targetname" "MegaLaserAttackPing"
+				"origin" "0 0 0"
+				"message" "weapons\rescue_ranger_teleport_receive_01.wav"
+				"radius" "4096"
+				"health" "10"
+				"spawnflags" "16"
+			}
+			ambient_generic
+			{
+				"targetname" "MegaLaserAttackSound"
+				"origin" "0 0 0"
+				"message" "megalaser_fire.wav"
+				"radius" "4096"
+				"health" "10"
+				"spawnflags" "16"
+			}
+
+            OnSpawnOutput
+			{
+				Target "MegaLaserAttackPing"
+				Action "PlaySound"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+            OnSpawnOutput
+			{
+				Target "MegaLaserAttackSound"
+				Action "PlaySound"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserRainAttack"
+				Action "Enable"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserRainDamage"
+				Action "Enable"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackDamage"
+				Action "Disable"
+				Delay 4
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackPoint"
+				Action "SetAnimation"
+				Param "end"
+				Delay 4
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackPoint"
+				Action "Kill"
+				Delay 5
+				Repeats 1
+				Cooldown -1
+			}
 		}
 		FallenShocksMegaLaserDamage
 		{
