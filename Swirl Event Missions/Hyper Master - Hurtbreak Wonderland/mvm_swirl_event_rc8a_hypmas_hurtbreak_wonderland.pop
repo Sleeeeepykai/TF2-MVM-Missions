@@ -1543,7 +1543,73 @@ WaveSchedule
 
 		MasqueradeBossPT
 		{
+			KeepAlive 1
 
+			RemoveIfKilled "MasqueradeMasterTarget"
+
+			//// CORE LOGIC ////
+
+			info_target
+			{
+				"targetname" "MasqueradeMasterTarget"
+			}
+
+			logic_relay // Attack Init
+			{
+				"targetname" "MasqueradeAttackInit"
+
+				"OnTrigger" "MasqueradePhase1AttackPoolRelay,Trigger,,0,-1"
+				"OnTrigger" "MasqueradePhase2AttackPoolRelay,Trigger,,0,-1"
+				"OnTrigger" "MasqueradePhase3AttackPoolRelay,Trigger,,0,-1"
+			}
+
+			logic_relay // Phase 1 Attacks
+			{
+				"targetname" "MasqueradePhase1AttackPoolRelay"
+
+				"OnTrigger" "MasqueradePhase1AttackPool,PickRandomShuffle,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "MasqueradePhase1AttackPool"
+
+				"OnCase01" "!activator,$ChangeAttributes,FireSpiralAttack,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,SummonSoldiersAttack,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,RuneBladesAttack,0,-1"
+				"OnCase04" "!activator,$ChangeAttributes,TeslaAttack,0,-1"
+			}
+
+			logic_relay // Phase 2 Attacks
+			{
+				"targetname" "MasqueradePhase2AttackPoolRelay"
+
+				"OnTrigger" "MasqueradePhase2AttackPool,PickRandomShuffle,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "MasqueradePhase2AttackPool"
+				
+				"OnCase01" "!activator,$ChangeAttributes,FireSpiralEvolvedAttack,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,SummonGBurstDemosAttack,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,RuneBladesAttack,0,-1"
+				"OnCase04" "!activator,$ChangeAttributes,ArcaneSpikeAttack,0,-1"
+			}
+
+			logic_relay // Phase 3 Attacks
+			{
+				"targetname" "MasqueradePhase31ttackPoolRelay"
+
+				"OnTrigger" "MasqueradePhase3AttackPool,PickRandomShuffle,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "MasqueradePhase3AttackPool"
+
+				"OnCase01" "!activator,$ChangeAttributes,SummonGDeflectorHeaviesAttack,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,ArcaneSpikeEvolvedAttack,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,SuperSlamAttack,0,-1"
+				"OnCase04" "!activator,$ChangeAttributes,SuperNovaAttack,0,-1"
+			}
 		}
 
 		//// Summoner PTs ////
@@ -2170,6 +2236,8 @@ WaveSchedule
 			Attributes UseBossHealthBar
 
 			UseCustomModel "models/bots/scout_boss/bot_scout_gray_boss.mdl"
+
+			SpawnTemplate "MasqueradeBossPT"
 
 			UseHumanAnimations 1
 
@@ -5678,15 +5746,14 @@ WaveSchedule
 		// Carries over Fire Spiral, now varies in height
 		// Carries over Summon, changes to Giant Burst Demos
 		// Carries over Rune Blades
-		// Arcane Spike - Creates tracking indicators that launch up high damaging spikes
-		// Super Slam - Identical to Minos Prime, launches up and then slams down onto players dealing insane damage
+		// Arcane Spike - Creates indicators that launch up high damaging spikes
 
 		// Phase 3 Transition:
 
 		// Unleashes Fireball Rain
 		// Carries over Summon, changes to Giant Deflector Heavies
-		// Carries over Arcane Spike
-		// Carries over Super Slam
+		// Carries over Arcane Spike, now tracks players
+		// Super Slam - Identical to Minos Prime, launches up and then slams down onto players dealing insane damage
 		// Supernova - Charge-up ability that throws down a massive nuke on the team
 
 		// Boss Fight Victory:
