@@ -1547,6 +1547,7 @@ WaveSchedule
 
 			RemoveIfKilled "MasqueradeMasterTarget"
 
+			// Master Target Setup //
 			OnSpawnOutput
 			{
 				Target "MasqueradeMasterTarget"
@@ -1560,10 +1561,37 @@ WaveSchedule
 				Param ""
 			}
 
+			// Fire Spiral Attack Setup //
 			OnSpawnOutput
 			{
 				Target "FireSpiralAttackWeapon"
 				Action $SetOwner
+				Param "!activator"
+			}
+
+			// Summon Attack Setup //
+			OnSpawnOutput
+			{
+				Target "MasqueradeSoldierGenerator1"
+				Action SetParent
+				Param "!activator"
+			}
+			OnSpawnOutput
+			{
+				Target "MasqueradeSoldierGenerator2"
+				Action SetParent
+				Param "!activator"
+			}
+			OnSpawnOutput
+			{
+				Target "MasqueradeSoldierGenerator3"
+				Action SetParent
+				Param "!activator"
+			}
+			OnSpawnOutput
+			{
+				Target "MasqueradeSoldierGenerator4"
+				Action SetParent
 				Param "!activator"
 			}
 
@@ -1595,9 +1623,9 @@ WaveSchedule
 			{
 				"targetname" "MasqueradePhase1AttackPool"
 
-				"OnCase01" "!activator,$ChangeAttributes,FireSpiralAttack,0,-1"
-				"OnCase02" "!activator,$ChangeAttributes,SummonSoldiersAttack,0,-1"
-				"OnCase03" "!activator,$ChangeAttributes,RuneBladesAttack,0,-1"
+				"OnCase01" "!activator,$ChangeAttributes,MasqueradeFireSpiral,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,MasqueradeSoldierSummon,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,MasqueradeRuneBlades,0,-1"
 				"OnCase04" "!activator,$ChangeAttributes,TeslaAttack,0,-1"
 			}
 
@@ -1636,7 +1664,6 @@ WaveSchedule
 			//// PHASE 1 ATTACK POOL ////
 
 			// Fire Spiral Attack
-
 			logic_relay
 			{
 				"targetname" "MasqueradeFireSpiralAttackRelay"
@@ -1683,7 +1710,6 @@ WaveSchedule
 			}
 
 			// Summon Attack
-
 			logic_relay
 			{
 				"targetname" "MasqueradeSoldierSummonAttackRelay"
@@ -1695,8 +1721,8 @@ WaveSchedule
 				"OnTrigger" "MasqueradeSoldierSummonIndicator,Enable,,0.5,-1"
 				"OnTrigger" "MasqueradeSoldierSummonIndicator,SetAnimation,Start,0.5,-1"
 
+				"OnTrigger" "!activator,RunScriptCode,SummonerScript.SummonerMinionTrace(self),2.4,-1"
 				"OnTrigger" "SummonerMinionSpawnPT,ForceSpawn,,2.49,-1"
-				"OnTrigger" "!activator,RunScriptCode,SummonerScript.SummonerMinionTrace(self),2.49,-1"
 
 				"OnTrigger" "MasqueradeSoldierGenerator1,SpawnBot,,2.5,-1"
 				"OnTrigger" "MasqueradeSoldierGenerator2,SpawnBot,,2.5,-1"
@@ -1821,6 +1847,17 @@ WaveSchedule
 
 				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerSuperchargedRapidFireSoldierMinionInit(self),0,-1"
 				"OnSpawned" "!activator,$Suicide,,30,-1"
+			}
+
+			// Runeblade Attack
+			logic_relay
+			{
+				"targetname" "MasqueradeRuneBladesAttackRelay"
+
+				"OnTrigger" "!activator,$Addcond,87 4,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_bat_man,0,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_primary,4,-1"
 			}
 		}
 
@@ -2473,16 +2510,17 @@ WaveSchedule
 				"override footstep sound set" 5
 			}
 
+			ItemAttributes
+			{
+				ItemName "Three-Rune Blade"
+
+				"attach particle effect" "3043"
+			}
+
 			EventChangeAttributes
 			{
 				MasqueradeDefault [$SIGSEGV]
 				{
-					CharacterAttributes
-					{
-						"no_attack" 0
-						"no_jump" 0
-					}
-
 					FireInput
 					{
 						Target "MasqueradeAttackInit"
@@ -2491,17 +2529,34 @@ WaveSchedule
 						Repeats 1
 					}
 				}
+
+				//// PHASE 1 ATTACK POOL ////
+
 				MasqueradeFireSpiral [$SIGSEGV]
 				{
-					CharacterAttributes
-					{
-						"no_attack" 1
-						"no_jump" 0
-					}
-
 					FireInput
 					{
 						Target "MasqueradeFireSpiralAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+				MasqueradeSoldierSummon [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeSoldierSummonAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+				MasqueradeRuneBlades [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeRuneBladesAttackRelay"
 						Action "Trigger"
 						Delay 0
 						Repeats 1
@@ -5986,7 +6041,7 @@ WaveSchedule
 		// Phase 1 Attack Pool:
 
 		// Fire Spiral - Identical to the spiral from Made in Hell (Done)
-		// Summon - Summons Rapid Fire Supercharged Soldiers
+		// Summon - Summons Rapid Fire Supercharged Soldiers (Done)
 		// Rune Blades - Throws a pattern of rune blades
 		// Tesla - Unleashes some kind of lightning
 
