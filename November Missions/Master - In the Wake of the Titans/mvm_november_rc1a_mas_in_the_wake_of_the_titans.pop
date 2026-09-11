@@ -21,6 +21,29 @@ WaveSchedule
 
     ForceRedMoney 1
 
+    MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				EntFire(`env_sun`, `AddOutput`, `rendercolor 251 226 200 400`)
+                EntFire(`env_soundscape_proxy*`, `Enable`)
+                SetSkyboxTexture(`sky_november_01`)
+
+                for (local i = 1; i <= MaxPlayers; i++)
+                {
+                    local Player = PlayerInstanceFromIndex(i)
+                    if (Player == null)
+                        continue
+
+                    SetPropString(Player, `m_iszScriptThinkFunction`, ``)
+                    SetPropInt(Player, `m_Local.m_skybox3d.fog.colorPrimary`, RGBAToColor32(181, 114, 99, 255))
+                    SetPropInt(Player, `m_Local.m_fog.colorPrimary`, RGBAToColor32(181, 114, 99, 255))
+                }
+			  "
+		Delay -1
+	}
+
     //// DISABLED SOUNDS ////
 
     DisableSound "Announcer.MVM_Wave_End"
@@ -60,6 +83,213 @@ WaveSchedule
     // Precached Soundscape //
 
     PrecacheGeneric "scripts/soundscapes_mvm_november_rc1a.txt"
+
+    //// POINT TEMPLATES ////
+
+    PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						IncludeScript(`tankextensions_main`)
+
+                        ::RGBAToColor32 <- function(r, g, b, a)
+                        {
+                            return ((r) | (g << 8) | (b << 16) | (a << 24))
+                        }
+
+                        ::DispatchParticleEffectOn <- function(hEntity, sName)
+						{
+							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = Entities.CreateByClassname(`trigger_particle`)
+							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromString(`particle_name`, sName)
+							hParticle.KeyValueFromInt(`attachment_type`, 1)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
+							hParticle.Kill()
+						}
+
+						::DispatchParticleAttached <- function(entity, name, attachment)
+						{
+							if(entity == null) return
+							if(name == null) { entity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = CreateByClassname(`trigger_particle`)
+							SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromInt(`attachment_type`, 4)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.KeyValueFromString(`particle_name`, name)
+							hParticle.KeyValueFromString(`attachment_name`, attachment)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, ``, entity, entity)
+							hParticle.Kill()
+						}
+
+                        EntFire(`env_sun`, `AddOutput`, `rendercolor 251 226 200 400`)
+                        EntFire(`env_soundscape_proxy*`, `Enable`)
+                        SetSkyboxTexture(`sky_november_01`)
+
+                        for (local i = 1; i <= MaxPlayers; i++)
+                        {
+                            local Player = PlayerInstanceFromIndex(i)
+                            if (Player == null)
+                                continue
+
+                            SetPropString(Player, `m_iszScriptThinkFunction`, ``)
+                            SetPropInt(Player, `m_Local.m_skybox3d.fog.colorPrimary`, RGBAToColor32(181, 114, 99, 255))
+                            SetPropInt(Player, `m_Local.m_fog.colorPrimary`, RGBAToColor32(181, 114, 99, 255))
+                        }
+					  "
+			}
+
+			// Universal Filters
+            filter_activator_class // Is a Player
+            {
+                "targetname" "filter_is_player"
+                "Negated" "0"
+                "filterclass" "player"
+            }
+            filter_multi // Is a Red Player
+            {
+                "targetname" "filter_is_red_player"
+                "Negated"	"0"
+                "FilterType" "0"			
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_player"
+            }
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+            filter_multi // Is an Un-Ubered Red Player
+            {
+                "targetname" "filter_redteam_nouber"
+                "Negated"	"0"
+                "FilterType" "0" //and				
+                "Filter01"   "filter_redteam"
+                "Filter02"   "filter_is_not_ubered"
+                "Filter03"   "filter_is_not_ubered2"
+                "Filter04"   "filter_is_not_ubered3"
+                "Filter05"   "filter_is_not_ubered4"
+                "Filter06"   "filter_is_player"
+            }
+            filter_multi // Is an Un-Ubered Player
+            {
+                "targetname" "filter_nouber"
+                "Negated"	"0"
+                "FilterType" "0"
+                "Filter01"   "filter_is_not_ubered"
+                "Filter02"   "filter_is_not_ubered2"
+                "Filter03"   "filter_is_not_ubered3"
+                "Filter04"   "filter_is_not_ubered4"
+                "Filter05"   "filter_is_player"
+            }
+		}
+
+		MissionPT
+		{
+			logic_relay
+			{
+				"targetname" "TankStopRelay"
+				"OnTrigger" "tank_boss*,SetSpeed,0,0,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`doors/heavy_metal_stop1.wav`);EmitSoundEx({sound_name=`doors/heavy_metal_stop1.wav`,pitch = 90,filter_type=5})0-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`hl1/ambience/steamburst1.wav`);EmitSoundEx({sound_name=`hl1/ambience/steamburst1.wav`,pitch = 100,filter_type=5})0-1"
+			}
+			logic_relay
+			{
+				"targetname" "TankMoveRelay"
+
+				"OnTrigger" "tank_boss*,SetSpeed,15,0,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,35,1.5,-1"
+				"OnTrigger" "tank_boss*,SetSpeed,50,3,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
+			}
+			logic_relay
+			{
+				"targetname" "TankCleanupRelay"
+
+				"OnTrigger" "tank_boss*,RemoveHealth,100000,0,-1"
+			}
+
+            // Champion Giant Logic //
+
+            trigger_multiple
+            {
+                "targetname" "ChampionGiantFlagZone"
+                "origin" "-160 -448 212"
+                "mins" "-120 -120 -176"
+                "maxs" "120 120 176"
+                "wait" "0.5"
+                "spawnflags" "1"
+
+                "OnStartTouch" "ChampionGiantFilter,TestActivator,,0,-1"
+            }
+            
+            filter_tf_bot_has_tag
+            {
+                "targetname" "ChampionGiantFilter"
+                "tags" "ChampionGiant"
+
+                "OnPass" "control_point,SetOwner,3,0,-1"
+            }
+		}
+
+        VoidPT
+        {
+            OnSpawnOutput
+            {
+                Target BigNet
+                Action RunScriptCode
+                Param "
+                        SetSkyboxTexture(`sky_void_01`)
+                        EntFire(`env_sun`, `AddOutput`, `rendercolor 234 200 251 400`)
+                        EntFire(`env_soundscape_proxy*`, `Disable`)
+
+                        for (local i = 1; i <= MaxPlayers; i++)
+                        {
+                            local Player = PlayerInstanceFromIndex(i)
+                            if (Player == null)
+                                continue
+
+                            SetPropInt(Player, `m_Local.m_skybox3d.fog.colorPrimary`, RGBAToColor32(143, 99, 181, 255))
+                            SetPropInt(Player, `m_Local.m_fog.colorPrimary`, RGBAToColor32(143, 99, 181, 255))
+                            SetPropInt(Player, `m_Local.m_audio.soundscapeIndex`, 153)
+                        }
+                      "
+                Delay 0.1
+            }
+        }
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+	SpawnTemplate "MissionPT"
 
     //// ROBOT TEMPLATES ////
     
