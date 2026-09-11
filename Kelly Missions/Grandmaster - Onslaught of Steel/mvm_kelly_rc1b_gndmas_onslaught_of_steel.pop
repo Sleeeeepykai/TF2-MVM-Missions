@@ -84,6 +84,7 @@ WaveSchedule
 						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `(Grandmaster) Onslaught of Steel`)
 
 						PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
+						PrecacheSound(`items/cart_explode_trigger.wav`)
 
                         Convars.SetValue(`tf_playergib`, 0)
 
@@ -94,16 +95,54 @@ WaveSchedule
 
 						IncludeScript(`tankextensions_main`)
 
-						IncludeScript(`tankextensions/blimp`)
 						IncludeScript(`tankextensions/combattank`)
-						IncludeScript(`tankextensions/combattank_weapons/cannon`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
-						IncludeScript(`tankextensions/combattank_weapons/minigun`)
-						IncludeScript(`tankextensions/combattank_weapons/fireball`)
 						IncludeScript(`tankextensions/combattank_weapons/railgun`)
-						IncludeScript(`tankextensions/helicopter`)
-						IncludeScript(`tankextensions/teletank`)
-						IncludeScript(`tankextensions/ubertank`)
+						IncludeScript(`tankextensions/painttank`)
+
+						TankExt.NewTankType(`tankexplosion`, 
+						{
+							function OnDeath()
+							{
+								local flDamage = 600 
+								local flRange  = 450
+
+								local vecOrigin = self.GetOrigin()
+								local vecCenter = self.GetCenter()
+
+								DispatchParticleEffect(`explosionTrail_seeds_mvm`, vecOrigin, Vector(1))
+								DispatchParticleEffect(`fluidSmokeExpl_ring_mvm`, vecOrigin, Vector(1))
+								ScreenShake(vecOrigin, 25, 5, 5, 1000, SHAKE_START, false)
+
+								local EntityArray = []
+								foreach(sClassname in [`player`, `obj_sentrygun`, `obj_dispenser`, `obj_teleporter`])
+									for(local hEnt; hEnt = FindByClassnameWithin(hEnt, sClassname, vecOrigin, flRange);)
+										EntityArray.append(hEnt)
+
+								foreach(hEnt in EntityArray)
+									if(hEnt.IsAlive())
+									{
+										local vecEntCenter = hEnt.GetCenter()
+										local Trace = 
+										{
+											start = vecCenter
+											end   = vecEntCenter
+											mask  = MASK_SOLID_BRUSHONLY
+
+											startsolid = false
+											allsolid   = false
+										}
+										TraceLineEx(Trace)
+										if(!(Trace.fraction < 1 || Trace.allsolid || Trace.startsolid))
+										{
+											if(hEnt.IsPlayer())
+												ScreenFade(hEnt, 255, 255, 255, 255, 1, 0.1, FFADE_IN)
+
+											hEnt.TakeDamageEx(First(), null, null, Vector(), Vector(), flDamage, DMG_BLAST)
+										}
+									}
+							}
+						})
 					  "
 			}
 
@@ -556,6 +595,54 @@ WaveSchedule
                 "start_active" "1"
             }
 		}
+		ButHeresTheForcer
+		{
+			OnSpawnOutput
+			{
+				Target Kablooey
+				Action Trigger
+				Delay 5
+			}
+		}
+		KamikazeTankPT
+		{
+			OnSpawnOutput
+			{
+				Target !activator
+				Action AddOutput
+				Param "OnHealthBelow30Percent Kablooey:Trigger::0:-1"
+			}
+			logic_relay
+			{
+				"targetname" "Kablooey"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})0.5-1"
+				"OnTrigger" "!activator,Color,255 0 0,0.5,-1"
+				"OnTrigger" "!activator,Color,255 255 255,0.6,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeself.SetModelScale(1.2, 0.3)1.7-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1-1"
+				"OnTrigger" "!activator,Color,255 0 0,1,-1"
+				"OnTrigger" "!activator,Color,255 255 255,1.1,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.4-1"
+				"OnTrigger" "!activator,Color,255 0 0,1.4,-1"
+				"OnTrigger" "!activator,Color,255 255 255,1.5,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.7-1"
+				"OnTrigger" "!activator,Color,255 0 0,1.7,-1"
+				"OnTrigger" "!activator,Color,255 255 255,1.8,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.9-1"
+				"OnTrigger" "!activator,Color,255 0 0,1.9,-1"
+
+				"OnTrigger" "!activator,$PlaySound,items/cart_explode.wav,1.99,-1"
+				"OnTrigger" "!activator,RemoveHealth,9999999,2,-1"
+
+				"spawnflags" "2"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -589,11 +676,60 @@ WaveSchedule
 		Node "-320 -2560 68"
 		Node "-152 -2456 68"
 	}
+	ExtraTankPath // Tank Path C (Upper Right Path)
+	{
+		Name "tank_path_c"
+
+		Node "-128 2688 -60"
+		Node "-128 256 36"
+		Node "-176 152 28"
+		Node "-264 104 28"
+		Node "-376 112 28"
+		Node "-464 232 28"
+		Node "-592 312 28"
+		Node "-696 360 28"
+		Node "-824 384 28"
+		Node "-896 376 196"
+		Node "-1048 312 196"
+		Node "-1384 176 196"
+		Node "-1448 112 196"
+		Node "-1472 0 196"
+		Node "-1576 -1360 196"
+		Node "-1608 -1148 196"
+		Node "-1544 -1688 196"
+		Node "-1368 -1824 196"
+		Node "-1272 -1912 196"
+		Node "-1248 -2008 196"
+		Node "-1248 -2360 196"
+		Node "-1216 -2472 196"
+		Node "-1096 -2608 196"
+		Node "-944 -2656 196"
+		Node "-848 -2640 196"
+		Node "-320 -2560 68"
+		Node "-152 -2456 68"
+	}
 
 	//// ROBOT TEMPLATES ////
 
 	Templates
 	{
+		//// TANKS ////
+
+		Tank_Tiny_Kamikaze
+		{
+			Name "painttank|255 255 255^tankexplosion$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+
+			SpawnTemplate "KamikazeTankPT"
+
+			IsMiniBoss 0
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+		
 		//// GIANTS ////
 
 		T_TFBot_Giant_Heavy_BrassBeast
@@ -2745,6 +2881,76 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Demoman_Burst
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_right_upper_relay`, `Trigger`, null, 6.1)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave4_Subwave1_CEMENT"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			FirstSpawnWarningSound music\hl1_song17.mp3
+			LastSpawnWarningSound ambient\alarms\razortrain_horn1.wav
+			TotalCurrency 0
+		
+			Tank
+			{
+				Template Tank_Tiny_Kamikaze
+				Health 99994
+				Speed 300
+				SpawnTemplate ButHeresTheForcer
+				StartingPathTrackNode "tank_path_a_1"
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave1_CEMENT"
+			Where spawnbot
+			TotalCount 25
+			MaxActive 25
+			SpawnCount 25
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+		
+			TotalCurrency 0
+		
+			TFBot
+			{ 
+				Template T_TFBot_Scout_Sandman
+				Attributes AlwaysCrit
 			}
 		}
 	}
