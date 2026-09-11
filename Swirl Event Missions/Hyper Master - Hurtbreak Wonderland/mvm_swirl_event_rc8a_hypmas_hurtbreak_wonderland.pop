@@ -134,8 +134,7 @@ WaveSchedule
 			"remove damage type" 2
 
 			"penetrate teammates" 1
-			"mult projectile count" 7
-			"projectile speed decreased" 0.65
+			"projectile speed decreased" 0.4
 			"projectile spread angle penalty" 25
 			"projectile gravity" -1
 			"arrow hit kill time" 0.1
@@ -144,7 +143,7 @@ WaveSchedule
 			"mod projectile heat aim error" 270
 			"mod projectile heat aim time" 1.5
 
-			"custom projectile model" "models/weapons/c_models/c_scout_sword/c_scout_sword.mdl"
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
 			"projectile trail particle" "~eyeboss_projectile"
 			"custom kill icon" "scout_sword"
 		}
@@ -179,6 +178,9 @@ WaveSchedule
 
 						PrecacheSound(`misc/halloween/spell_stealth.wav`)
 						PrecacheSound(`ambient/energy/zap9.wav`)
+						PrecacheSound(`misc/halloween/spell_mirv_cast.wav`)
+						PrecacheSound(`misc/halloween/spell_lightning_ball_impact.wav`)
+						PrecacheSound(`weapons/icicle_melt_01.wav`)
 
 						IncludeScript(`tankextensions_main`)
 						IncludeScript(`tankextensions/hammertank`)
@@ -1738,6 +1740,7 @@ WaveSchedule
 			{
 				"targetname" "MasqueradeSoldierSummonAttackRelay"
 
+				"OnTrigger" "!activator,$RemoveItem,Three-Rune Blade,0,-1"
 				"OnTrigger" "!activator,$Addcond,87 3,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,secondrate_sorcery_scout,0,-1"
 
@@ -1882,9 +1885,8 @@ WaveSchedule
 				"OnTrigger" "!activator,$Addcond,87 4,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,taunt_bat_man,0,-1"
 
-				"OnTrigger" "RuneBladeAttackWeapon,FireOnce,,0.83,-1"
-				"OnTrigger" "RuneBladeAttackWeapon,FireOnce,,1.83,-1"
-				"OnTrigger" "RuneBladeAttackWeapon,FireOnce,,2.83,-1"
+				"OnTrigger" "RuneBladeAttackWeapon,$StartFiring,,0.83,-1"
+				"OnTrigger" "RuneBladeAttackWeapon,$StopFiring,,2.16,-1"
 
 				"OnTrigger" "!activator,$PlaySequence,run_primary,4,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,4,-1"
@@ -1895,6 +1897,156 @@ WaveSchedule
 				"origin" "80 0 128"
 				"teamnum" "3"
 				"$weaponname" "MasqueradeRuneBladeWeapon"
+				"$firetime" "0.15"
+
+				"$OnFire" "RuneBladeAttackSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			env_entity_maker
+			{
+				"targetname" "RuneBladeAttackSpawner"
+				"entitytemplate" "MasqueradeRuneBladePT"
+				"$autoparent" "1"
+			}
+		}
+
+		MasqueradeRuneBladePT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "RuneBladeProjectile"
+
+			OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+            }
+			OnParentKilledOutput
+			{
+				Target "RuneBladeProjectile"
+				Action Kill
+			}
+
+			prop_dynamic
+            {
+                "targetname" "RuneBladeProjectile"
+                "parentname" "RuneBladeRotator"
+				"origin" "0 0 0"
+                "model" "models/workshop/weapons/c_models/c_scout_sword/c_scout_sword.mdl"
+				"modelscale" "1.5"
+            }
+            func_rotating
+            {
+                "targetname" "RuneBladeRotator"
+                "spawnflags" "73"
+                "maxspeed" "500"
+            }
+		}
+
+		MasqueradeArcaneSpikePT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "ArcaneSpikeProp"
+
+			OnSpawnOutput
+			{
+				Target "ArcaneSpikeRelay"
+				Action Trigger
+			}
+			OnSpawnOutput
+			{
+				Target "ArcaneSpikeIndicator"
+				Action "$SetLocalAngles"
+				Param "0 0 0"
+			}
+
+			logic_relay
+			{
+				"targetname" "ArcaneSpikeRelay"
+
+				"OnTrigger" "ArcaneSpikeIndicator,Enable,,0,-1"
+				"OnTrigger" "ArcaneSpikeIndicatorRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_mirv_cast.wav`, channel = 6, pitch = 90, sound_level = 90, origin = self.GetOrigin() + Vector(0, 0, 40)})0-1"
+				"OnTrigger" "ArcaneSpikeIndicator,Skin,0,2,-1"
+
+				"OnTrigger" "ArcaneSpikeIndicatorRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_lightning_ball_impact.wav`, channel = 6, pitch = 90, sound_level = 80, origin = self.GetOrigin() + Vector(0, 0, 40)})3-1"
+				"OnTrigger" "ArcaneSpikeIndicatorRunScriptCodeEmitSoundEx({sound_name = `weapons/icicle_melt_01.wav`, channel = 6, pitch = 90, sound_level = 90, origin = self.GetOrigin() + Vector(0, 0, 40)})3-1"
+				"OnTrigger" "ArcaneSpikeProp,Enable,,3,-1"
+				"OnTrigger" "ArcaneSpikeStrike,Enable,,3,-1"
+				"OnTrigger" "ArcaneSpikeDamage,Enable,,3,-1"
+				"OnTrigger" "ArcaneSpikeIndicator,Disable,,3,-1"
+				"OnTrigger" "ArcaneSpikeStrike,Disable,,3.1,-1"
+
+				"OnTrigger" "ArcaneSpikeProp,Kill,,6,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "ArcaneSpikeIndicator"
+				"origin" "0 0 10"
+
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "2"
+				"defaultanim" "start"
+				"skin" "1"
+				"solid" "0"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "ArcaneSpikeProp"
+				"parentname" "ArcaneSpikeIndicator"
+				"origin" "0 0 10"
+				"angles" "180 0 0"
+				"model" "models/props_forest/icicle_lrg_corner.mdl"
+				"modelscale" "5"
+				"solid" "0"
+				"rendermode" "1"
+				"rendercolor" "192 160 192"
+				"renderamt" "200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			trigger_multiple
+			{
+				"targetname" "ArcaneSpikeStrike"
+				"filtername" "filter_red_nouber"
+				"origin" "0 0 5"
+				"mins" "-45 -45 -20"
+				"maxs" "45 45 80"
+				"wait" "0.1"
+
+				"spawnflags" "1"
+
+				"OnStartTouch" "!activatorRunScriptCodeself.TakeDamage(75,1,self)0.1-1"
+				"OnStartTouch" "!activatorRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,0,700))0.1-1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			trigger_multiple
+			{
+				"targetname" "ArcaneSpikeDamage"
+				"filtername" "filter_red_nouber"
+				"origin" "0 0 5"
+				"mins" "-45 -45 -20"
+				"maxs" "45 45 80"
+				"wait" "0.5"
+
+				"spawnflags" "1"
+
+				"OnStartTouch" "!activatorRunScriptCodeself.TakeDamage(25,2,self)0.1-1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
 			}
 		}
 
@@ -2520,6 +2672,7 @@ WaveSchedule
 			Scale 2
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
+			WeaponRestrictions MeleeOnly
 			Action Mobber
 
 			UseCustomModel "models/bots/scout_boss/bot_scout_gray_boss.mdl"
@@ -2528,8 +2681,6 @@ WaveSchedule
 
 			UseHumanAnimations 1
 
-			Item "The Force-a-Nature"
-			Item "The Flying Guillotine"
 			Item "Three-Rune Blade"
 
 			Item "dec2014 Marauders Mask"
@@ -2558,6 +2709,15 @@ WaveSchedule
 			{
 				MasqueradeDefault [$SIGSEGV]
 				{
+					Item "Three-Rune Blade"
+
+					ItemAttributes
+					{
+						ItemName "Three-Rune Blade"
+
+						"attach particle effect" "3043"
+					}
+
 					FireInput
 					{
 						Target "MasqueradeAttackInit"
@@ -6079,22 +6239,22 @@ WaveSchedule
 
 		// Fire Spiral - Identical to the spiral from Made in Hell (Done)
 		// Summon - Summons Rapid Fire Supercharged Soldiers (Done)
-		// Rune Blades - Throws a pattern of rune blades
-		// Tesla - Unleashes some kind of lightning
+		// Rune Blades - Throws a pattern of rune blades (Done)
+		// Arcane Spike - Creates indicators that launch up high damaging spikes (Done, needs implementing as an attack)
 
 		// Phase 2 Transition:
 
 		// Carries over Fire Spiral, now varies in height
 		// Carries over Summon, changes to Giant Burst Demos
 		// Carries over Rune Blades
-		// Arcane Spike - Creates indicators that launch up high damaging spikes
+		// Carries over Arcane Spike, now tracks players
 
 		// Phase 3 Transition:
 
 		// Unleashes Fireball Rain
 		// Carries over Summon, changes to Giant Deflector Heavies
-		// Carries over Arcane Spike, now tracks players
-		// Super Slam - Identical to Minos Prime, launches up and then slams down onto players dealing insane damage
+		// Carries over Rune Blades
+		// Carries over Arcane Spike
 		// Supernova - Charge-up ability that throws down a massive nuke on the team
 
 		// Boss Fight Victory:
