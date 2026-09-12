@@ -148,6 +148,25 @@ WaveSchedule
 			"projectile trail particle" "~eyeboss_projectile"
 			"custom kill icon" "scout_sword"
 		}
+		"MasqueradeProvidenceWeapon"
+		{
+			OriginalItemName "The Rescue Ranger"
+
+			"damage bonus" 0
+
+			"penetrate teammates" 1
+			"projectile penetration" 1
+			"projectile speed decreased" 0.4
+			"projectile spread angle penalty" 25
+			"projectile gravity" -1
+			"arrow hit kill time" 0.1
+
+			"mod projectile heat seek power" 75
+			"mod projectile heat aim error" 270
+
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+			"projectile trail particle" "~eyeboss_projectile"
+		}
 		"MasqueradeSupernovaWeapon"
 		{
 			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
@@ -1698,7 +1717,7 @@ WaveSchedule
 				
 				"OnCase01" "!activator,$ChangeAttributes,MasqueradeFireSpiralEvolved,0,-1"
 				"OnCase02" "!activator,$ChangeAttributes,MasqueradeGBurstDemoSummon,0,-1"
-				"OnCase03" "!activator,$ChangeAttributes,MasqueradeRuneBlades,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,MasqueradeProvidenceBeams,0,-1"
 				"OnCase04" "!activator,$ChangeAttributes,MasqueradeArcaneSpikeEvolved,0,-1"
 			}
 
@@ -1712,10 +1731,10 @@ WaveSchedule
 			{
 				"targetname" "MasqueradePhase3AttackPool"
 
-				"OnCase01" "!activator,$ChangeAttributes,SummonGDeflectorHeaviesAttack,0,-1"
-				"OnCase02" "!activator,$ChangeAttributes,ArcaneSpikeEvolvedAttack,0,-1"
-				"OnCase03" "!activator,$ChangeAttributes,SuperSlamAttack,0,-1"
-				"OnCase04" "!activator,$ChangeAttributes,SuperNovaAttack,0,-1"
+				"OnCase01" "!activator,$ChangeAttributes,MasqueradeGDeflectorHeavySummon,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,MasqueradeProvidenceBeams,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,MasqueradeArcaneSpikeEvolved,0,-1"
+				"OnCase04" "!activator,$ChangeAttributes,MasqueradeSupernova,0,-1"
 			}
 
 			//// PHASE 1 ATTACK POOL ////
@@ -1955,6 +1974,24 @@ WaveSchedule
 				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,2.5,-1"
 			}
 
+			//// PHASE 2 TRANSITION ////
+
+			logic_relay
+			{
+				"targetname" "MasqueradePhase2TransitionRelay"
+
+				"OnTrigger" "!activator,$Addcond,87 10,0,-1"
+				"OnTrigger" "!activator,$Addcond,14 10,0,-1"
+
+				"OnTrigger" "MasqueradePhase1AttackPool,Disable,,0,-1"
+				"OnTrigger" "MasqueradePhase2AttackPool,Enable,,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_painsevere02.mp3,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,primary_stun_begin,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,primary_stun_end,0.8,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_melee,1.13,-1"
+			}
+
 			//// PHASE 2 ATTACK POOL ////
 
 			// Fire Spiral Evolved Attack
@@ -2101,6 +2138,37 @@ WaveSchedule
 
 				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerGBurstDemoMinionInit(self),0,-1"
 				"OnSpawned" "!activator,$Suicide,,30,-1"
+			}
+
+			// Providence Beams Attack
+			logic_relay
+			{
+				"targetname" "MasqueradeProvidenceBeamsAttackRelay"
+
+				"OnTrigger" "!activator,$Addcond,87 4,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_bat_man,0,-1"
+
+				"OnTrigger" "ProvidenceAttackWeapon,$StartFiring,,0.83,-1"
+				"OnTrigger" "ProvidenceAttackWeapon,$StopFiring,,2.16,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_melee,4,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,4,-1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "ProvidenceAttackWeapon"
+				"origin" "80 0 128"
+				"teamnum" "3"
+				"$weaponname" "MasqueradeProvidenceWeapon"
+				"$firetime" "0.15"
+
+				"$OnFire" "ProvidenceAttackSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			env_entity_maker
+			{
+				"targetname" "ProvidenceAttackSpawner"
+				"entitytemplate" "ProvidenceCrossBeamsPT"
+				"$autoparent" "1"
 			}
 
 			// Arcane Spike Evolved Attack
@@ -3409,6 +3477,16 @@ WaveSchedule
 					FireInput
 					{
 						Target "MasqueradeGBurstDemoSummonAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+				MasqueradeProvidenceBeams [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeProvidenceBeamsAttackRelay"
 						Action "Trigger"
 						Delay 0
 						Repeats 1
@@ -6921,34 +6999,6 @@ WaveSchedule
 		{
 			"min respawn time" 15
 		}
-
-		// BOSS FIGHT
-
-		// Boss Plan:
-
-		// Teamwipe Lose Condition, Respawn Time will be extended to 15 seconds minimum (Done)
-
-		// Phase 1 Attack Pool:
-
-		// Fire Spiral - Identical to the spiral from Made in Hell (Done)
-		// Summon - Summons Rapid Fire Supercharged Soldiers (Done)
-		// Rune Blades - Throws a pattern of rune blades (Done)
-		// Arcane Spike - Creates indicators that launch up high damaging spikes (Done)
-
-		// Phase 2 Transition:
-
-		// Carries over Fire Spiral, now varies in height (Done)
-		// Carries over Summon, changes to Giant Burst Demos (Done)
-		// Carries over Rune Blades (Done)
-		// Carries over Arcane Spike, now tracks players (Done)
-
-		// Phase 3 Transition:
-
-		// Unleashes Fireball Rain
-		// Carries over Summon, changes to Giant Deflector Heavies (Done)
-		// Carries over Rune Blades, adds Crits to them
-		// Carries over Arcane Spike (Done)
-		// Supernova - Charge-up ability that throws down a massive nuke on the team (Done)
 
 		// Boss Fight Victory:
 
