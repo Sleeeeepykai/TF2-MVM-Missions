@@ -79,7 +79,7 @@ const MAX_WEAPONS = 8
 		{
 			if (Child.GetClassname() == "bot_generator")
 			{
-				local TraceParams = 
+				local TraceParams =
 				{
 					start = Target.GetOrigin()
 					end = Child.GetOrigin()
@@ -192,6 +192,45 @@ const MAX_WEAPONS = 8
 
 	//// DEMOMAN MINION FUNCTIONS ////
 
+	// Giant Demoman Functions //
+
+	function SummonerGBurstDemoMinionInit(Target)
+	{
+		Target.RemoveWeaponRestriction(7)
+		Target.ClearAllBotAttributes()
+		Target.ClearAllBotTags()
+		Target.SetCustomModelWithClassAnimations(null)
+		Target.SetDifficulty(3)
+		Target.SetMaxVisionRangeOverride(9999)
+
+		SetFakeClientConVarValue(Target, "name", "Resurrected Giant Demoman")
+		Target.SetCustomModelWithClassAnimations("models/bots/demo_boss/bot_demo_boss_gibby.mdl")
+		SetPropString(Target, "m_PlayerClass.m_iszClassIcon", "demo_summoner")
+
+		Target.AddWeaponRestriction(2)
+		Target.AddBotAttribute(1)
+		Target.AddBotAttribute(16)
+		Target.AddBotAttribute(2048)
+		Target.SetIsMiniBoss(true)
+
+		Target.AddCustomAttribute("cannot pick up intelligence", 1, 0)
+		Target.AddCustomAttribute("max health additive bonus", 3125, 0)
+		Target.AddCustomAttribute("move speed penalty", 0.5, 0)
+		Target.AddCustomAttribute("damage force reduction", 0.4, 0)
+		Target.AddCustomAttribute("airblast vulnerability multiplier", 0.4, 0)
+		Target.AddCustomAttribute("override footstep sound set", 4, 0)
+
+		Target.SetHealth(3300)
+		Target.SetModelScale(1.75, 0.0)
+
+		local Primary = Target.GetActiveWeapon()
+		Primary.AddAttribute("fire rate bonus", 0.1, 0)
+		Primary.AddAttribute("faster reload rate", 0.65, 0)
+		Primary.AddAttribute("clip size upgrade atomic", 7, 0)
+		Primary.AddAttribute("projectile speed increased", 1.1, 0)
+		Primary.AddAttribute("projectile spread angle penalty", 5, 0)
+	}
+
 	function SummonerDemomanMinionInit(Target)
 	{
 		Target.RemoveWeaponRestriction(7)
@@ -216,7 +255,7 @@ const MAX_WEAPONS = 8
 		Target.SetHealth(300)
 		Target.SetModelScale(1.3, 0.0)
 	}
-	
+
 	//// HEAVY MINION FUNCTIONS ////
 
 	function SummonerHeavyMinionInit(Target)
