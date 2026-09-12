@@ -219,7 +219,7 @@ const MAX_WEAPONS = 8
 		Primary.AddAttribute("faster reload rate", 0.001, 0)
 		Primary.AddAttribute("projectile speed decreased", 0.65, 0)
 
-		Target.AcceptInput("$AddItemAttribute", format("%s|%s|%i", "projectile trail particle", "flare_glow", Primary), null, null)
+		Target.AcceptInput("$AddItemAttribute", format("%s|%s|%i", "projectile trail particle", "flare_glow", Primary.GetSlot()), null, null)
 	}
 
 	//// DEMOMAN MINION FUNCTIONS ////
