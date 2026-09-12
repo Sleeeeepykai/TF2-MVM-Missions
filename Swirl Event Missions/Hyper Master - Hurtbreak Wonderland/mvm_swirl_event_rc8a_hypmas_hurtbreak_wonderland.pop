@@ -65,6 +65,9 @@ WaveSchedule
 	PrecacheSound "music/hurtbreakwonderland/spiral_out.wav"
 	PrecacheSound "music/hurtbreakwonderland/no_devil_lived_on.wav"
 	PrecacheSound "music/hurtbreakwonderland/the_break.wav"
+	PrecacheSound "music/hurtbreakwonderland/the_shattering_circle.wav"
+
+	PrecacheSound "boss_half_health.mp3"
  
 	//// DISABLED SOUNDS ////
 
@@ -272,6 +275,7 @@ WaveSchedule
 						PrecacheSound(`#music/hurtbreakwonderland/spiral_out.wav`)
 						PrecacheSound(`#music/hurtbreakwonderland/no_devil_lived_on.wav`)
 						PrecacheSound(`#music/hurtbreakwonderland/the_break.wav`)
+						PrecacheSound(`#music/hurtbreakwonderland/the_shattering_circle.wav`)
 						MusicSystemMent.ResetAll()
 						MusicSystemMent.HookByName(`bignet`)
 					  "
@@ -280,6 +284,13 @@ WaveSchedule
 			point_populator_interface
 			{
 				"targetname" "pop_interface"
+			}
+
+			logic_relay
+			{
+				"targetname" "Winner"
+
+				"OnTrigger" "tf_gamerules,$FinishWave,,0,-1"
 			}
 
 			filter_activator_class // Is a Player
@@ -1299,6 +1310,86 @@ WaveSchedule
 				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
 				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,11,-1"
 			}
+
+			// Masquerade Intro Cutscene (Wave 3)
+
+			logic_relay
+			{
+				"targetname" "MasqueradeWave3IntroRelay"
+
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)0-1"
+				"OnTrigger" "MasqueradeIntroCamera3,CallScriptFunction,EnableAll,0,-1"
+
+				"OnTrigger" "MasqueradeMan,SetAnimation,taunt_peace_out,0.1,-1"
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Say goodbye to your kneecaps chucklehead!,0,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_taunts08.mp3,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_taunts08.mp3,0.1,-1"
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,1.5,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Yeah I dare you! Ragequit! C'mon make us both happy.,2.4,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination19.mp3,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination19.mp3,2.5,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,5,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/thunder3.wav,5,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 128, 1, 0, 1)5-1"
+				"OnTrigger" "MasqueradeMan,Disable,,5,-1"
+				"OnTrigger" "MasqueradeManBot,TurnOff,,5,-1"
+				"OnTrigger" "MasqueradeFit,TurnOff,,5,-1"
+				"OnTrigger" "MasqueradeParticle,Stop,,5,-1"
+				
+				"OnTrigger" "MasqueradeIntroCamera3,CallScriptFunction,DisableAll,8,-1"
+				"OnTrigger" "MasqueradeFrontCamera,CallScriptFunction,EnableAll,8,-1"
+			}
+
+			point_viewcontrol
+			{
+				"targetname" "MasqueradeFrontCamera"
+				"origin" "544 50 564"
+
+				"target" "MasqueradeFrontTarget"
+                "acceleration" "0"
+                "deceleration" "0"
+				"trackspeed" "50"
+
+                "spawnflags" "28"
+                "vscripts" "point_viewcontrol_fix"
+			}
+
+			info_target
+			{
+				"targetname" "MasqueradeFrontTarget"
+				"origin" "544 -736 96"
+			}
+			prop_dynamic
+			{
+				"targetname" "MasqueradeBomb"
+				"origin" "544 -512 80"
+				"angles" "0 270 0"
+
+				"model" "models/props_td/atom_bomb.mdl"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeBombChargeParticle"
+				"origin" "544 -512 80"
+				"effect_name" "charge_up"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeBombParticle"
+				"origin" "544 -512 80"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
 		}
 		MasqueradeFireRainStageHazardPT
 		{
@@ -1737,6 +1828,42 @@ WaveSchedule
 				"OnCase04" "!activator,$ChangeAttributes,MasqueradeSupernova,0,-1"
 			}
 
+			//// BOSS INTRO ////
+
+			logic_relay
+			{
+				"targetname" "MasqueradeBossIntroRelay"
+
+				"OnTrigger" "!activator,$Addcond,87 14.67,0.1,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 128, 1, 0, 1)2-1"
+				"OnTrigger" "MasqueradeBomb,Enable,,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_teleport.wav,2,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,scout_taunt_replay,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,4.67,-1"
+				"OnTrigger" "MasqueradeBombChargeParticle,Start,,4.67,-1"
+
+				"OnTrigger" "MasqueradeBomb,Disable,,7.67,-1"
+				"OnTrigger" "MasqueradeBombParticle,Start,,7.67,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode.wav,7.67,-1"
+				"OnTrigger" "MasqueradeBombParticle,Stop,,10,-1"
+
+				"OnTrigger" "MasqueradeTextCard,$setkey$message,Bring it!,12.5,-1"
+				"OnTrigger" "MasqueradeTextCard,Display,,12.67,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare02.mp3,12.67,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare02.mp3,12.67,-1"
+
+				"OnTrigger" "MasqueradeFrontCamera,CallScriptFunction,DisableAll,14.65,-1"
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)14.65-1"
+
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/hurtbreakwonderland/the_shattering_circle.wav`),14.65,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}The Shattering Circle - Heaven Pierce Her,14.65,-1"
+
+				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,14.67,-1"
+				"OnTrigger" "MasqueradeMan,Kill,,14.67,-1"
+			}
+
 			//// PHASE 1 ATTACK POOL ////
 
 			// Fire Spiral Attack
@@ -1997,18 +2124,21 @@ WaveSchedule
 				"OnTrigger" "!activator,$Addcond,87 6,0,-1"
 				"OnTrigger" "!activator,$Addcond,14 6,0,-1"
 
-				"OnTrigger" "MasqueradePhase1AttackPool,Disable,,0,-1"
-				"OnTrigger" "MasqueradePhase2AttackPool,Enable,,0,-1"
+				"OnTrigger" "MasqueradePhase1AttackPoolRelay,Disable,,0,-1"
+				"OnTrigger" "MasqueradePhase2AttackPoolRelay,Enable,,0,-1"
 
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_painsevere02.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_painsevere02.mp3,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_begin,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_end,0.8,-1"
 				"OnTrigger" "!activator,$PlaySequence,run_melee,1.13,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_stunballhit12.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_stunballhit12.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_award07.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_award07.mp3,4,-1"
 
-				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_regeneration.wav,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_regeneration.wav,5,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,6,-1"
 			}
 
@@ -2228,20 +2358,22 @@ WaveSchedule
 				"OnTrigger" "!activator,$Addcond,87 6,0,-1"
 				"OnTrigger" "!activator,$Addcond,14 6,0,-1"
 
-				"OnTrigger" "MasqueradePhase2AttackPool,Disable,,0,-1"
-				"OnTrigger" "MasqueradePhase3AttackPool,Enable,,0,-1"
+				"OnTrigger" "MasqueradePhase2AttackPoolRelay,Disable,,0,-1"
+				"OnTrigger" "MasqueradePhase3AttackPoolRelay,Enable,,0,-1"
 
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_painsevere06.mp3,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_painsevere06.mp3,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_begin,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_end,0.8,-1"
 				"OnTrigger" "!activator,$PlaySequence,run_melee,1.13,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_revenge03.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_revenge03.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination02.mp3,4,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_domination02.mp3,4,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_crits.wav,5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_laughlong02.mp3,5,-1"
-
 				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,6,-1"
 			}
 
@@ -2452,16 +2584,36 @@ WaveSchedule
 				"OnTrigger" "!activator,$Addcond,87 9999,0,-1"
 				"OnTrigger" "!activator,$Addcond,14 9999,0,-1"
 
+				"OnTrigger" "MasqueradePhase1AttackPool,Disable,,0,-1"
 				"OnTrigger" "MasqueradePhase2AttackPool,Disable,,0,-1"
-				"OnTrigger" "MasqueradePhase3AttackPool,Enable,,0,-1"
+				"OnTrigger" "MasqueradePhase3AttackPool,Disable,,0,-1"
 
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_painsevere02.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,boss_half_health.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,boss_half_health.mp3,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_begin,0,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_middle,0.8,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_middle,1.8,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_middle,2.8,-1"
 				"OnTrigger" "!activator,$PlaySequence,primary_stun_end,3.8,-1"
-				"OnTrigger" "!activator,$PlaySequence,run_melee,4.13,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_commending_clap_scout,4.13,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob04.mp3,5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob04.mp3,5,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_melee,8.29,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_niceshot03.mp3,8.29,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_niceshot03.mp3,8.29,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob03.mp3,10.79,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob03.mp3,10.79,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,10.79,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,10.79,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/thunder3.wav,10.79,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 128, 1, 0, 1)10.79-1"
+				"OnTrigger" "Winner,Trigger,,10.79,-1"
+				"OnTrigger" "!activator,$BotCommand,Despawn,10.81,-1"
 			}
 		}
 
@@ -3496,6 +3648,13 @@ WaveSchedule
 
 			ChangeAttributes
 			{
+				Name "MasqueradeIntro"
+				Delay 0
+				Repeats 1
+			}
+
+			ChangeAttributes
+			{
 				Name "MasqueradePhase2"
 				Delay 0
 				Repeats 1
@@ -3510,8 +3669,36 @@ WaveSchedule
 				IfHealthBelow 60001
 			}
 
+			ChangeAttributes
+			{
+				Name "MasqueradeFightEnd"
+				Delay 0
+				Repeats 1
+				IfHealthBelow 1001
+			}
+
 			EventChangeAttributes
 			{
+				MasqueradeIntro [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeBossIntroRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target !activator
+						Action $SetLocalOrigin
+						Param "544 -736 96"
+						Delay 0
+						Repeats 1
+					}
+				}
+
 				MasqueradeDefault [$SIGSEGV]
 				{
 					Item "Three-Rune Blade"
@@ -3662,6 +3849,19 @@ WaveSchedule
 					FireInput
 					{
 						Target "MasqueradeSupernovaAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+
+				//// FIGHT END ////
+
+				MasqueradeFightEnd [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeFightEndRelay"
 						Action "Trigger"
 						Delay 0
 						Repeats 1
@@ -7134,6 +7334,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_boss_relay`, `Trigger`)
+					EntFire(`MasqueradeWave3IntroRelay`, `Trigger`)
 				  "
 		}
 
@@ -7142,11 +7343,6 @@ WaveSchedule
 			"min respawn time" 15
 		}
 
-		// Boss Fight Victory:
-
-		// Masquerade is Impressed, becomes small and offers a high five
-		// Teleports out
-
 		WaveSpawn
 		{
 			Name "Masquerade"
@@ -7154,7 +7350,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 0
+			WaitBeforeStarting 8
 			WaitBetweenSpawns 0
 			TotalCurrency 0
 
