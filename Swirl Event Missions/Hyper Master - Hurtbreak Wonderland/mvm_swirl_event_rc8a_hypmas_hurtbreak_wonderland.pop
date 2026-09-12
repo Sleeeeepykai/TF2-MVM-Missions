@@ -148,6 +148,34 @@ WaveSchedule
 			"projectile trail particle" "~eyeboss_projectile"
 			"custom kill icon" "scout_sword"
 		}
+		"MasqueradeSupernovaWeapon"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+			"projectile speed decreased" 0.4
+			"mod projectile heat seek power" 360
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 0.25
+			"mod projectile heat no predict target speed" 1
+
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+			"projectile trail particle" "~spell_fireball_small_red"
+		}
+		"MasqueradeSupernovaNukeWeapon"
+		{
+			OriginalItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+
+			"damage bonus" 5
+			"blast radius increased" 2
+
+			"add damage type" 8
+			"remove damage type" 64
+			"Set DamageType Ignite" 1
+			"dmg taken from self reduced" 0
+			"use large smoke explosion" 1
+
+			"custom kill icon" "megaton"
+		}
 
 		//// COSMETICS ////
 		"SummonerArmour"
@@ -2088,6 +2116,188 @@ WaveSchedule
 				"OnTrigger" "!activator,$PlaySequence,run_melee,2.5,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,2.5,-1"
 			}
+
+			//// PHASE 3 ATTACK POOL ////
+			
+			// GDeflector Heavy Summon Attack
+			logic_relay
+			{
+				"targetname" "MasqueradeGDeflectorHeavySummonAttackRelay"
+
+				"OnTrigger" "!activator,$RemoveItem,Three-Rune Blade,0,-1"
+				"OnTrigger" "!activator,$Addcond,87 3,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,secondrate_sorcery_scout,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_mirv_cast.wav,0.5,-1"
+				"OnTrigger" "MasqueradeGBurstDemoSummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "MasqueradeGBurstDemoSummonIndicator,SetAnimation,Start,0.5,-1"
+				"OnTrigger" "MasqueradeGDeflectorHeavySummonIndicator,Enable,,0.5,-1"
+				"OnTrigger" "MasqueradeGDeflectorHeavySummonIndicator,SetAnimation,Start,0.5,-1"
+
+				"OnTrigger" "!activator,RunScriptCode,SummonerScript.SummonerMinionTrace(self),2.4,-1"
+				"OnTrigger" "SummonerMinionSpawnPT,ForceSpawn,,2.49,-1"
+
+				"OnTrigger" "MasqueradeGDeflectorHeavyGenerator1,SpawnBot,,2.5,-1"
+				"OnTrigger" "MasqueradeGDeflectorHeavyGenerator2,SpawnBot,,2.5,-1"
+				"OnTrigger" "MasqueradeGDeflectorHeavyGenerator3,SpawnBot,,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,2.5,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_melee,3,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,3,-1"
+				"OnTrigger" "MasqueradeGBurstDemoSummonIndicator,SetAnimation,End,3,-1"
+				"OnTrigger" "MasqueradeGDeflectorHeavySummonIndicator,SetAnimation,End,3,-1"
+				"OnTrigger" "MasqueradeGBurstDemoSummonIndicator,Disable,,4,-1"
+				"OnTrigger" "MasqueradeGDeflectorHeavySummonIndicator,Disable,,4,-1"
+			}
+
+			prop_dynamic
+            {
+                "targetname" "MasqueradeGDeflectorHeavySummonIndicator"
+                "origin" "200 0 10"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "2.5"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+				
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+				"startdisabled" "1"
+            }
+			bot_generator
+			{
+				"targetname" "MasqueradeGDeflectorHeavyGenerator1"
+				"origin" "0 200 10"
+				"team" "blue"
+				"class" "heavyweapons"
+				"count" "0"
+				"maxActive" "999"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerGDeflectorHeavyMinionInit(self),0,-1"
+				"OnSpawned" "!activator,$Suicide,,30,-1"
+			}
+			bot_generator
+			{
+				"targetname" "MasqueradeGDeflectorHeavyGenerator2"
+				"origin" "0 -200 10"
+				"team" "blue"
+				"class" "heavyweapons"
+				"count" "0"
+				"maxActive" "999"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerGDeflectorHeavyMinionInit(self),0,-1"
+				"OnSpawned" "!activator,$Suicide,,30,-1"
+			}
+			bot_generator
+			{
+				"targetname" "MasqueradeGDeflectorHeavyGenerator3"
+				"origin" "200 0 10"
+				"team" "blue"
+				"class" "heavyweapons"
+				"count" "0"
+				"maxActive" "999"
+				"spawnOnlyWhenTriggered" "1"
+
+				"OnSpawned" "!activator,RunScriptCode,SummonerScript.SummonerGDeflectorHeavyMinionInit(self),0,-1"
+				"OnSpawned" "!activator,$Suicide,,30,-1"
+			}
+
+			// Supernova Attack
+			logic_relay
+			{
+				"targetname" "MasqueradeSupernovaAttackRelay"
+
+				"OnTrigger" "!activator,$Addcond,87 4.83,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt05,0,-1"
+
+				"OnTrigger" "MasqueradeSupernovaParticle1,Start,,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/fire/ignite.wav,1,-1"
+
+				"OnTrigger" "MasqueradeSupernovaParticle1,Stop,,1.5,-1"
+				"OnTrigger" "MasqueradeSupernovaParticle2,Start,,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_meteor_cast.wav,1.5,-1"
+
+				"OnTrigger" "MasqueradeSupernovaParticle3,Start,,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_fireball_cast.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_fireball_cast.wav,2,-1"
+
+				"OnTrigger" "SupernovaWeapon,FireOnce,,4.16,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/merasmus_spell.wav,4.16,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_meteor_cast.wav,4.16,-1"
+				"OnTrigger" "MasqueradeSupernovaParticle2,Stop,,4.16,-1"
+				"OnTrigger" "MasqueradeSupernovaParticle3,Stop,,4.16,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_melee,4.83,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,MasqueradeDefault,4.83,-1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "SupernovaWeapon"
+				"origin" "0 0 400"
+				"teamnum" "3"
+				"$weaponname" "MasqueradeSupernovaWeapon"
+				"$firetime" "0.15"
+
+				"$OnFire" "SupernovaAttackSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			env_entity_maker
+			{
+				"targetname" "SupernovaAttackSpawner"
+				"entitytemplate" "MasqueradeSupernovaPT"
+				"$autoparent" "1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle1"
+				"origin" "0 0 400"
+				"effect_name" "spell_fireball_small_red"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle2"
+				"origin" "0 0 400"
+				"effect_name" "lava_fireball"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle3"
+				"origin" "0 0 450"
+				"effect_name" "lava_fireball_01"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle3"
+				"origin" "0 0 350"
+				"effect_name" "lava_fireball_01"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle3"
+				"origin" "50 0 400"
+				"effect_name" "lava_fireball_01"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle3"
+				"origin" "-50 0 400"
+				"effect_name" "lava_fireball_01"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle3"
+				"origin" "0 50 400"
+				"effect_name" "lava_fireball_01"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaParticle3"
+				"origin" "0 -50 400"
+				"effect_name" "lava_fireball_01"
+			}
 		}
 
 		MasqueradeRuneBladePT
@@ -2345,7 +2555,118 @@ WaveSchedule
 				"startdisabled" "1"
 			}
 		}
+		MasqueradeSupernovaPT
+		{
+			KeepAlive 1
 
+			RemoveIfKilled "MasqueradeSupernovaProjectileParticleMain"
+
+			OnParentKilledOutput
+			{
+				Target MasqueradeSupernovaNukePT
+				Action ForceSpawnAtEntityOrigin
+				Param "MasqueradeSupernovaProjectileParticleMain"
+			}
+			OnParentKilledOutput
+			{
+				Target MasqueradeSupernovaProjectileParticleMain
+				Action Kill
+				Delay 0.5
+			}
+
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticleMain"
+				"effect_name" "lava_fireball"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticle"
+				"origin" "0 0 50"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticle"
+				"origin" "0 0 -50"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticle"
+				"origin" "50 0 0"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticle"
+				"origin" "-50 0 0"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticle"
+				"origin" "0 50 0"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "MasqueradeSupernovaProjectileParticle"
+				"origin" "0 -50 0"
+				"effect_name" "lava_fireball_01"
+				"start_active" "1"
+			}
+
+			trigger_hurt
+			{
+				"targetname" "SupernovaAura"
+				"filtername" "filter_red_nouber"
+				"origin" "0 0 96"
+				"mins" "-128 -128 -128"
+				"maxs" "128 128 128"
+
+				"damage" "120"
+				"damagetype" "8"
+
+				"spawnflags" "1"
+
+				"OnHurtPlayer" "!activator,$IgnitePlayerDuration,5,0,-1"
+			}
+		}
+		MasqueradeSupernovaNukePT
+		{
+			KeepAlive 1
+			RemoveIfKilled "SupernovaNukeWeapon"
+
+			OnSpawnOutput
+			{
+				Target SupernovaNukeWeapon
+				Action FireOnce
+			}
+			OnSpawnOutput
+			{
+				Target SupernovaNukeWeapon
+				Action Kill
+				Delay 0.5
+			}
+			
+			tf_point_weapon_mimic
+			{
+				"targetname" "SupernovaNukeWeapon"
+				"origin" "0 0 0"
+				"teamnum" "3"
+				"$weaponname" "MasqueradeSupernovaNukeWeapon"
+
+				"$OnFire" "!self,DetonateStickies,,0,-1"
+				"$OnFire" "tf_gamerules,PlayVO,misc/doomsday_missile_explosion.wav,0,-1"
+			}
+		}
 
 		//// Summoner PTs ////
 
@@ -3024,6 +3345,7 @@ WaveSchedule
 						Action "Trigger"
 						Delay 2
 						Repeats 1
+						IfSeeTarget 1
 					}
 				}
 
@@ -3097,6 +3419,29 @@ WaveSchedule
 					FireInput
 					{
 						Target "MasqueradeArcaneSpikeEvolvedAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+
+				//// PHASE 3 ATTACK POOL ////
+
+				MasqueradeGDeflectorHeavySummon [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeGDeflectorHeavySummonAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+				MasqueradeSupernova [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "MasqueradeSupernovaAttackRelay"
 						Action "Trigger"
 						Delay 0
 						Repeats 1
@@ -6572,11 +6917,16 @@ WaveSchedule
 				  "
 		}
 
+		PlayerAttributes
+		{
+			"min respawn time" 15
+		}
+
 		// BOSS FIGHT
 
 		// Boss Plan:
 
-		// Teamwipe Lose Condition, Respawn Time will be extended to 10 seconds minimum
+		// Teamwipe Lose Condition, Respawn Time will be extended to 15 seconds minimum (Done)
 
 		// Phase 1 Attack Pool:
 
@@ -6595,10 +6945,10 @@ WaveSchedule
 		// Phase 3 Transition:
 
 		// Unleashes Fireball Rain
-		// Carries over Summon, changes to Giant Deflector Heavies
+		// Carries over Summon, changes to Giant Deflector Heavies (Done)
 		// Carries over Rune Blades, adds Crits to them
 		// Carries over Arcane Spike (Done)
-		// Supernova - Charge-up ability that throws down a massive nuke on the team
+		// Supernova - Charge-up ability that throws down a massive nuke on the team (Done)
 
 		// Boss Fight Victory:
 
