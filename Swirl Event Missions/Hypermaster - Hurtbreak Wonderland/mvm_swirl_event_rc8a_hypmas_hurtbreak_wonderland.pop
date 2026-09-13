@@ -57,6 +57,7 @@ WaveSchedule
 	// Precached Particles
 
 	PrecacheParticle "spell_lightningball_glow2_blue"
+	PrecacheParticle "utaunt_electricity_purple_discharge"
 
 	// Precached Sounds
 
@@ -64,7 +65,7 @@ WaveSchedule
 	PrecacheSound "music/hurtbreakwonderland/in_absentia_logos.wav"
 	PrecacheSound "music/hurtbreakwonderland/spiral_out.wav"
 	PrecacheSound "music/hurtbreakwonderland/no_devil_lived_on.wav"
-	PrecacheSound "music/hurtbreakwonderland/the_break.wav"
+	PrecacheSound "music/hurtbreakwonderland/the_break_fix.wav"
 	PrecacheSound "music/hurtbreakwonderland/the_shattering_circle.wav"
 
 	PrecacheSound "boss_half_health.mp3"
@@ -234,6 +235,8 @@ WaveSchedule
 						PrecacheSound(`weapons/icicle_melt_01.wav`)
 
 						IncludeScript(`tankextensions_main`)
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/cannon`)
 						IncludeScript(`tankextensions/hammertank`)
 
 						IncludeScript(`mvm_summoner_script`)
@@ -274,7 +277,7 @@ WaveSchedule
 						PrecacheSound(`#music/hurtbreakwonderland/in_absentia_logos.wav`)
 						PrecacheSound(`#music/hurtbreakwonderland/spiral_out.wav`)
 						PrecacheSound(`#music/hurtbreakwonderland/no_devil_lived_on.wav`)
-						PrecacheSound(`#music/hurtbreakwonderland/the_break.wav`)
+						PrecacheSound(`#music/hurtbreakwonderland/the_break_fix.wav`)
 						PrecacheSound(`#music/hurtbreakwonderland/the_shattering_circle.wav`)
 						MusicSystemMent.ResetAll()
 						MusicSystemMent.HookByName(`bignet`)
@@ -938,69 +941,6 @@ WaveSchedule
 				"start_active" "0"
 			}
 
-			prop_dynamic
-			{
-				"targetname" "MasqueradeVortex"
-				"origin" "208 -336 2189"
-
-				"model" "models/reudina/vortex_reu.mdl"
-				"modelscale" "5"
-
-				"rendermode" "1"
-				"rendercolor" "255 216 128"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
-				"startdisabled" "1"
-			}
-			prop_dynamic
-			{
-				"targetname" "MasqueradeVortexArm"
-				"origin" "127 -263 1826"
-				"angles" "0 0 90"
-				
-				"model" "models/reudina/wof_reu.mdl"
-				"modelscale" "3"
-
-				"rendermode" "1"
-				"rendercolor" "255 216 128"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
-				"startdisabled" "1"
-			}
-			prop_dynamic
-			{
-				"targetname" "MasqueradeVortexArm"
-				"origin" "289 -409 1826"
-				"angles" "0 180 90"
-				
-				"model" "models/reudina/wof_reu.mdl"
-				"modelscale" "3"
-
-				"rendermode" "1"
-				"rendercolor" "255 216 128"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
-				"startdisabled" "1"
-			}
-
-			color_correction
-            {
-                "targetname" "MasqueradeCC"
-                "origin" "208 -320 1312"
-
-				"filename" "materials/colorcorrection/hurtbreaklight.raw"
-                "maxweight" "0.4"
-
-                "minfalloff" "-1"
-                "maxfalloff" "-1"
-                "fadeInDuration" "0"
-                "fadeOutDuration" "5"
-                "StartDisabled" "1"
-            }
-
 			// Masquerade Mid-wave Cutscene (Wave 1)
 
 			logic_relay
@@ -1115,7 +1055,7 @@ WaveSchedule
 			trigger_hurt // Mapwide Bot Cleaner
             {
                 "targetname" "GottaSweepSweepSweep"
-				"filtername" "filter_is_blue"
+				"filtername" "filter_blue"
                 "mins" "-5000 -5000 -5000"
 				"maxs" "5000 5000 5000"
 
@@ -1241,36 +1181,33 @@ WaveSchedule
 				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,3,-1"
 				"OnTrigger" "MasqueradeTextCard,$setkey$message,Today ain't your day pancakes!,3,-1"
 				"OnTrigger" "MasqueradeTextCard,Display,,3.1,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationehvy02.mp3,3.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationhvy02.mp3,3.1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_dominationhvy02.mp3,3.1,-1"
 
 				"OnTrigger" "MasqueradeSword,Disable,,5.1,-1"
 				"OnTrigger" "MasqueradeMan,SetAnimation,secondrate_sorcery_scout,5.1,-1"
-				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `utaunt_electricity_purple_parent`, `hand_L`)5.1-1"
-				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `utaunt_electricity_purple_parent`, `hand_R`)5.1-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `utaunt_electricity_purple_discharge`, `hand_L`)5.1-1"
+				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, `utaunt_electricity_purple_discharge`, `hand_R`)5.1-1"
 				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_crits.wav,5.6,-1"
 
-				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,6.6,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,6.6,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,6.6,-1"
-				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 1, 1)6.6-1"
-				"OnTrigger" "MasqueradeElectricFieldStageHazardPT,ForceSpawn,,6.6,-1"
-
+				"OnTrigger" "MasqueradeMan,SetPlaybackRate,0.001,7.6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,7.6,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 1, 1)7.6-1"
+				"OnTrigger" "MasqueradeElectricFieldStageHazardPT,ForceSpawn,,7.6,-1"
 				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, null, `hand_L`)7.6-1"
 				"OnTrigger" "MasqueradeManRunScriptCodeDispatchParticleAttached(self, null, `hand_R`)7.6-1"
-				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,7.6,-1"
-				"OnTrigger" "MasqueradeIntroCamera7,CallScriptFunction,EnableAll,7.6,-1"
 
-				"OnTrigger" "MasqueradeIntroCamera7,CallScriptFunction,DisableAll,8.6,-1"
-				"OnTrigger" "MasqueradeSummonCamera,CallScriptFunction,EnableAll,8.6,-1"
-				"OnTrigger" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,MasqueradeSummonPortalParticle,8.6,-1"
+				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,9.6,-1"
+				"OnTrigger" "MasqueradeSummonCamera,CallScriptFunction,EnableAll,9.6,-1"
+				"OnTrigger" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,MasqueradeSummonPortalParticle,9.6,-1"
 
-				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)12-1"
-				"OnTrigger" "MasqueradeSummonCamera,CallScriptFunction,DisableAll,12,-1"
-				"OnTrigger" "MasqueradeIdleRelay,Trigger,,12,-1"
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)13.1-1"
+				"OnTrigger" "MasqueradeSummonCamera,CallScriptFunction,DisableAll,13.1,-1"
+				"OnTrigger" "MasqueradeIdleRelay,Trigger,,13.1,-1"
 
-				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/hurtbreakwonderland/the_break.wav`),12,-1"
-				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}The Break - Heaven Pierce Her,12,-1"
+				"OnTrigger" "BigNet,RunScriptCode,MusicSystemMent.SetMusicTrack(`#music/hurtbreakwonderland/the_break_fix.wav`),13.1,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{00FFFF}Now Playing: {FFFFFF}The Break - Heaven Pierce Her,13.1,-1"
 			}
 
 			// Masquerade End-wave Cutscene (Wave 2)
@@ -1282,6 +1219,9 @@ WaveSchedule
 				"OnTrigger" "item_teamflag*,ForceReset,,0,-1"
 				"OnTrigger" "BigNetRunScriptCodeMusicSystemMent.SetMusicTrack(``, 0.5, 0.5)0-1"
 				"OnTrigger" "ElectricFieldTimer,Kill,,0,-1"
+				"OnTrigger" "pop_interface,PauseBotSpawning,,0,-1"
+				"OnTrigger" "GottaSweepSweepSweep,Enable,,0,-1"
+				"OnTrigger" "GottaSweepSweepSweep,Disable,,0.1,-1"
 
 				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)2-1"
 				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,EnableAll,2,-1"
@@ -1304,9 +1244,10 @@ WaveSchedule
 
 				"OnTrigger" "MasqueradeTextCard,$setkey$message,You and me!,8.82,-1"
 				"OnTrigger" "MasqueradeTextCard,Display,,8.83,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_meleedare04.mp3,8.83,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/taunts/scout_mvm_m_meleedare04.mp3,8.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare04.mp3,8.83,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_meleedare04.mp3,8.83,-1"
 
+				"OnTrigger" "pop_interface,UnpauseBotSpawning,,10.9,-1"
 				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)11-1"
 				"OnTrigger" "MasqueradeIntroCamera5,CallScriptFunction,DisableAll,11,-1"
 			}
@@ -1390,6 +1331,79 @@ WaveSchedule
 				"effect_name" "mvm_tank_destroy"
 				"start_active" "0"
 			}
+		}
+		MasqueradePortalPT
+		{
+			logic_relay
+			{
+				"targetname" "MasqueradePortalEnableRelay"
+
+				"OnTrigger" "MasqueradeCC,Enable,,0,-1"
+				"OnTrigger" "MasqueradeVortex,Enable,,0,-1"
+				"OnTrigger" "MasqueradeVortexArm,Enable,,0,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "MasqueradeVortex"
+				"origin" "208 -336 2189"
+
+				"model" "models/reudina/vortex_reu.mdl"
+				"modelscale" "5"
+
+				"rendermode" "1"
+				"rendercolor" "255 216 128"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "MasqueradeVortexArm"
+				"origin" "127 -263 1826"
+				"angles" "0 0 90"
+				
+				"model" "models/reudina/wof_reu.mdl"
+				"modelscale" "3"
+
+				"rendermode" "1"
+				"rendercolor" "255 216 128"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "MasqueradeVortexArm"
+				"origin" "289 -409 1826"
+				"angles" "0 180 90"
+				
+				"model" "models/reudina/wof_reu.mdl"
+				"modelscale" "3"
+
+				"rendermode" "1"
+				"rendercolor" "255 216 128"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			color_correction
+            {
+                "targetname" "MasqueradeCC"
+                "origin" "208 -320 1312"
+
+				"filename" "materials/colorcorrection/hurtbreaklight.raw"
+                "maxweight" "0.4"
+
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" "0"
+                "fadeOutDuration" "5"
+                "StartDisabled" "1"
+            }
 		}
 		MasqueradeFireRainStageHazardPT
 		{
@@ -2580,6 +2594,14 @@ WaveSchedule
 				"OnTrigger" "MasqueradeSupernovaParticle2,Stop,,0,-1"
 				"OnTrigger" "MasqueradeSupernovaParticle3,Stop,,0,-1"
 
+				// Killing Shit
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_SuperScouts,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_SuperScouts,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_FuryPyros,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_FuryPyros,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_Bowmen,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_Bowmen,0,-1"
+
 				// Actual Sequence
 				"OnTrigger" "!activator,$Addcond,87 9999,0,-1"
 				"OnTrigger" "!activator,$Addcond,14 9999,0,-1"
@@ -2608,12 +2630,13 @@ WaveSchedule
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob03.mp3,10.79,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_goodjob03.mp3,10.79,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,10.79,-1"
-                "OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,10.79,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient/thunder3.wav,10.79,-1"
-				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 128, 1, 0, 1)10.79-1"
-				"OnTrigger" "Winner,Trigger,,10.79,-1"
-				"OnTrigger" "!activator,$BotCommand,Despawn,10.81,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,12.79,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,12.79,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/thunder3.wav,12.79,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 128, 1, 0, 1)12.79-1"
+				"OnTrigger" "!activator,$BotCommand,Despawn,12.79,-1"
+
+				"OnTrigger" "Winner,Trigger,,14.79,-1"
 			}
 		}
 
@@ -3582,6 +3605,7 @@ WaveSchedule
 	SpawnTemplate "CorePT"
 	SpawnTemplate "MissionPT"
 	SpawnTemplate "MasqueradeCinematicsPT"
+	SpawnTemplate "MasqueradePortalPT"
 
 	//// EXTRA TANK PATHS ////
 
@@ -3644,6 +3668,7 @@ WaveSchedule
 				ItemName "Three-Rune Blade"
 
 				"attach particle effect" "3043"
+				"damage bonus" 2
 				"bleeding duration" 0
 				"hit self on miss" 0
 			}
@@ -3710,6 +3735,7 @@ WaveSchedule
 						ItemName "Three-Rune Blade"
 
 						"attach particle effect" "3043"
+						"damage bonus" 2
 						"bleeding duration" 0
 						"hit self on miss" 0
 					}
@@ -3720,7 +3746,6 @@ WaveSchedule
 						Action "Trigger"
 						Delay 2
 						Repeats 1
-						IfSeeTarget 1
 					}
 				}
 
@@ -3926,6 +3951,12 @@ WaveSchedule
 				"override footstep sound set" 6
 				"voice pitch scale" 0
 			}
+
+			FireInput
+			{
+				Target "@c@!activator"
+
+			}
 		}
 		T_TFBot_Giant_Pyro_Necromancer_BrassBeastHeavy
 		{
@@ -4007,6 +4038,13 @@ WaveSchedule
 				"ignores other projectiles" 1
 			}
 
+			ShootTemplate
+			{
+				Name "ProvidenceCrossBeamsPT"
+				AttachToProjectile 1
+				ItemName "The Cow Mangler 5000"
+			}
+
 			ChangeAttributes
 			{
 				Name "ProvidenceDefault"
@@ -4020,11 +4058,12 @@ WaveSchedule
 			{
 				ProvidenceDefault [$SIGSEGV]
 				{
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+
 					ItemAttributes
 					{
 						ItemName "TF_WEAPON_ROCKETLAUNCHER"
 
-						"damage bonus" 1.5
 						"fire rate bonus" 0.3
 						"faster reload rate" 0.001
 						"projectile speed decreased" 0.25
@@ -4059,7 +4098,7 @@ WaveSchedule
 						"projectile speed decreased" 0.25
 
 						"projectile acceleration" 5000
-						"projectile acceleration start time" 0.25
+						"projectile acceleration start time" 0.75
 						"projectile acceleration time" 1
 
 						"projectile trail particle" "spell_lightningball_glow2_blue"
@@ -4069,13 +4108,6 @@ WaveSchedule
 						"noclip projectiles" 1
 
 						"projectile detonate lifetime" 3
-					}
-
-					ShootTemplate
-					{
-						Name "ProvidenceCrossBeamsPT"
-						AttachToProjectile 1
-						ItemName "The Cow Mangler 5000"
 					}
 
 					ChangeAttributes
@@ -5583,6 +5615,7 @@ WaveSchedule
 			Param "
 					EntFire(`wave_init_upper_relay`, `Trigger`)
 					EntFire(`MasqueradeIdleRelay`, `Trigger`)
+					EntFire(`MasqueradePortalEnableRelay`, `Trigger`)
 
 					local bomb = Entities.FindByName(null, `intel_35`)
 					bomb.AcceptInput(`RunScriptFile`, `bombhop.nut`, null, null)
@@ -7330,6 +7363,7 @@ WaveSchedule
 			Param "
 					EntFire(`wave_init_lower_relay`, `Trigger`)
 					EntFire(`MasqueradeIdleRelay`, `Trigger`)
+					EntFire(`MasqueradePortalEnableRelay`, `Trigger`)
 				  "
 		}
 		StartWaveOutput
@@ -7346,6 +7380,8 @@ WaveSchedule
 		{
 			"min respawn time" 15
 		}
+
+		RedTeamWipeCausesWaveLoss 1
 
 		// Dummy Icons
 		WaveSpawn
@@ -7392,10 +7428,10 @@ WaveSchedule
 			Where spawnbot_left
 			Support 1
 			TotalCount 20
-			MaxActive 2
+			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 15
+			WaitBeforeStarting 15
+			WaitBetweenSpawnsAfterDeath 15
 			TotalCurrency 100
 
 			TFBot
@@ -7433,10 +7469,10 @@ WaveSchedule
 			Where spawnbot_flank
 			Support 1
 			TotalCount 100
-			MaxActive 4
-			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 8
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 10
 			TotalCurrency 100
 
 			TFBot
@@ -7452,10 +7488,10 @@ WaveSchedule
 			Where spawnbot_right
 			Support 1
 			TotalCount 100
-			MaxActive 4
-			SpawnCount 2
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 12
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
 			TotalCurrency 100
 
 			TFBot
@@ -7481,6 +7517,26 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Boss_Scout_Masquerade
+			}
+		}
+	}
+	Wave
+	{
+		WaveSpawn // 1 Providence
+		{
+			Name "Wave2_Subwave4_Providence"
+			Where spawnbot_chief
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "vo/mvm/mght/soldier_mvm_m_directhittaunt02.mp3"
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Providence_Miniboss
 			}
 		}
 	}
