@@ -56,7 +56,6 @@ WaveSchedule
 
 	// Precached Particles
 
-	PrecacheParticle "spell_lightningball_glow2_blue"
 	PrecacheParticle "utaunt_electricity_purple_discharge"
 
 	// Precached Sounds
@@ -3081,16 +3080,10 @@ WaveSchedule
 			{
 				"targetname" "SummonerTarget"
 				"origin" "0 0 50"
+
+				"OnUser1" "SummonerSummonRelay,Trigger,,0,-1"
 			}
 
-			logic_timer
-			{
-				"targetname" "SummonerMinionTimer"
-				"RefireTime" "10"
-				"StartDisabled" 1
-
-				"OnTimer" "SummonerSummonRelay,Trigger,,0,-1"
-			}
 			logic_relay
 			{
 				"targetname" "SummonerSummonRelay"
@@ -3321,16 +3314,10 @@ WaveSchedule
 			{
 				"targetname" "SummonerTarget"
 				"origin" "0 0 50"
+
+				"OnUser1" "SummonerSummonRelay,Trigger,,0,-1"
 			}
 
-			logic_timer
-			{
-				"targetname" "SummonerMinionTimer"
-				"RefireTime" "10"
-				"StartDisabled" 1
-
-				"OnTimer" "SummonerSummonRelay,Trigger,,0,-1"
-			}
 			logic_relay
 			{
 				"targetname" "SummonerSummonRelay"
@@ -3512,6 +3499,22 @@ WaveSchedule
 
 		ProvidenceCrossBeamsPT
 		{
+			OnSpawnOutput
+			{
+				Target "CrossBeamsSetup"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "CrossBeamsSetup"
+
+				"OnTrigger" "CrossBeam1,StrikeOnce,,0,-1"
+				"OnTrigger" "CrossBeam2,StrikeOnce,,0,-1"
+				"OnTrigger" "!self,Trigger,,1.01,-1"
+				"spawnflags" "2"
+			}
+
 			env_beam
 			{
 				"targetname" "CrossBeam1"
@@ -3519,13 +3522,12 @@ WaveSchedule
 				"LightningStart" "CrossBeamStart1"
 				"LightningEnd" "CrossBeamEnd1"
 				
-				"life" "0"
+				"life" "1"
 				"BoltWidth" "24"
 				"texture" "sprites/laserbeam.spr"
 				"TextureScroll" "5"
-				"rendercolor" "128 0 255"
-
-				"spawnflags" "1"
+				"renderamt" "110"
+				"rendercolor" "255 128 255"
 			}
 			prop_dynamic
 			{
@@ -3535,7 +3537,7 @@ WaveSchedule
 			}
 			prop_dynamic
 			{
-				"targetname" "CrossBeamStart2"
+				"targetname" "CrossBeamEnd1"
 				"origin" "0 0 -256"
 				"model" "models/empty.mdl"
 			}
@@ -3562,29 +3564,28 @@ WaveSchedule
 				"LightningStart" "CrossBeamStart2"
 				"LightningEnd" "CrossBeamEnd2"
 				
-				"life" "0"
+				"life" "1"
 				"BoltWidth" "24"
 				"texture" "sprites/laserbeam.spr"
 				"TextureScroll" "5"
-				"rendercolor" "128 0 255"
-
-				"spawnflags" "1"
-			}
-			prop_dynamic
-			{
-				"targetname" "CrossBeamStart1"
-				"origin" "256 0 0"
-				"model" "models/empty.mdl"
+				"renderamt" "110"
+				"rendercolor" "255 128 255"
 			}
 			prop_dynamic
 			{
 				"targetname" "CrossBeamStart2"
-				"origin" "-256 0 0"
+				"origin" "0 256 0"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "CrossBeamEnd2"
+				"origin" "0 -256 0"
 				"model" "models/empty.mdl"
 			}
 			trigger_hurt
 			{
-				"targetname" "CrossBeamDamage1"
+				"targetname" "CrossBeamDamage2"
 				"filtername" "filter_red_nouber"
 				"origin" "0 0 0"
 				"mins" "-256 -32 -32"
@@ -3955,7 +3956,11 @@ WaveSchedule
 			FireInput
 			{
 				Target "@c@!activator"
-
+				Action "FireUser1"
+				Delay 0
+				Repeats 0
+				Cooldown 10
+				IfSeeTarget 1
 			}
 		}
 		T_TFBot_Giant_Pyro_Necromancer_BrassBeastHeavy
@@ -3990,6 +3995,16 @@ WaveSchedule
 				"override footstep sound set" 6
 				"voice pitch scale" 0
 			}
+
+			FireInput
+			{
+				Target "@c@!activator"
+				Action "FireUser1"
+				Delay 0
+				Repeats 0
+				Cooldown 10
+				IfSeeTarget 1
+			}
 		}
 		T_TFBot_Giant_Soldier_Burst_Modded
 		{
@@ -4009,6 +4024,7 @@ WaveSchedule
 			Name "Giant Providence Soldier"
 			Class Soldier
 			ClassIcon soldier_accel_crossbeam_giant
+			Skill Expert
 			Health 4000
 			Attributes MiniBoss
 			Attributes AlwaysCrit
@@ -4093,15 +4109,15 @@ WaveSchedule
 					{
 						ItemName "The Cow Mangler 5000"
 
-						"faster reload rate" 2
-						"clip size penalty" 0.25
+						"fire rate penalty" 2
+						"faster reload rate" 0.001
 						"projectile speed decreased" 0.25
 
 						"projectile acceleration" 5000
 						"projectile acceleration start time" 0.75
 						"projectile acceleration time" 1
 
-						"projectile trail particle" "spell_lightningball_glow2_blue"
+						"projectile trail particle" "~dxhr_lightningball_parent_red"
 
 						"projectile no deflect" 1
 						"ignores other projectiles" 1
@@ -4953,7 +4969,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 22
+			WaitBeforeStarting 26
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
@@ -5015,7 +5031,7 @@ WaveSchedule
 			TotalCount 2
 			MaxActive 2
 			SpawnCount 2
-			WaitBeforeStarting 22
+			WaitBeforeStarting 26
 			WaitBetweenSpawns 0
 			TotalCurrency 60
 
@@ -7517,26 +7533,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Boss_Scout_Masquerade
-			}
-		}
-	}
-	Wave
-	{
-		WaveSpawn // 1 Providence
-		{
-			Name "Wave2_Subwave4_Providence"
-			Where spawnbot_chief
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBetweenSpawns 0
-			TotalCurrency 100
-
-			FirstSpawnWarningSound "vo/mvm/mght/soldier_mvm_m_directhittaunt02.mp3"
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Providence_Miniboss
 			}
 		}
 	}
