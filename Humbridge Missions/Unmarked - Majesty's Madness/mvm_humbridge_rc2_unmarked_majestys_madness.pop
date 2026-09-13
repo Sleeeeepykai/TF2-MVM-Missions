@@ -158,7 +158,7 @@ WaveSchedule
 	Mission // Sentry Buster
 	{
 		Objective DestroySentries
-		Where spawnbot_mission_sentrybuster
+		Where spawnbot_mission_sentry_buster
 		BeginAtWave 1
 		RunForThisManyWaves 6
 		InitialCooldown 30
@@ -168,6 +168,39 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
+		}
+	}
+
+    Mission // Spy (Wave 1)
+	{
+		Objective Spy  
+		Where spawnbot_mission_spy
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 15
+		CooldownTime 45
+		DesiredCount 3
+
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
+    Mission // Engineer (Wave 1)
+	{
+		Objective Engineer
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 60
+		CooldownTime 60
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_Engineer_Sentry_Teleporter_TeleIn
+            TeleportWhere spawnbot
+            TeleportWhere flankers
 		}
 	}
 
@@ -202,5 +235,187 @@ WaveSchedule
         }
 
 		// Subwave 1
+        WaveSpawn // 1 GScout
+        {
+            Name "Wave1_Subwave1_GScout"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout
+                Skill Normal
+                Attributes HoldFireUntilFullReload
+            }
+        }
+        WaveSpawn // 14 Soldiers
+        {
+            Name "Wave1_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave1_Subwave1_GScout"
+            Where spawnbot
+            TotalCount 14
+            MaxActive 14
+            SpawnCount 14
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
+
+        WaveSpawn // Support Demoknights
+        {
+            Name "Wave1_Subwave1_Demoknights"
+            WaitForAllSpawned "Wave1_Subwave1_GScout"
+            Where flankers
+            Support 1
+            TotalCount 50
+            MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 15
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Knight
+            }
+        }
+
+        WaveSpawn // 1 GBurst Soldier and 1 Quick-Uber Medic
+        {
+            Name "Wave1_Subwave1_GBurstSoldier"
+            WaitForAllSpawned "Wave1_Subwave1_GScout"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Burst
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+        WaveSpawn // 14 Bat Scouts
+        {
+            Name "Wave1_Subwave1_Scouts"
+            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier"
+            Where spawnbot_invasion
+            TotalCount 14
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Melee
+            }
+        }
+        WaveSpawn // 3 Heavies and 3 Quick-Uber Medics
+        {
+            Name "Wave1_Subwave1_Heavies"
+            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier"
+            Where spawnbot
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Heavy
+                    Skill Easy
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+
+        WaveSpawn // 1 GBurst Soldier and 1 Quick-Uber Medic
+        {
+            Name "Wave1_Subwave1_GBurstSoldier2"
+            WaitForAllSpawned "Wave1_Subwave1_GScout"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Soldier_Burst
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_QuickUber
+                }
+            }
+        }
+        WaveSpawn // 14 Bat Scouts
+        {
+            Name "Wave1_Subwave1_Scouts2"
+            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
+            Where spawnbot_invasion
+            TotalCount 14
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Melee
+            }
+        }
+        WaveSpawn // 12 Soldiers
+        {
+            Name "Wave1_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave1_Subwave1_GBurstSoldier2"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 5
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Soldier
+                Skill Easy
+            }
+        }
 	}
 }
