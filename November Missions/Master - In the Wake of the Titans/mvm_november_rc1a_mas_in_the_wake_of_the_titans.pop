@@ -95,6 +95,7 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
+                        EntFire(`control_point_area`, `Kill`)
 						IncludeScript(`tankextensions_main`)
 
                         ::RGBAToColor32 <- function(r, g, b, a)
@@ -236,6 +237,33 @@ WaveSchedule
 				"OnTrigger" "tank_boss*,RemoveHealth,100000,0,-1"
 			}
 
+            logic_relay
+            {
+                "targetname" "ChampionGiantTutorial"
+
+                "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `Champion Giants will instantly capture the point! Don't let them reach it!`, lifetime = 5, play_sound = `misc/null.wav`, worldPosX = -2394, worldPosY = -350, worldPosZ = 288})0,-1"
+            }
+
+            // Control Point Logic //
+
+            trigger_timer_door
+            {
+                "targetname" "NovemberMasterControlPoint"
+                "filtername" "filter_capbot"
+                "origin" "24.62 -448 352"
+                "mins" "-160 -160 -176"
+                "maxs" "160 160 176"
+
+                "area_cap_point" "control_point"
+                "door_name" "capture_door"
+                "area_time_to_cap" "5"
+
+                "team_cancap_2" "0"
+                "team_cancap_3" "1"
+
+                "spawnflags" "1"
+            }
+
             // Champion Giant Logic //
 
             trigger_multiple
@@ -284,6 +312,23 @@ WaveSchedule
                 Delay 0.1
             }
         }
+
+        //// ROBOT PTs ////
+        
+        ChampionGiantPT
+        {
+            OnSpawnOutput
+            {
+                Target !activator
+                Action RunScriptCode
+                Param "SendGlobalGameEvent(`show_annotation`, {
+                    text = `Champion Giant Active!`
+                    lifetime = 5
+                    play_sound = `mvm/mvm_warning.wav`
+                    follow_entindex = self
+                })"
+            }
+        }
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -310,6 +355,8 @@ WaveSchedule
 
             Tag ChampionGiant
 
+            SpawnTemplate "ChampionGiantPT"
+
             Item "Prince Tavish's Crown"
             Item "Forgotten King's Pauldrons"
             
@@ -329,245 +376,6 @@ WaveSchedule
                 "faster reload rate" 0.1
                 "clip size upgrade atomic" 4
                 "projectile speed decreased" 0.9
-            }
-        }
-        T_TFBot_Giant_Demoman_Champion
-        {
-            Name "Champion Demoman"
-            Class Demoman
-            ClassIcon demo_champion_kai
-            Skill Expert
-            Health 6600
-            Scale 1.8
-            Attributes MiniBoss
-            Attributes UseBossHealthBar
-            Attributes HoldFireUntilFullReload
-            WeaponRestrictions PrimaryOnly
-
-            Tag ChampionGiant
-
-            Item "Prince Tavish's Crown"
-            Item "Forgotten King's Pauldrons"
-
-            CharacterAttributes
-            {
-                "move speed penalty" 0.4
-                "damage force reduction" 0.1
-                "airblast vulnerability multiplier" 0.1
-                "override footstep sound set" 4
-            }
-
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_GRENADELAUNCHER"
-                "damage bonus" 1.5
-                "mult projectile count" 4
-                "projectile spread angle penalty" 2
-                "faster reload rate" 0.35
-            }
-        }
-        T_TFBot_Giant_Pyro_Champion
-        {
-            Name "Champion Pyro"
-            Class Pyro
-            ClassIcon pyro_champion_kai
-            Skill Expert
-            Health 6000
-            Scale 1.8
-            Attributes MiniBoss
-            Attributes UseBossHealthBar
-            Attributes HoldFireUntilFullReload
-            WeaponRestrictions PrimaryOnly
-
-            MaxVisionRange 1200
-
-            Tag ChampionGiant
-
-            Item "Prince Tavish's Crown"
-            Item "Forgotten King's Pauldrons"
-
-            Item "The Dragon's Fury"
-
-            CharacterAttributes
-            {
-                "move speed penalty" 0.5
-                "damage force reduction" 0.1
-                "airblast vulnerability multiplier" 0.1
-                "override footstep sound set" 6
-            }
-
-            ItemAttributes
-            {
-                ItemName "The Dragon's Fury"
-                "damage bonus" 1.75
-                "afterburn duration bonus" 3
-                "mult_item_meter_charge_rate" 1.25
-            }
-        }
-        T_TFBot_Giant_Heavy_Champion
-        {
-            Name "Champion Heavy"
-            Class Heavy
-            ClassIcon heavy_champion_kai
-            Skill Expert
-            Health 10000
-            Scale 1.8
-            Attributes MiniBoss
-            Attributes UseBossHealthBar
-            Attributes HoldFireUntilFullReload
-            WeaponRestrictions PrimaryOnly
-
-            MaxVisionRange 1200
-
-            Tag ChampionGiant
-
-            Item "Prince Tavish's Crown"
-            Item "Forgotten King's Pauldrons"
-
-            CharacterAttributes
-            {
-                "move speed penalty" 0.3
-                "damage force reduction" 0.1
-                "airblast vulnerability multiplier" 0.1
-                "override footstep sound set" 2
-            }
-
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_MINIGUN"
-                "damage bonus" 1.5
-                "weapon spread bonus" 0.75
-            }
-        }
-
-        T_TFBot_Heavy_Rocketeer
-        {
-            Name "Rocketeer Heavy"
-            Class Heavy
-            ClassIcon heavy_rocket
-            Skill Expert
-            AimAt Body
-            AimOffset "0 0 20"
-
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_MINIGUN"
-                "damage bonus" 5
-                "fire rate penalty" 3
-                "override projectile type" 2
-                "mini rockets" 1
-                "spread offset pattern" "22 0 -27"
-            }
-        }
-        T_TFBot_Pyro_Flaregun_Burst
-        {
-            Name "Burst Flare Pyro"
-            Class Pyro
-            ClassIcon pyro_flare_burst_nys
-            Skill Hard
-            Health 500
-            Scale 1.3
-            WeaponRestrictions SecondaryOnly
-            
-            Item "The Flare Gun"
-
-            ItemAttributes
-            {
-                ItemName "The Flare Gun"
-
-                "mult projectile count" 3
-                "projectile spread angle penalty" 2
-            }
-        }
-        T_TFBot_Demoman_Stickybomb_Spammer
-        {
-            Name "Rapid Fire Stickybomb Demoman"
-            Class Demoman
-            ClassIcon demo_stickybomb_spammer_kai
-            Skill Expert
-            Health 525
-            Scale 1.3
-            WeaponRestrictions SecondaryOnly
-
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_GRENADELAUNCHER"
-                "is_passive_weapon" 1
-                "override projectile type" 27.0
-            }
-
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
-                "fire rate bonus" 0.75
-                "faster reload rate" 0.001
-                "stickybomb charge rate" 0.01
-                "projectile range decreased" 0.35
-                "max pipebombs decreased" -7
-            }
-        }
-        T_TFBot_Heavy_Warrior
-        {
-            Name "Warrior Heavy"
-            Class Heavy
-            ClassIcon heavy_warrior
-            Skill Expert
-            Health 900
-            Scale 1.5
-            WeaponRestrictions MeleeOnly
-
-            Item "Warrior's Spirit"
-        }
-        T_TFBot_Giant_Pyro_Shotgun_Spammer
-        {
-            Name "Giant Rapid Fire Shotgun Pyro"
-			Class Pyro
-			ClassIcon heavy_shotgun_spammer_pda_giant
-			Skill Expert
-			Health 3000
-			Attributes MiniBoss
-            Attributes HoldFireUntilFullReload
-			WeaponRestrictions SecondaryOnly
-
-            CharacterAttributes
-			{
-				"move speed penalty" 0.5
-				"damage force reduction" 0.6
-				"airblast vulnerability multiplier" 0.6
-				"override footstep sound set" 6
-			}
-            ItemAttributes
-            {
-                ItemName "TF_WEAPON_SHOTGUN_PYRO"
-
-                "fire rate bonus" 0.6
-                "faster reload rate" 0.0001
-            }
-        }
-        T_TFBot_Giant_Pyro_Homewrecker
-        {
-			Name "Giant Homewrecker Pyro"
-			Class Pyro
-			ClassIcon pyro_homewrecker_lite_giant
-			Skill Expert
-			Health 3000
-			Attributes MiniBoss
-			WeaponRestrictions MeleeOnly
-
-            Item "The Homewrecker"
-
-			CharacterAttributes
-			{
-				"move speed penalty" 0.75
-				"damage force reduction" 0.6
-				"airblast vulnerability multiplier" 0.6
-				"override footstep sound set" 6
-			}
-            ItemAttributes
-            {
-                ItemName "The Homewrecker"
-
-                "dmg bonus vs buildings" 5
             }
         }
     }
@@ -606,8 +414,6 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`advexp_spawn_ab_relay`, `Trigger`)
-                    EntFire(`spawn_a_arrows_flank_enable`, `Disable`)
                   "
         }
         StartWaveOutput
