@@ -1,0 +1,448 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1200
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+	EventPopfile Halloween
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+    BodyPartScaleSpeed 10
+
+	ForceHoliday 2
+	ZombiesNoWave666 1
+
+    MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+	//// PRECACHES ////
+
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		"PickaxeAttack"
+		{
+			OriginalItemName "The Iron Bomber"
+			"faster reload rate" 0
+			"projectile speed decreased" 0.65
+			"mult projectile scale" 0.5
+			"custom projectile size" 24
+			"custom projectile model" "models/props_forest/cliff_wall_09c.mdl"
+			"projectile trail particle" "electrocuted_blue"
+			"projectile spread angle penalty" 4
+			"mult projectile count" 3
+		}
+		"RocketAttack"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+			"damage bonus" 1
+			"projectile speed decreased" 0.4
+			"mod projectile heat seek power" 180
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 0.5
+			"mod projectile heat no predict target speed" 1
+			"projectile trail particle" "eyeboss_projectile"
+		}
+		"FrankensteinRocket"
+        {
+            OriginalItemName "Highland High Heels"
+            "custom item model" "models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl" 
+            "attachment name" "flag"
+            "attachment angles" "0 270 0"
+            "attachment offset" "25 0 0"
+        }
+		"FrankensteinRocket2"
+        {
+            OriginalItemName "Potato of Labor"
+            "custom item model" "models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl" 
+            "attachment name" "flag"
+            "attachment angles" "0 270 0"
+            "attachment offset" "-25 0 0"
+        }
+	}
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `(Master) Shoot the Moon`)
+						
+                        Convars.SetValue(`tf_playergib`, 0)
+
+						PrecacheSound(`vo/soldier_sf12_zombie02.mp3`)
+						PrecacheSound(`vo/soldier_sf12_zombie04.mp3`)
+
+						IncludeScript(`tankextensions_main`)
+					  "
+			}
+		}
+
+		FrankensteinSoldierPT
+		{
+			// Pickaxe Attack //
+			OnSpawnOutput
+			{
+				Target "PickaxeAttackMain"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "PickaxeAttackMain"
+				Action "$RotateTowards"
+				Param "!activator"
+				Delay 0.02
+			}
+
+			tf_point_weapon_mimic
+			{
+				"spawnflags" "1"
+				"targetname" "PickaxeAttackMain"
+				"$weaponname" "PickaxAttack"
+				"origin" "40 0 80"
+				"angles" "-40 0 0"
+				"$preventshootparent" "1"
+				"teamnum" "3"
+				"Crits" "false"
+				"modelscale" "1"
+
+				"$modules" "rotator"
+				"$lookat" "aim"
+				"$rotationspeedx" "300"
+				"$rotationspeedy" "300"
+				"$rotationlimitx" "180"
+				"$rotationlimity" "180"
+			}
+
+			// Rocket Attack //
+			OnSpawnOutput
+			{
+				Target "RocketAttackLeft"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "RocketAttackRight"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+
+			logic_relay
+			{
+				"targetname" "RocketBarrageRelay"
+				
+				"OnTrigger" "RocketAttack*,FireOnce,,0,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,0.5,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1.5,-1"
+			}
+			logic_relay
+			{
+				"targetname" "RocketBarrageRageRelay"
+				
+				"OnTrigger" "RocketAttack*,FireOnce,,0,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,0.25,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,0.5,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,0.75,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1.25,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1.5,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1.75,-1"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketAttackLeft"
+				"origin" "25 50 150"
+				"angles" "315 0 0"
+
+				"$weaponname" "RocketAttack"
+				"teamnum" "3"
+				"crits" "false"
+				"$preventshootparent" "1"
+
+				"spawnflags" "1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketAttackRight"
+				"origin" "25 -50 150"
+				"angles" "315 0 0"
+
+				"$weaponname" "RocketAttack"
+				"teamnum" "3"
+				"crits" "false"
+				"$preventshootparent" "1"
+
+				"spawnflags" "1"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Miniboss_Frankenstein_Soldier
+		{
+			Name "Frankenstein's Soldier"
+			Class Soldier
+			ClassIcon soldier_pickaxe_escape_explode 
+			Skill Expert
+			Health 35000
+			Scale 1.9
+			Attributes MiniBoss
+			Attributes SuppressFire
+			Attributes UseBossHealthBar
+			WeaponRestrictions MeleeOnly
+
+			SpawnTemplate "FrankensteinSoldierPT"
+
+			Item "The Escape Plan"
+
+			Item "Potato Hat"
+
+			Item "FrankensteinRocket" [$SIGSEGV]
+			Item "FrankensteinRocket2" [$SIGSEGV]
+
+			CharacterAttributes
+			{
+				"move speed bonus" 0.4
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"mult stun resistance" 0
+				"override footstep sound set" 3
+				"voice pitch scale" 0.75
+			}
+
+			ItemAttributes 
+			{
+				ItemName "The Escape Plan"
+				"fire input on attack" "PickaxeAttack^FireMultiple^1"
+				"melee cleave attack" 1
+				"mod shovel speed boost" 0
+				"self mark for death" 0
+			}
+
+			AddAttribute 
+            {
+                Item "FrankensteinRocket"
+                Name "attachment scale"
+                Value "2.35"
+                Delay 0.1
+                Repeats 1
+				Cooldown -1
+            }
+			AddAttribute 
+            {
+                Item "FrankensteinRocket2"
+                Name "attachment scale"
+                Value "2.35"
+                Delay 0.1
+                Repeats 1
+				Cooldown -1
+            }
+
+			ChangeAttributes
+			{
+				Name "FrankensteinPhase1"
+				Delay 0
+				Repeats 1
+			}
+			ChangeAttributes
+			{
+				Name "FrankensteinPhase2"
+				Delay 0
+				Repeats 1
+				IfHealthBelow 17501
+			}
+
+			EventChangeAttributes
+			{
+				FrankensteinPhase1 [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "
+								EmitSoundEx({
+									sound_name = `vo/soldier_sf12_zombie04.mp3`
+									channel = 6
+									pitch = 85
+									sound_level = 120
+									special_dsp = 25
+									entity = self
+								})
+							  "
+					}
+
+					FireWeapon  
+					{
+						Type "Primary"
+						Delay 0
+						Duration 0.5
+						Cooldown 2.5
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+					FireInput
+					{
+						Target "RocketBarrageRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 0
+						Cooldown 7
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+				}
+
+				FrankensteinPhase2 [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "
+								EmitSoundEx({
+									sound_name = `vo/soldier_sf12_zombie02.mp3`
+									channel = 6
+									pitch = 85
+									sound_level = 120
+									special_dsp = 25
+									entity = self
+								})
+							  "
+					}
+
+					FireWeapon  
+					{
+						Type "Primary"
+						Delay 0
+						Duration 0.5
+						Cooldown 1.5
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+
+					FireInput
+					{
+						Target "RocketBarrageRageRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 0
+						Cooldown 7
+						IfSeeTarget 1
+						IfLeftSpawn 1
+					}
+				}
+			}
+		}
+	}
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 7
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+		
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`init_wave_relay_main`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // Frankenstein's Soldier
+		{
+			Name "Wave1_Subwave1_FrankensteinSoldier"
+			Where spawnbot_boss
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 400
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_Frankenstein_Soldier
+			}
+		}
+	}
+}
