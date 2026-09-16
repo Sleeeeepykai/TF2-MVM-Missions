@@ -250,6 +250,7 @@ WaveSchedule
 				"damage force reduction" 0
 				"airblast vulnerability multiplier" 0
 				"mult stun resistance" 0
+				"mod weapon blocks healing" 1
 				"override footstep sound set" 3
 				"voice pitch scale" 0.75
 			}
@@ -442,6 +443,229 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Miniboss_Frankenstein_Soldier
+			}
+		}
+
+		WaveSpawn // Support Scouts
+		{
+			Name "Wave1_Subwave1_Scouts"
+			WaitForAllSpawned "Wave1_Subwave1_FrankensteinSoldier"
+			Where spawnbot_boss
+			Support 1
+			TotalCount 60
+			MaxActive 4
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // Support Demomen and Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_Demomen"
+			WaitForAllSpawned "Wave1_Subwave1_FrankensteinSoldier"
+			Where spawnbot
+			Support 1
+			TotalCount 20
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Class Demoman
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`init_wave_relay_main`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 GBurst Charged Soldier and 4 Quick-Uber Medics
+		{
+			Name "Wave2_Subwave1_GBurstChargedSoldier"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 10 Direct Hit Soldiers
+		{
+			Name "Wave2_Subwave1_DirectHitSoldiers"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstChargedSoldier"
+			Where spawnbot_right
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DirectHit
+				Skill Expert
+				
+				AimAt Feet
+			}
+		}
+		WaveSpawn // 9 Heavies
+		{
+			Name "Wave2_Subwave1_Heavies"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstChargedSoldier"
+			Where spawnbot_flank
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GBurst Charged Soldier and 4 Quick-Uber Medics
+		{
+			Name "Wave2_Subwave1_GBurstChargedSoldier2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstChargedSoldier"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Burst_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 10 Direct Hit Soldiers
+		{
+			Name "Wave2_Subwave1_DirectHitSoldiers2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstChargedSoldier2"
+			Where spawnbot_right
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_DirectHit
+				Skill Expert
+				
+				AimAt Feet
+			}
+		}
+		WaveSpawn // 9 Heavies
+		{
+			Name "Wave2_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstChargedSoldier2"
+			Where spawnbot_flank
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Heavy
+				Skill Easy
 			}
 		}
 	}
