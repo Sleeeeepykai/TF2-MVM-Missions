@@ -417,6 +417,21 @@ WaveSchedule
 			Template T_TFBot_Sniper
 		}
 	}
+	Mission // Engineer (Wave 3)
+	{
+		Objective Engineer
+		Where spawnbot_invasion
+		BeginAtWave 3
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 50
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_Engineer_Sentry_Battle_TeleIn
+		}
+	}
 
 	//// WAVES ////
 
@@ -1047,7 +1062,7 @@ WaveSchedule
         }
 
 		// Subwave 1
-		WaveSpawn
+		WaveSpawn // 1 Rocket Barrage Tank
 		{
 			Name "Wave3_Subwave1_RocketBarrageTank"
 			TotalCount 1
@@ -1063,7 +1078,7 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Combat_Rocket_Barrage
-				Health 35000
+				Health 45000
 				Speed 50
 				StartingPathTrackNode "boss_path_2"
 
@@ -1073,6 +1088,92 @@ WaveSchedule
 					Action Trigger
 				}
 			}
+		}
+		WaveSpawn // 6 Rapid Demos and 6 Quick-Uber Medics
+		{
+			Name "Wave3_Subwave1_RapidDemos"
+			WaitForAllSpawned "Wave3_Subwave1_RocketBarrageTank"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 36 Bowmen
+		{
+			Name "Wave3_Subwave1_Bowmen"
+			WaitForAllSpawned "Wave3_Subwave1_RocketBarrageTank"
+			Where spawnbot_invasion
+			TotalCount 36
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Sniper_Huntsman
+			}
+		}
+
+		WaveSpawn // 1 GHeavy and 4 Fury Pyros
+		{
+			Name "Wave3_Subwave1_GHeavy"
+			WaitForAllSpawned "Wave3_Subwave1_RapidDemos"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Dragon_Fury
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn
+		{
+			Name "Wave3_Subwave2_"
 		}
 	}
 }
