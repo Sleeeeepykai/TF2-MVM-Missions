@@ -1015,4 +1015,60 @@ WaveSchedule
 			}
 		}
 	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`init_wave_relay_alt`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave3_Subwave1_RocketBarrageTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Template Tank_Combat_Rocket_Barrage
+				Health 35000
+				Speed 50
+				StartingPathTrackNode "boss_path_2"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+	}
 }

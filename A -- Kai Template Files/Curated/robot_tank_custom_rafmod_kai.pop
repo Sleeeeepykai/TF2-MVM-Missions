@@ -1,5 +1,42 @@
 WaveSchedule
 {
+	PointTemplates
+	{
+		//// ROCKET BARRAGE TANK ////
+
+		CombatTankBarragePT
+		{
+			OnSpawnOutput
+			{
+				Target CombatTankBarrageMode
+				Action Trigger
+				Delay 5
+			}
+			logic_relay
+			{
+				"targetname" "CombatTankIdleMode"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`hl1/ambience/steamburst1.wav`);EmitSoundEx({sound_name=`hl1/ambience/steamburst1.wav`,pitch = 100,filter_type=5})0-1"
+
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 10})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_RELOAD_DELAY = 10})0-1"
+
+				"OnTrigger" "CombatTankBarrageMode,Trigger,,10,-1"
+			}
+			logic_relay
+			{
+				"targetname" "CombatTankBarrageMode"
+
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tank_horn.wav`);EmitSoundEx({sound_name=`mvm/mvm_tank_horn.wav`,pitch = 85,filter_type=5})0-1"
+
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.16})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_RELOAD_DELAY = 0.001})0-1"
+
+				"OnTrigger" "CombatTankIdleMode,Trigger,,10,-1"
+			}
+		}
+	}
+
 	Templates
 	{
 		Tank_Tiny
@@ -22,6 +59,20 @@ WaveSchedule
 			Name "combattank_bomb|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav"
 			ClassIcon tank_combat_rocket_dual_kai
 			Speed 75
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+		Tank_Combat_Rocket_Barrage
+		{
+			Name "combattank_bomb|rocketpod|rocketpod$pingsound|npc/combine_gunship/ping_search.wav"
+			ClassIcon tank_combat_rocket_barrage_dual_kai
+			Speed 75
+
+			SpawnTemplate "CombatTankBarragePT"
 
 			OnBombDroppedOutput
 			{
