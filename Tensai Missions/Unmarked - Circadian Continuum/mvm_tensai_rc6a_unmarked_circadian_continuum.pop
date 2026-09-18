@@ -1,0 +1,66 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1000
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+    BodyPartScaleSpeed 10
+
+	MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `(Expert) Majesty's Madness`)
+						
+                        Convars.SetValue(`tf_playergib`, 0)
+
+						if (!(`circadian_continuum_script` in getroottable()))
+						{
+							IncludeScript(`circadian_continuum_script`)
+						}
+
+						IncludeScript(`tankextensions_main`)
+					  "
+			}
+		}
+	}
+	
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+}
