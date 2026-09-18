@@ -40,10 +40,16 @@ WaveSchedule
 
 	//// PRECACHES ////
 
+	// Precached Models
+
+	PrecacheModel "models/bots/pyro_boss/bot_pyro_gray_boss.mdl"
+
 	//// CUSTOM WEAPONS ////
 
 	CustomWeapon
 	{
+		//// FRANKENSTEIN'S SOLDIER ////
+
 		"PickaxeAttack"
 		{
 			OriginalItemName "The Iron Bomber"
@@ -83,6 +89,76 @@ WaveSchedule
             "attachment angles" "0 270 0"
             "attachment offset" "-25 0 0"
         }
+
+		//// GRAVE BUTCHER ////
+
+		"AxeRangedWeapon"
+		{
+			OriginalItemName "The Rescue Ranger"
+			"damage bonus" 1.5
+			"no damage falloff" 1
+			"add damage type" 128
+			"remove damage type" 2
+			"Set DamageType Ignite" 1
+
+			"fire rate penalty" 2
+			"faster reload rate" 0.001
+
+			"penetrate teammates" 1
+			"projectile penetration" 1
+			"projectile speed decreased" 0.65
+			"projectile gravity" -1
+
+			"grenade bounce speed" 1.1
+			"projectile lifetime" 10
+            "projectile no deflect" 1
+            "reset arrow hits on bounce" 1
+
+			"mod projectile heat seek power" 180
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 0.75
+			"mod projectile heat no predict target speed" 1
+
+			"custom item model" "models/weapons/w_models/w_fireaxe.mdl"
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+			"custom weapon fire sound" "common/null.wav"
+			"custom kill icon" "fireaxe"
+		}
+		"AxeRangedWeaponPhase2"
+		{
+			OriginalItemName "The Rescue Ranger"
+			"damage bonus" 1.5
+			"no damage falloff" 1
+			"add damage type" 128
+			"remove damage type" 2
+			"Set DamageType Ignite" 1
+
+			"fire rate penalty" 2
+			"faster reload rate" 0.001
+
+			"penetrate teammates" 1
+			"projectile penetration" 1
+			"projectile speed decreased" 0.65
+			"projectile gravity" -1
+
+			"grenade bounce speed" 1.1
+			"projectile lifetime" 10
+            "projectile no deflect" 1
+            "reset arrow hits on bounce" 1
+
+			"mult projectile count" 3
+			"spread angle pattern" "0 -5 0|0 0 0|0 5 0"
+
+			"mod projectile heat seek power" 90
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 0.75
+			"mod projectile heat no predict target speed" 1
+
+			"custom item model" "models/weapons/w_models/w_fireaxe.mdl"
+			"custom projectile model" "models/weapons/w_models/w_drg_ball.mdl"
+			"custom weapon fire sound" "common/null.wav"
+			"custom kill icon" "fireaxe"
+		}
 	}
 
 	//// POINT TEMPLATES ////
@@ -102,12 +178,26 @@ WaveSchedule
 
 						PrecacheSound(`vo/soldier_sf12_zombie02.mp3`)
 						PrecacheSound(`vo/soldier_sf12_zombie04.mp3`)
+						PrecacheSound(`vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`)
+						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_paincrticialdeath03.mp3`)
 
 						IncludeScript(`tankextensions_main`)
 
 						IncludeScript(`tankextensions/combattank`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
 
+						::DispatchParticleEffectOn <- function(hEntity, sName)
+						{
+							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
+							local hParticle = Entities.CreateByClassname(`trigger_particle`)
+							NetProps.SetPropBool(hParticle, `m_bForcePurgeFixedupStrings`, true)
+							hParticle.KeyValueFromString(`particle_name`, sName)
+							hParticle.KeyValueFromInt(`attachment_type`, 1)
+							hParticle.KeyValueFromInt(`spawnflags`, 64)
+							hParticle.DispatchSpawn()
+							hParticle.AcceptInput(`StartTouch`, null, hEntity, hEntity)
+							hParticle.Kill()
+						}
 					  "
 			}
 		}
@@ -216,6 +306,39 @@ WaveSchedule
 				"spawnflags" "1"
 			}
 		}
+
+		GraveButcherPT
+		{
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+            }
+			OnSpawnOutput
+			{
+				Target AxeProjectile
+				Action RunScriptCode
+				Param "
+						DispatchParticleEffectOn(self, `burningplayer_blue`)
+					  "
+			}
+
+            prop_dynamic
+            {
+                "targetname" "AxeProjectile"
+                "parentname" "AxeRotator"
+				"origin" "-10 0 -50"
+                "model" "models/weapons/w_models/w_fireaxe.mdl"
+				"modelscale" "1.5"
+            }
+            func_rotating
+            {
+                "targetname" "AxeRotator"
+                "spawnflags" "73"
+                "maxspeed" "500"
+            }
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -255,6 +378,7 @@ WaveSchedule
 				"airblast vulnerability multiplier" 0
 				"mult stun resistance" 0
 				"mod weapon blocks healing" 1
+				"rage giving scale" 0.5
 				"override footstep sound set" 3
 				"voice pitch scale" 0.75
 			}
@@ -383,6 +507,115 @@ WaveSchedule
 				}
 			}
 		}
+
+		T_TFBot_Miniboss_Grave_Butcher
+		{
+			Name "The Grave Butcher"
+			Class Pyro
+			ClassIcon pyro_fireaxe_lite_giant
+			Skill Expert
+			Health 45000
+			Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			UseMeleeThreatPrioritization 1
+			AimAt Head
+
+			UseCustomModel "models/bots/pyro_boss/bot_pyro_gray_boss.mdl"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.4
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"mult stun resistance" 0
+				"mod weapon blocks healing" 1
+				"rage giving scale" 0.5
+				"override footstep sound set" 3
+				"voice pitch scale" 0.85
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_FIREAXE"
+
+				"fire rate penalty" 1.5625
+
+				"is_passive_weapon" 1
+			}
+
+			ShootTemplate
+			{
+				Name "GraveButcherPT"
+				AttachToProjectile 1
+				ItemName "AxeRangedWeapon"
+			}
+			ShootTemplate
+			{
+				Name "GraveButcherPT"
+				AttachToProjectile 1
+				ItemName "AxeRangedWeaponPhase2"
+			}
+
+			ChangeAttributes
+			{
+				Name "GraveButcherPhase1"
+				Delay 0
+				Repeats 1
+			}
+			ChangeAttributes
+			{
+				Name "GraveButcherPhase2"
+				Delay 0
+				Repeats 1
+				IfHealthBelow 22501
+			}
+
+			EventChangeAttributes
+			{
+				GraveButcherPhase1 [$SIGSEGV]
+				{
+					Item "AxeRangedWeapon" [$SIGSEGV]
+
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "
+								EmitSoundEx({
+									sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`
+									channel = 6
+									pitch = 85
+									sound_level = 120
+									special_dsp = 25
+									entity = self
+								})
+							  "
+					}
+				}
+				GraveButcherPhase2 [$SIGSEGV]
+				{
+					Item "AxeRangedWeaponPhase2" [$SIGSEGV]
+
+					FireInput
+					{
+						Target !activator
+						Action RunScriptCode
+						Param "
+								EmitSoundEx({
+									sound_name = `vo/mvm/mght/pyro_mvm_m_paincrticialdeath03.mp3`
+									channel = 6
+									pitch = 85
+									sound_level = 120
+									special_dsp = 25
+									entity = self
+								})
+							  "
+					}
+				}
+			}
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -402,6 +635,7 @@ WaveSchedule
 			Template T_TFBot_SentryBuster
 		}
 	}
+
 	Mission // Sniper (Wave 2)
 	{
 		Objective Sniper
@@ -417,6 +651,7 @@ WaveSchedule
 			Template T_TFBot_Sniper
 		}
 	}
+
 	Mission // Engineer (Wave 3)
 	{
 		Objective Engineer
@@ -425,6 +660,53 @@ WaveSchedule
 		RunForThisManyWaves 1
 		InitialCooldown 30
 		CooldownTime 50
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_Engineer_Sentry_Battle_TeleIn
+		}
+	}
+
+	Mission // Sniper (Wave 5)
+	{
+		Objective Sniper
+		Where spawnbot_invasion
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 20
+		CooldownTime 45
+		DesiredCount 3
+
+		TFBot
+		{
+			Template T_TFBot_Sniper
+		}
+	}
+	Mission // Spy (Wave 5)
+	{
+		Objective Spy
+		Where spawnbot_invasion
+		BeginAtWave 5
+		RunForThisManyWaves 1
+		InitialCooldown 20
+		CooldownTime 45
+		DesiredCount 3
+
+		TFBot
+		{
+			Template T_TFBot_Spy
+		}
+	}
+
+	Mission // Engineer (Wave 6)
+	{
+		Objective Engineer
+		Where spawnbot_invasion
+		BeginAtWave 6
+		RunForThisManyWaves 1
+		InitialCooldown 40
+		CooldownTime 40
 		DesiredCount 1
 
 		TFBot
@@ -1658,7 +1940,7 @@ WaveSchedule
 			SpawnCount 5
 			WaitBeforeStarting 25
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 80
 
 			Squad
 			{
@@ -1720,6 +2002,345 @@ WaveSchedule
 				Template T_TFBot_Heavy_Deflector
 				Skill Expert
 			}
+		}
+		WaveSpawn // 9 Pyros
+		{
+			Name "Wave4_Subwave2_Pyros"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo"
+			Where spawnbot_invasion
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Demo and 4 Steel Gauntlets
+		{
+			Name "Wave4_Subwave2_GBurstDemo2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+			}
+		}
+		WaveSpawn // 1 GFAN Scout
+		{
+			Name "Wave4_Subwave2_GFANScout2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
+			Where spawnbot
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN
+			}
+		}
+		WaveSpawn // 4 Deflector Heavies
+		{
+			Name "Wave4_Subwave2_DeflectorHeavies2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
+			Where spawnbot_left
+			TotalCount 4
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Deflector
+				Skill Expert
+			}
+		}
+		WaveSpawn // 9 Pyros
+		{
+			Name "Wave4_Subwave2_Pyros2"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
+			Where spawnbot_invasion
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Demo and 4 Steel Gauntlets
+		{
+			Name "Wave4_Subwave2_GBurstDemo3"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo2"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_SteelFist
+				}
+			}
+		}
+		WaveSpawn // 3 GFAN Scouts
+		{
+			Name "Wave4_Subwave2_GFANScout3"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo3"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN
+			}
+		}
+		WaveSpawn // 2 Deflector Heavies
+		{
+			Name "Wave4_Subwave2_DeflectorHeavies3"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo3"
+			Where spawnbot_left
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Deflector
+				Skill Expert
+			}
+		}
+		WaveSpawn // 9 Pyros
+		{
+			Name "Wave4_Subwave2_Pyros3"
+			WaitForAllSpawned "Wave4_Subwave2_GBurstDemo3"
+			Where spawnbot_invasion
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`init_wave_relay_main`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // The Grave Butcher
+		{
+			Name "Wave5_Subwave1_GraveButcher"
+			Where spawnbot_boss
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 400
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_Grave_Butcher
+			}
+		}
+
+		WaveSpawn // Support GRapid Soldiers
+		{
+			Name "Wave5_Subwave1_GRapidSoldier"
+			WaitForAllSpawned "Wave5_Subwave1_GraveButcher"
+			Where spawnbot
+			Support 1
+			TotalCount 10
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+			}
+		}
+		WaveSpawn // Support Homewrecker Demoknights
+		{
+			Name "Wave5_Subwave1_HomewreckerKnights"
+			WaitForAllSpawned "Wave5_Subwave1_GraveButcher"
+			Where spawnbot
+			Support 1
+			TotalCount 20
+			MaxActive 5
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 8
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Knight_Homewrecker
+				Attributes AlwaysCrit
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`init_wave_relay_alt`, `Trigger`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn
+		{
+			Name "Wave6_Subwave1_"
 		}
 	}
 }
