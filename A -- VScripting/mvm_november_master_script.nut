@@ -29,38 +29,19 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 ::NovemberMasterScript <-
 {
-	// Cleanup Functions
+	// CLEANUP FUNCTIONS //
+
 	function Cleanup()
 	{
 		printl("Void Cleanup")
 
-		SetSkyboxTexture("sky_november_01")
-		EntFire("env_sun", "AddOutput", "rendercolor 251 226 200 400")
-		EntFire("env_soundscape*", "Enable")
-		EntFire("env_soundscape_proxy*", "Enable")
-
-		for (local i = 1; i <= MaxPlayers; i++)
-		{
-			local Player = PlayerInstanceFromIndex(i)
-			if (Player == null)
-				continue
-
-			SetPropString(Player, "m_iszScriptThinkFunction", "")
-			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", RGBAToColor32(181, 114, 99, 255))
-			SetPropInt(Player, "m_Local.m_fog.colorPrimary", RGBAToColor32(181, 114, 99, 255))
-		}
+		NovemberMasterScript.SetAmbienceNormal()
 
 		delete ::NovemberMasterScript
 	}
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 
-	// HELPER FUNCTIONS //
-
-	function RGBAToColor32(r, g, b, a)
-	{
-		return ((r) | (g << 8) | (b << 16) | (a << 24))
-	}
 	// MAIN FUNCTIONS //
 
 	function SetAmbienceNormal()
@@ -70,15 +51,16 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		EntFire("env_soundscape*", "Enable")
 		EntFire("env_soundscape_proxy*", "Enable")
 
-		for (local i = 1; i <= MaxPlayers; i++)
+		if(FindByName(null, "VoidSkybox"))
 		{
-			local Player = PlayerInstanceFromIndex(i)
-			if (Player == null)
-				continue
-
-			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", RGBAToColor32(181, 114, 99, 255))
-			SetPropInt(Player, "m_Local.m_fog.colorPrimary", RGBAToColor32(181, 114, 99, 255))
+			EntFire("VoidSkybox", "Kill")
 		}
+
+		local FogController = FindByClassname(null, "env_fog_controller")
+
+		FogController.AcceptInput("SetColor", "181 114 99", null, null)
+		FogController.AcceptInput("SetStartDist", "100", null, null)
+		FogController.AcceptInput("SetEndDist", "8000", null, null)
 	}
 
 	function SetAmbienceVoid()
@@ -88,14 +70,18 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		EntFire("env_soundscape*", "Disable")
 		EntFire("env_soundscape_proxy*", "Disable")
 
+		local FogController = FindByClassname(null, "env_fog_controller")
+
+		FogController.AcceptInput("SetColor", "0 0 0", null, null)
+		FogController.AcceptInput("SetStartDist", "100", null, null)
+		FogController.AcceptInput("SetEndDist", "4000", null, null)
+
 		for (local i = 1; i <= MaxPlayers; i++)
 		{
 			local Player = PlayerInstanceFromIndex(i)
 			if (Player == null)
 				continue
 
-			SetPropInt(Player, "m_Local.m_skybox3d.fog.colorPrimary", RGBAToColor32(143, 99, 181, 255))
-            SetPropInt(Player, "m_Local.m_fog.colorPrimary", RGBAToColor32(143, 99, 181, 255))
 			SetPropInt(Player, "m_Local.m_audio.soundscapeIndex", 153)
 		}
 
