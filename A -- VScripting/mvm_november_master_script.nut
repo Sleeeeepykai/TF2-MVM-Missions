@@ -37,7 +37,10 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 		NovemberMasterScript.SetAmbienceNormal()
 
-		delete ::NovemberMasterScript
+		if("NovemberMasterScript" in getroottable())
+		{
+			delete ::NovemberMasterScript
+		}
 	}
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
@@ -49,7 +52,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		SetSkyboxTexture("sky_november_01")
 		EntFire("env_sun", "AddOutput", "rendercolor 251 226 200 400")
 		EntFire("env_soundscape*", "Enable")
-		EntFire("env_soundscape_proxy*", "Enable")
 
 		if(FindByName(null, "VoidSkybox"))
 		{
@@ -68,7 +70,6 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 		SetSkyboxTexture("sky_void_01")
 		EntFire("env_sun", "AddOutput", "rendercolor 234 200 251 400")
 		EntFire("env_soundscape*", "Disable")
-		EntFire("env_soundscape_proxy*", "Disable")
 
 		local FogController = FindByClassname(null, "env_fog_controller")
 

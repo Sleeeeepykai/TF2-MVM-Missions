@@ -104,6 +104,7 @@ WaveSchedule
     // Precached Colour Correction
 
     PrecacheGeneric "materials/colorcorrection/november_master_void.raw"
+    PrecacheGeneric "materials/colorcorrection/november_master_finale.raw"
 
     //// POINT TEMPLATES ////
 
@@ -231,6 +232,19 @@ WaveSchedule
 
                 "OnPass" "control_point,SetOwner,3,0,-1"
             }
+
+            // Finale Logic //
+
+            logic_relay
+            {
+                "targetname" "TitanInitRelay"
+
+                "OnTrigger" "DemomanTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "SoldierTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "MedicTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "PyroTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "HeavyTitanPT,ForceSpawn,,0,-1"
+            }
 		}
 
         VoidPT
@@ -264,7 +278,6 @@ WaveSchedule
             color_correction
             {
                 "targetname" "VoidCC"
-                "origin" "0 0 0"
 
 				"filename" "materials/colorcorrection/november_master_void.raw"
                 "maxweight" "1"
@@ -274,15 +287,78 @@ WaveSchedule
                 "fadeInDuration" "0"
                 "fadeOutDuration" "0"
             }
+
+            color_correction
+            {
+                "targetname" "VoidFinaleCC"
+
+				"filename" "materials/colorcorrection/november_master_finale.raw"
+                "maxweight" "1"
+
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" "0"
+                "fadeOutDuration" "0"
+                "startdisabled" "1"
+            }
         }
 
         //// TITAN PTs ////
 
-        SpawnATitanPT
+        DemomanTitanPT
         {
+            OnSpawnOutput
+            {
+                Target "DemomanTitanSetupRelay"
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "DemomanTitanSetupRelay"
+
+                "OnTrigger" "DemomanTitan,SetAnimation,competitive_winnerstate_idle,0,-1"
+                "OnTrigger" "DemomanTitan,SetPlaybackRate,0.0001,0.1,-1"
+            }
+            prop_dynamic
+            {
+                "targetname" "DemomanTitan"
+                "origin" "0 2800 334" 
+                "angles" "0 -75 0"
+
+                "model" "models/player/demo.mdl"
+                "modelscale" "20"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "DemomanTitanBot"
+				"initialowner" "DemomanTitan"
+
+                "model" "models/bots/demo_boss/bot_demo_boss.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "DemomanTitanWeapon"
+				"initialowner" "DemomanTitan"
+
+                "model" "models/weapons/c_models/c_lochnload/c_lochnload.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
             $trigger_detector
 			{
-				"targetname" "SpawnATitanDetector"
+				"targetname" "DemomanTitanDetector"
 				"filtername" "filter_red"
 				"origin" "128 1888 480"
 				"mins" "-832 -544 -672"
@@ -292,14 +368,53 @@ WaveSchedule
 
 				"spawnflags" "1"
 
-				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+				"$TargetTestPass" "DemomanTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
         }
-        SpawnBTitanPT
+        SoldierTitanPT
         {
+            OnSpawnOutput
+            {
+                Target "SoldierTitanSetupRelay"
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "SoldierTitanSetupRelay"
+
+                "OnTrigger" "SoldierTitan,SetAnimation,taunt_flag_soldier,0,-1"
+                "OnTrigger" "SoldierTitan,SetPlaybackRate,0.0001,3,-1"
+            }
+            prop_dynamic
+            {
+                "targetname" "SoldierTitan"
+                "origin" "2610 439 327" 
+                "angles" "0 -175 0"
+
+                "model" "models/player/soldier.mdl"
+                "modelscale" "20"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "SoldierTitanBot"
+				"initialowner" "SoldierTitan"
+
+                "model" "models/bots/soldier_boss/bot_soldier_boss.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
             $trigger_detector
 			{
-				"targetname" "SpawnBTitanDetector"
+				"targetname" "SoldierTitanDetector"
 				"filtername" "filter_red"
 				"origin" "1536 448 480"
 				"mins" "-576 -704 -672"
@@ -309,14 +424,75 @@ WaveSchedule
 
 				"spawnflags" "1"
 
-				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+				"$TargetTestPass" "SoldierTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
         }
-        SpawnCTitanPT
+        MedicTitanPT
         {
+            OnSpawnOutput
+            {
+                Target "MedicTitanSetupRelay"
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "MedicTitanSetupRelay"
+
+                "OnTrigger" "MedicTitan,SetAnimation,taunt09,0,-1"
+                "OnTrigger" "MedicTitan,SetPlaybackRate,0.0001,3,-1"
+            }
+            prop_dynamic
+            {
+                "targetname" "MedicTitan"
+                "origin" "3010 -1278 400" 
+                "angles" "0 -175 0"
+
+                "model" "models/player/medic.mdl"
+                "modelscale" "20"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "MedicTitanBot"
+				"initialowner" "MedicTitan"
+
+                "model" "models/bots/medic/bot_medic.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "MedicTitanWeapon"
+				"initialowner" "MedicTitan"
+
+                "model" "models/weapons/c_models/c_proto_medigun/c_proto_medigun.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "MedicTitanBackpack"
+				"initialowner" "MedicTitan"
+
+                "model" "models/weapons/c_models/c_proto_backpack/c_proto_backpack.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
             $trigger_detector
 			{
-				"targetname" "SpawnCTitanDetector"
+				"targetname" "MedicTitanDetector"
 				"filtername" "filter_red"
 				"origin" "1728 -1344 480"
 				"mins" "-704 -640 -672"
@@ -326,14 +502,63 @@ WaveSchedule
 
 				"spawnflags" "1"
 
-				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+				"$TargetTestPass" "MedicTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
         }
-        SpawnDTitanPT
+        PyroTitanPT
         {
+            OnSpawnOutput
+            {
+                Target "PyroTitanSetupRelay"
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "PyroTitanSetupRelay"
+
+                "OnTrigger" "PyroTitan,SetAnimation,taunt_flag_pyro,0,-1"
+                "OnTrigger" "PyroTitan,SetPlaybackRate,0.0001,4.5,-1"
+            }
+            prop_dynamic
+            {
+                "targetname" "PyroTitan"
+                "origin" "0 -3680 412" 
+                "angles" "0 90 0"
+
+                "model" "models/player/pyro.mdl"
+                "modelscale" "20"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "PyroTitanBot"
+				"initialowner" "PyroTitan"
+
+                "model" "models/bots/pyro_boss/bot_pyro_boss.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "PyroTitanWeapon"
+				"initialowner" "PyroTitan"
+
+                "model" "models/weapons/c_models/c_rfa_hammer/c_rfa_hammer.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
             $trigger_detector
 			{
-				"targetname" "SpawnDTitanDetector"
+				"targetname" "PyroTitanDetector"
 				"filtername" "filter_red"
 				"origin" "32 -2560 480"
 				"mins" "-800 -512 -672"
@@ -343,14 +568,52 @@ WaveSchedule
 
 				"spawnflags" "1"
 
-				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+				"$TargetTestPass" "PyroTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
         }
-        SpawnETitanPT
+        HeavyTitanPT
         {
+            OnSpawnOutput
+            {
+                Target "HeavyTitanSetupRelay"
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "HeavyTitanSetupRelay"
+
+                "OnTrigger" "HeavyTitan,SetAnimation,taunt_flag_heavy,0,-1"
+                "OnTrigger" "HeavyTitan,SetPlaybackRate,0.0001,4,-1"
+            }
+            prop_dynamic
+            {
+                "targetname" "HeavyTitan"
+                "origin" "-4598 -192 167" 
+
+                "model" "models/player/heavy.mdl"
+                "modelscale" "20"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "HeavyTitanBot"
+				"initialowner" "HeavyTitan"
+
+                "model" "models/bots/heavy_boss/bot_heavy_boss.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
             $trigger_detector
 			{
-				"targetname" "SpawnETitanDetector"
+				"targetname" "HeavyTitanDetector"
 				"filtername" "filter_red"
 				"origin" "-1792 -448 480"
 				"mins" "-448 -960 -672"
@@ -360,7 +623,7 @@ WaveSchedule
 
 				"spawnflags" "1"
 
-				"$TargetTestPass" "MasqueradeElectricFieldPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
+				"$TargetTestPass" "HeavyTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
         }
 
