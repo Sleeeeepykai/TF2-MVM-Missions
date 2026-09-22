@@ -1,9 +1,13 @@
 #base robot_standard_vanilla_kai.pop
 #base robot_standard_custom_kai.pop
 #base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
 #base robot_giant_vanilla_kai.pop
 #base robot_giant_custom_kai.pop
 #base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
 #base robot_tank_custom_rafmod_kai.pop
 
 WaveSchedule
@@ -30,8 +34,23 @@ WaveSchedule
 		{
 			OriginalItemName "Potato of Labor"
 
-			"set item tint rgb" 15787660
+			"set item tint rgb" "15787660"
 			"custom item model" "models/player/items/heavy/pugilist_protector.mdl"
+		}
+
+		"SoldierDefenderCapHat"
+		{
+			OriginalItemName "MvM GateBot Light Soldier"
+
+			"attach particle effect" "3043"
+			"item color rgb" "7799039"
+		}
+		"PyroDefenderCapHat"
+		{
+			OriginalItemName "MvM GateBot Light Pyro"
+
+			"attach particle effect" "3043"
+			"item color rgb" "7799039"
 		}
 	}
 
@@ -50,6 +69,35 @@ WaveSchedule
 				"OnMapSpawn" "arena_mode_enable_relay,Trigger,,0,-1"
 			}
 
+			// Global Filters
+            filter_tf_condition // Medigun Uber Filter
+            {
+                "targetname" "filter_is_not_ubered"
+                "Negated"	"1"
+                "condition"  "5" //medigun uber
+            }
+            filter_tf_condition // Canteen Uber Filter
+            {
+                "targetname" "filter_is_not_ubered2"
+                "Negated"	"1"
+                "condition"  "52" //canteen uber
+            }
+            filter_tf_condition // MVM Spawn Uber Filter
+            {
+                "targetname" "filter_is_not_ubered3"
+                "Negated"	"1"
+                "condition"  "51" //hidden uber
+            }
+            filter_tf_condition // Wheel of Fate Uber ilter
+            {
+                "targetname" "filter_is_not_ubered4"
+                "Negated"	"1"
+                "condition"  "57" //WoF uber
+            }
+		}
+
+		MissionPT
+		{
 			logic_timer
 			{
 				"targetname" "MissionAlarmTimer"
@@ -76,6 +124,12 @@ WaveSchedule
 				"OnTrigger" "arena_mode_transition_text1,Show,,0,-1"
 				"OnTrigger" "arena_mode_controlpointtext1,Show,,5,-1"
 				"OnTrigger" "arena_mode_controlpointtext2,Show,,10,-1"
+			}
+			logic_relay
+			{
+				"targetname" "MissionDefenderIntroRelay"
+
+				"OnTrigger" "arena_mode_defendertext1,Show,,0,-1"
 			}
 			logic_relay
 			{
@@ -114,68 +168,14 @@ WaveSchedule
 				"lifetime" "5"
 			}
 
-			// Global Filters
-			filter_activator_class // Is a Player
-            {
-                "targetname" "filter_is_player"
-                "Negated" "0"
-                "filterclass" "player"
-            }
-            filter_multi // Is a Red Player
-            {
-                "targetname" "filter_is_red_player"
-                "Negated"	"0"
-                "FilterType" "0"			
-                "Filter01"   "filter_redteam"
-                "Filter02"   "filter_is_player"
-            }
-            filter_tf_condition // Medigun Uber Filter
-            {
-                "targetname" "filter_is_not_ubered"
-                "Negated"	"1"
-                "condition"  "5" //medigun uber
-            }
-            filter_tf_condition // Canteen Uber Filter
-            {
-                "targetname" "filter_is_not_ubered2"
-                "Negated"	"1"
-                "condition"  "52" //canteen uber
-            }
-            filter_tf_condition // MVM Spawn Uber Filter
-            {
-                "targetname" "filter_is_not_ubered3"
-                "Negated"	"1"
-                "condition"  "51" //hidden uber
-            }
-            filter_tf_condition // Wheel of Fate Uber ilter
-            {
-                "targetname" "filter_is_not_ubered4"
-                "Negated"	"1"
-                "condition"  "57" //WoF uber
-            }
-            filter_multi // Is an Un-Ubered Red Player
-            {
-                "targetname" "filter_redteam_nouber"
-                "Negated"	"0"
-                "FilterType" "0" //and				
-                "Filter01"   "filter_redteam"
-                "Filter02"   "filter_is_not_ubered"
-                "Filter03"   "filter_is_not_ubered2"
-                "Filter04"   "filter_is_not_ubered3"
-                "Filter05"   "filter_is_not_ubered4"
-                "Filter06"   "filter_is_player"
-            }
-            filter_multi // Is an Un-Ubered Player
-            {
-                "targetname" "filter_nouber"
-                "Negated"	"0"
-                "FilterType" "0"
-                "Filter01"   "filter_is_not_ubered"
-                "Filter02"   "filter_is_not_ubered2"
-                "Filter03"   "filter_is_not_ubered3"
-                "Filter04"   "filter_is_not_ubered4"
-                "Filter05"   "filter_is_player"
-            }
+			training_annotation
+			{
+				"targetname" "arena_mode_defendertext1"
+
+				"origin" "480 4000 192"
+				"display_text" "Robots with glowing purple hats will defend the points."
+				"lifetime" "5"
+			}
 		}
 
 		ControlPointPT
@@ -200,35 +200,64 @@ WaveSchedule
 				"targetname" "ControlPointFilter"
 				"Negated" "0"
 				"FilterType" "1"
-				"Filter01"   "ControlPointPlayerFilter"
-                "Filter02"   "ControlPointBotFilter"
+
+				"Filter01" "ControlPointPlayerFilter"
+                "Filter02" "ControlPointBotFilter"
+				"Filter03" "ControlPointBotDefenderFilter"
 			}
 			filter_multi // Control Point Player Filter
 			{
 				"targetname" "ControlPointPlayerFilter"
 				"Negated" "0"
 				"FilterType" "0"
-				"Filter01"   "filter_is_player"
-				"Filter02"   "filter_redteam"
-                "Filter03"   "filter_is_not_ubered"
-                "Filter04"   "filter_is_not_ubered2"
-                "Filter05"   "filter_is_not_ubered3"
-                "Filter06"   "filter_is_not_ubered4"
+
+				"Filter01" "filter_redteam"
+                "Filter02" "filter_is_not_ubered"
+                "Filter03" "filter_is_not_ubered2"
+                "Filter04" "filter_is_not_ubered3"
+                "Filter05" "filter_is_not_ubered4"
 			}
+
 			filter_multi // Control Point Bot Filter
 			{
 				"targetname" "ControlPointBotFilter"
-				"Filter01"   "filter_is_player"
-				"Filter02"   "ControlPointBotTagFilter"
-                "Filter03"   "filter_is_not_ubered"
-                "Filter04"   "filter_is_not_ubered2"
-                "Filter05"   "filter_is_not_ubered3"
-                "Filter06"   "filter_is_not_ubered4"
+				"Negated" "0"
+				"FilterType" "0"
+
+				"Filter01" "filter_bluteam"
+				"Filter02" "ControlPointBotTagFilter"
+                "Filter03" "filter_is_not_ubered"
+                "Filter04" "filter_is_not_ubered2"
+                "Filter05" "filter_is_not_ubered3"
+                "Filter06" "filter_is_not_ubered4"
 			}
 			filter_tf_bot_has_tag // Control Point Bot Tag Filter
 			{
 				"targetname" "ControlPointBotTagFilter"
+				"Negated" "0"
+				
 				"tags" "ArenaCaptureBot"
+			}
+
+			filter_multi // Control Point Bot Defender Filter
+			{
+				"targetname" "ControlPointBotDefenderFilter"
+				"Negated" "0"
+				"FilterType" "0"
+
+				"Filter01" "filter_bluteam"
+				"Filter02" "ControlPointBotDefenderTagFilter"
+                "Filter03" "filter_is_not_ubered"
+                "Filter04" "filter_is_not_ubered2"
+                "Filter05" "filter_is_not_ubered3"
+                "Filter06" "filter_is_not_ubered4"
+			}
+			filter_tf_bot_has_tag // Control Point Bot Defender Tag Filter
+			{
+				"targetname" "ControlPointBotDefenderTagFilter"
+				"Negated" "0"
+
+				"tags" "ArenaCaptureDefenderBot"
 			}
 
 			// Control Point A
@@ -275,17 +304,44 @@ WaveSchedule
 				"origin" "-820 2756 40"
 				"mins" "-128 -220 -128"
 				"maxs" "128 220 128"
-				"solid" "0"
 
 				"area_cap_point" "ControlPointA"
 				"area_time_to_cap" "10"
 				"team_cancap_2" "1"
 				"team_cancap_3" "1"
 
+				"spawnflags" "1"
+
 				"disableshadows" "1"
 
 				"OnCapTeam1" "ControlPointABase,Skin,1,0,-1"
+				"OnCapTeam1" "ControlPointATrigger,Disable,,0,-1"
+
 				"OnCapTeam2" "ControlPointABase,Skin,2,0,-1"
+				"OnCapTeam2" "ControlPointATrigger,Enable,,3,-1"
+			}
+
+			trigger_multiple
+			{
+				"targetname" "ControlPointATrigger"
+				"filtername" "ControlPointBotFilter"
+				"origin" "0 0 0"
+				"mins" "-15000 -15000 -15000"
+				"maxs" "15000 15000 15000"
+				"spawnflags" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "ControlPointATriggerCase,PickRandom,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "ControlPointATriggerCase"
+
+				"OnCase01" "!activator,$ChangeAttributes,ControlPointB,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,ControlPointC,0,-1"
 			}
 
 			// Control Point B
@@ -332,17 +388,44 @@ WaveSchedule
 				"origin" "750 2672 288"
 				"mins" "-160 -160 -128"
 				"maxs" "160 160 128"
-				"solid" "0"
 
 				"area_cap_point" "ControlPointB"
 				"area_time_to_cap" "10"
 				"team_cancap_2" "1"
 				"team_cancap_3" "1"
 
+				"spawnflags" "1"
+
 				"disableshadows" "1"
 
 				"OnCapTeam1" "ControlPointBBase,Skin,1,0,-1"
+				"OnCapTeam1" "ControlPointBTrigger,Disable,,0,-1"
+
 				"OnCapTeam2" "ControlPointBBase,Skin,2,0,-1"
+				"OnCapTeam2" "ControlPointBTrigger,Enable,,3,-1"
+			}
+
+			trigger_multiple
+			{
+				"targetname" "ControlPointBTrigger"
+				"filtername" "ControlPointBotFilter"
+				"origin" "0 0 0"
+				"mins" "-15000 -15000 -15000"
+				"maxs" "15000 15000 15000"
+				"spawnflags" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+
+				"OnStartTouch" "ControlPointBTriggerCase,PickRandom,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "ControlPointBTriggerCase"
+
+				"OnCase01" "!activator,$ChangeAttributes,ControlPointA,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,ControlPointC,0,-1"
 			}
 
 			// Control Point C
@@ -389,18 +472,23 @@ WaveSchedule
 				"origin" "2084 2532 288"
 				"mins" "-140 -224 -128"
 				"maxs" "140 224 128"
-				"solid" "0"
 
 				"area_cap_point" "ControlPointC"
 				"area_time_to_cap" "10"
 				"team_cancap_2" "1"
 				"team_cancap_3" "1"
 
+				"spawnflags" "1"
+
 				"disableshadows" "1"
 
 				"OnCapTeam1" "ControlPointCBase,Skin,1,0,-1"
+				"OnCapTeam1" "ControlPointCTrigger,Disable,,0,-1"
+
 				"OnCapTeam2" "ControlPointCBase,Skin,2,0,-1"
+				"OnCapTeam2" "ControlPointCTrigger,Enable,,3,-1"
 			}
+
 			trigger_multiple
 			{
 				"targetname" "ControlPointCTrigger"
@@ -420,7 +508,8 @@ WaveSchedule
 			{
 				"targetname" "ControlPointCTriggerCase"
 
-				"OnCase01" "!activator,$ChangeAttributes,ControlPointA"
+				"OnCase01" "!activator,$ChangeAttributes,ControlPointA,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,ControlPointB,0,-1"
 			}
 		}
 	}
@@ -428,6 +517,7 @@ WaveSchedule
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "CorePT"
+	SpawnTemplate "MissionPT"
 	SpawnTemplate "ControlPointPT"
 
 	//// EXTRA TANK PATHS ////
@@ -455,33 +545,212 @@ WaveSchedule
 		T_TFBot_Giant_Soldier_CaptureBot
 		{
 			Template T_TFBot_Giant_Soldier
+			Attributes DisableDodge
 			Action Mobber
 
 			Tag ArenaCaptureBot
 
 			Item "MvM GateBot Light Soldier"
 
-			InterruptAction
+			EventChangeAttributes
 			{
-				Target "ControlPointB"
-				Delay 0.1
-				Repeats 0
-				Cooldown 5
-				Duration 5
-				Distance 100
+				ControlPointA [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointA"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointB [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointB"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointC [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointC"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
 			}
 		}
-
-		//// MINIGIANTS ////
-		T_TFBot_Demoman_Spammer_CaptureBot
+		T_TFBot_Giant_Pyro_Dragon_Fury_Burst_CaptureDefenderBot
 		{
-			Template T_TFBot_Demoman_Spammer
+			Template T_TFBot_Giant_Pyro_Dragon_Fury_Burst
+			Attributes DisableDodge
+			Action Mobber
+
+			Tag ArenaCaptureDefenderBot
+
+			Item "PyroDefenderCapHat" [$SIGSEGV]
+
+			EventChangeAttributes
+			{
+				ControlPointA [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointA"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointB [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointB"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointC [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointC"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+			}
+		}
+		T_TFBot_Giant_Heavy_CaptureBot
+		{
+			Template T_TFBot_Giant_Heavy
+			Attributes DisableDodge
 			Action Mobber
 
 			Tag ArenaCaptureBot
 
-			Item "MvM GateBot Light Demoman"
+			Item "MvM GateBot Light Heavy"
 
+			EventChangeAttributes
+			{
+				ControlPointA [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointA"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointB [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointB"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointC [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointC"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+			}
+		}
+
+		//// MINIGIANTS ////
+		T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+		{
+			Template T_TFBot_Soldier_RocketShotgun
+			Attributes DisableDodge
+			Action Mobber
+
+			Tag ArenaCaptureDefenderBot
+
+			Item "SoldierDefenderCapHat" [$SIGSEGV]
+
+			EventChangeAttributes
+			{
+				ControlPointA [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointA"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointB [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointB"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointC [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointC"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+			}
 		}
 
 		//// COMMONS ////
@@ -491,6 +760,7 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_gru
 			Skill Easy
+			Attributes DisableDodge
 			WeaponRestrictions MeleeOnly
 			Action Mobber
 
@@ -501,14 +771,46 @@ WaveSchedule
 			Item "PunchieCapHat" [$SIGSEGV]
 			Item "MvM GateBot Light Heavy"
 
-			InterruptAction
+			EventChangeAttributes
 			{
-				Target "ControlPointC"
-				Delay 0.1
-				Repeats 0
-				Cooldown 5
-				Duration 5
-				Distance 100
+				ControlPointA [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointA"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointB [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointB"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
+
+				ControlPointC [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "ControlPointC"
+						Delay 0.1
+						Repeats 0
+						Cooldown 5
+						Duration 5
+						Distance 100
+					}
+				}
 			}
 		}
 	}
@@ -529,6 +831,22 @@ WaveSchedule
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
+		}
+	}
+	Mission // Spy (Wave 3)
+	{
+		Objective Spy
+		Where spawnbot_arena_mainleft [$SIGSEGV]
+		Where spawnbot_arena_mainright [$SIGSEGV]
+		BeginAtWave 3
+		RunForThisManyWaves 1
+		InitialCooldown 10
+		CooldownTime 30
+		DesiredCount 2
+		
+		TFBot
+		{
+			Template T_TFBot_Spy
 		}
 	}
 
@@ -560,17 +878,17 @@ WaveSchedule
 		}
 
 		// Subwave 1
-		WaveSpawn // 15 Punchies
+		WaveSpawn // 10 KGB Heavies
 		{
-			Name "Wave1_Subwave1_Punchies"
+			Name "Wave1_Subwave1_KGBHeavies"
 			Where spawnbot_arena_mainleft [$SIGSEGV]
 			Where spawnbot_arena_mainright [$SIGSEGV]
 			RandomSpawn 1
-			TotalCount 15
-			MaxActive 15
-			SpawnCount 15
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 10
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 13
+			WaitBetweenSpawns 0
 			TotalCurrency 100
 
 			TFBot
@@ -583,7 +901,7 @@ WaveSchedule
 		WaveSpawn // 1 GSoldier and 3 Big-Heal Medics
 		{
 			Name "Wave1_Subwave1_GSoldier"
-			WaitForAllSpawned "Wave1_Subwave1_Punchies"
+			WaitForAllSpawned "Wave1_Subwave1_KGBHeavies"
 			Where spawnbot_arena_mainleft [$SIGSEGV]
 			TotalCount 4
 			MaxActive 4
@@ -596,7 +914,14 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_PointB
+					Template T_TFBot_Giant_Soldier_CaptureBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
 				}
 				TFBot
 				{
@@ -618,7 +943,7 @@ WaveSchedule
 			WaitForAllSpawned "Wave1_Subwave1_GSoldier"
 			Where spawnbot_arena_mainright [$SIGSEGV]
 			TotalCount 2
-			MaxActive 2
+			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 10
@@ -627,26 +952,6 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Demoman_Spammer
-				Action Mobber
-			}
-		}
-		WaveSpawn // 10 Punchies
-		{
-			Name "Wave1_Subwave1_Punchies2"
-			WaitForAllSpawned "Wave1_Subwave1_GSoldier"
-			Where spawnbot_arena_mainleft [$SIGSEGV]
-			Where spawnbot_arena_mainright [$SIGSEGV]
-			RandomSpawn 1
-			TotalCount 10
-			MaxActive 6
-			SpawnCount 2
-			WaitBeforeStarting 10
-			WaitBetweenSpawns 2
-			TotalCurrency 100
-
-			TFBot
-			{
-				Template T_TFBot_Heavy_Heavyweight_Champ
 				Action Mobber
 			}
 		}
@@ -667,7 +972,14 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Soldier_PointB
+					Template T_TFBot_Giant_Soldier_CaptureBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
 				}
 				TFBot
 				{
@@ -683,9 +995,134 @@ WaveSchedule
 				}
 			}
 		}
+		WaveSpawn // 10 KGB Heavies
+		{
+			Name "Wave1_Subwave1_KGBHeavies2"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			RandomSpawn 1
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ
+				Action Mobber
+			}
+		}
+		WaveSpawn // 2 Rapid Demos
+		{
+			Name "Wave1_Subwave1_RapidDemos2"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 2
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Action Mobber
+			}
+		}
+
+		WaveSpawn // 1 GSoldier and 3 Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_GSoldier3"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_CaptureBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+		WaveSpawn // 15 KGB Heavies
+		{
+			Name "Wave1_Subwave1_KGBHeavies3"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			RandomSpawn 1
+			TotalCount 15
+			MaxActive 15
+			SpawnCount 15
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ
+				Action Mobber
+			}
+		}
+		WaveSpawn // 2 Rapid Demos
+		{
+			Name "Wave1_Subwave1_RapidDemos3"
+			WaitForAllSpawned "Wave1_Subwave1_GSoldier3"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 2
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Spammer
+				Action Mobber
+			}
+		}
 	}
+	// Wave 2 Notes
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`MissionAlarmTimer`, `Disable`)
+				  "
+		}
 		StartWaveOutput
         {
             Target BigNet
@@ -693,6 +1130,7 @@ WaveSchedule
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
 					EntFire(`ArenaWaveStartRelay`, `Trigger`)
+					EntFire(`MissionDefenderIntroRelay`, `Trigger`)
                   "
         }
         DoneOutput
@@ -701,7 +1139,875 @@ WaveSchedule
             Action RunScriptCode
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
+					EntFire(`ArenaWaveFinishRelay`, `Trigger`)
                   "
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 GBurst Fury Pyro
+		{
+			Name "Wave2_Subwave1_GBurstFuryPyro"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 3
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Dragon_Fury_Burst_CaptureDefenderBot
+				Skill Normal
+
+				ChangeAttributes
+				{
+					Name "ControlPointC"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+		WaveSpawn // 10 Charged Soldiers
+		{
+			Name "Wave2_Subwave1_ChargedSoldiers"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+				Action Mobber
+			}
+		}
+		WaveSpawn // 12 GRU Heavies
+		{
+			Name "Wave2_Subwave1_GRUHeavies"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 6
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointA"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Fury Pyro and 2 Heavies
+		{
+			Name "Wave2_Subwave1_GBurstFuryPyro2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury_Burst_CaptureDefenderBot
+					Skill Normal
+
+					ChangeAttributes
+					{
+						Name "ControlPointA"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+			}
+		}
+		WaveSpawn // 10 Charged Soldiers
+		{
+			Name "Wave2_Subwave1_ChargedSoldier2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+				Action Mobber
+			}
+		}
+		WaveSpawn // 12 GRU Heavies
+		{
+			Name "Wave2_Subwave1_GRUHeavies2"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 6
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointC"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Fury Pyro and 3 Heavies
+		{
+			Name "Wave2_Subwave1_GBurstFuryPyro3"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro2"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury_Burst_CaptureDefenderBot
+					Skill Normal
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+			}
+		}
+		WaveSpawn // 10 Charged Soldiers
+		{
+			Name "Wave2_Subwave1_ChargedSoldier3"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro3"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+				Action Mobber
+			}
+		}
+		WaveSpawn // 8 GRU Heavies
+		{
+			Name "Wave2_Subwave1_GRUHeavies3"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro3"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointC"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+		WaveSpawn // 8 GRU Heavies
+		{
+			Name "Wave2_Subwave1_GRUHeavies3"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro3"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointA"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GBurst Fury Pyro and 3 Heavies
+		{
+			Name "Wave2_Subwave1_GBurstFuryPyro4"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro3"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Dragon_Fury_Burst_CaptureDefenderBot
+					Skill Normal
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+				TFBot
+				{
+					Class Heavy
+					Skill Hard
+
+					Action Mobber
+				}
+			}
+		}
+		WaveSpawn // 6 Charged Soldiers
+		{
+			Name "Wave2_Subwave1_ChargedSoldier4"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro4"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+			
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+				Action Mobber
+			}
+		}
+		WaveSpawn // 8 GRU Heavies
+		{
+			Name "Wave2_Subwave1_GRUHeavies4"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro4"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointC"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+		WaveSpawn // 8 GRU Heavies
+		{
+			Name "Wave2_Subwave1_GRUHeavies4"
+			WaitForAllSpawned "Wave2_Subwave1_GBurstFuryPyro4"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Lightweight_Champ_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointA"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+	}
+	// Wave 3 Notes
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`MissionAlarmTimer`, `Disable`)
+				  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`ArenaWaveStartRelay`, `Trigger`)
+					EntFire(`MissionDefenderIntroRelay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+					EntFire(`ArenaWaveFinishRelay`, `Trigger`)
+                  "
+		}
+
+		// Subwave 1
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave1_GHeavy"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointB"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+		WaveSpawn // 3 Burst Demos and 3 Quick-Uber Medics
+		{
+			Name "Wave3_Subwave1_BurstDemos"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // Support Scouts
+		{
+			Name "Wave3_Subwave1_Scouts"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			Support 1
+			TotalCount 80
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 8
+			TotalCurrency 80
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave1_GHeavy2"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 24
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointC"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+		WaveSpawn // 3 Burst Demos and 3 Quick-Uber Medics
+		{
+			Name "Wave3_Subwave1_BurstDemos2"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy2"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+
+		WaveSpawn // 1 GHeavy
+		{
+			Name "Wave3_Subwave1_GHeavy3"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 24
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_CaptureBot
+
+				ChangeAttributes
+				{
+					Name "ControlPointA"
+					Delay 0
+					Repeats 1
+				}
+			}
+		}
+		WaveSpawn // 3 Burst Demos and 3 Quick-Uber Medics
+		{
+			Name "Wave3_Subwave1_BurstDemos3"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy3"
+			Where spawnbot_arena_mainright [$SIGSEGV]
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+					Action Mobber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave3_Subwave2_GDemo"
+			WaitForAllSpawned "Wave3_Subwave1_GHeavy3"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 24
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Action Mobber
+			}
+		}
+		WaveSpawn // 1 Rocket Shotgun Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave3_Subwave2_RocketShotgunSoldier"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointA"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 1 Rocket Shotgun Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave3_Subwave2_RocketShotgunSoldier"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 1 Rocket Shotgun Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave3_Subwave2_RocketShotgunSoldier"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointC"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 6 Pyros
+		{
+			Name "Wave3_Subwave2_Pyros"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+
+		WaveSpawn // 1 GDemo
+		{
+			Name "Wave3_Subwave2_GDemo2"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman
+				Action Mobber
+			}
+		}
+		WaveSpawn // 1 Rocket Shotgun Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave3_Subwave2_RocketShotgunSoldier2"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointA"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 1 Rocket Shotgun Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave3_Subwave2_RocketShotgunSoldier2"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 6
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointB"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 1 Rocket Shotgun Soldier and 1 Quick-Uber Medic
+		{
+			Name "Wave3_Subwave2_RocketShotgunSoldier2"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo2"
+			Where spawnbot_arena_mainleft [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun_CaptureDefenderBot
+
+					ChangeAttributes
+					{
+						Name "ControlPointC"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_QuickUber
+				}
+			}
+		}
+		WaveSpawn // 6 Pyros
+		{
+			Name "Wave3_Subwave2_Pyros2"
+			WaitForAllSpawned "Wave3_Subwave2_GDemo2"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
 		}
 	}
 }
