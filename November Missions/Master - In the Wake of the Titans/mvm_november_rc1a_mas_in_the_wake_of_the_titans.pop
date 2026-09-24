@@ -24,7 +24,10 @@ WaveSchedule
 		Target BigNet
 		Action RunScriptCode
 		Param "
-				NovemberMasterScript.Cleanup()
+                if(`NovemberMasterScript` in getroottable())
+                {
+				    NovemberMasterScript.Cleanup()
+                }
 
                 Convars.SetValue(`mp_capdeteriorate_time`, 90)
 			  "
@@ -61,7 +64,7 @@ WaveSchedule
 	DisableSound "Announcer.MVM_Tank_Alert_Halfway_Multiple"
 	DisableSound "Announcer.MVM_Tank_Alert_Near_Hatch"
 	DisableSound "Announcer.MVM_Tank_Alert_Deploying"
-	DisableSound "Announcer.MVM_Tank_Planted" 
+	DisableSound "Announcer.MVM_Tank_Planted"
 	DisableSound "Announcer.MVM_General_Destruction"
 
 	DisableSound "Announcer.RoundBegins5Seconds"
@@ -73,14 +76,21 @@ WaveSchedule
     DisableSound "music.mvm_start_wave"
     DisableSound "music.mvm_start_mid_wave"
     DisableSound "music.mvm_start_tank_wave"
-    DisableSound "music.mvm_start_last_wave"					   						   
+    DisableSound "music.mvm_start_last_wave"
     DisableSound "music.mvm_end_wave"
     DisableSound "music.mvm_end_tank_wave"
     DisableSound "music.mvm_end_mid_wave"
-    DisableSound "music.mvm_end_last_wave"						   
-    DisableSound "music.mvm_lost_wave"					   	   
+    DisableSound "music.mvm_end_last_wave"
+    DisableSound "music.mvm_lost_wave"
 
     //// PRECACHES ////
+
+    // Precached Music //
+
+    PrecacheSound "november_master_finale_setup.mp3"
+
+	PrecacheSound "november_master_finale_intro.mp3"
+	PrecacheSound "november_master_finale_loop.mp3"
 
     // Precached Skybox //
 
@@ -105,6 +115,7 @@ WaveSchedule
 
     PrecacheGeneric "materials/colorcorrection/november_master_void.raw"
     PrecacheGeneric "materials/colorcorrection/november_master_finale.raw"
+    PrecacheGeneric "materials/colorcorrection/november_master_void_finale.raw"
 
     //// POINT TEMPLATES ////
 
@@ -117,20 +128,58 @@ WaveSchedule
 				Target BigNet
 				Action RunScriptCode
 				Param "
-                        IncludeScript(`mvm_november_master_script`)
-                        EntFire(`control_point_area`, `Kill`)
+						IncludeScript(`mvm_november_master_script`)
 
-                        Convars.SetValue(`mp_capdeteriorate_time`, 0)
+						if(`NovemberMasterScript` in getroottable())
+						{
+							NovemberMasterScript.SetAmbienceNormal()
+						}
 
-                        PrecacheSound(`ambient/levels/citadel/strange_talk9.wav`)
-                        PrecacheSound(`weapons/bottle_broken_hit_world1.wav`)
-                        PrecacheSound(`weapons/bottle_broken_hit_world2.wav`)
-                        PrecacheSound(`weapons/bottle_broken_hit_world3.wav`)
-                        PrecacheSound(`physics/glass/glass_sheet_break2.wav`)
+						EntFire(`control_point_area`, `Kill`)
+
+						Convars.SetValue(`mp_capdeteriorate_time`, 0)
+
+						PrecacheSound(`ambient/levels/citadel/strange_talk9.wav`)
+						PrecacheSound(`weapons/bottle_broken_hit_world1.wav`)
+						PrecacheSound(`weapons/bottle_broken_hit_world2.wav`)
+						PrecacheSound(`weapons/bottle_broken_hit_world3.wav`)
+						PrecacheSound(`physics/glass/glass_sheet_break2.wav`)
+
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_domination08.mp3`)
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_laughshort02.mp3`)
+						PrecacheSound(`vo/mvm/norm/medic_mvm_negativevocalization07.mp3`)
+						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_laughhappy01.mp3`)
+						PrecacheSound(`vo/mvm/mght/demoman_mvm_m_gibberish07.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_laughshort03.mp3`)
+						PrecacheSound(`vo/mvm/mght/taunts/heavy_mvm_m_taunts01.mp3`)
+
+						PrecacheSound(`mvm/giant_heavy/giant_heavy_entrance.wav`)
+
+						PrecacheSound(`vo/mvm/mght/demoman_mvm_m_painsharp04.mp3`)
+						PrecacheSound(`vo/mvm/mght/demoman_mvm_m_painsharp07.mp3`)
+						PrecacheSound(`vo/mvm/mght/demoman_mvm_m_painsevere02.mp3`)
+
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_painsharp05.mp3`)
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_painsharp01.mp3`)
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_painsevere01.mp3`)
+
+						PrecacheSound(`vo/mvm/norm/medic_mvm_painsharp02.mp3`)
+						PrecacheSound(`vo/mvm/norm/medic_mvm_painsharp08.mp3`)
+						PrecacheSound(`vo/mvm/norm/medic_mvm_painsevere03.mp3`)
+
+						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_painsharp07.mp3`)
+						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_painsharp05.mp3`)
+						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_painsevere06.mp3`)
+
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_painsharp01.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_painsharp04.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_painsevere02.mp3`)
 
 						IncludeScript(`tankextensions_main`)
+						IncludeScript(`tankextensions/teletank`)
+						IncludeScript(`tankextensions/ubertank`)
 
-                        ::DispatchParticleEffectOn <- function(hEntity, sName)
+						::DispatchParticleEffectOn <- function(hEntity, sName)
 						{
 							if(!sName) { hEntity.AcceptInput(`DispatchEffect`, `ParticleEffectStop`, null, null); return }
 							local hParticle = Entities.CreateByClassname(`trigger_particle`)
@@ -163,32 +212,18 @@ WaveSchedule
 
 		MissionPT
 		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "local hRelay = Entities.CreateByClassname(`logic_relay`), hGameRules = Entities.FindByClassname(null, `tf_gamerules`), iCountdownLast = -1; NetProps.SetPropBool(hRelay, `m_bForcePurgeFixedupStrings`, true); hRelay.ValidateScriptScope(); hRelay.GetScriptScope().Think <- function() { local flRestartRoundTime = NetProps.GetPropFloat(hGameRules, `m_flRestartRoundTime`); if(flRestartRoundTime != -1) { local iCountdown = ceil(flRestartRoundTime - Time()).tointeger(); if(iCountdown != iCountdownLast && iCountdown == 5) EntFire(`Wave7SetupEndRelay`, `Trigger`, null, -1, null); iCountdownLast = iCountdown } else iCountdownLast = -1; return -1 } AddThinkToEnt(hRelay, `Think`)"
+			}
+
             logic_relay
             {
                 "targetname" "ChampionGiantTutorial"
 
                 "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `Champion Giants will instantly capture the point! Don't let them reach it!`, lifetime = 5, play_sound = `misc/null.wav`, worldPosX = -2394, worldPosY = -350, worldPosZ = 288})0,-1"
-            }
-
-            logic_relay
-            {
-                "targetname" "VoidTransitionSequence"
-
-                "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `Reality is tearing at the seams...`, lifetime = 3, play_sound = `misc/null.wav`, worldPosX = 0, worldPosY = -256, worldPosZ = 1280})0,-1"
-                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `ambient/levels/citadel/strange_talk9.wav`,pitch = 85,special_dsp = 10,filter_type = 5})0-1"
-
-                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `weapons/bottle_broken_hit_world1.wav`,pitch = 100,special_dsp = 10,filter_type = 5})4-1"
-                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 12, 40, 1, 50000, 0, true)4-1"
-
-                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `weapons/bottle_broken_hit_world2.wav`,pitch = 75,special_dsp = 10,filter_type = 5})5.5-1"
-                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 12, 40, 1, 50000, 0, true)5.5-1"
-
-                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `weapons/bottle_broken_hit_world3.wav`,pitch = 50,special_dsp = 10,filter_type = 5})7-1"
-                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 12, 40, 1, 50000, 0, true)7-1"
-
-                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `physics/glass/glass_sheet_break2.wav`,pitch = 60,special_dsp = 10,filter_type = 5})8.5-1"
-                "OnTrigger" "PlayerRunScriptCodeScreenFade(null, 143, 99, 181, 255, 3, 0, 1)8.5-1"
-                "OnTrigger" "VoidPT,ForceSpawn,,8.5,-1"
             }
 
             // Control Point Logic //
@@ -224,7 +259,7 @@ WaveSchedule
 
                 "OnStartTouch" "ChampionGiantFilter,TestActivator,,0,-1"
             }
-            
+
             filter_tf_bot_has_tag
             {
                 "targetname" "ChampionGiantFilter"
@@ -233,18 +268,350 @@ WaveSchedule
                 "OnPass" "control_point,SetOwner,3,0,-1"
             }
 
-            // Finale Logic //
+			// W3 Logic //
 
-            logic_relay
+			logic_relay
             {
-                "targetname" "TitanInitRelay"
+                "targetname" "VoidTransitionSequence"
 
-                "OnTrigger" "DemomanTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `Reality is tearing at the seams...`, lifetime = 3, play_sound = `misc/null.wav`, worldPosX = 0, worldPosY = -256, worldPosZ = 1280})0,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `ambient/levels/citadel/strange_talk9.wav`,pitch = 85,special_dsp = 10,filter_type = 5})0-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `weapons/bottle_broken_hit_world1.wav`,pitch = 100,special_dsp = 10,filter_type = 5})4-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 12, 40, 1, 50000, 0, true)4-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `weapons/bottle_broken_hit_world2.wav`,pitch = 75,special_dsp = 10,filter_type = 5})5.5-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 12, 40, 1, 50000, 0, true)5.5-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `weapons/bottle_broken_hit_world3.wav`,pitch = 50,special_dsp = 10,filter_type = 5})7-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 12, 40, 1, 50000, 0, true)7-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `physics/glass/glass_sheet_break2.wav`,pitch = 60,special_dsp = 10,filter_type = 5})8.5-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenFade(null, 143, 99, 181, 255, 3, 0, 1)8.5-1"
+                "OnTrigger" "VoidPT,ForceSpawn,,8.5,-1"
+            }
+
+			// W6 Logic //
+
+			logic_relay
+			{
+				"targetname" "FinaleTransitionSequence"
+
+				"OnTrigger" "BigNetRunScriptCodeScreenFade(null, 0, 0, 0, 0, 0, 5, 0)0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/clock_tick.wav,0,-1"
+
+				"OnTrigger" "VoidCC,Disable,,0,-1"
+				"OnTrigger" "VoidFinaleCC,Enable,,0,-1"
+
+				"OnTrigger" "DemomanTitanPT,ForceSpawn,,0,-1"
                 "OnTrigger" "SoldierTitanPT,ForceSpawn,,0,-1"
                 "OnTrigger" "MedicTitanPT,ForceSpawn,,0,-1"
                 "OnTrigger" "PyroTitanPT,ForceSpawn,,0,-1"
                 "OnTrigger" "HeavyTitanPT,ForceSpawn,,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_domination08.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_domination08.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/clock_tick.wav,5,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughshort02.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})6-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughshort02.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})6-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_negativevocalization07.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})6.5-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_negativevocalization07.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})6.5-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_laughhappy01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})7-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_laughhappy01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})7-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/demoman_mvm_m_gibberish07.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})7.5-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/demoman_mvm_m_gibberish07.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})7.5-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_laughshort03.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})13-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_laughshort03.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})13-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/taunts/heavy_mvm_m_taunts01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})15-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/taunts/heavy_mvm_m_taunts01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})15-1"
+
+				"OnTrigger" "TankATeleBeam,Start,,17,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,17,-1"
+
+				"OnTrigger" "TankBTeleBeam,Start,,17.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,17.5,-1"
+
+				"OnTrigger" "TankCTeleBeam,Start,,18,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,18,-1"
+
+				"OnTrigger" "TankDTeleBeam,Start,,18.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,18.5,-1"
+
+				"OnTrigger" "TankETeleBeam,Start,,19,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,19,-1"
+
+				"OnTrigger" "tf_gamerules,$FinishWave,,19.5,-1"
+			}
+
+			info_particle_system
+            {
+				"targetname" "TankATeleBeam"
+				"origin" "280 1680 -3"
+                "effect_name" "teleporter_mvm_bot_persist"
             }
+			info_particle_system
+            {
+				"targetname" "TankBTeleBeam"
+				"origin" "1168 96 79"
+                "effect_name" "teleporter_mvm_bot_persist"
+            }
+			info_particle_system
+            {
+				"targetname" "TankCTeleBeam"
+				"origin" "1144 -1328 126"
+                "effect_name" "teleporter_mvm_bot_persist"
+            }
+			info_particle_system
+            {
+				"targetname" "TankDTeleBeam"
+				"origin" "128 -2336 128"
+                "effect_name" "teleporter_mvm_bot_persist"
+            }
+			info_particle_system
+            {
+				"targetname" "TankETeleBeam"
+				"origin" "-1920 -448 -69"
+                "effect_name" "teleporter_mvm_bot_persist"
+            }
+
+            // Wave7 Logic //
+
+			logic_relay
+			{
+				"targetname" "Wave7SetupRelay"
+
+				"OnTrigger" "Wave7SetupMusic,PlaySound,,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFSuffering Leaves, Suffering Leaves - Heaven Pierce Her`)0-1"
+				"OnTrigger" "tf_gamerules,$StopVO,#november_master_finale_intro.mp3,0,-1"
+
+				"OnTrigger" "VoidFinaleCC,Enable,,0,-1"
+
+				"OnTrigger" "DemomanTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "SoldierTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "MedicTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "PyroTitanPT,ForceSpawn,,0,-1"
+                "OnTrigger" "HeavyTitanPT,ForceSpawn,,0,-1"
+
+				"OnTrigger" "TankATeleBeam,Start,,0,-1"
+				"OnTrigger" "TankBTeleBeam,Start,,0,-1"
+				"OnTrigger" "TankCTeleBeam,Start,,0,-1"
+				"OnTrigger" "TankDTeleBeam,Start,,0,-1"
+				"OnTrigger" "TankETeleBeam,Start,,0,-1"
+
+				"OnTrigger" "tank_path_a_67,AddOutput,OnPass TankACheck:SetValue:1:0:-1,0,-1"
+				"OnTrigger" "tank_path_a_67,AddOutput,OnPass !activator:SetSpeed:0:0:-1,0,-1"
+
+				"OnTrigger" "tank_path_b_67,AddOutput,OnPass TankBCheck:SetValue:1:0:-1,0,-1"
+				"OnTrigger" "tank_path_b_67,AddOutput,OnPass !activator:SetSpeed:0:0:-1,0,-1"
+
+				"OnTrigger" "tank_path_c_68,AddOutput,OnPass TankCCheck:SetValue:1:0:-1,0,-1"
+				"OnTrigger" "tank_path_c_68,AddOutput,OnPass !activator:SetSpeed:0:0:-1,0,-1"
+
+				"OnTrigger" "tank_path_d_66,AddOutput,OnPass TankDCheck:SetValue:1:0:-1,0,-1"
+				"OnTrigger" "tank_path_d_66,AddOutput,OnPass !activator:SetSpeed:0:0:-1,0,-1"
+
+				"OnTrigger" "tank_path_e_72,AddOutput,OnPass TankECheck:SetValue:1:0:-1,0,-1"
+				"OnTrigger" "tank_path_e_72,AddOutput,OnPass !activator:SetSpeed:0:0:-1,0,-1"
+			}
+
+			ambient_generic
+            {
+                "targetname" "Wave7SetupMusic"
+                "message" "#november_master_finale_setup.mp3"
+				"health" "10"
+
+                "spawnflags" "17"
+            }
+
+			logic_relay
+			{
+				"targetname" "Wave7SetupEndRelay"
+				"StartDisabled" "1"
+				"OnTrigger" "Wave7SetupMusic,FadeOut,4,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Wave7StartRelay"
+
+				"OnTrigger" "Wave7MusicIntro,PlaySound,,2,-1"
+
+				"OnTrigger" "TankATeleBeam,Stop,,14.684,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,14.684,-1"
+
+				"OnTrigger" "TankBTeleBeam,Stop,,15.184,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,15.184,-1"
+
+				"OnTrigger" "TankCTeleBeam,Stop,,15.684,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,15.684,-1"
+
+				"OnTrigger" "TankDTeleBeam,Stop,,16.184,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,16.184,-1"
+
+				"OnTrigger" "TankETeleBeam,Stop,,16.684,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,16.684,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_lift_warning.wav,22,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_lift_warning.wav,22,-1"
+
+				"OnTrigger" "tank_a,SetSpeed,110,23.554,-1"
+				"OnTrigger" "tank_b,SetSpeed,110,23.554,-1"
+				"OnTrigger" "tank_c,SetSpeed,110,23.554,-1"
+				"OnTrigger" "tank_d,SetSpeed,110,23.554,-1"
+				"OnTrigger" "tank_e,SetSpeed,110,23.554,-1"
+
+				"OnTrigger" "Wave7MusicLoop1,PlaySound,,24.054,-1"
+				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFDanse Macabre - Heaven Pierce Her`)24.054-1"
+
+				"OnTrigger" "Wave7MusicFadeout1,Disable,,109.926,-1"
+				"OnTrigger" "Wave7MusicFadeout2,Enable,,109.926,-1"
+
+				"OnTrigger" "Wave7MusicLoop2,PlaySound,,109.926,-1"
+				"OnTrigger" "Wave7MusicFadeout2,Disable,,195.798,-1"
+				"OnTrigger" "Wave7MusicFadeout3,Enable,,195.798,-1"
+
+				"OnTrigger" "Wave7MusicLoop3,PlaySound,,195.798,-1"
+			}
+
+			logic_branch_listener
+			{
+				"targetname" "TankArrivalChecker"
+
+				"Branch01" "TankACheck"
+				"Branch02" "TankBCheck"
+				"Branch03" "TankCCheck"
+				"Branch04" "TankDCheck"
+				"Branch05" "TankECheck"
+
+				"OnAllTrue" "TankDeploySequence,Trigger,,0,-1"
+			}
+
+			logic_branch
+			{
+				"targetname" "TankACheck"
+
+				"InitialValue" "0"
+			}
+			logic_branch
+			{
+				"targetname" "TankBCheck"
+
+				"InitialValue" "0"
+			}
+			logic_branch
+			{
+				"targetname" "TankCCheck"
+
+				"InitialValue" "0"
+			}
+			logic_branch
+			{
+				"targetname" "TankDCheck"
+
+				"InitialValue" "0"
+			}
+			logic_branch
+			{
+				"targetname" "TankECheck"
+
+				"InitialValue" "0"
+			}
+
+			logic_relay
+			{
+				"targetname" "TankDeploySequence"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_lift_warning.wav,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_lift_warning.wav,4,-1"
+
+				"OnTrigger" "tank_a,SetSpeed,115,6,-1"
+				"OnTrigger" "tank_b,SetSpeed,65,6,-1"
+				"OnTrigger" "tank_c,SetSpeed,70,6,-1"
+				"OnTrigger" "tank_d,SetSpeed,80,6,-1"
+				"OnTrigger" "tank_e,SetSpeed,155,6,-1"
+			}
+
+			ambient_generic
+            {
+                "targetname" "Wave7MusicIntro"
+                "message" "#november_master_finale_intro.mp3"
+				"health" "10"
+
+                "spawnflags" "17"
+            }
+			ambient_generic
+            {
+                "targetname" "Wave7MusicLoop1"
+                "message" "#november_master_finale_loop.mp3"
+				"health" "10"
+
+                "spawnflags" "17"
+            }
+			logic_relay
+			{
+				"targetname" "Wave7MusicFadeout1"
+
+				"OnTrigger" "Wave7MusicLoop1,FadeOut,4,0,-1"
+			}
+
+			ambient_generic
+            {
+                "targetname" "Wave7MusicLoop2"
+                "message" "#november_master_finale_loop.mp3"
+				"health" "10"
+
+                "spawnflags" "17"
+            }
+			logic_relay
+			{
+				"targetname" "Wave7MusicFadeout2"
+				"StartDisabled" "1"
+
+				"OnTrigger" "Wave7MusicLoop2,FadeOut,4,0,-1"
+			}
+
+			ambient_generic
+            {
+                "targetname" "Wave7MusicLoop3"
+                "message" "#november_master_finale_loop.mp3"
+				"health" "10"
+
+                "spawnflags" "17"
+            }
+			logic_relay
+			{
+				"targetname" "Wave7MusicFadeout3"
+				"StartDisabled" "1"
+
+				"OnTrigger" "Wave7MusicLoop3,FadeOut,4,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Wave7EndRelay"
+
+				"OnTrigger" "Wave7MusicFadeout1,Trigger,,0,-1"
+				"OnTrigger" "Wave7MusicFadeout2,Trigger,,0,-1"
+				"OnTrigger" "Wave7MusicFadeout3,Trigger,,0,-1"
+
+				"OnTrigger" "Wave7_finale_music2,Disable,,0,-1"
+				"OnTrigger" "Wave7_finale_music3,Disable,,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeScreenFade(null, 255, 255, 255, 255, 4, 2, 1)6-1"
+				"OnTrigger" "BigNetRunScriptCodeScreenFade(null, 255, 255, 255, 255, 3, 2, 2)11-1"
+
+				"OnTrigger" "BigNetRunScriptCodeNovemberMasterScript.SetAmbienceNormal()11-1"
+				"OnTrigger" "VoidFinaleCC,Disable,,11,-1"
+
+				"OnTrigger" "tf_gamerules,$FinishWave,,20,-1"
+			}
 		}
 
         VoidPT
@@ -255,10 +622,16 @@ WaveSchedule
                 Action RunScriptCode
                 Param "
                         EntFire(`VoidSkybox`, `ActivateSkybox`)
-                        NovemberMasterScript.SetAmbienceVoid()
+                        EntFire(`VoidCC`, `Enable`)
+
+                        if(`NovemberMasterScript` in getroottable())
+                        {
+                            NovemberMasterScript.SetAmbienceVoid()
+                        }
                       "
+                Delay 0.1
             }
-            
+
             sky_camera
             {
                 "targetname" "VoidSkybox"
@@ -275,6 +648,7 @@ WaveSchedule
                 "fogdir" "1 0 0"
                 "fogRadial" "1"
             }
+
             color_correction
             {
                 "targetname" "VoidCC"
@@ -287,12 +661,11 @@ WaveSchedule
                 "fadeInDuration" "0"
                 "fadeOutDuration" "0"
             }
-
             color_correction
             {
                 "targetname" "VoidFinaleCC"
 
-				"filename" "materials/colorcorrection/november_master_finale.raw"
+				"filename" "materials/colorcorrection/november_master_void_finale.raw"
                 "maxweight" "1"
 
                 "minfalloff" "-1"
@@ -323,7 +696,7 @@ WaveSchedule
             prop_dynamic
             {
                 "targetname" "DemomanTitan"
-                "origin" "0 2800 334" 
+                "origin" "0 2800 334"
                 "angles" "0 -75 0"
 
                 "model" "models/player/demo.mdl"
@@ -370,6 +743,61 @@ WaveSchedule
 
 				"$TargetTestPass" "DemomanTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
+
+            logic_relay
+            {
+                "targetname" "DemomanTitanStunRelay"
+
+                "OnTrigger" "DemomanTitanDetector,Disable,,0,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/demoman_mvm_m_painsharp04.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})0-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,0,-1"
+                "OnTrigger" "DemomanTitanStunParticle1,Start,,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2,-1"
+                "OnTrigger" "DemomanTitanStunParticle2,Start,,2,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/demoman_mvm_m_painsharp07.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2.33-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2.33,-1"
+                "OnTrigger" "DemomanTitanStunParticle3,Start,,2.33,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/demoman_mvm_m_painsevere02.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})4.33-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,4.33,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/levels/labs/electric_explosion3.wav,4.33,-1"
+                "OnTrigger" "DemomanTitanStunParticle4,Start,,4.33,-1"
+
+                "OnTrigger" "DemomanTitanWeapon,TurnOff,,4.33,-1"
+                "OnTrigger" "DemomanTitan,SetAnimation,primary_stun_begin,4.33,-1"
+                "OnTrigger" "DemomanTitan,SetAnimation,primary_stun_middle,5.13,-1"
+                "OnTrigger" "DemomanTitan,SetPlaybackRate,0.0001,5.13,-1"
+
+                "OnTrigger" "spawn_a_setblue_relay,Trigger,,8.13,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.13-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.13-1"
+            }
+            info_particle_system
+            {
+                "targetname" "DemomanTitanStunParticle1"
+                "origin" "-387 2689 1471"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "DemomanTitanStunParticle2"
+                "origin" "228 2561 834"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "DemomanTitanStunParticle3"
+                "origin" "177 2633 1695"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "DemomanTitanStunParticle4"
+                "origin" "28 2739 1810"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
         }
         SoldierTitanPT
         {
@@ -389,7 +817,7 @@ WaveSchedule
             prop_dynamic
             {
                 "targetname" "SoldierTitan"
-                "origin" "2610 439 327" 
+                "origin" "2610 439 327"
                 "angles" "0 -175 0"
 
                 "model" "models/player/soldier.mdl"
@@ -426,6 +854,70 @@ WaveSchedule
 
 				"$TargetTestPass" "SoldierTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
+
+            logic_relay
+            {
+                "targetname" "SoldierTitanStunRelay"
+
+                "OnTrigger" "SoldierTitanDetector,Disable,,0,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_painsharp05.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})0-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,0,-1"
+                "OnTrigger" "SoldierTitanStunParticle1,Start,,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2,-1"
+                "OnTrigger" "SoldierTitanStunParticle2,Start,,2,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_7.wav,2.33,-1"
+                "OnTrigger" "SoldierTitanStunParticle3,Start,,2.33,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_painsharp01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2.33-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2.66,-1"
+                "OnTrigger" "SoldierTitanStunParticle4,Start,,2.66,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_painsevere01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})4.33-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,4.66,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/levels/labs/electric_explosion1.wav,4.66,-1"
+                "OnTrigger" "SoldierTitanStunParticle5,Start,,4.66,-1"
+
+                "OnTrigger" "SoldierTitan,SetAnimation,primary_stun_begin,4.66,-1"
+                "OnTrigger" "SoldierTitan,SetAnimation,primary_stun_middle,5.43,-1"
+                "OnTrigger" "SoldierTitan,SetPlaybackRate,0.0001,5.43,-1"
+
+                "OnTrigger" "spawn_b_setblue_relay,Trigger,,8.43,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.43-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.43-1"
+            }
+            info_particle_system
+            {
+                "targetname" "SoldierTitanStunParticle1"
+                "origin" "2647 800 1374"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "SoldierTitanStunParticle2"
+                "origin" "2624 373 794"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "SoldierTitanStunParticle3"
+                "origin" "2584 218 1525"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "SoldierTitanStunParticle4"
+                "origin" "2536 1046 1827"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "SoldierTitanStunParticle5"
+                "origin" "2623 595 1846"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
         }
         MedicTitanPT
         {
@@ -445,7 +937,7 @@ WaveSchedule
             prop_dynamic
             {
                 "targetname" "MedicTitan"
-                "origin" "3010 -1278 400" 
+                "origin" "3010 -1278 400"
                 "angles" "0 -175 0"
 
                 "model" "models/player/medic.mdl"
@@ -504,6 +996,61 @@ WaveSchedule
 
 				"$TargetTestPass" "MedicTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
+
+            logic_relay
+            {
+                "targetname" "MedicTitanStunRelay"
+
+                "OnTrigger" "MedicTitanDetector,Disable,,0,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_painsharp02.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})0-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,0,-1"
+                "OnTrigger" "MedicTitanStunParticle1,Start,,0,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_painsharp08.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2,-1"
+                "OnTrigger" "MedicTitanStunParticle2,Start,,2,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,4,-1"
+                "OnTrigger" "MedicTitanStunParticle3,Start,,4,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_painsevere03.mp3`,channel = 6,pitch = 65,special_dsp = 22,filter_type = 5})4.33-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,4.33,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap9.wav,4.33,-1"
+                "OnTrigger" "MedicTitanStunParticle4,Start,,4.33,-1"
+
+                "OnTrigger" "MedicTitanWeapon,TurnOff,,4.33,-1"
+                "OnTrigger" "MedicTitan,SetAnimation,primary_stun_begin,4.33,-1"
+                "OnTrigger" "MedicTitan,SetAnimation,primary_stun_middle,5.13,-1"
+                "OnTrigger" "MedicTitan,SetPlaybackRate,0.0001,5.13,-1"
+
+                "OnTrigger" "spawn_c_setblue_relay,Trigger,,8.13,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.13-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.13-1"
+            }
+            info_particle_system
+            {
+                "targetname" "MedicTitanStunParticle1"
+                "origin" "2848 -962 1529"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "MedicTitanStunParticle2"
+                "origin" "3001 -1329 1062"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "MedicTitanStunParticle3"
+                "origin" "2972 -1407 1396"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "MedicTitanStunParticle4"
+                "origin" "3008 -1246 1841"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
         }
         PyroTitanPT
         {
@@ -523,7 +1070,7 @@ WaveSchedule
             prop_dynamic
             {
                 "targetname" "PyroTitan"
-                "origin" "0 -3680 412" 
+                "origin" "0 -3680 412"
                 "angles" "0 90 0"
 
                 "model" "models/player/pyro.mdl"
@@ -570,6 +1117,69 @@ WaveSchedule
 
 				"$TargetTestPass" "PyroTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
+
+            logic_relay
+            {
+                "targetname" "PyroTitanStunRelay"
+
+                "OnTrigger" "PyroTitanDetector,Disable,,0,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_painsharp07.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})0-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,0,-1"
+                "OnTrigger" "PyroTitanStunParticle1,Start,,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,0.33,-1"
+                "OnTrigger" "PyroTitanStunParticle2,Start,,0.33,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_painsharp05.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2.33-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2.33,-1"
+                "OnTrigger" "PyroTitanStunParticle3,Start,,2.33,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2.66,-1"
+                "OnTrigger" "PyroTitanStunParticle4,Start,,2.66,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_painsevere06.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})4.66-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,4.66,-1"
+                "OnTrigger" "PyroTitanStunParticle5,Start,,4.66,-1"
+
+                "OnTrigger" "PyroTitanWeapon,TurnOff,,4.66,-1"
+                "OnTrigger" "PyroTitan,SetAnimation,primary_stun_begin,4.366,-1"
+                "OnTrigger" "PyroTitan,SetAnimation,primary_stun_middle,5.43,-1"
+                "OnTrigger" "PyroTitan,SetPlaybackRate,0.0001,5.43,-1"
+
+                "OnTrigger" "spawn_d_setblue_relay,Trigger,,8.43,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.43-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})8.43-1"
+            }
+            info_particle_system
+            {
+                "targetname" "PyroTitanStunParticle1"
+                "origin" "98 -3593 957"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "PyroTitanStunParticle2"
+                "origin" "580 -3245 1279"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "PyroTitanStunParticle3"
+                "origin" "484 -4397 1106"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "PyroTitanStunParticle4"
+                "origin" "186 -3460 1267"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "PyroTitanStunParticle5"
+                "origin" "331 -3127 1328"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
         }
         HeavyTitanPT
         {
@@ -589,7 +1199,7 @@ WaveSchedule
             prop_dynamic
             {
                 "targetname" "HeavyTitan"
-                "origin" "-4598 -192 167" 
+                "origin" "-4598 -192 167"
 
                 "model" "models/player/heavy.mdl"
                 "modelscale" "20"
@@ -625,10 +1235,74 @@ WaveSchedule
 
 				"$TargetTestPass" "HeavyTitanAttackPT,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
+
+            logic_relay
+            {
+                "targetname" "HeavyTitanStunRelay"
+
+                "OnTrigger" "HeavyTitanDetector,Disable,,0,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_painsharp01.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})0-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,0,-1"
+                "OnTrigger" "HeavyTitanStunParticle1,Start,,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_7.wav,1,-1"
+                "OnTrigger" "HeavyTitanStunParticle2,Start,,1,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_painsharp04.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})2-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,2,-1"
+                "OnTrigger" "HeavyTitanStunParticle3,Start,,2,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_3.wav,3,-1"
+                "OnTrigger" "HeavyTitanStunParticle4,Start,,3,-1"
+
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_painsevere02.mp3`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})4-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,4,-1"
+                "OnTrigger" "HeavyTitanStunParticle5,Start,,4,-1"
+
+                "OnTrigger" "HeavyTitan,SetAnimation,primary_stun_begin,4,-1"
+                "OnTrigger" "HeavyTitan,SetAnimation,primary_stun_middle,4.8,-1"
+                "OnTrigger" "HeavyTitan,SetPlaybackRate,0.0001,4.8,-1"
+
+                "OnTrigger" "spawn_e_setblue_relay,Trigger,,7.8,-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})7.8-1"
+                "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/giant_heavy/giant_heavy_entrance.wav`,channel = 6,pitch = 85,special_dsp = 22,filter_type = 5})7.8-1"
+            }
+
+            info_particle_system
+            {
+                "targetname" "HeavyTitanStunParticle1"
+                "origin" "-4522 -432 944"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "HeavyTitanStunParticle2"
+                "origin" "-4393 -43 1233"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "HeavyTitanStunParticle3"
+                "origin" "-4475 -449 704"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "HeavyTitanStunParticle4"
+                "origin" "-4315 -21 1457"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
+            info_particle_system
+            {
+                "targetname" "HeavyTitanStunParticle5"
+                "origin" "-4584 -214 1725"
+                "effect_name" "drg_cow_explosioncore_charged_blue"
+            }
         }
 
         //// ROBOT PTs ////
-        
+
         ChampionGiantPT
         {
             OnSpawnOutput
@@ -650,8 +1324,485 @@ WaveSchedule
 	SpawnTemplate "CorePT"
 	SpawnTemplate "MissionPT"
 
+    //// EXTRA TANK PATHS ////
+
+    // Finale Tank Paths //
+
+    ExtraTankPath // A Tank
+	{
+		Name "tank_path_a"
+		Node "280 1681 32"
+		Node "128 1673 24"
+		Node "-120 1625 32"
+		Node "-296 1569 40"
+		Node "-464 1481 80"
+		Node "-584 1409 96"
+		Node "-744 1289 104"
+		Node "-912 1161 96"
+		Node "-1072 1073 96"
+		Node "-1192 1001 96"
+		Node "-1328 897 88"
+		Node "-1432 761 64"
+		Node "-1512 585 40"
+		Node "-1496 409 24"
+		Node "-1360 65 24"
+		Node "-1472 -41 24"
+		Node "-1640 -153 -16"
+		Node "-1792 -233 -32"
+		Node "-1928 -329 -40"
+		Node "-1936 -449 -40"
+		Node "-1920 -449 -32"
+		Node "-1880 -545 -40"
+		Node "-1792 -633 -40"
+		Node "-1512 -777 -32"
+		Node "-1488 -865 -24"
+		Node "-1488 -1033 32"
+		Node "-1488 -1409 32"
+		Node "-1488 -1809 224"
+		Node "-1472 -1937 224"
+		Node "-1392 -2001 224"
+		Node "-1304 -2033 224"
+		Node "-1192 -2033 224"
+		Node "-1072 -2009 224"
+		Node "-992 -1945 224"
+		Node "-928 -1889 224"
+		Node "-816 -1833 224"
+		Node "-768 -1833 224"
+		Node "-632 -1833 160"
+		Node "-536 -1833 160"
+		Node "-448 -1905 160"
+		Node "-344 -2033 160"
+		Node "-280 -2121 160"
+		Node "-144 -2329 160"
+		Node "128 -2337 160"
+		Node "304 -2329 160"
+		Node "1024 -1809 160"
+		Node "1136 -1721 160"
+		Node "1144 -1513 152"
+		Node "1144 -1329 160"
+		Node "1152 -1137 160"
+		Node "1152 -881 272"
+		Node "1152 -521 272"
+		Node "1152 -249 144"
+		Node "1160 -65 144"
+		Node "1168 97 112"
+		Node "1168 113 104"
+		Node "1192 201 104"
+		Node "1224 417 96"
+		Node "1256 713 96"
+		Node "1272 937 88"
+		Node "1248 1153 80"
+		Node "1160 1265 80"
+		Node "1048 1377 88"
+		Node "920 1505 96"
+		Node "784 1609 96"
+		Node "608 1665 48"
+		Node "472 1681 40"
+		Node "280 1681 32"
+		Node "-32 1664 32"
+		Node "-192 1600 32"
+		Node "-264 1576 32"
+		Node "-344 1544 48"
+		Node "-408 1504 64"
+		Node "-472 1456 80"
+		Node "-504 1400 88"
+		Node "-520 1352 88"
+		Node "-512 1296 88"
+		Node "-496 1256 88"
+		Node "-464 1224 96"
+		Node "-432 1192 96"
+		Node "-392 1152 96"
+		Node "-344 1048 96"
+		Node "-144 1048 40"
+		Node "-56 1048 32"
+		Node "-16 1040 32"
+		Node "32 1008 32"
+		Node "64 984 32"
+		Node "88 936 32"
+		Node "112 880 32"
+		Node "128 824 32"
+		Node "128 784 32"
+		Node "72 656 32"
+		Node "8 560 32"
+	}
+
+    ExtraTankPath // B Tank
+	{
+		Name "tank_path_b"
+		Node "1168 95 112"
+		Node "1168 111 104"
+		Node "1192 199 104"
+		Node "1224 415 96"
+		Node "1256 711 96"
+		Node "1272 935 88"
+		Node "1248 1151 80"
+		Node "1160 1263 80"
+		Node "1048 1375 88"
+		Node "920 1503 96"
+		Node "784 1607 96"
+		Node "608 1663 48"
+		Node "472 1679 40"
+		Node "280 1679 32"
+		Node "128 1671 24"
+		Node "-120 1623 32"
+		Node "-296 1567 40"
+		Node "-464 1479 80"
+		Node "-584 1407 96"
+		Node "-744 1287 104"
+		Node "-912 1159 96"
+		Node "-1072 1071 96"
+		Node "-1192 999 96"
+		Node "-1328 895 88"
+		Node "-1432 759 64"
+		Node "-1512 583 40"
+		Node "-1496 407 24"
+		Node "-1360 63 24"
+		Node "-1472 -39 24"
+		Node "-1640 -151 -16"
+		Node "-1792 -231 -32"
+		Node "-1928 -327 -40"
+		Node "-1920 -447 -32"
+		Node "-1880 -543 -40"
+		Node "-1792 -631 -40"
+		Node "-1512 -775 -32"
+		Node "-1488 -863 -24"
+		Node "-1488 -1031 32"
+		Node "-1488 -1407 32"
+		Node "-1488 -1807 224"
+		Node "-1472 -1935 224"
+		Node "-1392 -1999 224"
+		Node "-1304 -2031 224"
+		Node "-1192 -2031 224"
+		Node "-1072 -2007 224"
+		Node "-992 -1943 224"
+		Node "-928 -1887 224"
+		Node "-816 -1831 224"
+		Node "-768 -1831 224"
+		Node "-632 -1831 160"
+		Node "-536 -1831 160"
+		Node "-448 -1903 160"
+		Node "-344 -2031 160"
+		Node "-280 -2119 160"
+		Node "-144 -2327 160"
+		Node "128 -2335 160"
+		Node "304 -2327 160"
+		Node "1024 -1807 160"
+		Node "1136 -1719 160"
+		Node "1144 -1511 152"
+		Node "1144 -1327 160"
+		Node "1152 -1135 160"
+		Node "1152 -879 272"
+		Node "1152 -519 272"
+		Node "1152 -247 144"
+		Node "1160 -63 144"
+		Node "1168 95 112"
+		Node "1168 110 104"
+		Node "960 112 96"
+		Node "912 120 96"
+		Node "856 144 96"
+		Node "816 200 96"
+		Node "808 216 96"
+		Node "808 344 32"
+		Node "800 376 32"
+		Node "760 426 32"
+		Node "640 440 32"
+		Node "352 440 32"
+	}
+
+    ExtraTankPath // C Tank
+	{
+		Name "tank_path_c"
+		Node "1143 -1328 160"
+		Node "1151 -1136 160"
+		Node "1151 -880 272"
+		Node "1151 -520 272"
+		Node "1151 -248 144"
+		Node "1159 -64 144"
+		Node "1167 96 112"
+		Node "1167 112 104"
+		Node "1191 200 104"
+		Node "1223 416 96"
+		Node "1255 712 96"
+		Node "1271 936 88"
+		Node "1247 1152 80"
+		Node "1159 1264 80"
+		Node "1047 1376 88"
+		Node "919 1504 96"
+		Node "783 1608 96"
+		Node "607 1664 48"
+		Node "471 1680 40"
+		Node "279 1680 32"
+		Node "127 1672 24"
+		Node "-119 1624 32"
+		Node "-295 1568 40"
+		Node "-463 1480 80"
+		Node "-583 1408 96"
+		Node "-743 1288 104"
+		Node "-911 1160 96"
+		Node "-1071 1072 96"
+		Node "-1191 1000 96"
+		Node "-1327 896 88"
+		Node "-1431 760 64"
+		Node "-1511 584 40"
+		Node "-1495 408 24"
+		Node "-1359 64 24"
+		Node "-1471 -40 24"
+		Node "-1639 -152 -16"
+		Node "-1791 -232 -32"
+		Node "-1927 -328 -40"
+		Node "-1935 -448 -40"
+		Node "-1919 -448 -32"
+		Node "-1879 -544 -40"
+		Node "-1791 -632 -40"
+		Node "-1511 -776 -32"
+		Node "-1487 -864 -24"
+		Node "-1487 -1032 32"
+		Node "-1487 -1408 32"
+		Node "-1487 -1808 224"
+		Node "-1471 -1936 224"
+		Node "-1391 -2000 224"
+		Node "-1303 -2032 224"
+		Node "-1191 -2032 224"
+		Node "-1071 -2008 224"
+		Node "-991 -1944 224"
+		Node "-927 -1888 224"
+		Node "-815 -1832 224"
+		Node "-767 -1832 224"
+		Node "-631 -1832 160"
+		Node "-535 -1832 160"
+		Node "-447 -1904 160"
+		Node "-343 -2032 160"
+		Node "-279 -2120 160"
+		Node "-143 -2328 160"
+		Node "127 -2336 160"
+		Node "303 -2328 160"
+		Node "1023 -1808 160"
+		Node "1135 -1720 160"
+		Node "1143 -1512 152"
+		Node "1143 -1328 160"
+		Node "1159 -1136 160"
+		Node "1167 -880 272"
+		Node "1167 -840 272"
+		Node "1143 -776 272"
+		Node "1119 -736 272"
+		Node "1079 -696 272"
+		Node "1039 -656 272"
+		Node "991 -616 272"
+		Node "967 -576 272"
+		Node "943 -528 272"
+		Node "911 -472 272"
+		Node "871 -464 272"
+		Node "807 -448 272"
+		Node "743 -448 272"
+		Node "671 -448 272"
+		Node "591 -448 272"
+		Node "535 -448 272"
+		Node "479 -448 224"
+		Node "359 -448 224"
+		Node "279 -448 224"
+		Node "191 -448 224"
+		Node "103 -448 224"
+		Node "15 -448 200"
+		Node "-30 -448 192"
+	}
+
+    ExtraTankPath // D Tank
+	{
+		Name "tank_path_d"
+		Node "128 -2336 160"
+		Node "304 -2328 160"
+		Node "1024 -1808 160"
+		Node "1136 -1720 160"
+		Node "1144 -1512 152"
+		Node "1144 -1328 160"
+		Node "1152 -1136 160"
+		Node "1152 -880 272"
+		Node "1152 -520 272"
+		Node "1152 -248 144"
+		Node "1160 -64 144"
+		Node "1168 96 112"
+		Node "1168 112 104"
+		Node "1192 200 104"
+		Node "1224 416 96"
+		Node "1256 712 96"
+		Node "1272 936 88"
+		Node "1248 1152 80"
+		Node "1160 1264 80"
+		Node "1048 1376 88"
+		Node "920 1504 96"
+		Node "784 1608 96"
+		Node "608 1664 48"
+		Node "472 1680 40"
+		Node "280 1680 32"
+		Node "128 1672 24"
+		Node "-120 1624 32"
+		Node "-296 1568 40"
+		Node "-464 1480 80"
+		Node "-584 1408 96"
+		Node "-744 1288 104"
+		Node "-912 1160 96"
+		Node "-1072 1072 96"
+		Node "-1192 1000 96"
+		Node "-1328 896 88"
+		Node "-1432 760 64"
+		Node "-1512 584 40"
+		Node "-1496 408 24"
+		Node "-1360 64 24"
+		Node "-1472 -40 24"
+		Node "-1640 -152 -16"
+		Node "-1792 -232 -32"
+		Node "-1928 -328 -40"
+		Node "-1936 -448 -40"
+		Node "-1880 -544 -40"
+		Node "-1792 -632 -40"
+		Node "-1512 -776 -32"
+		Node "-1488 -864 -24"
+		Node "-1488 -1032 32"
+		Node "-1488 -1408 32"
+		Node "-1488 -1808 224"
+		Node "-1472 -1936 224"
+		Node "-1392 -2000 224"
+		Node "-1304 -2032 224"
+		Node "-1192 -2032 224"
+		Node "-1072 -2008 224"
+		Node "-992 -1944 224"
+		Node "-928 -1888 224"
+		Node "-816 -1832 224"
+		Node "-768 -1832 224"
+		Node "-632 -1832 160"
+		Node "-536 -1832 160"
+		Node "-448 -1904 160"
+		Node "-344 -2032 160"
+		Node "-280 -2120 160"
+		Node "128 -2336 160"
+		Node "304 -2328 160"
+		Node "392 -2280 160"
+		Node "464 -2240 160"
+		Node "536 -2176 160"
+		Node "576 -2112 160"
+		Node "600 -2024 160"
+		Node "608 -1960 160"
+		Node "592 -1896 160"
+		Node "528 -1816 160"
+		Node "424 -1792 160"
+		Node "296 -1792 104"
+		Node "248 -1784 96"
+		Node "192 -1760 96"
+		Node "160 -1712 96"
+		Node "136 -1664 96"
+		Node "128 -1592 96"
+		Node "128 -1528 96"
+		Node "128 -1424 96"
+		Node "264 -1144 96"
+	}
+
+    ExtraTankPath // E Tank
+	{
+		Name "tank_path_e"
+		Node "-1953 -448 -32"
+		Node "-1881 -544 -40"
+		Node "-1793 -632 -40"
+		Node "-1513 -776 -32"
+		Node "-1489 -864 -24"
+		Node "-1489 -1032 32"
+		Node "-1489 -1408 32"
+		Node "-1489 -1808 224"
+		Node "-1473 -1936 224"
+		Node "-1393 -2000 224"
+		Node "-1305 -2032 224"
+		Node "-1193 -2032 224"
+		Node "-1073 -2008 224"
+		Node "-993 -1944 224"
+		Node "-929 -1888 224"
+		Node "-817 -1832 224"
+		Node "-769 -1832 224"
+		Node "-633 -1832 160"
+		Node "-537 -1832 160"
+		Node "-449 -1904 160"
+		Node "-345 -2032 160"
+		Node "-281 -2120 160"
+		Node "-145 -2328 160"
+		Node "129 -2336 160"
+		Node "305 -2328 160"
+		Node "1025 -1808 160"
+		Node "1137 -1720 160"
+		Node "1145 -1512 152"
+		Node "1145 -1328 160"
+		Node "1153 -1136 160"
+		Node "1153 -880 272"
+		Node "1153 -520 272"
+		Node "1153 -248 144"
+		Node "1161 -64 144"
+		Node "1169 96 112"
+		Node "1169 112 104"
+		Node "1193 200 104"
+		Node "1225 416 96"
+		Node "1257 712 96"
+		Node "1273 936 88"
+		Node "1249 1152 80"
+		Node "1161 1264 80"
+		Node "1049 1376 88"
+		Node "921 1504 96"
+		Node "785 1608 96"
+		Node "609 1664 48"
+		Node "473 1680 40"
+		Node "281 1680 32"
+		Node "129 1672 24"
+		Node "-121 1624 32"
+		Node "-297 1568 40"
+		Node "-465 1480 80"
+		Node "-585 1408 96"
+		Node "-745 1288 104"
+		Node "-913 1160 96"
+		Node "-1073 1072 96"
+		Node "-1193 1000 96"
+		Node "-1329 896 88"
+		Node "-1433 760 64"
+		Node "-1513 584 40"
+		Node "-1497 408 24"
+		Node "-1433 360 24"
+		Node "-1385 312 40"
+		Node "-1353 280 72"
+		Node "-1329 184 24"
+		Node "-1321 112 24"
+		Node "-1361 64 24"
+		Node "-1473 -40 24"
+		Node "-1641 -152 -16"
+		Node "-1793 -232 -32"
+		Node "-1929 -328 -40"
+		Node "-1953 -448 -32"
+		Node "-1881 -544 -40"
+		Node "-1793 -632 -40"
+		Node "-1513 -776 -32"
+		Node "-1489 -864 -24"
+		Node "-1489 -1032 32"
+		Node "-1465 -1120 32"
+		Node "-1385 -1168 32"
+		Node "-1305 -1168 32"
+		Node "-1249 -1120 32"
+		Node "-1201 -1056 32"
+		Node "-1161 -992 32"
+		Node "-1105 -944 32"
+		Node "-1033 -928 32"
+		Node "-953 -904 32"
+		Node "-881 -896 32"
+		Node "-801 -936 32"
+		Node "-785 -992 32"
+		Node "-785 -1072 32"
+		Node "-785 -1168 32"
+		Node "-745 -1232 32"
+		Node "-673 -1256 32"
+		Node "-593 -1264 32"
+		Node "-505 -1272 32"
+		Node "-417 -1280 32"
+		Node "-337 -1280 32"
+		Node "-257 -1280 32"
+		Node "-153 -1280 96"
+		Node "-17 -1168 88"
+	}
+
     //// ROBOT TEMPLATES ////
-    
+
     Templates
     {
         T_TFBot_Giant_Soldier_Champion
@@ -673,7 +1824,7 @@ WaveSchedule
 
             Item "Prince Tavish's Crown"
             Item "Forgotten King's Pauldrons"
-            
+
             CharacterAttributes
             {
                 "move speed penalty" 0.4
@@ -709,18 +1860,18 @@ WaveSchedule
 		InitialCooldown 25
 		CooldownTime 25
 		DesiredCount 1
-		
+
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
 		}
 	}
 
-    // General Design Notes
-
     //// WAVES ////
 
-    // Notes for Wave 1
+	// General Design Notes
+
+    // Wave 1 Notes
     Wave
     {
         InitWaveOutput
@@ -746,5 +1897,357 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+        WaveSpawn
+        {
+            WaitBeforeStarting 99999
+        }
+    }
+	// Wave 2 Notes
+	Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        WaveSpawn
+        {
+            WaitBeforeStarting 99999
+        }
+    }
+	// Wave 3 Notes
+	Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        WaveSpawn
+        {
+            WaitBeforeStarting 99999
+        }
+    }
+	// Wave 4 Notes
+	Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        WaveSpawn
+        {
+            WaitBeforeStarting 99999
+        }
+    }
+	// Wave 5 Notes
+	Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        WaveSpawn
+        {
+            WaitBeforeStarting 99999
+        }
+    }
+	// Wave 6 Notes
+	Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        WaveSpawn
+		{
+			Name "Wave6_End"
+			WaitForAllDead "Wave6_EndCheck"
+			WaitBeforeStarting 2
+
+			FirstSpawnOutput
+			{
+				Target FinaleTransitionSequence
+				Action Trigger
+			}
+		}
+
+		WaveSpawn
+		{
+			WaitBeforeStarting 9999
+		}
+    }
+	// Wave 7 Notes
+	Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`Wave7SetupRelay`, `Trigger`)
+					EntFire(`Wave7SetupEndRelay`, `Enable`)
+                  "
+        }
+        StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`Wave7StartRelay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		WaveSpawn
+		{
+			Name "TankA"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 14.684
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			Tank
+			{
+				Name "teletank$usecustomlocomotion|2^scale|0.75^targetname|tank_a^pingsound|misc/null.wav^disablesmokestack|1"
+				ClassIcon tank_tele
+				Health 1000
+				Speed 0
+				StartingPathTrackNode "tank_path_a_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+				 	Action Trigger
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "TankB"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15.184
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			Tank
+			{
+				Name "teletank$usecustomlocomotion|2^scale|0.75^targetname|tank_b^pingsound|misc/null.wav^disablesmokestack|1"
+				ClassIcon tank_tele
+				Health 1000
+				Speed 0
+				StartingPathTrackNode "tank_path_b_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+				 	Action Trigger
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "TankC"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15.684
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			Tank
+			{
+				Name "teletank$usecustomlocomotion|2^scale|0.75^targetname|tank_c^pingsound|misc/null.wav^disablesmokestack|1"
+				ClassIcon tank_tele
+				Health 1000
+				Speed 0
+				StartingPathTrackNode "tank_path_c_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+				 	Action Trigger
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "TankD"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16.184
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			Tank
+			{
+				Name "teletank$usecustomlocomotion|2^scale|0.75^targetname|tank_d^pingsound|misc/null.wav^disablesmokestack|1"
+				ClassIcon tank_tele
+				Health 1000
+				Speed 0
+				StartingPathTrackNode "tank_path_d_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+				 	Action Trigger
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "TankE"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 16.684
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			Tank
+			{
+				Name "teletank$usecustomlocomotion|2^scale|0.75^targetname|tank_e^pingsound|misc/null.wav^disablesmokestack|1"
+				ClassIcon tank_tele
+				Health 1000
+				Speed 0
+				StartingPathTrackNode "tank_path_e_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+				 	Action Trigger
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave7_End"
+			WaitForAllDead "Wave7_EndCheck"
+			WaitBeforeStarting 0
+
+			FirstSpawnOutput
+			{
+				Target Wave7EndRelay
+				Action Trigger
+			}
+		}
+
+		WaveSpawn
+		{
+			WaitBeforeStarting 9999
+		}
     }
 }
