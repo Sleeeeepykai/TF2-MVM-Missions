@@ -19,6 +19,27 @@ WaveSchedule
 	AddSentryBusterWhenDamageDealtExceeds 3000
     AddSentryBusterWhenKillCountExceeds 10
 
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						IncludeScript(`tankextensions_main`)
+					  "
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+
 	//// ROBOT TEMPLATES ////
 
 	Templates
@@ -49,7 +70,7 @@ WaveSchedule
 		InitialCooldown 30
 		CooldownTime 30
 		DesiredCount 1
-		
+
 		TFBot
 		{
 			Template T_TFBot_SentryBuster
@@ -58,7 +79,7 @@ WaveSchedule
 
 	Mission // Spy (Wave 1)
 	{
-		Objective Spy  
+		Objective Spy
 		Where spawnbot_mission_spy
 		BeginAtWave 1
 		RunForThisManyWaves 1
@@ -90,7 +111,7 @@ WaveSchedule
 
 	Mission // Spy (Wave 4)
 	{
-		Objective Spy  
+		Objective Spy
 		Where spawnbot_mission_spy
 		BeginAtWave 4
 		RunForThisManyWaves 1
@@ -122,7 +143,7 @@ WaveSchedule
 
 	Mission // Spy (Wave 7)
 	{
-		Objective Spy  
+		Objective Spy
 		Where spawnbot_mission_spy
 		BeginAtWave 7
 		RunForThisManyWaves 1
@@ -135,7 +156,7 @@ WaveSchedule
 			Template T_TFBot_Spy
 		}
 	}
-	
+
 	Wave
 	{
 		InitWaveOutput
@@ -173,8 +194,8 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0.1
-			TotalCurrency 100		
-		
+			TotalCurrency 100
+
 			TFBot
 			{
 				Class Heavyweapons
@@ -192,7 +213,7 @@ WaveSchedule
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 15
 			TotalCurrency 300
-		
+
 			TFBot
 			{
 				Template T_TFBot_Demoman_Knight
@@ -266,7 +287,7 @@ WaveSchedule
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 2
 			TotalCurrency 40
-			
+
 			TFBot
 			{
 				Class Scout
@@ -341,7 +362,7 @@ WaveSchedule
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 2
 			TotalCurrency 40
-			
+
 			TFBot
 			{
 				Class Scout
@@ -416,7 +437,7 @@ WaveSchedule
 			WaitBeforeStarting 3
 			WaitBetweenSpawns 2
 			TotalCurrency 40
-			
+
 			TFBot
 			{
 				Class Scout
@@ -471,8 +492,8 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 4
 			WaitBetweenSpawns 0.1
-			TotalCurrency 100		
-		
+			TotalCurrency 100
+
 			TFBot
 			{
 				Class Heavyweapons
@@ -520,17 +541,17 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss_alternate"
+				Template Tank_Tiny
 				Health 23000
 				Speed 75
-				StartingPathTrackNode "tank_path_main_start"
-				
-				OnBombDroppedOutput                             
+				StartingPathTrackNode "tank_path_flank_1"
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
-			}		
+			}
 		}
 		WaveSpawn // Support Scouts
 		{
@@ -543,7 +564,7 @@ WaveSchedule
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 8
 			TotalCurrency 250
-		
+
 			TFBot
 			{
 				Class Scout
@@ -587,7 +608,7 @@ WaveSchedule
 		{
 			Name "Wave2_Subwave1_GHeavy2"
 			WaitForAllSpawned "Wave2_Subwave1_GHeavy"
-			Where spawnbot_tank_main
+			Where spawnbot_minitank_main
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
@@ -682,7 +703,7 @@ WaveSchedule
 		{
 			Name "Wave2_Subwave1_GHeavy4"
 			WaitForAllSpawned "Wave2_Subwave1_GHeavy3"
-			Where spawnbot_tank_flank
+			Where spawnbot_minitank_flank
 			TotalCount 10
 			MaxActive 10
 			SpawnCount 10
@@ -748,7 +769,7 @@ WaveSchedule
 			Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`bombpath_garage_relay`, `Trigger`)
+                    EntFire(`bombpath_warehouse_relay`, `Trigger`)
                   "
 		}
 		StartWaveOutput
@@ -1118,7 +1139,7 @@ WaveSchedule
 			Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`bombpath_garage_relay`, `Trigger`)
+                    EntFire(`bombpath_warehouse_relay`, `Trigger`)
                   "
 		}
 		StartWaveOutput
@@ -1176,7 +1197,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave1_Pyros"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
@@ -1222,15 +1243,15 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss"
-				Health 30000
+				Template Tank_Tiny
+				Health 28000
 				Speed 75
-				StartingPathTrackNode "tank_path_main_start"
-				
-				OnBombDroppedOutput                             
+				StartingPathTrackNode "tank_path_flank_1"
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
 			}
 		}
@@ -1256,7 +1277,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave1_Pyros2"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier2"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
@@ -1311,7 +1332,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave1_Pyros3"
 			WaitForAllSpawned "Wave4_Subwave1_GBurstSoldier3"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
@@ -1378,7 +1399,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave2_Pyros"
 			WaitForAllSpawned "Wave4_Subwave2_GBurstSoldier"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
@@ -1445,7 +1466,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave2_Pyros2"
 			WaitForAllSpawned "Wave4_Subwave2_GBurstSoldier2"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 8
 			SpawnCount 8
@@ -1487,7 +1508,7 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
-		
+
 		// Subwave 1
 		WaveSpawn // Support Soldiers
 		{
@@ -1540,7 +1561,7 @@ WaveSchedule
 		WaveSpawn // 1 GDeflector Heavy
 		{
 			Name "Wave5_Subwave1_GDeflectorHeavy"
-			Where spawnbot_tank_main
+			Where spawnbot_minitank_main
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1557,7 +1578,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave1_GDeflectorHeavy2"
 			WaitForAllSpawned "Wave5_Subwave1_GDeflectorHeavy"
-			Where spawnbot_tank_flank
+			Where spawnbot_minitank_flank
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1605,7 +1626,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave1_GDeflectorHeavy3"
 			WaitForAllSpawned "Wave5_Subwave1_Pyros2"
-			Where spawnbot_tank_main
+			Where spawnbot_minitank_main
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1622,7 +1643,7 @@ WaveSchedule
 		{
 			Name "Wave5_Subwave1_GDeflectorHeavy4"
 			WaitForAllSpawned "Wave5_Subwave1_GDeflectorHeavy3"
-			Where spawnbot_tank_flank
+			Where spawnbot_minitank_flank
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -1979,7 +2000,7 @@ WaveSchedule
 		{
 			Name "Wave6_Subwave2_Heavies"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstSoldier"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 4
 			SpawnCount 2
@@ -2053,7 +2074,7 @@ WaveSchedule
 		{
 			Name "Wave6_Subwave2_Pyros"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstSoldier2"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 10
 			MaxActive 6
 			SpawnCount 2
@@ -2116,7 +2137,7 @@ WaveSchedule
 		{
 			Name "Wave6_Subwave2_Heavies2"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstSoldier3"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 4
 			SpawnCount 2
@@ -2159,7 +2180,7 @@ WaveSchedule
 		{
 			Name "Wave6_Subwave2_Pyros2"
 			WaitForAllSpawned "Wave6_Subwave2_GBurstSoldier4"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 10
 			MaxActive 6
 			SpawnCount 2
@@ -2208,7 +2229,7 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
-		
+
 		// Subwave 1
 		WaveSpawn // 1 Tank
 		{
@@ -2222,15 +2243,15 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss_alternate"
-				Health 30000
+				Template Tank_Tiny
+				Health 28000
 				Speed 75
-				StartingPathTrackNode "tank_path_main_start"
-				
-				OnBombDroppedOutput                             
+				StartingPathTrackNode "tank_path_flank_1"
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
 			}
 		}
@@ -2353,15 +2374,15 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss"
-				Health 30000
+				Template Tank_Tiny
+				Health 28000
 				Speed 75
-				StartingPathTrackNode "tank_path_flank_start"
-				
-				OnBombDroppedOutput                             
+				StartingPathTrackNode "tank_path_main_1"
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
 			}
 		}
@@ -2476,7 +2497,7 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_Heavies"
 			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 4
 			SpawnCount 2
@@ -2565,7 +2586,7 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_Heavies2"
 			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier2"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 4
 			SpawnCount 2
@@ -2654,7 +2675,7 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_Heavies3"
 			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier3"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 4
 			SpawnCount 2
@@ -2743,7 +2764,7 @@ WaveSchedule
 		{
 			Name "Wave7_Subwave2_Heavies4"
 			WaitForAllSpawned "Wave7_Subwave2_GRapidSoldier4"
-			Where spawnbot_tunnel
+			Where spawnbot
 			TotalCount 8
 			MaxActive 4
 			SpawnCount 2
@@ -2796,15 +2817,15 @@ WaveSchedule
 
 			Tank
 			{
-				Name "tankboss"
-				Health 40000
+				Template Tank_Tiny
+				Health 32000
 				Speed 75
-				StartingPathTrackNode "tank_path_main_start"
-				
-				OnBombDroppedOutput                             
+				StartingPathTrackNode "tank_path_flank_1"
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
 			}
 		}
@@ -2857,7 +2878,7 @@ WaveSchedule
 			Target BigNet
             Action RunScriptCode
             Param "
-                    EntFire(`bombpath_garage_relay`, `Trigger`)
+                    EntFire(`bombpath_warehouse_relay`, `Trigger`)
                   "
 		}
 		StartWaveOutput
@@ -2877,7 +2898,7 @@ WaveSchedule
                   "
         }
 
-		WaveSpawn 
+		WaveSpawn
 		{
 			Name "Wave8_Subwave1_BitchHavers"
 			Where spawnbot
@@ -2900,7 +2921,7 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn 
+		WaveSpawn
 		{
 			Name "Wave8_Subwave1_HoeHarvesters"
 			Where spawnbot
