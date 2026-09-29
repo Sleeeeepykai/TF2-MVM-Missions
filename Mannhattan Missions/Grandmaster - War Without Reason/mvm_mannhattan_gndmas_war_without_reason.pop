@@ -51,6 +51,22 @@ WaveSchedule
 
 	//// CUSTOM WEAPONS ////
 
+	CustomWeapon
+	{
+		"GoldenJuggernautHelm"
+		{
+			OriginalItemName "The Bunsen Brave"
+
+			"set item tint RGB" "15185211"
+		}
+		"GoldenJuggernautBeard"
+		{
+			OriginalItemName "The All-Father"
+
+			"set item tint RGB" "15185211"
+		}
+	}
+
 	//// POINT TEMPLATES ////
 
 	PointTemplates
@@ -128,6 +144,25 @@ WaveSchedule
 				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_sentrybuster:Enable::0:-1,0,-1"
 				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_sniper:Enable::0:-1,0,-1"
 				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_spy:Enable::0:-1,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "FirstBreakRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Subwave1_ScoutRunner,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Subwave1_ScoutRunner,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `You've earned a break. Rebuild, upgrade and prepare.`, lifetime = 5, play_sound = `misc/null.wav`, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_get_to_upgrade09.mp3,0,-1"
+				"OnTrigger" "FrontUpgradeOpen,Trigger,,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `10 seconds remain.`, lifetime = 5, play_sound = `misc/null.wav`, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})20,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `5 seconds.`, lifetime = 5, play_sound = `misc/null.wav`, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})25,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_wave_start03.mp3,27,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `The war continues.`, lifetime = 5, play_sound = `misc/null.wav`, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})30,-1"
+				"OnTrigger" "FrontUpgradeClose,Trigger,,30,-1"
 			}
 		}
 
@@ -1839,10 +1874,53 @@ WaveSchedule
 			}
 		}
 
+		T_TFBot_Miniboss_Heavy_Juggernaut
+		{
+			Name "Golden Gatling Juggernaut"
+			Class Heavy
+			ClassIcon heavy_golden_titanium
+			Health 15000
+			Scale 2
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			WeaponRestrictions PrimaryOnly
+
+			Tag bot_giant
+
+			Item "GoldenJuggernautHelm" [$SIGSEGV]
+			Item "GoldenJuggernautBeard" [$SIGSEGV]
+
+			CharacterAttributes
+			{
+				"move speed bonus" 0.4
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+				"mult stun resistance" 0
+				"mod weapon blocks healing" 1
+				"rage giving scale" 0.5
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_MINIGUN"
+
+				"damage bonus" 1.25
+				"fire rate bonus" 0.75
+				"minigun spinup time increased" 2
+				"fire rate bonus with reduced health" 0.1
+
+				"item style override" 1
+				"is australium item" 1
+				"turn to gold" 1
+				"attach particle effect" "3083"
+			}
+		}
+
 		// GIANTS //
 
 		// COMMONS //
-
 		T_TFBot_Heavyweight_Champ_Concheror
 		{
 			Name "Concheror Champ"
@@ -1864,6 +1942,15 @@ WaveSchedule
 			}
 		}
 
+		T_TFBot_Pyro_Airblast
+		{
+			Class Pyro
+			ClassIcon pyro_reflect_daan_nolod
+			Skill Expert
+
+			Item "Traffic Cone"
+		}
+
 		//// GATEBOTS ////
 
 		// GIANTS //
@@ -1874,6 +1961,7 @@ WaveSchedule
 			Tag bot_giant
 
 			Item "MvM GateBot Light Heavy"
+			Item "Big Steel Jaw of Summer Fun"
 
 			CharacterAttributes
 			{
@@ -1933,6 +2021,63 @@ WaveSchedule
 				}
 			}
 		}
+
+		// COMMONS //
+		T_TFBot_Soldier_Extended_Concheror_Gatebot
+		{
+			Template T_TFBot_Soldier_Extended_Concheror
+
+			Item "MvM GateBot Light Soldier"
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Soldier"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Soldier_Burst_Gatebot
+		{
+			Template T_TFBot_Soldier_Burst
+
+			Item "MvM GateBot Light Soldier"
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Soldier"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -1977,6 +2122,8 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		//// PHASE 1 ////
 
 		// Subwave 1
 		WaveSpawn // Support Scouts
@@ -2100,6 +2247,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					Tag bot_giant
+
 					CharacterAttributes
 					{
 						"damage force reduction" 0
@@ -2216,6 +2365,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					Tag bot_giant
+
 					CharacterAttributes
 					{
 						"damage force reduction" 0
@@ -2308,6 +2459,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
+
+					Tag bot_giant
 
 					CharacterAttributes
 					{
@@ -2425,6 +2578,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					Tag bot_giant
+
 					CharacterAttributes
 					{
 						"damage force reduction" 0
@@ -2510,11 +2665,768 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 100
 
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
 			Tank
 			{
 				Template Tank_Gate
 				Health 40000
 				StartingPathTrackNode "tank_path_gate_1"
+			}
+		}
+		WaveSpawn // 1 GPyro and 1 GCharged Medic
+		{
+			Name "Subwave3_GPyro"
+			WaitForAllSpawned "Subwave3_GateTank"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+					Tag noflank_ledge
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 18 Burst Demos
+		{
+			Name "Subwave3_BurstDemos"
+			WaitForAllSpawned "Subwave3_GateTank"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+			}
+		}
+		WaveSpawn // 18 Burst Soldiers
+		{
+			Name "Subwave3_BurstSoldiers"
+			WaitForAllSpawned "Subwave3_GateTank"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Burst
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 1 GCharged Medic
+		{
+			Name "Subwave3_GPyro2"
+			WaitForAllSpawned "Subwave3_GPyro"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+					Tag noflank_ledge
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 6 Rapid Battalion Soldiers and 12 Burst Demos
+		{
+			Name "Subwave3_BackupSquads"
+			WaitForAllSpawned "Subwave3_GPyro2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 10
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.75
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+			}
+		}
+		WaveSpawn // 4 Spies
+		{
+			Name "Subwave3_Spies"
+			WaitForAllSpawned "Subwave3_GPyro2"
+			Where spawnbot_front_mission_spy [$SIGSEGV]
+			Where spawnbot_gatea_mission_spy [$SIGSEGV]
+			Where spawnbot_gateb_mission_spy [$SIGSEGV]
+			Support Limited
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 1 GCharged Medic
+		{
+			Name "Subwave3_GPyro3"
+			WaitForAllSpawned "Subwave3_GPyro2"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+					Tag noflank_ledge
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 6 Rapid Battalion Soldiers and 12 Burst Demos
+		{
+			Name "Subwave3_BackupSquads2"
+			WaitForAllSpawned "Subwave3_GPyro3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 10
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.75
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+				}
+			}
+		}
+
+		// Subwave 4
+		WaveSpawn // 2 GRapid Soldiers and 4 Pyros
+		{
+			Name "Subwave4_GRapidSoldier"
+			WaitForAllDead "Subwave3_GPyro3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+			}
+		}
+		WaveSpawn // 14 Conch Soldiers
+		{
+			Name "Subwave4_ConchSoldiers"
+			WaitForAllSpawned "Subwave4_GRapidSoldier"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 14
+			MaxActive 10
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Concheror_Gatebot
+				Skill Expert
+
+				Tag GateAtoBFlankUpper
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 Pyros
+		{
+			Name "Subwave4_GRapidSoldier2"
+			WaitForAllSpawned "Subwave4_GRapidSoldier"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+			}
+		}
+		WaveSpawn // 14 Burst Soldiers
+		{
+			Name "Subwave4_BurstSoldiers"
+			WaitForAllSpawned "Subwave4_GRapidSoldier2"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 14
+			MaxActive 10
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Burst_Gatebot
+				Skill Expert
+
+				Tag GateAtoBFlankLower
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 Pyros
+		{
+			Name "Subwave4_GRapidSoldier3"
+			WaitForAllSpawned "Subwave4_GRapidSoldier2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+			}
+		}
+		WaveSpawn // 14 Conch Soldiers
+		{
+			Name "Subwave4_ConchSoldiers2"
+			WaitForAllSpawned "Subwave4_GRapidSoldier3"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 14
+			MaxActive 10
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Concheror_Gatebot
+				Skill Expert
+
+				Tag GateAtoBFlankUpper
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 Pyros
+		{
+			Name "Subwave4_GRapidSoldier4"
+			WaitForAllSpawned "Subwave4_GRapidSoldier3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Airblast
+				}
+			}
+		}
+		WaveSpawn // 14 Burst Soldiers
+		{
+			Name "Subwave4_BurstSoldiers2"
+			WaitForAllSpawned "Subwave4_GRapidSoldier4"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 14
+			MaxActive 10
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Burst_Gatebot
+				Skill Expert
+
+				Tag GateAtoBFlankLower
+			}
+		}
+
+		// Subwave 5
+		WaveSpawn // Golden Gatling Juggernaut & 1 GShield Medic
+		{
+			Name "Subwave5_GGJuggernaut"
+			WaitForAllDead "Subwave4_GRapidSoldier4"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Miniboss_Heavy_Juggernaut
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Shield
+				}
+			}
+		}
+		WaveSpawn // 5 Ballista Bowmen and 5 Full-Uber Medics
+		{
+			Name "Subwave5_BallistaBowmen"
+			WaitForAllSpawned "Subwave5_GGJuggernaut"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman_Ballista
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 32 Rapid Scouts
+		{
+			Name "Subwave5_RapidScouts"
+			WaitForAllSpawned "Subwave5_GGJuggernaut"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 32
+			MaxActive 16
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Spammer
+			}
+		}
+
+		WaveSpawn // Golden Gatling Juggernaut & 1 GShield Medic
+		{
+			Name "Subwave5_GGJuggernaut2"
+			WaitForAllSpawned "Subwave5_GGJuggernaut"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Miniboss_Heavy_Juggernaut
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Shield
+				}
+			}
+		}
+		WaveSpawn // 5 Ballista Bowmen and 5 Full-Uber Medics
+		{
+			Name "Subwave5_BallistaBowmen2"
+			WaitForAllSpawned "Subwave5_GGJuggernaut2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman_Ballista
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 32 Rapid Scouts
+		{
+			Name "Subwave5_RapidScouts2"
+			WaitForAllSpawned "Subwave5_GGJuggernaut2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 32
+			MaxActive 16
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Spammer
+			}
+		}
+
+		// Subwave 5 Check
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_GGJuggernaut"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_GGJuggernaut2"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_BallistaBowmen"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_BallistaBowmen2"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_RapidScouts"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_RapidScouts"
+		}
+
+		WaveSpawn
+		{
+			Name "Subwave5_Break"
+			WaitForAllSpawned "Subwave5_Check"
+
+			FirstSpawnOutput
+			{
+				Target FirstBreakRelay
+				Action Trigger
+			}
+		}
+
+		//// PHASE 2 ////
+
+		// Subwave 6
+		WaveSpawn
+		{
+			Name "Subwave6_Tank"
+			WaitForAllSpawned "Subwave5_Break"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Name "tankboss"
+				Health 30000
+				Speed 75
+				StartingPathTrackNode "tank_path_gate_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
 			}
 		}
 	}
