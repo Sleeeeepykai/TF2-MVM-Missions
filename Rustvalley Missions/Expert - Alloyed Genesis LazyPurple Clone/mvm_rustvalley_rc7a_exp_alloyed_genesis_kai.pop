@@ -48,9 +48,11 @@ WaveSchedule
 
 	// SFX
 	PrecacheSound "major_shocks_spin.mp3"
+	PrecacheSound "megabuster_explode.mp3"
 
 	// Music
 	PrecacheSound "rustvalleynight.mp3"
+	PrecacheSound "w3preboss.mp3"
 
 	// Precached Particles //
 
@@ -109,6 +111,63 @@ WaveSchedule
 			"custom weapon fire sound" "=55|weapons/rpg/rocketfire1.wav"
             "custom impact sound" "=75|weapons/explode4.wav"
 		}
+
+		//// TIMED DISASTER ////
+
+		"TimedDisasterGrenadeLauncher1"
+        {
+            OriginalItemName "Highland High Heels"
+            "custom item model" "models/weapons/c_models/c_grenadelauncher/c_grenadelauncher.mdl"
+            "attachment name" "flag"
+            "attachment angles" "45 315 -30"
+            "attachment offset" "25 0 0"
+        }
+		"TimedDisasterGrenadeLauncher2"
+        {
+            OriginalItemName "Potato of Labor"
+            "custom item model" "models/weapons/c_models/c_grenadelauncher/c_grenadelauncher.mdl"
+            "attachment name" "flag"
+            "attachment angles" "45 270 30"
+            "attachment offset" "-25 0 0"
+        }
+
+		"MultiPillLauncher"
+        {
+            OriginalItemName "TF_WEAPON_GRENADELAUNCHER"
+			"dmg bonus vs buildings" 0.5
+			"fire rate bonus" 0.25
+			"faster reload rate" -0.5
+
+			"mult projectile count" 2
+            "spread offset pattern" "0 25 -20|0 -25 -20"
+            "projectile spread angle penalty" 3
+        }
+        "MultiPillLauncher2"
+        {
+            OriginalItemName "The Iron Bomber"
+			"dmg bonus vs buildings" 0.5
+			"fire rate penalty" 2.6
+			"faster reload rate" 0.001
+
+			"mult projectile count" 8
+            "spread offset pattern" "0 15 -10|0 35 -10|0 15 -30|0 35 -30|0 -15 -10|0 -35 -10|0 -15 -30|0 -35 -30"
+        }
+
+		"TimedDisasterCannon"
+		{
+			OriginalItemName "The Loose Cannon"
+            "damage bonus" 1.2
+			"dmg bonus vs buildings" 0.5
+
+			"mult projectile count" 2
+            "projectile speed increased" 1.2
+            "projectile spread angle penalty" 10
+		}
+
+		"PillRain"
+		{
+			OriginalItemName "The Loch-n-Load"
+		}
 	}
 
 	//// POINT TEMPLATES ////
@@ -130,8 +189,8 @@ WaveSchedule
 						IncludeScript(`tankextensions_main`)
                 		IncludeScript(`tankextensions/gatetank`)
 						IncludeScript(`tankextensions/hammertank`)
+						IncludeScript(`tankextensions/targetank`)
 						IncludeScript(`tankextensions/teletank`)
-						IncludeScript(`tankextensions/speedtank`)
 					  "
 			}
 
@@ -234,7 +293,7 @@ WaveSchedule
 				"OnTrigger" "Wave2EndRelayStun,Disable,,5.1,-1"
 				"OnTrigger" "item_teamflag*,ForceResetSilent,,5,-1"
 				"OnTrigger" "item_teamflag*,Disable,,5,-1"
-				"OnTrigger" "BigNetRunScriptCode;EmitSoundEx({sound_name=`music/mvm_lost_wave.wav`,channel = 6, pitch = 60, filter_type = 5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name=`music/mvm_lost_wave.wav`,channel = 6, pitch = 60, filter_type = 5})01"
 				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)5-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 64, 119, 158, 150, 0.9, 0.1, 1)51"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 7, 8, 2)5-1"
@@ -314,9 +373,12 @@ WaveSchedule
 			{
 				"targetname" "Wave3SetupRelay"
 
-				"OnTrigger" "Wave3SideBarrierPT,ForceSpawn,,0,-1"
 				"OnTrigger" "Wave3MainBarrierPT,ForceSpawn,,0,-1"
+				"OnTrigger" "Wave3SideBarrierPT,ForceSpawn,,0,-1"
+				"OnTrigger" "Wave3FrontBarrierPT,ForceSpawn,,0,-1"
 				"OnTrigger" "forcecapture_ab_relay,Trigger,,0,-1"
+				"OnTrigger" "pathblocker_b,Disable,,0,-1"
+				"OnTrigger" "pathblocker_a,Enable,,0,-1"
 				"OnTrigger" "BigNet,RunScriptCode,SetSkyboxTexture(`sky_halloween`),0,-1"
 				"OnTrigger" "RustvalleyNightCC,Enable,,0,-1"
 				"OnTrigger" "RustvalleyFog,Enable,,0,-1"
@@ -326,6 +388,7 @@ WaveSchedule
 				"OnTrigger" "door_red_large_win_4,Lock,,0,-1"
 
 				"OnTrigger" "cap_b_trigtimer,$SetKey$area_time_to_cap,40,0,-1"
+				"OnTrigger" "cap_a_trigtimer,$SetKey$area_time_to_cap,40,0,-1"
 
 				"OnTrigger" "cap_b_trigtimer,AddOutput,OnCapTeam1 PointBCaptureRelay:Trigger::0:-1,0,-1"
 				"OnTrigger" "cap_a_trigtimer,AddOutput,OnCapTeam1 PointACaptureRelay:Trigger::0:-1,0,-1"
@@ -477,7 +540,9 @@ WaveSchedule
 				"OnTrigger" "GateBForwardTeleporter,SetAnimation,idle,0,-1"
 				"OnTrigger" "GateBForwardTeleporterParticle,Kill,,0,-1"
 				"OnTrigger" "GateATankTeleporter,SetAnimation,running,0,-1"
-				"OnTrigger" "pop_interface,$ResumeWavespawn,Wave3_Subwave2_GDeflectorHeavy,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_Bustlets2,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_Bustlets2,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave2_GDeflectorHeavy,0,-1"
 			}
 
 			prop_dynamic
@@ -501,93 +566,111 @@ WaveSchedule
 				"OnTrigger" "cap_a_trigtimer,SetTeamCanCap,2 1,0,-1"
 				"OnTrigger" "cap_a_trigtimerRunScriptCodeNetProps.SetPropEntity(self,`m_hFilter`,Entities.FindByName(null, `capture_filter`))0-1"
 			}
-		}
 
-		Wave3SideBarrierPT
-		{
-			RemoveIfKilled "SideBarrierProp"
+			logic_relay
+			{
+				"targetname" "PointACaptureRelay"
+
+				"OnTrigger" "pop_interface,$ResumeWavespawn,Wave3_Subwave3_Tank,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break4.wav,0,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break1.wav,0.33,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break3.wav,0.66,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break4.wav,0.99,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break1.wav,1.32,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break2.wav,1.65,1"
+                "OnTrigger" "tf_gamerules,PlayVO,physics/wood/wood_plank_break3.wav,2,1"
+
+				"OnTrigger" "SideBarrierProp,Kill,,2,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `A shortcut has opened!`, lifetime = 5, worldPosX = -2847, worldPosY = 1015, worldPosZ = -82})2,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Wave3IntermissionRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_get_to_upgrade01.mp3,0,1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `The upgrade station is open!`, lifetime = 5, worldPosX = 434, worldPosY = 666, worldPosZ = 53})0,-1"
+
+				"OnTrigger" "forward_station_enable,Trigger,,0,-1"
+				"OnTrigger" "Wave3Music,FadeOut,3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,w3preboss.mp3,0,-1"
+
+				"OnTrigger" "Player,$DisplayTextChat,{99C2D8}???{reset}: YOUR RESILIENCE AMAZES ME.,7,-1"
+                "OnTrigger" "Player,$DisplayTextChat,{99C2D8}???{reset}: BUT TO SHOW ME YOUR WORTH. YOU WILL FIGHT AN OLD FOE.,13,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `It will arrive soon.`, lifetime = 5, worldPosX = 1454, worldPosY = -1261, worldPosZ = -231})15,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,15,1"
+				"OnTrigger" "FrontTeleporter,SetAnimation,running,15,-1"
+				"OnTrigger" "FrontTeleporterParticle1,Start,,15,-1"
+
+                "OnTrigger" "Player,$DisplayTextChat,{99C2D8}???{reset}: ONLY THEN WILL YOU TRULY GET MY ATTENTION.,20,-1"
+                "OnTrigger" "Player,$DisplayTextChat,{99C2D8}???{reset}: IT HAS YEARNED FOR REVENGE. I GRANTED ITS WISH.,27,-1"
+
+				"OnTrigger" "forward_station_disable,Trigger,,30,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_cpoint_klaxon.wav,30,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Start,,30,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Stop,,30.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_cpoint_klaxon.wav,32,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Start,,32,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Stop,,32.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_cpoint_klaxon.wav,34,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Start,,34,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Stop,,34.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_cpoint_klaxon.wav,35,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Start,,35,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Stop,,35.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_cpoint_klaxon.wav,36,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Start,,36,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Stop,,36.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_cpoint_klaxon.wav,36.5,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Start,,36.5,-1"
+				"OnTrigger" "FrontTeleporterParticle2,Stop,,36.6,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,37,1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 186, 186, 186, 255, 1, 0.1, 1)37-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave3_Subwave4_TimedDisaster,37,-1"
+			}
 
 			prop_dynamic
-            {
-                "targetname" "SideBarrierProp"
-				"origin" "-1825 15 -117"
-                "model" "models/props_mvm/mine_elevator_door.mdl"
+			{
+				"targetname" "FrontTeleporter"
+				"origin" "1454 -1261 -281"
+				"model" "models/buildables/teleporter_light.mdl"
+				"modelscale" "3.5"
+				"skin" "1"
+				"solid" "0"
 
-                "disablebonefollowers" "1"
+				"disablebonefollowers" "1"
 				"disableshadows" "1"
-            }
-			prop_dynamic
-            {
-                "targetname" "SideBarrierProp"
-				"origin" "-1825 648 -117"
-                "model" "models/props_mvm/mine_elevator_door.mdl"
-
-                "disablebonefollowers" "1"
-				"disableshadows" "1"
-            }
-			prop_dynamic
-            {
-                "targetname" "SideBarrierProp"
-				"origin" "-1841 907 -285"
-                "model" "models/props_mvm/mine_elevator_door.mdl"
-
-                "disablebonefollowers" "1"
-				"disableshadows" "1"
-            }
-
-			prop_dynamic
-            {
-                "targetname" "SideBarrierProp"
-				"origin" "-2496 777 -208"
-				"angles" "0 270 0"
-                "model" "models/props_mvm/mine_elevator_door.mdl"
-
-                "disablebonefollowers" "1"
-				"disableshadows" "1"
-            }
+			}
 			func_forcefield
-            {
-                "targetname" "SideBarrierField"
-                "origin" "-2552 672 -120"
-                "mins" "-72 -112 -136"
-                "maxs" "72 112 136"
-
+			{
+				"targetname" "FrontTeleporterBarrier"
+				"origin" "1454 -1261 -281"
+                "mins" "-75 -75 -50"
+                "maxs" "75 75 500"
                 "teamnum" "3"
-            }
-			func_nobuild
-            {
-                "targetname" "SideBarrierField"
-                "origin" "-2560 800 -224"
-                "mins" "-128 -32 -32"
-                "maxs" "128 32 32"
-            }
+			}
 
-			prop_dynamic
-            {
-                "targetname" "SideBarrierProp"
-				"origin" "-2383 1176 -243"
-				"angles" "0 180 0"
-                "model" "models/props_mvm/mine_elevator_door.mdl"
-
-                "disablebonefollowers" "1"
-				"disableshadows" "1"
-            }
-			func_forcefield
-            {
-                "targetname" "SideBarrierField"
-                "origin" "-2240 1172 -196"
-                "mins" "-136 -180 -132"
-                "maxs" "136 180 132"
-
-                "teamnum" "3"
-            }
-			func_nobuild
-            {
-                "targetname" "SideBarrierField"
-                "origin" "-2400 1152 -224"
-                "mins" "-32 -192 -32"
-                "maxs" "32 192 32"
-            }
+			info_particle_system
+			{
+				"targetname" "FrontTeleporterParticle1"
+				"origin" "1454 -1261 -221"
+				"effect_name" "teleporter_mvm_bot_persist"
+			}
+			info_particle_system
+			{
+				"targetname" "FrontTeleporterParticle2"
+				"origin" "1454 -1261 -261"
+				"effect_name" "powerup_supernova_explode_blue_spiral"
+			}
 		}
 
 		Wave3MainBarrierPT
@@ -845,6 +928,164 @@ WaveSchedule
                 "targetname" "BarrierDestructionParticle"
                 "origin" "-1092 1300 0"
                 "effect_name" "mvm_wood_boards_destroy"
+            }
+		}
+
+		Wave3SideBarrierPT
+		{
+			RemoveIfKilled "SideBarrierProp"
+
+			prop_dynamic
+            {
+                "targetname" "SideBarrierProp"
+				"origin" "-1825 15 -117"
+                "model" "models/props_mvm/mine_elevator_door.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "SideBarrierProp"
+				"origin" "-1825 648 -117"
+                "model" "models/props_mvm/mine_elevator_door.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_forcefield
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-1968 328 -52"
+                "mins" "-112 -342 -76"
+                "maxs" "112 342 76"
+
+                "teamnum" "3"
+            }
+			func_nobuild
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-1824 24 -96"
+                "mins" "-32 -72 -32"
+                "maxs" "32 72 32"
+            }
+			func_nobuild
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-1824 648 -96"
+                "mins" "-32 -72 -32"
+                "maxs" "32 72 32"
+            }
+
+			prop_dynamic
+            {
+                "targetname" "SideBarrierProp"
+				"origin" "-1841 907 -285"
+                "model" "models/props_mvm/mine_elevator_door.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_forcefield
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-1976 896 -200"
+                "mins" "-120 -192 -96"
+                "maxs" "120 192 96"
+
+                "teamnum" "3"
+            }
+			func_nobuild
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-1824 896 -264"
+                "mins" "-32 -80 -32"
+                "maxs" "32 80 32"
+            }
+
+			prop_dynamic
+            {
+                "targetname" "SideBarrierProp"
+				"origin" "-2496 777 -208"
+				"angles" "0 270 0"
+                "model" "models/props_mvm/mine_elevator_door.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_forcefield
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-2552 672 -120"
+                "mins" "-72 -112 -136"
+                "maxs" "72 112 136"
+
+                "teamnum" "3"
+            }
+			func_nobuild
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-2560 800 -224"
+                "mins" "-128 -32 -32"
+                "maxs" "128 32 32"
+            }
+
+			prop_dynamic
+            {
+                "targetname" "SideBarrierProp"
+				"origin" "-2383 1176 -243"
+				"angles" "0 180 0"
+                "model" "models/props_mvm/mine_elevator_door.mdl"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_forcefield
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-2240 1172 -196"
+                "mins" "-136 -180 -132"
+                "maxs" "136 180 132"
+
+                "teamnum" "3"
+            }
+			func_nobuild
+            {
+                "targetname" "SideBarrierField"
+                "origin" "-2400 1152 -224"
+                "mins" "-32 -192 -32"
+                "maxs" "32 192 32"
+            }
+		}
+
+		Wave3FrontBarrierPT
+		{
+			RemoveIfKilled "FrontBarrierDestruction"
+
+			logic_relay
+            {
+                "targetname" "FrontBarrierDestructionRelay"
+
+				"OnTrigger" "pathblocker_a,Disable,,0,-1"
+				"OnTrigger" "FrontBarrierDestruction,SetAnimation,deathpit,0,1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tank_smash.wav,0,1"
+                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 8, 1, 50000, 0, true)0-1"
+
+				"OnTrigger" "FrontBarrierDestruction,$SetKey$renderfx,6,5,1"
+
+                "OnTrigger" "FrontBarrierDestruction,Kill,,8,1"
+            }
+
+			prop_dynamic
+            {
+                "targetname" "FrontBarrierDestruction"
+				"origin" "600 200 -158"
+				"angles" "0 270 0"
+                "model" "models/props_mvm/wood_boards_deathpit.mdl"
+				"modelscale" "1.55"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
             }
 		}
 
@@ -1265,6 +1506,166 @@ WaveSchedule
 				"effect_name" "teleporter_mvm_bot_persist"
 			}
 		}
+
+		// TIMED DISASTER //
+
+		TimedDisasterPT
+		{
+			// ATTACK POOL LOGIC //
+
+			logic_relay
+			{
+				"targetname" "TimedDisasterAttackInit"
+				"spawnflags" "2"
+
+				"OnTrigger" "TimedDisasterAttackPool,PickRandomShuffle,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "TimedDisasterAttackPool"
+
+				"OnCase01" "pop_interface,ChangeBotAttributes,TimedDisasterNuke,0,-1"
+				"OnCase02" "pop_interface,ChangeBotAttributes,TimedDisasterGrenadeShotgun,0,-1"
+				"OnCase03" "pop_interface,ChangeBotAttributes,TimedDisasterGrenadeShotgun2,0,-1"
+				"OnCase04" "pop_interface,ChangeBotAttributes,TimedDisasterCannonSpray,0,-1"
+			}
+
+			// NUKE ATTACK //
+
+			logic_relay
+			{
+				"targetname" "TimedDisasterNukeRelay"
+
+				"OnTrigger" "!activator,$Taunt,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,megabuster_explode.mp3,0,-1"
+
+				"OnTrigger" "TimedDisasterChargeParticle1,TurnOn,,1,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 3, 3, 8, 50000, 0, true)2-1"
+
+				"OnTrigger" "TimedDisasterChargeParticle2,TurnOn,,3.5,-1"
+
+				"OnTrigger" "TimedDisasterChargeParticle3,TurnOn,,6,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 3, 3, 8, 50000, 0, true)6-1"
+
+				"OnTrigger" "TimedDisasterNukeWeapon,FireOnce,,8.8,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)9-1"
+				"OnTrigger" "!activator,$RemoveCond,7,9.2,-1"
+				"OnTrigger" "TimedDisasterChargeParticle*,TurnOff,,9.3,-1"
+
+				"OnTrigger" "TimedDisasterAttackInit,Trigger,,11,-1"
+
+				"spawnflags" "2"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "TimedDisasterNukeWeapon"
+				"origin" "0 0 90"
+
+				"teamnum" "3"
+				"WeaponType" "3"
+				"Damage" "99999"
+				"SplashRadius" "99999"
+
+				"$preventshootparent" "1"
+
+				"$OnFire" "!self,DetonateStickies,,0,-1"
+			}
+
+			point_tesla
+			{
+				"targetname" "TimedDisasterChargeParticle1"
+				"origin" "0 0 90"
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 240 170"
+				"m_flRadius" "350"
+				"beamcount_min" "1"
+				"beamcount_max" "3"
+				"thick_min" "4"
+				"thick_max" "10"
+				"lifetime_min" "0.31"
+				"lifetime_max" "0.31"
+				"interval_min" "0.1"
+				"interval_max" "0.1"
+			}
+			point_tesla
+			{
+				"targetname" "TimedDisasterChargeParticle2"
+				"origin" "0 0 90"
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 240 170"
+				"m_flRadius" "450"
+				"beamcount_min" "1"
+				"beamcount_max" "6"
+				"thick_min" "4"
+				"thick_max" "10"
+				"lifetime_min" "0.25"
+				"lifetime_max" "0.25"
+				"interval_min" "0.07"
+				"interval_max" "0.07"
+			}
+			point_tesla
+			{
+				"targetname" "TimedDisasterChargeParticle3"
+				"origin" "0 0 90"
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 240 170"
+				"m_flRadius" "550"
+				"beamcount_min" "3"
+				"beamcount_max" "9"
+				"thick_min" "4"
+				"thick_max" "10"
+				"lifetime_min" "0.15"
+				"lifetime_max" "0.15"
+				"interval_min" "0.05"
+				"interval_max" "0.05"
+			}
+
+			// CANNON SPRAY ATTACK //
+
+			logic_relay
+			{
+				"targetname" "CannonSprayAttackRelay"
+
+				"OnTrigger" "!activator,$Taunt,,0,-1"
+
+				"OnTrigger" "CannonSprayRotator,StartBackward,,0,-1"
+				"OnTrigger" "CannonSprayWeapon,$StartFiring,,0.3,-1"
+
+				"OnTrigger" "CannonSprayWeapon,$StopFiring,,1.7,-1"
+				"OnTrigger" "CannonSprayRotator,StopAtStartPos,,1.8,-1"
+
+				"OnTrigger" "!activator,$RemoveCond,7,2.5,-1"
+
+				"OnTrigger" "TimedDisasterAttackInit,Trigger,,5,-1"
+
+				"spawnflags" "2"
+			}
+
+			func_rotating
+			{
+				"targetname" "CannonSprayRotator"
+
+				"origin" "0 0 250"
+
+				"maxspeed" "500"
+				"fanfriction" "100"
+				"spawnflags" "80"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "CannonSprayWeapon"
+				"parentname" "CannonSprayRotator"
+
+				"origin" "0 0 80"
+				"teamnum" "3"
+
+				"$firetime" "0.05"
+				"$weaponname" "TimedDisasterCannon"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -1595,6 +1996,322 @@ WaveSchedule
 			}
 		}
 
+		T_TFBot_Miniboss_TimedDisaster
+		{
+			Name "Timed Disaster"
+			Class Demoman
+			ClassIcon sentry_buster_king
+			Skill Expert
+			Health 80000
+			Scale 1.9
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			WeaponRestrictions PrimaryOnly
+
+			Item "The Ullapool Caber"
+
+			Item "Prince Tavish's Crown"
+			Item "TimedDisasterGrenadeLauncher1" [$SIGSEGV]
+			Item "TimedDisasterGrenadeLauncher2" [$SIGSEGV]
+
+			UseBusterModel 1
+			AlwaysGlow 1
+
+			SpawnTemplate "TimedDisasterPT"
+
+			Tag bot_giant
+			Tag dontdoublehp
+			Tag dontdoublehp_damageres
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier"	0.4
+				"override footstep sound set" 4
+				"head scale" 3.5
+				"torso scale" 0
+			}
+
+			AddAttribute
+            {
+                Item "TimedDisasterGrenadeLauncher1"
+                Name "attachment scale"
+                Value "2.3"
+                Delay 0.1
+                Repeats 1
+				Cooldown -1
+            }
+			AddAttribute
+            {
+                Item "TimedDisasterGrenadeLauncher2"
+                Name "attachment scale"
+                Value "2.3"
+                Delay 0.1
+                Repeats 1
+				Cooldown -1
+            }
+
+			ChangeAttributes
+			{
+				Name "TimedDisasterIntro"
+				Delay 0
+				Repeats 1
+			}
+
+			EventChangeAttributes
+			{
+				TimedDisasterIntro [$SIGSEGV]
+				{
+					Addcond
+					{
+						Index 87
+						Duration 5
+					}
+					Taunt
+					{
+						Delay 1.5
+						Repeats 1
+					}
+
+					ChangeAttributes
+					{
+						Name "TimedDisasterNuke"
+						Delay 5
+						Repeats 1
+					}
+				}
+
+				TimedDisasterNuke [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					WeaponRestrictions MeleeOnly
+
+					Item "The Ullapool Caber"
+
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher1"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher2"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					CharacterAttributes
+					{
+						"always allow taunt" 1
+						"gesture speed increase" 0.24
+					}
+
+					WeaponResist
+					{
+						"TF_WEAPON_KNIFE" 0.65
+					}
+
+					FireInput
+					{
+						Target "TimedDisasterNukeRelay"
+						Action "Trigger"
+						Delay 0.5
+						Repeats 1
+					}
+				}
+				TimedDisasterGrenadeShotgun [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					WeaponRestrictions PrimaryOnly
+
+					Item "MultiPillLauncher"
+
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher1"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher2"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 1
+						Duration 2
+						Cooldown 4
+					}
+
+					FireInput
+					{
+						Target "TimedDisasterAttackInit"
+						Action "Trigger"
+						Delay 9
+						Repeats 1
+					}
+				}
+				TimedDisasterGrenadeShotgun2 [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					WeaponRestrictions PrimaryOnly
+
+					Item "MultiPillLauncher2"
+
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher1"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher2"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 1
+						Duration 2
+						Cooldown 4
+					}
+					FireInput
+					{
+						Target "TimedDisasterAttackInit"
+						Action "Trigger"
+						Delay 9
+						Repeats 1
+					}
+				}
+				TimedDisasterCannonSpray [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					WeaponRestrictions MeleeOnly
+
+					Item "The Ullapool Caber"
+
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher1"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher2"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target "CannonSprayAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+					}
+				}
+				TimedDisasterPillRain [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					WeaponRestrictions PrimaryOnly
+
+					Item "PillRain"
+
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher1"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+					AddAttribute
+					{
+						Item "TimedDisasterGrenadeLauncher2"
+						Name "attachment scale"
+						Value "2.3"
+						Delay 0.1
+						Repeats 1
+						Cooldown -1
+					}
+
+					FireInput
+					{
+						Target "tf_gamerules"
+						Action "PlayVO"
+						Param "misc/doomsday_cap_spin_start.wav"
+						Delay 0
+						Repeats 1
+					}
+					FireInput
+					{
+						Target "tf_gamerules"
+						Action "PlayVO"
+						Param "weapons/loose_cannon_charge.wav"
+						Delay 0
+						Repeats 1
+					}
+
+					Addcond
+					{
+						Index 2
+						Delay 0
+						Duration 2
+					}
+
+					FireWeapon
+					{
+						Type "Primary"
+						Delay 3
+						Duration 4
+						Cooldown 99
+					}
+					FireInput
+					{
+						Target "TimedDisasterAttackInit"
+						Action "Trigger"
+						Delay 10
+						Repeats 1
+					}
+				}
+			}
+		}
+
 		//// TANKS ////
 		Tank_Gate
 		{
@@ -1626,6 +2343,19 @@ WaveSchedule
 		{
 			Name "hammertank"
 			ClassIcon tank_mallet
+			Speed 75
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+
+		Tank_Targe
+		{
+			Name "targetank"
+			ClassIcon tank_targe
 			Speed 75
 
 			OnBombDroppedOutput
@@ -2130,6 +2860,61 @@ WaveSchedule
 			}
 		}
 
+		T_TFBot_Giant_Heavy_Combo
+		{
+			Name "Giant Multi-Utility Heavy"
+			Class Heavy
+			ClassIcon heavy_closegru_giant
+			Skill Expert
+			Health 5000
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			Item "Gloves of Running Urgently MvM"
+
+			Item "Pugilist's Protector"
+			Item "Big Steel Jaw of Summer Fun"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_MINIGUN"
+
+				"damage bonus" 1.5
+				"mod minigun can holster while spinning" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "Gloves of Running Urgently MvM"
+
+				"damage bonus" 1.2
+				"fire rate bonus" 0.6
+			}
+
+			WeaponSwitch
+			{
+				Delay 0
+				Cooldown 0
+				IfSeeTarget 1
+				Type "Primary"
+			}
+			WeaponSwitch
+			{
+				Delay 0
+				Cooldown 1
+				IfSeeTarget 0
+				Type "Melee"
+			}
+		}
+
 		//// MINIGIANTS ////
 		T_TFBot_Soldier_Crit_Armored
 		{
@@ -2324,14 +3109,12 @@ WaveSchedule
 			ClassIcon boss_mecha_miner
 			Skill Expert
 			Health 275
-			Attributes MiniBoss
 			Attributes DisableDodge
 
 			UseMeleeThreatPrioritization 1
 
 			SpawnTemplate "MiniMechaMinerPT"
 
-			Tag bot_giant
 			Tag dontdoublehp
 			Tag dontdoublehp_damageres
 
@@ -2348,7 +3131,7 @@ WaveSchedule
 				Name "MechaMinerUnBurrow"
 				Delay 0
 				Repeats 1
-				IfHealthBelow 3700
+				IfHealthBelow 225
 			}
 
 			EventChangeAttributes
@@ -3370,6 +4153,11 @@ WaveSchedule
 					{
 						EntFire(`Wave3PT`, `ForceSpawn`)
 					}
+
+					TankExt.SetValueOverrides({
+						TARGETANK_CHARGE_DURATION = 3
+						TARGETANK_CHARGE_SPEED = 150
+					})
 				  "
 		}
 		StartWaveOutput
@@ -3477,6 +4265,7 @@ WaveSchedule
 		{
 			Name "Wave3_Subwave1_MultiUtilityHeavies"
 			Where spawnbot_main_slow1
+			Support Limited
 			TotalCount 20
 			MaxActive 8
 			SpawnCount 2
@@ -3505,6 +4294,7 @@ WaveSchedule
 		{
 			Name "Wave3_Subwave1_BurstDemos"
 			Where spawnbot_main_slow1
+			Support Limited
 			TotalCount 35
 			MaxActive 19
 			SpawnCount 7
@@ -3523,12 +4313,12 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // 2 GPyros and 8 Full-Uber Medics
+		WaveSpawn // 3 GPyros and 12 Full-Uber Medics
 		{
 			Name "Wave3_Subwave1_GPyro"
 			WaitForAllDead "Wave3_Subwave1_TeleTank"
 			Where spawnbot_main_slow1
-			TotalCount 10
+			TotalCount 15
 			MaxActive 10
 			SpawnCount 5
 			WaitBeforeStarting 13
@@ -3629,11 +4419,12 @@ WaveSchedule
 			Name "Wave3_Subwave1_Bustlets"
 			WaitForAllDead "Wave3_Subwave1_TeleTank"
 			Where spawnbot_main_slow1
+			Support Limited
 			TotalCount 18
 			MaxActive 18
 			SpawnCount 1
 			WaitBeforeStarting 13
-			WaitBetweenSpawns 15
+			WaitBetweenSpawns 1
 			TotalCurrency 25
 
 			TFBot
@@ -3641,12 +4432,13 @@ WaveSchedule
 				Template T_TFBot_Bustlet
 			}
 		}
-		WaveSpawn // 20 Bustlets
+		WaveSpawn // 15 Bustlets
 		{
 			Name "Wave3_Subwave1_Bustlets2"
 			WaitForAllSpawned "Wave3_Subwave1_Bustlets"
 			Where spawnbot_main_slow1
-			TotalCount 20
+			Support Limited
+			TotalCount 15
 			MaxActive 10
 			SpawnCount 5
 			WaitBeforeStarting 13
@@ -3740,8 +4532,8 @@ WaveSchedule
 			WaitBetweenSpawns 0
 			TotalCurrency 75
 
-			FirstSpawnWarningSound "mvm/mvm_tele_deliver.wav"
-			LastSpawnWarningSound "mvm/mvm_tank_start.wav"
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "mvm/mvm_tele_deliver.wav"
 
 			Tank
 			{
@@ -3757,6 +4549,7 @@ WaveSchedule
 			Name "Wave3_Subwave2_Soldiers"
 			WaitForAllSpawned "Wave3_Subwave2_GDeflectorHeavy"
 			Where spawnbot_main1
+			Support Limited
 			TotalCount 15
 			MaxActive 15
 			SpawnCount 15
@@ -3797,6 +4590,8 @@ WaveSchedule
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
 			TotalCurrency 0
+
+			HideIcon 1
 
 			TFBot
 			{
@@ -3868,6 +4663,7 @@ WaveSchedule
 			Name "Wave3_Subwave2_Soldiers2"
 			WaitForAllSpawned "Wave3_Subwave2_Soldiers"
 			Where spawnbot_ambush1
+			Support Limited
 			TotalCount 30
 			MaxActive 12
 			SpawnCount 3
@@ -3909,14 +4705,14 @@ WaveSchedule
             }
 		}
 
-		WaveSpawn // 2 GRapid Burst Demos and 6 Full-Uber Medics
+		WaveSpawn // 3 GRapid Burst Demos and 9 Full-Uber Medics
 		{
 			Name "Wave3_Subwave2_GRapidBurstDemo"
 			WaitForAllDead "Wave3_Subwave2_GDeflectorHeavy"
 			Where spawnbot_mid0
             Where spawnbot_main_slow1
-            TotalCount 8
-            MaxActive 4
+            TotalCount 12
+            MaxActive 5
             SpawnCount 4
             WaitBeforeStarting 0
             WaitBetweenSpawns 20
@@ -3992,30 +4788,13 @@ WaveSchedule
 				Item "MvM GateBot Light Scout"
             }
 		}
-		WaveSpawn // 30 Bustlets
-		{
-			Name "Wave3_Subwave2_Bustlets"
-			WaitForAllDead "Wave3_Subwave2_GDeflectorHeavy"
-			Where spawnbot_scattered0
-			Where spawnbot_main_slow1
-			TotalCount 30
-            MaxActive 13
-            SpawnCount 5
-            WaitBeforeStarting 0
-            WaitBetweenSpawns 9
-            TotalCurrency 0
-
-			TFBot
-			{
-				Template T_TFBot_Bustlet
-			}
-		}
 		WaveSpawn // 14 Fireball Cannon Demomen
 		{
 			Name "Wave3_Subwave2_FireballCannonDemomen"
 			WaitForAllDead "Wave3_Subwave2_GDeflectorHeavy"
 			Where spawnbot_scattered0
             Where spawnbot_main_slow1
+			Support Limited
             TotalCount 14
             MaxActive 6
             SpawnCount 2
@@ -4035,6 +4814,7 @@ WaveSchedule
 			WaitForAllDead "Wave3_Subwave2_GDeflectorHeavy"
 			Where spawnbot_scattered0
             Where spawnbot_main_slow1
+			Support Limited
 			TotalCount 20
 			MaxActive 8
 			SpawnCount 2
@@ -4070,22 +4850,51 @@ WaveSchedule
 		}
 
 		// Subwave 3
-		WaveSpawn // 15 Mini Mecha Miners
+		WaveSpawn // 1 Targe Tank
 		{
-			Name "Wave3_Subwave3_MiniMechaMiners"
-			WaitForAllDead "Wave3_Subwave2_MultiUtilityHeavies"
-			Where spawnbot_scattered0
-			Where spawnbot_main_slow1
-			TotalCount 15
-			MaxActive 10
+			Name "Wave3_Subwave3_TargeTank"
+			WaitForAllDead "Wave3_Subwave2_GRapidBurstDemo"
+			TotalCount 1
+			MaxActive 1
 			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 250
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Targe
+				Health 30000
+				Skin 1
+				StartingPathTrackNode "path_tank_1"
+
+				OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+			}
+		}
+		WaveSpawn // 12 Mini Mecha-Miners
+		{
+			Name "Wave3_Subwave3_MiniMiners"
+			WaitForAllSpawned "Wave3_Subwave3_TargeTank"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support Limited
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 4
+			WaitBetweenSpawns 5
 			TotalCurrency 100
 
 			TFBot
 			{
 				Template T_TFBot_Engineer_Miner
+				Tag bot_gatebot
 
 				FireInput
 				{
@@ -4095,15 +4904,356 @@ WaveSchedule
 					Delay 0
 					Repeats 1
 				}
+			}
+		}
+
+		WaveSpawn // 3 GMulti-Utility Heavies and 3 GMedics
+		{
+			Name "Wave3_Subwave3_GMultiUtilityHeavies"
+			WaitForAllSpawned "Wave3_Subwave3_TargeTank"
+			Where spawnbot_mid0
+			TotalCount 6
+			MaxActive 3
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 25
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Combo
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic
+				}
+			}
+		}
+		WaveSpawn // 36 Fireball Cannon Demomen
+		{
+			Name "Wave3_Subwave3_FireballCannonDemomen"
+			WaitForAllSpawned "Wave3_Subwave3_TargeTank"
+			Where spawnbot_scattered0
+			Support Limited
+			TotalCount 36
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 50
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Fireball_Cannon
+			}
+		}
+
+		// Subwave 3 Check
+		WaveSpawn
+		{
+			Name "Wave3_Subwave3_Check"
+			WaitForAllDead "Wave3_Subwave3_TargeTank"
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave3_Check"
+			WaitForAllDead "Wave3_Subwave3_MiniMiners"
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave3_Check"
+			WaitForAllDead "Wave3_Subwave3_GMultiUtilityHeavies"
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave3_Check"
+			WaitForAllDead "Wave3_Subwave3_FireballCannonDemomen"
+		}
+
+		WaveSpawn
+		{
+			Name "Wave3_Subwave3_Intermission"
+			WaitForAllSpawned "Wave3_Subwave3_Check"
+
+			FirstSpawnOutput
+			{
+				Target Wave3IntermissionRelay
+				Action Trigger
+			}
+		}
+
+		// Subwave 4
+
+		WaveSpawn // Timed Disaster
+		{
+			Name "Wave3_Subwave4_TimedDisaster"
+			Where spawnbot_boss0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 500
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_TimedDisaster
 
 				FireInput
+				{
+					Target !self
+					Action $SetLocalOrigin
+					Param "1454 -1261 -281"
+					Delay 0
+					Repeats 1
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target RedLoseRelay
+                Action Disable
+			}
+		}
+
+		WaveSpawn // Timed Disaster Buster Attack
+		{
+			Name "Wave3_Subwave4_BusterAttack"
+			Where spawnbot_right0
+            Where spawnbot_main1
+			Support 1
+            TotalCount 99
+            MaxActive 22
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0.1
+            TotalCurrency 0
+
+			HideIcon 1
+			StartDisabled 1
+
+			RandomChoice
+            {
+                Shuffle 1 [$SIGSEGV]
+
+                TFBot
                 {
-                    Target "!self"
-                    Action "RunScriptCode"
-                    Param "self.AddBotTag(`bot_gatebot`)"
-                    Delay -1
-                    Repeats 1
+                    Template T_TFBot_Bustlet
+                    Tag isbuster
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
                 }
+                TFBot
+                {
+                    Template T_TFBot_Bustlet
+                    Tag isbuster
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Bustlet
+                    Tag isbuster
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Bustlet
+                    Tag isbuster
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Bustlet
+                    Tag isbuster
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Bustlet
+                    Tag isbuster
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_SentryBuster
+                    Tag isbuster
+                    UseBusterModel 1
+                    Action SuicideBomber
+                    CharacterAttributes
+                    {
+                        "cancel falling damage" 1
+                    }
+                    FireInput
+                    {
+                        Target "!self"
+                        Action "$TeleportToEntity"
+                        Param  "busterlunger"
+                        Delay  0
+                        Repeats 1
+                    }
+                }
+            }
+		}
+		WaveSpawn // Support Biblically Accurate Burst Demos
+		{
+			Name "Wave3_Subwave4_BurstDemos"
+			WaitForAllSpawned "Wave3_Subwave4_TimedDisaster"
+			Where spawnbot_scattered0
+			Where spawnbot_main1
+			Support 1
+			TotalCount 50
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 6
+
+            TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst_BiblicallyAccurate
+			}
+		}
+		WaveSpawn // Support Shotgunners
+		{
+			Name "Wave3_Subwave4_ShotgunCrew"
+			WaitForAllSpawned "Wave3_Subwave4_TimedDisaster"
+			Where spawnbot_right0
+            Where spawnbot_main1
+			Support 1
+			TotalCount 62
+            MaxActive 10
+            SpawnCount 4
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 10
+			TotalCurrency 50
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Shotgun
+				}
+				TFBot
+				{
+					Template T_TFBot_Engineer_Shotgun
+				}
+			}
+		}
+
+		WaveSpawn
+		{
+			WaitBeforeStarting 99999
+		}
+	}
+	Wave
+	{
+		WaveSpawn // Timed Disaster
+		{
+			Name "Wave3_Subwave4_TimedDisaster"
+			Where spawnbot_boss0
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 500
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_TimedDisaster
+
+				FireInput
+				{
+					Target !self
+					Action $SetLocalOrigin
+					Param "1454 -1261 -281"
+					Delay 0
+					Repeats 1
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target RedLoseRelay
+                Action Disable
 			}
 		}
 	}

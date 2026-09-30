@@ -1,5 +1,50 @@
 WaveSchedule
 {
+    PointTemplates
+    {
+        GChargedMedicPT
+        {
+            OnSpawnOutput
+            {
+                Target GChargedMedicTarget
+                Action SetParent
+                Param !activator
+            }
+
+            info_target
+            {
+                "targetname" "GChargedMedicTarget"
+
+                "OnUser1" "UberchargeRelay,Trigger,,0,-1"
+            }
+
+            logic_relay
+            {
+                "targetname" "UberchargeRelay"
+
+                "OnTrigger" "!activatorRunScriptCodePrecacheSound(`vo/mvm/norm/medic_mvm_autochargeready01.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_autochargeready01.mp3`, channel = 6, filter_type = 5, entity = self})01"
+                "OnTrigger" "!activatorRunScriptCodePrecacheSound(`weapons/medigun_charged.wav`);EmitSoundEx({sound_name = `weapons/medigun_charged.wav`, channel = 6, filter_type = 5, entity = self})01"
+
+                "OnTrigger" "!activatorRunScriptCodePrecacheSound(`vo/mvm/norm/medic_mvm_specialcompleted07.mp3`);EmitSoundEx({sound_name = `vo/mvm/norm/medic_mvm_specialcompleted07.mp3`, channel = 6, filter_type = 5, entity = self})2.51"
+
+                "OnTrigger" "UberchargeActivateParticle,Start,,3,-1"
+                "OnTrigger" "!activatorRunScriptCodePrecacheSound(`player/quickfix_invulnerable_on.wav`);EmitSoundEx({sound_name = `player/quickfix_invulnerable_on.wav`, channel = 6, filter_type = 5, entity = self})31"
+                "OnTrigger" "!activatorRunScriptCodePrecacheSound(`weapons/medigun_charged.wav`);EmitSoundEx({sound_name = `weapons/medigun_charged.wav`, channel = 6, filter_type = 5, entity = self, flags = 4})31"
+
+                "OnTrigger" "!activatorRunScriptCodePrecacheSound(`player/quickfix_invulnerable_on.wav`);EmitSoundEx({sound_name = `player/quickfix_invulnerable_on.wav`, channel = 6, filter_type = 5, entity = self, flags = 4})4.51"
+            }
+
+            info_particle_system
+            {
+                "targetname" "UberchargeActivateParticle"
+                "origin" "0 0 10"
+                "effect_name" "powerup_supernova_explode_blue"
+            }
+        }
+    }
+
+    //// ROBOT TEMPLATES ////
+
 	Templates
 	{
         //// SCOUT TEMPLATES ////
@@ -532,6 +577,82 @@ WaveSchedule
                 "projectile gravity" 0
             }
         }
+
+        T_TFBot_Giant_Medic_Charged // Giant Medic (Popper)
+		{
+			Name "Giant Charged Medic"
+			Class Medic
+			ClassIcon medic_pop_giant
+			Skill Expert
+			Health 4500
+			Attributes MiniBoss
+			Attributes SpawnWithFullCharge
+			WeaponRestrictions SecondaryOnly
+
+            SpawnTemplate "GChargedMedicPT"
+
+			Item "The Quick-Fix"
+
+			CharacterAttributes
+			{
+				"health drain medic" -3
+                "bot medic uber health threshold" 0
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"mod weapon blocks healing" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_SYRINGEGUN_MEDIC"
+
+				"damage penalty" 0.1
+			}
+			ItemAttributes
+			{
+				ItemName "The Quick-Fix"
+
+				"ubercharge rate penalty" 0.01
+				"heal rate bonus" 200
+			}
+
+            ChangeAttributes
+            {
+                Name "ChargeTelegraph"
+                Delay 0
+                Repeats 1
+                IfHealthBelow 751
+            }
+
+            EventChangeAttributes
+            {
+                ChargeTelegraph [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "The Quick-Fix"
+
+                        "attach particle effect" "3045"
+                    }
+                    FireInput
+                    {
+                        Target "@c@!activator"
+                        Action "FireUser1"
+                        Delay 0
+                        Repeats 1
+                    }
+
+                    FireWeapon
+                    {
+                        Type "Secondary"
+                        Delay 3
+                        Repeats 1
+                        Duration 2
+                    }
+                }
+            }
+		}
 
         T_TFBot_Giant_Medic_Shield
         {

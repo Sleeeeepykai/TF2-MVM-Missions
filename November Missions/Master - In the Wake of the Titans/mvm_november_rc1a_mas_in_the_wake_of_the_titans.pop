@@ -139,6 +139,8 @@ WaveSchedule
 
 						Convars.SetValue(`mp_capdeteriorate_time`, 0)
 
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_dominationengineer03.mp3`)
+
 						PrecacheSound(`ambient/levels/citadel/strange_talk9.wav`)
 						PrecacheSound(`weapons/bottle_broken_hit_world1.wav`)
 						PrecacheSound(`weapons/bottle_broken_hit_world2.wav`)
@@ -219,13 +221,6 @@ WaveSchedule
 				Param "local hRelay = Entities.CreateByClassname(`logic_relay`), hGameRules = Entities.FindByClassname(null, `tf_gamerules`), iCountdownLast = -1; NetProps.SetPropBool(hRelay, `m_bForcePurgeFixedupStrings`, true); hRelay.ValidateScriptScope(); hRelay.GetScriptScope().Think <- function() { local flRestartRoundTime = NetProps.GetPropFloat(hGameRules, `m_flRestartRoundTime`); if(flRestartRoundTime != -1) { local iCountdown = ceil(flRestartRoundTime - Time()).tointeger(); if(iCountdown != iCountdownLast && iCountdown == 5) EntFire(`Wave7SetupEndRelay`, `Trigger`, null, -1, null); iCountdownLast = iCountdown } else iCountdownLast = -1; return -1 } AddThinkToEnt(hRelay, `Think`)"
 			}
 
-            logic_relay
-            {
-                "targetname" "ChampionGiantTutorial"
-
-                "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `Champion Giants will instantly capture the point! Don't let them reach it!`, lifetime = 5, worldPosX = -2394, worldPosY = -350, worldPosZ = 288})0,-1"
-            }
-
             // Control Point Logic //
 
             trigger_timer_door
@@ -247,6 +242,13 @@ WaveSchedule
             }
 
             // Champion Giant Logic //
+
+			logic_relay
+            {
+                "targetname" "ChampionGiantTutorial"
+
+                "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `Champion Giants will instantly capture the point! Don't let them reach it!`, lifetime = 5, worldPosX = -2394, worldPosY = -350, worldPosZ = 288})0,-1"
+            }
 
             trigger_multiple
             {
@@ -381,7 +383,7 @@ WaveSchedule
                 "effect_name" "teleporter_mvm_bot_persist"
             }
 
-            // Wave7 Logic //
+            // W7 Logic //
 
 			logic_relay
 			{
@@ -1313,7 +1315,7 @@ WaveSchedule
                     text = `Champion Giant Active!`
                     lifetime = 5
                     play_sound = `mvm/mvm_warning.wav`
-                    follow_entindex = self
+                    follow_entindex = self.entindex()
                 })"
             }
         }
@@ -1898,10 +1900,64 @@ WaveSchedule
                   "
         }
 
-        WaveSpawn
-        {
-            WaitBeforeStarting 99999
-        }
+        // Subwave 1
+		WaveSpawn // 1 Champion Soldier
+		{
+			Name "Wave1_Subwave1_ChampionSoldier"
+			Where spawnbot_e
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Champion
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/soldier_mvm_m_dominationengineer03.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+			LastSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/soldier_mvm_m_dominationengineer03.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_Subwave1_ChampionTutorial"
+			WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
+			WaitBeforeStarting 5
+
+			FirstSpawnOutput
+			{
+				Target ChampionGiantTutorial
+				Action Trigger
+			}
+		}
     }
 	// Wave 2 Notes
 	Wave
