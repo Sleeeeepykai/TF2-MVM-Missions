@@ -19,6 +19,9 @@ WaveSchedule
 
     WaveStartCountdown 5
 
+	BonusRatioHalf 1.01
+	BonusRatioFull 1.01
+
     MissionUnloadOutput
 	{
 		Target BigNet
@@ -137,9 +140,12 @@ WaveSchedule
 
 						EntFire(`control_point_area`, `Kill`)
 
-						Convars.SetValue(`mp_capdeteriorate_time`, 0)
+						//Convars.SetValue(`mp_capdeteriorate_time`, 90000)
 
 						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_dominationengineer03.mp3`)
+						PrecacheSound(`vo/mvm/mght/taunts/demoman_mvm_m_taunts11.mp3`)
+						PrecacheSound(`vo/mvm/mght/taunts/demoman_mvm_m_taunts03.mp3`)
+						PrecacheSound(`vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`)
 
 						PrecacheSound(`ambient/levels/citadel/strange_talk9.wav`)
 						PrecacheSound(`weapons/bottle_broken_hit_world1.wav`)
@@ -178,6 +184,9 @@ WaveSchedule
 						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_painsevere02.mp3`)
 
 						IncludeScript(`tankextensions_main`)
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
+
 						IncludeScript(`tankextensions/teletank`)
 						IncludeScript(`tankextensions/ubertank`)
 
@@ -220,6 +229,13 @@ WaveSchedule
 				Action RunScriptCode
 				Param "local hRelay = Entities.CreateByClassname(`logic_relay`), hGameRules = Entities.FindByClassname(null, `tf_gamerules`), iCountdownLast = -1; NetProps.SetPropBool(hRelay, `m_bForcePurgeFixedupStrings`, true); hRelay.ValidateScriptScope(); hRelay.GetScriptScope().Think <- function() { local flRestartRoundTime = NetProps.GetPropFloat(hGameRules, `m_flRestartRoundTime`); if(flRestartRoundTime != -1) { local iCountdown = ceil(flRestartRoundTime - Time()).tointeger(); if(iCountdown != iCountdownLast && iCountdown == 5) EntFire(`Wave7SetupEndRelay`, `Trigger`, null, -1, null); iCountdownLast = iCountdown } else iCountdownLast = -1; return -1 } AddThinkToEnt(hRelay, `Think`)"
 			}
+			OnSpawnOutput
+			{
+				Target NovemberMasterControlPoint
+				Action SetControlPoint
+				Param "control_point"
+				Delay 1
+			}
 
             // Control Point Logic //
 
@@ -227,13 +243,13 @@ WaveSchedule
             {
                 "targetname" "NovemberMasterControlPoint"
                 "filtername" "filter_capbot"
-                "origin" "24.62 -448 352"
+                "origin" "-160 -448 336"
                 "mins" "-160 -160 -176"
                 "maxs" "160 160 176"
 
                 "area_cap_point" "control_point"
                 "door_name" "capture_door"
-                "area_time_to_cap" "5"
+                "area_time_to_cap" "2.5"
 
                 "team_cancap_2" "0"
                 "team_cancap_3" "1"
@@ -270,11 +286,26 @@ WaveSchedule
                 "OnPass" "control_point,SetOwner,3,0,-1"
             }
 
+			// W2 Logic //
+
+			logic_relay
+			{
+				"targetname" "SpawnSwitchRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/rd_finale_beep01.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/rd_finale_beep01.wav,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/rd_finale_beep01.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_warning.wav,3,-1"
+			}
+
 			// W3 Logic //
 
 			logic_relay
             {
                 "targetname" "VoidTransitionSequence"
+
+				"OnTrigger" "populator,$KillWaveSpawn,Wave3_Subwave1_GRapidDemos,0,-1"
+				"OnTrigger" "populator,$FinishWaveSpawn,Wave3_Subwave1_GRapidDemos,0,-1"
 
                 "OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, { text = `Reality is tearing at the seams...`, lifetime = 3, play_sound = `misc/null.wav`, worldPosX = 0, worldPosY = -256, worldPosZ = 1280})0,-1"
                 "OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `ambient/levels/citadel/strange_talk9.wav`,pitch = 85,special_dsp = 10,filter_type = 5})0-1"
@@ -299,7 +330,7 @@ WaveSchedule
 			{
 				"targetname" "FinaleTransitionSequence"
 
-				"OnTrigger" "BigNetRunScriptCodeScreenFade(null, 0, 0, 0, 0, 0, 5, 0)0-1"
+				"OnTrigger" "BigNetRunScriptCodeScreenFade(null, 0, 0, 0, 0, 0, 5, 1)0-1"
 				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/clock_tick.wav,0,-1"
 
 				"OnTrigger" "VoidCC,Disable,,0,-1"
@@ -390,16 +421,10 @@ WaveSchedule
 				"targetname" "Wave7SetupRelay"
 
 				"OnTrigger" "Wave7SetupMusic,PlaySound,,0,-1"
-				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFSuffering Leaves, Suffering Leaves - Heaven Pierce Her`)0-1"
+				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `\x07800080Now Playing: \x07FFFFFFSuffering Leaves, Suffering Leaves - Heaven Pierce Her`)0-1"
 				"OnTrigger" "tf_gamerules,$StopVO,#november_master_finale_intro.mp3,0,-1"
 
 				"OnTrigger" "VoidFinaleCC,Enable,,0,-1"
-
-				"OnTrigger" "DemomanTitanPT,ForceSpawn,,0,-1"
-                "OnTrigger" "SoldierTitanPT,ForceSpawn,,0,-1"
-                "OnTrigger" "MedicTitanPT,ForceSpawn,,0,-1"
-                "OnTrigger" "PyroTitanPT,ForceSpawn,,0,-1"
-                "OnTrigger" "HeavyTitanPT,ForceSpawn,,0,-1"
 
 				"OnTrigger" "TankATeleBeam,Start,,0,-1"
 				"OnTrigger" "TankBTeleBeam,Start,,0,-1"
@@ -470,7 +495,7 @@ WaveSchedule
 				"OnTrigger" "tank_e,SetSpeed,110,23.554,-1"
 
 				"OnTrigger" "Wave7MusicLoop1,PlaySound,,24.054,-1"
-				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFDanse Macabre - Heaven Pierce Her`)24.054-1"
+				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `\x07800080Now Playing: \x07FFFFFFDanse Macabre - Heaven Pierce Her`)24.054-1"
 
 				"OnTrigger" "Wave7MusicFadeout1,Disable,,109.926,-1"
 				"OnTrigger" "Wave7MusicFadeout2,Enable,,109.926,-1"
@@ -1319,6 +1344,15 @@ WaveSchedule
                 })"
             }
         }
+
+		ChampionPyroPT
+		{
+			NoFixup 1
+			logic_relay
+			{
+				"targetname" "spell_main_brain"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -1838,13 +1872,159 @@ WaveSchedule
             ItemAttributes
             {
                 ItemName "TF_WEAPON_ROCKETLAUNCHER"
-                "damage bonus" 1.5
                 "fire rate bonus" 0.3
                 "faster reload rate" 0.1
                 "clip size upgrade atomic" 4
                 "projectile speed decreased" 0.9
             }
         }
+
+		T_TFBot_Giant_Demoman_Champion
+		{
+			Name "Champion Demoman"
+			Class Demoman
+			ClassIcon demo_champion_kai
+			Skill Expert
+			Health 6600
+			Scale 1.8
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			Tag ChampionGiant
+
+            SpawnTemplate "ChampionGiantPT"
+
+            Item "Prince Tavish's Crown"
+            Item "Forgotten King's Pauldrons"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.4
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"override footstep sound set" 4
+			}
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+                "fire rate penalty" 1.5
+                "mult projectile count" 4
+                "projectile spread angle penalty" 3
+            }
+		}
+
+		T_TFBot_Giant_Pyro_Champion
+		{
+			Name "Champion Pyro"
+			Class Pyro
+			ClassIcon pyro_champion_kai
+			Skill Expert
+			Health 6000
+			Scale 1.8
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			WeaponRestrictions PrimaryOnly
+
+			Tag ChampionGiant
+
+			UseMeleeThreatPrioritization 1
+
+            SpawnTemplate "ChampionGiantPT"
+			SpawnTemplate "ChampionPyroPT"
+
+            Item "Prince Tavish's Crown"
+            Item "Forgotten King's Pauldrons"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.4
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"override footstep sound set" 6
+			}
+
+			ChangeAttributes
+			{
+				Name Default
+				Delay 0
+				Repeats 1
+			}
+
+			ChangeAttributes
+			{
+				Name "SpellDelay"
+				Delay 6
+				Cooldown 0
+				IfLeftSpawn 1
+			}
+
+			ChangeAttributes
+			{
+				Name "SpellFireball"
+			}
+
+			ChangeAttributes
+			{
+				Name "SpellMeteor"
+			}
+		}
+
+		//// GIANTS ////
+
+		T_TFBot_Giant_Scout_Bonk
+		{
+			Name "Giant Bonk Scout"
+			Class Scout
+			ClassIcon scout_bonk_giant
+			Skill Easy
+			Health 1600
+			Attributes MiniBoss
+			WeaponRestrictions MeleeOnly
+
+			Item "Bonk! Atomic Punch"
+			Item "Bonk Helm"
+
+			CharacterAttributes
+			{
+				"damage force reduction" 0.7
+				"airblast vulnerability multiplier" 0.7
+				"override footstep sound set" 5
+			}
+		}
+
+		//// COMMONS ////
+
+		T_TFBot_Soldier_Uncrit
+        {
+            Name "Uncharged Soldier"
+            Class Soldier
+            ClassIcon soldier_crit
+            Skill Normal
+            WeaponRestrictions PrimaryOnly
+
+            Item "The Original"
+
+            ItemAttributes
+			{
+				ItemName "The Original"
+
+                "fire rate penalty" 2
+				"faster reload rate" 0.2
+				"projectile speed decreased" 0.5
+			}
+        }
+
+		T_TFBot_Demoman_Knight_Caber
+		{
+			Name "Caberknight"
+			Template T_TFBot_Demoman_Knight
+			ClassIcon demo_caber_nys
+
+			Item "The Ullapool Caber"
+		}
     }
 
     //// MISSION BOTS ////
@@ -1881,6 +2061,7 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
+					EntFire(`advexp_spawn_e_relay`, `Trigger`)
                   "
         }
         StartWaveOutput
@@ -1915,6 +2096,10 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Soldier_Champion
+
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
 			}
 
 			FirstSpawnOutput
@@ -1946,7 +2131,7 @@ WaveSchedule
 					  "
 			}
 		}
-		WaveSpawn
+		WaveSpawn // Champion Giant Tutorial
 		{
 			Name "Wave1_Subwave1_ChampionTutorial"
 			WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
@@ -1958,6 +2143,317 @@ WaveSchedule
 				Action Trigger
 			}
 		}
+
+		WaveSpawn // Support Giant Burst Fire Soldiers (Subwave 2)
+		{
+			Name "Wave1_Subwave2_GBurstSoldiers"
+			WaitForAllDead "Wave1_Subwave1_ChampionSoldier"
+			Where spawnbot_a
+			TotalCount 4
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+			Support 1
+
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst
+
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+				Tag flankbot
+			}
+		}
+
+		WaveSpawn // 4 Burst Demos and 4 Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_BurstDemos"
+			WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
+			Where spawnbot_e
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 7
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+		WaveSpawn // 4 Burst Demos and 4 Big-Heal Medics
+		{
+			Name "Wave1_Subwave1_BurstDemos"
+			WaitForAllSpawned "Wave1_Subwave1_ChampionSoldier"
+			Where spawnbot_e
+			TotalCount 8
+			MaxActive 6
+			SpawnCount 4
+			WaitBeforeStarting 7
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+					Tag flankbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		// Depends on either Champion Soldier or Burst Demos Dying to Activate KGB Heavies
+		WaveSpawn
+		{
+			Name "Wave1_KGBActivate2"
+			WaitForAllDead "Wave1_Subwave1_ChampionSoldier"
+
+			FirstSpawnOutput
+			{
+				Target populator
+				Action $ResumeWaveSpawn
+				Param "Wave1_Subwave1_KGBHeavies"
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave1_KGBActivate2"
+			WaitForAllDead "Wave1_Subwave1_BurstDemos"
+
+			FirstSpawnOutput
+			{
+				Target populator
+				Action $ResumeWaveSpawn
+				Param "Wave1_Subwave1_KGBHeavies"
+			}
+		}
+
+		WaveSpawn // 40 KGB Heavies
+		{
+			Name "Wave1_Subwave1_KGBHeavies"
+			WaitForAllDead "Wave1_Subwave1_BurstDemos"
+			Where spawnbot_e
+			Support Limited
+			TotalCount 40
+			MaxActive 8
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ
+					Attributes AlwaysCrit
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ
+					Attributes AlwaysCrit
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+					Tag flankbot
+				}
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllDead "Wave1_Subwave1_ChampionSoldier"
+			Where spawnbot_e
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 10 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllDead "Wave1_Subwave1_BurstDemos"
+			Where spawnbot_e
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 1
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+				Tag flankbot
+			}
+		}
+
+		WaveSpawn // Spawn A Enable
+		{
+			Name "Wave1_SpawnA_Active"
+			WaitForAllDead "Wave1_Subwave1_ChampionSoldier"
+			WaitBeforeStarting 2
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`spawn_a_setblue_relay`, `Trigger`)
+						EntFire(`tf_gamerules`, `PlayVO`, `ui/scored.wav`)
+					  "
+			}
+
+		}
+
+		WaveSpawn // 5 KGB Heavies
+		{
+			Name "Wave1_Subwave3_KGBHeavies"
+			WaitForAllDead "Wave1_Subwave2_Soldiers"
+			Where spawnbot_e
+			Support Limited
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ
+				Attributes AlwaysCrit
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 5 KGB Heavies
+		{
+			Name "Wave1_Subwave3_KGBHeavies"
+			WaitForAllDead "Wave1_Subwave2_Soldiers"
+			Where spawnbot_e
+			Support Limited
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Heavyweight_Champ
+				Attributes AlwaysCrit
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+				Tag flankbot
+			}
+		}
+
+		WaveSpawn // Support KGB Heavies
+		{
+			Name "Wave1_Subwave3_KGBHeavies_Inf"
+			WaitForAllSpawned "Wave1_Subwave3_KGBHeavies"
+			Where spawnbot_e
+			Support 1
+			TotalCount 20
+			MaxActive 18
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0.5
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ
+					Attributes AlwaysCrit
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Heavyweight_Champ
+					Attributes AlwaysCrit
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+					Tag flankbot
+				}
+			}
+		}
+
+		WaveSpawn // 2 GHeavies
+		{
+			Name "Wave1_Subwave3_GHeavy"
+			WaitForAllDead "Wave1_Subwave2_Soldiers"
+			Where spawnbot_e
+			TotalCount 2
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
     }
 	// Wave 2 Notes
 	Wave
@@ -1967,6 +2463,7 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
+					EntFire(`advexp_spawn_bc_relay`, `Trigger`)
                   "
         }
         StartWaveOutput
@@ -1986,10 +2483,460 @@ WaveSchedule
                   "
         }
 
-        WaveSpawn
-        {
-            WaitBeforeStarting 99999
-        }
+        // Subwave 1
+		WaveSpawn // 5 Rocket Shotgun Soldiers and 5 Kritzkrieg Medics (Spawn B)
+		{
+			Name "Wave2_Subwave1_RocketShotgunSoldier"
+			Where spawnbot_b
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 5 Rocket Shotgun Soldiers and 5 Kritzkrieg Medics (Spawn C)
+		{
+			Name "Wave2_Subwave1_RocketShotgunSoldier"
+			Where spawnbot_c
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 8
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Kritzkrieg
+				}
+			}
+		}
+		WaveSpawn // 20 Scouts (Spawn B)
+		{
+			Name "Wave2_Subwave1_Scouts"
+			Where spawnbot_b
+			TotalCount 20
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 20 Scouts (Spawn C)
+		{
+			Name "Wave2_Subwave1_Scouts"
+			Where spawnbot_flank_c
+			TotalCount 20
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Super Steel Gauntlet (Spawn B)
+		{
+			Name "Wave2_Subwave2_GSteelGauntlet"
+			WaitForAllSpawned "Wave2_Subwave1_RocketShotgunSoldier"
+			Where spawnbot_b
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_SteelFist
+				Attributes DisableDodge
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 1 GBurst Demo and 4 Loch Demos (Spawn C)
+		{
+			Name "Wave2_Subwave2_GBurstDemo"
+			WaitForAllSpawned "Wave2_Subwave1_RocketShotgunSoldier"
+			Where spawnbot_c
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 10
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+			}
+		}
+
+		WaveSpawn // 1 Super Steel Gauntlet (Spawn C)
+		{
+			Name "Wave2_Subwave2_GSteelGauntlet2"
+			WaitForAllSpawned "Wave2_Subwave2_GSteelGauntlet"
+			Where spawnbot_c
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_SteelFist
+				Attributes DisableDodge
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 1 GBurst Demo and 4 Loch Demos (Spawn B)
+		{
+			Name "Wave2_Subwave2_GBurstDemo2"
+			WaitForAllSpawned "Wave2_Subwave2_GBurstDemo"
+			Where spawnbot_b
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 10
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_LochnLoad
+					Skill Expert
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					AimAt Head
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 10 Scouts (Spawn B)
+		{
+			Name "Wave2_Subwave3_Scouts"
+			WaitForAllSpawned "Wave2_Subwave2_GSteelGauntlet2"
+			Where spawnbot_b
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 10
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 10 Scouts (Spawn C)
+		{
+			Name "Wave2_Subwave3_Scouts"
+			WaitForAllSpawned "Wave2_Subwave2_GBurstDemo2"
+			Where spawnbot_flank_c
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 3
+			TotalCurrency 10
+
+			TFBot
+			{
+				Class Scout
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+		WaveSpawn // 1 Champion Demoman (Spawn B)
+		{
+			Name "Wave2_Subwave3_ChampionDemoman"
+			WaitForAllSpawned "Wave2_Subwave3_Scouts"
+			Where spawnbot_b
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Champion
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/demoman_mvm_m_taunts11.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+			LastSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/demoman_mvm_m_taunts11.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+		}
+		WaveSpawn // 1 Champion Demoman (Spawn C)
+		{
+			Name "Wave2_Subwave3_ChampionDemoman"
+			WaitForAllSpawned "Wave2_Subwave3_Scouts"
+			Where spawnbot_c
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Demoman_Champion
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/demoman_mvm_m_taunts03.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+			LastSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/demoman_mvm_m_taunts03.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+		}
+
+		WaveSpawn // Support Scatter-Bonk Scouts (Spawn B)
+		{
+			Name "Wave2_Subwave3_Scatterbonks"
+			WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+			Where spawnbot_b
+			Support 1
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // Support Scatter-Bonk Scouts (Spawn C)
+		{
+			Name "Wave2_Subwave3_Scatterbonks"
+			WaitForAllSpawned "Wave2_Subwave3_ChampionDemoman"
+			Where spawnbot_c
+			Support 1
+			TotalCount 10
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 10
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
     }
 	// Wave 3 Notes
 	Wave
@@ -1999,6 +2946,15 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
+					EntFire(`advexp_spawn_de_relay`, `Trigger`)
+					EntFire(`spawn_d_arrows_flank`, `Disable`)
+
+					EntFire(`spawn_d_tank_setred`, `Disable`)
+
+					TankExt.SetValueOverrides({
+						COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.16
+						COMBATTANK_MAX_RANGE = 1
+					})
                   "
         }
         StartWaveOutput
@@ -2018,10 +2974,250 @@ WaveSchedule
                   "
         }
 
-        WaveSpawn
-        {
-            WaitBeforeStarting 99999
-        }
+		// Subwave 1
+        WaveSpawn // 1 Rocket Tank
+		{
+			Name "Wave3_Subwave1_RocketTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+			LastSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			Tank
+			{
+				Name "combattank_bomb|rocketpod|rocketpod$targetname|TankSpawner^pingsound|npc/combine_gunship/ping_search.wav"
+				Template Tank_Combat_Rocket
+				Speed 125
+				Health 15000
+
+				StartingPathTrackNode "tankpath_clockwise"
+			}
+
+			FirstSpawnOutput
+			{
+				Target tank_tutorial_message1
+				Action Show
+			}
+		}
+		WaveSpawn
+		{
+			WaitBeforeStarting 5
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						TankExt.SetValueOverrides({
+							COMBATTANK_MAX_RANGE = 1800
+						})
+					"
+			}
+		}
+
+		WaveSpawn // Support GRapid Demos and Shield Medics (Spawn D)
+		{
+			Name "Wave3_Subwave1_GRapidDemos"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_far_d
+			Support 1
+			TotalCount 8
+			MaxActive 3
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield
+				}
+			}
+		}
+
+		WaveSpawn // Support GBurst Soldiers (Spawn E)
+		{
+			Name "Wave3_Subwave1_GBurstSoldier"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_e
+			Support 1
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawnsAfterDeath 8
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_Supercharged
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+		WaveSpawn // Support Pyros (Spawn A)
+		{
+			Name "Wave3_Subwave1_Pyros"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_a
+			Support 1
+			TotalCount 20
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Pyro
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+		WaveSpawn // Support Heavies (Spawn B)
+		{
+			Name "Wave3_Subwave1_Heavies"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_b
+			Support 1
+			TotalCount 20
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // Support Soldiers (Spawn C)
+		{
+			Name "Wave3_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_c
+			Support 1
+			TotalCount 20
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 Champion Pyro and 1 GCharged Medic (Spawn D)
+		{
+			Name "Wave3_Subwave2_ChampionPyro"
+			WaitForAllDead "Wave3_Subwave1_RocketTank"
+			Where spawnbot_d
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Champion
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+			LastSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave3_Subwave2_VoidSequence"
+			WaitForAllDead "Wave3_Subwave2_ChampionPyro"
+			WaitBeforeStarting 3
+
+			FirstSpawnOutput
+			{
+				Target VoidTransitionSequence
+				Action Trigger
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave3_Subwave2_VoidSequence"
+			WaitForAllDead "Wave3_Subwave2_ChampionPyro"
+			WaitBeforeStarting 15
+		}
     }
 	// Wave 4 Notes
 	Wave
@@ -2031,6 +3227,10 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
+					if(!Entities.FindByName(null, `VoidSkybox`))
+					{
+						EntFire(`VoidPT`, `ForceSpawn`)
+					}
                   "
         }
         StartWaveOutput
@@ -2063,6 +3263,10 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
+					if(!Entities.FindByName(null, `VoidSkybox`))
+					{
+						EntFire(`VoidPT`, `ForceSpawn`)
+					}
                   "
         }
         StartWaveOutput
@@ -2095,6 +3299,10 @@ WaveSchedule
             Target BigNet
             Action RunScriptCode
             Param "
+					if(!Entities.FindByName(null, `VoidSkybox`))
+					{
+						EntFire(`VoidPT`, `ForceSpawn`)
+					}
                   "
         }
         StartWaveOutput
@@ -2117,7 +3325,7 @@ WaveSchedule
         WaveSpawn
 		{
 			Name "Wave6_End"
-			WaitForAllDead "Wave6_EndCheck"
+
 			WaitBeforeStarting 2
 
 			FirstSpawnOutput
@@ -2142,6 +3350,20 @@ WaveSchedule
             Param "
 					EntFire(`Wave7SetupRelay`, `Trigger`)
 					EntFire(`Wave7SetupEndRelay`, `Enable`)
+
+					if(!Entities.FindByName(null, `VoidSkybox`))
+					{
+						EntFire(`VoidPT`, `ForceSpawn`)
+					}
+
+					if(!Entities.FindByName(null, `HeavyTitan`))
+					{
+						EntFire(`DemomanTitanPT`, `ForceSpawn`)
+						EntFire(`SoldierTitanPT`, `ForceSpawn`)
+						EntFire(`MedicTitanPT`, `ForceSpawn`)
+						EntFire(`PyroTitanPT`, `ForceSpawn`)
+						EntFire(`HeavyTitanPT`, `ForceSpawn`)
+					}
                   "
         }
         StartWaveOutput
@@ -2164,7 +3386,7 @@ WaveSchedule
 
 		WaveSpawn
 		{
-			Name "TankA"
+			Name "Wave7_TankA"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -2189,7 +3411,7 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "TankB"
+			Name "Wave7_TankB"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -2214,7 +3436,7 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "TankC"
+			Name "Wave7_TankC"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -2239,7 +3461,7 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "TankD"
+			Name "Wave7_TankD"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -2264,7 +3486,7 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "TankE"
+			Name "Wave7_TankE"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
@@ -2286,6 +3508,32 @@ WaveSchedule
 				 	Action Trigger
 				}
 			}
+		}
+
+		WaveSpawn
+		{
+			Name "Wave7_EndCheck"
+			WaitForAllDead "Wave7_TankA"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_EndCheck"
+			WaitForAllDead "Wave7_TankB"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_EndCheck"
+			WaitForAllDead "Wave7_TankC"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_EndCheck"
+			WaitForAllDead "Wave7_TankD"
+		}
+		WaveSpawn
+		{
+			Name "Wave7_EndCheck"
+			WaitForAllDead "Wave7_TankE"
 		}
 
 		WaveSpawn
