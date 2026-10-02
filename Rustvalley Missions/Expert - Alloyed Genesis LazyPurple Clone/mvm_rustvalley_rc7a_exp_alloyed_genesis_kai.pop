@@ -46,6 +46,8 @@ WaveSchedule
 
 	PrecacheModel "models/bots/demo/bot_sentry_buster_gibby.mdl"
 
+	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
 	// Precached Sounds //
 
 	// SFX
@@ -59,6 +61,7 @@ WaveSchedule
 	PrecacheSound "w3preboss.mp3"
 	PrecacheSound "vstimeddisastersrevenge_intro.mp3"
 	PrecacheSound "vstimeddisastersrevenge.mp3"
+	PrecacheSound "alloyed_genesis_placeholder.mp3"
 
 	// Precached Particles //
 
@@ -226,11 +229,20 @@ WaveSchedule
 						PrecacheSound(`physics/concrete/concrete_break3.wav`)
 						PrecacheSound(`music/mvm_lost_wave.wav`)
 
+						PrecacheSound(`vo/mvm/norm/engineer_mvm_jeers01.mp3`)
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_jeers01.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_jeers01.mp3`)
+						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_jeers01.mp3`)
+						PrecacheSound(`vo/mvm/mght/scout_mvm_m_jeers03.mp3`)
+						PrecacheSound(`vo/mvm/norm/sniper_mvm_painsevere02.mp3`)
+
 						IncludeScript(`tankextensions_main`)
                 		IncludeScript(`tankextensions/gatetank`)
 						IncludeScript(`tankextensions/hammertank`)
 						IncludeScript(`tankextensions/targetank`)
 						IncludeScript(`tankextensions/teletank`)
+
+						IncludeScript(`claudz_logic_v3`)
 					  "
 			}
 
@@ -440,6 +452,15 @@ WaveSchedule
                 "targetname" "FinaleWindSound"
                 "message" "fat_w7_wind.mp3"
 				"health" "7"
+                "spawnflags" "17"
+            }
+
+			ambient_generic
+            {
+                "targetname" "AlloyedGenesisMusic"
+                "message" "#alloyed_genesis_placeholder.mp3"
+                "health" "10"
+                "pitch" "100"
                 "spawnflags" "17"
             }
 		}
@@ -2075,6 +2096,549 @@ WaveSchedule
                 "effect_name" "fireSmoke_collumnP"
             }
 		}
+
+		// ALLOYED GENESIS //
+
+		AlloyedGenesisIntroPT
+		{
+			RemoveIfKilled "AlloyedGenesisIntroProp"
+
+			OnSpawnOutput
+			{
+				Target "AlloyedGenesisIntroRelay"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisIntroRelay"
+
+				"OnTrigger" "AlloyedGenesisMusic,PlaySound,,0,1"
+
+				"OnTrigger" "AlloyedGenesisIntroCamera,CallScriptFunction,EnableAll,0.0,1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 0, 0, 0, 255, 3, 0.4, 1)0-1"
+				"OnTrigger" "PlayerRunScriptCodeself.SetHudHideFlags(~132)0-1"
+				"OnTrigger" "Player,SetScriptOverlayMaterial,effects/stealth_overlay,0,-1"
+
+				"OnTrigger" "AlloyedGenesisIntroPropRunScriptCodelocal o=self.GetOrigin(),i=RandomFloat(0,PI);function BobbingVFXThink(){self.SetAbsOrigin(o+Vector(0,0,sin(Time()*2+i)*32));return-1}AddThinkToEnt(self,`BobbingVFXThink`)0-1"
+				"OnTrigger" "AlloyedGenesisIntroProp,SetPlaybackRate,2.5,0,-1"
+				"OnTrigger" "AlloyedGenesisIntroProp,SetPlaybackRate,0.4,0.5,-1"
+
+				"OnTrigger" "AlloyedGenesisIntroProp,SetPlaybackRate,1,4,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,4,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,5,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,6,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,7,-1"
+
+				"OnTrigger" "AlloyedGenesisIntroProp,SetPlaybackRate,2,8,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,8,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,8.5,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 255, 3, 0.4, 2)9-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,9,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,9.3,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,9.6,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,9.9,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,10.2,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,10.5,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,10.8,-1"
+				"OnTrigger" "AlloyedGenesisPropTransformCase,PickRandomShuffle,,11.1,-1"
+
+				"OnTrigger" "AlloyedGenesisIntroCamera,CallScriptFunction,DisableAll,12,1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 255, 1, 0.4, 1)12-1"
+				"OnTrigger" "Player,SetScriptOverlayMaterial,,12,-1"
+				"OnTrigger" "PlayerRunScriptCodeself.RemoveHudHideFlags(~132)12-1"
+				"OnTrigger" "AlloyedGenesisIntroProp,Kill,,12.1,-1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "AlloyedGenesisIntroProp"
+				"origin" "1442 -1322 600"
+				"angles" "0 90 0"
+				"model" "models/bots/engineer/bot_engineer.mdl"
+				"modelscale" "2.5"
+				"skin" "1"
+
+				"defaultanim" "taunt_flip_success_receiver"
+				"rendercolor" "0 0 0"
+				"disableshadows" "1"
+			}
+			point_viewcontrol
+			{
+				"targetname" "AlloyedGenesisIntroCamera"
+				"origin" "1442 -922 600"
+
+				"target" "AlloyedGenesisIntroProp"
+                "acceleration" "0"
+                "deceleration" "0"
+				"trackspeed" "50"
+
+                "spawnflags" "28"
+                "vscripts" "point_viewcontrol_fix"
+			}
+
+			logic_case
+			{
+				"targetname" "AlloyedGenesisPropTransformCase"
+
+				"OnCase01" "AlloyedGenesisEngineerTransform,Trigger,,0,-1"
+				"OnCase02" "AlloyedGenesisSoldierTransform,Trigger,,0,-1"
+				"OnCase03" "AlloyedGenesisHeavyTransform,Trigger,,0,-1"
+				"OnCase04" "AlloyedGenesisPyroTransform,Trigger,,0,-1"
+				"OnCase05" "AlloyedGenesisScoutTransform,Trigger,,0,-1"
+				"OnCase06" "AlloyedGenesisSniperTransform,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisEngineerTransform"
+
+				"OnTrigger" "AlloyedGenesisProp,SetModel,models/bots/engineer/bot_engineer.mdl,0,-1"
+				"OnTrigger" "AlloyedGenesisProp,SetAnimation,a_jumpfloat_item2,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/weld2.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/demoman_mvm_m_laughshort03.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 80, 0.6, 0.1, 1)0-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Start,,0,-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Stop,,0.2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisSoldierTransform"
+
+				"OnTrigger" "AlloyedGenesisProp,SetModel,models/bots/soldier_boss/bot_soldier_boss.mdl,0,-1"
+				"OnTrigger" "AlloyedGenesisProp,SetAnimation,primary_floatB,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/energy/zap7.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_jeers01.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 80, 0.6, 0.1, 1)0-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Start,,0,-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Stop,,0.2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisHeavyTransform"
+
+				"OnTrigger" "AlloyedGenesisProp,SetModel,models/bots/heavy_boss/bot_heavy_boss.mdl,0,-1"
+				"OnTrigger" "AlloyedGenesisProp,SetAnimation,jumpfloat_melee,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/levels/labs/electric_explosion1.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_jeers01.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 80, 0.6, 0.1, 1)0-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Start,,0,-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Stop,,0.2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisPyroTransform"
+
+				"OnTrigger" "AlloyedGenesisProp,SetModel,models/bots/pyro_boss/bot_pyro_boss.mdl,0,-1"
+				"OnTrigger" "AlloyedGenesisProp,SetAnimation,a_jumpfloat_primary,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient_mp3/halloween/thunder_04.mp3,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_jeers01.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 80, 0.6, 0.1, 1)0-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Start,,0,-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Stop,,0.2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisScoutTransform"
+
+				"OnTrigger" "AlloyedGenesisProp,SetModel,models/bots/scout_boss/bot_scout_boss.mdl,0,-1"
+				"OnTrigger" "AlloyedGenesisProp,SetAnimation,Airwalk_LOSER,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient_mp3/halloween/thunder_04.mp3,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/scout_mvm_m_jeers03.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 80, 0.6, 0.1, 1)0-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Start,,0,-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Stop,,0.2,-1"
+			}
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisSniperTransform"
+
+				"OnTrigger" "AlloyedGenesisProp,SetModel,models/bots/sniper/bot_sniper.mdl,0,-1"
+				"OnTrigger" "AlloyedGenesisProp,SetAnimation,Airwalk_ITEM2,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/levels/labs/electric_explosion1.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/norm/sniper_mvm_painsevere02.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 80, 0.6, 0.1, 1)0-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Start,,0,-1"
+				"OnTrigger" "AlloyedGenesisTransformLightning,Stop,,0.2,-1"
+			}
+
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisTransformLightning"
+                "origin" "1442 -1322 700"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisTransformLightning"
+                "origin" "1442 -1322 700"
+				"angles" "-31.509422 -145.224258 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisTransformLightning"
+                "origin" "1442 -1322 700"
+				"angles" "39.090767 36.895836 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisTransformLightning"
+                "origin" "1442 -1322 700"
+				"angles" "15.327445 -86.748405 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisTransformLightning"
+                "origin" "1442 -1322 700"
+				"angles" "34.701805 130.318726 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisTransformLightning"
+                "origin" "1442 -1322 700"
+				"angles" "-12.260406 -31.839474 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+			prop_dynamic
+            {
+                "targetname" "whitebackground"
+				"origin" "1442 -1522 -36"
+                "angles" "90 90 0"
+
+                "model" "models/props_lakeside_event/fog_plane03.mdl"
+				"modelscale" "0.5"
+
+                "disableshadows" "1"
+                "disablebonefollowers" "1"
+            }
+		}
+
+		AlloyedGenesisPT
+		{
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisTarget
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisGlow
+				Action SetParent
+				Param !activator
+			}
+
+			// CORE LOGIC //
+			info_target
+			{
+				"targetname" "AlloyedGenesisTarget"
+			}
+			tf_glow
+            {
+				"targetname" "AlloyedGenesisGlow"
+				"target" "!parent"
+                "GlowColor" "219 152 250 255"
+            }
+
+			// INTRO LOGIC
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisBotIntroRelay"
+
+				"OnTrigger" "!activator,$SetLocalOrigin,1442 -1322 600,0,-1"
+				"OnTrigger" "!activator,Color,0 0 0,0,-1"
+				"OnTrigger" "!activator,RunScriptCode,self.SetGravity(0.0001),0,-1"
+				"OnTrigger" "AlloyedGenesisFormChangeRelay,Trigger,,0.1,-1"
+				"OnTrigger" "!activatorRunScriptCodeCzUtil.KirbyBoss(self, function(){}, `bossbar1.wav`, 1)0.51"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil04.mp3,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil04.mp3,2,-1"
+				"OnTrigger" "!activator,$Addcond,87,2,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_flip_success_receiver,2,-1"
+
+				"OnTrigger" "!activator,RunScriptCode,self.SetGravity(1),3,-1"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,4.5,-1"
+				"OnTrigger" "AlloyedGenesisRingPT,ForceSpawnAtEntityOrigin,!activator,4.5,-1"
+				"OnTrigger" "AlloyedGenesisIntroExplosionDamage,FireOnce,,4.5,-1"
+				"OnTrigger" "AlloyedGenesisIntroExplosion,Start,,4.5,-1"
+				"OnTrigger" "AlloyedGenesisIntroExplosion,Stop,,4.7,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_melee,5,-1"
+
+				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisIntroMegalaser,8,-1"
+				"OnTrigger" "Phase2TransitionRelay,Enable,,8,-1"
+                "OnTrigger" "Phase3TransitionRelay,Enable,,8,-1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "AlloyedGenesisIntroExplosion"
+				"origin" "0 0 20"
+				"effect_name" "cinefx_goldrush"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "AlloyedGenesisIntroExplosionDamage"
+				"origin" "0 0 90"
+
+				"teamnum" "3"
+				"WeaponType" "3"
+				"Damage" "500"
+				"SplashRadius" "400"
+
+				"$preventshootparent" "1"
+
+				"$OnFire" "!self,DetonateStickies,,0,-1"
+			}
+
+			// FORM CHANGE LOGIC //
+
+			logic_relay
+            {
+                "targetname" "AlloyedGenesisFormChangeRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,=40|ambient/levels/labs/electric_explosion1.wav,0,-1"
+
+                "OnTrigger" "AlloyedGenesisFormChangeLightning,Start,,0,-1"
+                "OnTrigger" "AlloyedGenesisFormChangeLightning,Stop,,2,-1"
+            }
+
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisFormChangeLightning"
+                "origin" "1442 -1322 700"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisFormChangeLightning"
+                "origin" "1442 -1322 700"
+				"angles" "-31.509422 -145.224258 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisFormChangeLightning"
+                "origin" "1442 -1322 700"
+				"angles" "39.090767 36.895836 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisFormChangeLightning"
+                "origin" "1442 -1322 700"
+				"angles" "15.327445 -86.748405 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisFormChangeLightning"
+                "origin" "1442 -1322 700"
+				"angles" "34.701805 130.318726 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+			info_particle_system
+            {
+                "targetname" "AlloyedGenesisFormChangeLightning"
+                "origin" "1442 -1322 700"
+				"angles" "-12.260406 -31.839474 0"
+                "effect_name" "wrenchmotron_teleport_beam"
+            }
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -2200,6 +2764,93 @@ WaveSchedule
 
 	Templates
 	{
+		//// FINAL BOSS ////
+
+		T_TFBot_Finalboss_Alloyed_Genesis
+		{
+			Name "THE ALLOYED GENESIS"
+			Class Soldier
+			ClassIcon random_lite_giant_hyper
+			Skill Expert
+			Health 120000
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Action Mobber
+
+			UseCustomModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
+			UseMeleeThreatPrioritization 1
+			CustomEyeGlowColor "128 0 128"
+
+			SpawnTemplate "AlloyedGenesisPT"
+			SpawnTemplate "AlloyedGenesisLoseCondPT"
+			SpawnTemplate "AlloyedGenesisRingPT"
+
+			Tag dontdoublehp
+			Tag dontdoublehp_damageres
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.1
+				"airblast vulnerability multiplier" 0.1
+				"override footstep sound set" 2
+				"cancel falling damage" 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action Color
+				Param "140 140 140"
+				Delay 0
+				Repeats 9999
+				Cooldown 0.1
+			}
+
+			ChangeAttributes
+			{
+				Name "AlloyedGenesisIntro"
+				Delay 0
+				Repeats 1
+			}
+
+			FireInput
+			{
+				Target "Phase2TransitionRelay"
+				Action "Trigger"
+				Delay 0
+				Repeats 0
+				Cooldown 1
+				IfHealthBelow 85001
+			}
+			FireInput
+			{
+				Target "Phase3TransitionRelay"
+				Action "Trigger"
+				Delay 0
+				Repeats 0
+				Cooldown 1
+				IfHealthBelow 40001
+			}
+
+			EventChangeAttributes
+			{
+				AlloyedGenesisIntro [$SIGSEGV]
+				{
+					UseCustomModel "models/bots/pyro_boss/bot_pyro_boss_gibby.mdl"
+
+					FireInput
+					{
+						Target "AlloyedGenesisBotIntroRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+				}
+			}
+		}
+
 		//// MINIBOSSES ////
 		T_TFBot_Miniboss_Engineer_Miner
 		{
@@ -5649,36 +6300,57 @@ WaveSchedule
 	}
 	Wave
 	{
-		WaveSpawn // Timed Disaster
+		InitWaveOutput
 		{
-			Name "Wave3_Subwave4_TimedDisaster"
-			Where spawnbot_boss0
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 500
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`FinaleSetupRelay`, `Trigger`)
 
-			TFBot
-			{
-				Template T_TFBot_Miniboss_TimedDisaster
+					IncludeScript(`bosstickdown`)
 
-				FireInput
-				{
-					Target !self
-					Action $SetLocalOrigin
-					Param "1454 -1261 -281"
-					Delay 0
-					Repeats 1
-				}
-			}
-
-			FirstSpawnOutput
-			{
-				Target RedLoseRelay
-                Action Disable
-			}
+					::AlloyedGenesisDeathScript <- {
+						function OnGameEvent_recalculate_holidays(_) { if(GetRoundState() == 3) delete ::AlloyedGenesisDeathScript }
+						function OnGameEvent_player_death(params)
+						{
+							local hVictim = GetPlayerFromUserID(params.userid)
+							if(hVictim.IsBotOfType(1337))
+							{
+								if(hVictim.HasBotTag(`dontdoublehp`))
+								{
+									EntFire(`AlloyedGenesisDeathPT`,`ForceSpawnAtEntityOrigin`,`AlloyedGenesisDeathSpawn`)
+								}
+							}
+						}
+					}
+					__CollectGameEventCallbacks(AlloyedGenesisDeathScript)
+				  "
 		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay_classic`, `Trigger`)
+					EntFire(`AlloyedGenesisIntroPT`, `ForceSpawn`)
+				  "
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finished_relay`, `Trigger`)
+				  "
+		}
+
+		Explanation
+        {
+            Line "{yellow}IT WILL NOT HOLD BACK. IT WILL PULL ALL THE STOPS."
+            Line "{yellow}IT WILL DYNAMICALLY SWITCH LOSE CONDITIONS."
+        }
+
+		CustomWaveNumber 4
+        CustomMaxWaveNumber 0
 	}
 }
