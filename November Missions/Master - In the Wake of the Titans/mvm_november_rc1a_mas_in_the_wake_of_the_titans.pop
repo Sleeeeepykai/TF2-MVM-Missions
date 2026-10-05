@@ -421,7 +421,7 @@ WaveSchedule
 				"targetname" "Wave7SetupRelay"
 
 				"OnTrigger" "Wave7SetupMusic,PlaySound,,0,-1"
-				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `\x07800080Now Playing: \x07FFFFFFSuffering Leaves, Suffering Leaves - Heaven Pierce Her`)0-1"
+				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFSuffering Leaves, Suffering Leaves - Heaven Pierce Her`)0-1"
 				"OnTrigger" "tf_gamerules,$StopVO,#november_master_finale_intro.mp3,0,-1"
 
 				"OnTrigger" "VoidFinaleCC,Enable,,0,-1"
@@ -495,7 +495,7 @@ WaveSchedule
 				"OnTrigger" "tank_e,SetSpeed,110,23.554,-1"
 
 				"OnTrigger" "Wave7MusicLoop1,PlaySound,,24.054,-1"
-				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `\x07800080Now Playing: \x07FFFFFFDanse Macabre - Heaven Pierce Her`)24.054-1"
+				"OnTrigger" "BigNetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFDanse Macabre - Heaven Pierce Her`)24.054-1"
 
 				"OnTrigger" "Wave7MusicFadeout1,Disable,,109.926,-1"
 				"OnTrigger" "Wave7MusicFadeout2,Enable,,109.926,-1"
@@ -1347,10 +1347,150 @@ WaveSchedule
 
 		ChampionPyroPT
 		{
-			NoFixup 1
+			NoFixUp 1
+
+			OnSpawnOutput
+            {
+                Target ChampionPyroTarget
+				Action SetParent
+				Param "!activator"
+            }
+
+			info_target
+			{
+				"targetname" "ChampionPyroTarget"
+				"origin" "0 0 0"
+			}
+
+			OnSpawnOutput
+            {
+                Target ChampionPyroSpellRelay
+				Action Trigger
+				Delay 1
+            }
+
 			logic_relay
 			{
-				"targetname" "spell_main_brain"
+				"targetname" "ChampionPyroSpellRelay"
+
+				"spawnflags" "2"
+
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,SpellPrepare,6,-1"
+				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, `spellbook_minor_burning`, `weapon_bone`)6-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.3,6,-1"
+				"OnTrigger" "SpellTickingRelay,Trigger,,6,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,SpellFireball,9,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,Default,13,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.4,13,-1"
+				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, null, `weapon_bone`)13-1"
+				"OnTrigger" "!self,Trigger,,13,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "ChampionPyroRageRelay"
+
+				"OnTrigger" "ChampionPyroSpellRelay,CancelPending,,0,-1"
+				"OnTrigger" "SpellTickingRelay,CancelPending,,0,-1"
+				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, null, `weapon_bone`)0-1"
+
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,Default,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_paincrticialdeath02.mp3,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_paincrticialdeath02.mp3,0,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.2,0,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.5,3,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/discipline_device_power_up.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_moveup01.mp3,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_moveup01.mp3,3.5,-1"
+
+				"OnTrigger" "ChampionPyroRageSpellRelay,Trigger,,3,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "ChampionPyroRageSpellRelay"
+
+				"spawnflags" "2"
+
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,SpellPrepare,4,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.4,4,-1"
+				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, `spellbook_major_burning`, `weapon_bone`)4-1"
+				"OnTrigger" "SpellTickingRelay,Trigger,,4,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,SpellMeteor,7,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.5,10,-1"
+				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,Default,10,-1"
+				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, null, `weapon_bone`)10-1"
+				"OnTrigger" "!self,Trigger,,10,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "SpellTickingRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.05,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.15,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.25,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.35,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.45,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.55,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.65,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.7,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.75,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,0.8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,0.9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,1.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,1.2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,1.4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,1.6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,1.8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,2.3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_01.wav,2.6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_02.wav,2.9,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spelltick_set.wav,3,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "ChampionPyroDeathRelay"
+
+				"OnTrigger" "SpellTickingRelay,CancelPending,,0,-1"
+				"OnTrigger" "ChampionPyroRageSpellRelay,CancelPending,,0,-1"
+			}
+		}
+
+		ChampionPyroGMedPT
+		{
+			KeepAlive 1
+			RemoveIfKilled "GMedicTarget"
+
+			OnParentKilledOutput
+			{
+				Target GMedicDeadRelay
+				Action Trigger
+			}
+
+			info_target
+			{
+				"targetname" "GMedicTarget"
+			}
+
+			logic_relay
+			{
+				"targetname" "GMedicDeadRelay"
+
+				"OnTrigger" "ChampionPyroRageRelay,Trigger,,0,-1"
+				"OnTrigger" "GMedicTarget,Kill,,1,-1"
 			}
 		}
 	}
@@ -1944,31 +2084,92 @@ WaveSchedule
 				"damage force reduction" 0.1
 				"airblast vulnerability multiplier" 0.1
 				"override footstep sound set" 6
+				"voice pitch scale" 0
 			}
 
-			ChangeAttributes
+			EventChangeAttributes
 			{
-				Name Default
-				Delay 0
-				Repeats 1
-			}
+				Default
+				{
+					Item "TF_WEAPON_FLAMETHROWER"
 
-			ChangeAttributes
-			{
-				Name "SpellDelay"
-				Delay 6
-				Cooldown 0
-				IfLeftSpawn 1
-			}
+					WeaponRestrictions PrimaryOnly
+				}
 
-			ChangeAttributes
-			{
-				Name "SpellFireball"
-			}
+				SpellPrepare [$SIGSEGV]
+				{
+					Attributes SuppressFire
+					WeaponRestrictions MeleeOnly
 
-			ChangeAttributes
-			{
-				Name "SpellMeteor"
+					Item "Necro Smasher"
+					Item "TF_WEAPON_SPELLBOOK"
+
+					ItemAttributes
+					{
+						ItemName "Necro Smasher"
+						"is invisible" 1
+					}
+				}
+
+				SpellFireball [$SIGSEGV]
+				{
+					WeaponRestrictions MeleeOnly
+
+					Item "Necro Smasher"
+					Item "TF_WEAPON_SPELLBOOK"
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_SPELLBOOK"
+						"is_passive_weapon" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "Necro Smasher"
+						"is invisible" 1
+					}
+
+					Spell [$SIGSEGV]
+					{
+						Type "Fireball"
+						Delay 0
+						Cooldown 1
+						Repeats 2
+						Charges 3
+						Limit 3
+					}
+				}
+
+				SpellMeteor [$SIGSEGV]
+				{
+					WeaponRestrictions MeleeOnly
+
+					Item "Necro Smasher"
+					Item "TF_WEAPON_SPELLBOOK"
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_SPELLBOOK"
+						"is_passive_weapon" 1
+					}
+
+					ItemAttributes
+					{
+						ItemName "Necro Smasher"
+						"is invisible" 1
+					}
+
+					Spell [$SIGSEGV] //Gives specified spell to bots.
+					{
+						Type "Meteor Shower"
+						Delay 0
+						Cooldown 2
+						Repeats 2
+						Charges 1
+						Limit 1
+					}
+				}
 			}
 		}
 
@@ -3163,10 +3364,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Pyro_Champion
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+					SpawnTemplate "ChampionPyroGMedPT"
 				}
 			}
 
@@ -3250,10 +3455,62 @@ WaveSchedule
                   "
         }
 
-        WaveSpawn
-        {
-            WaitBeforeStarting 99999
-        }
+        WaveSpawn // 1 Champion Pyro and 1 GCharged Medic (Spawn D)
+		{
+			Name "Wave3_Subwave2_ChampionPyro"
+			Where spawnbot_d
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Champion
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+					SpawnTemplate "ChampionPyroGMedPT"
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+			LastSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EmitSoundEx({
+							sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_highfive_success02.mp3`,
+							channel = 6,
+							pitch = 85,
+							special_dsp = 22,
+							filter_type = 5
+						})
+					  "
+			}
+		}
     }
 	// Wave 5 Notes
 	Wave
