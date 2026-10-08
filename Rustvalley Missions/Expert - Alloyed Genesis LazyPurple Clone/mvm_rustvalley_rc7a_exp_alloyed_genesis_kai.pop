@@ -376,19 +376,40 @@ WaveSchedule
 				"switch_teams" "0"
 				"force_map_reset" "1"
 			}
-			logic_timer
-			{
-				"targetname" "RedLoseTimer"
-				"RefireTime" "2.0"
-
-				"OnTimer" "RedLoseRelay,Trigger,,0,-1"
-
-				"StartDisabled" "1"
-
-			}
 			logic_relay
 			{
 				"targetname" "RedLoseRelay"
+				"OnTrigger" "RedLose,RoundWin,,0,-1"
+                "startdisabled" "1"
+			}
+
+			math_counter
+            {
+                "targetname" "TeamWipeCounter"
+                "startvalue" "0"
+                "min" "0"
+                "max" "99"
+
+                "OutValue" "TeamWipeCompare,SetValueCompare,,0,-1"
+            }
+            logic_compare
+            {
+                "targetname" "TeamWipeCompare"
+                "CompareValue" "0"
+
+                "OnEqualTo" "TeamwipeLoseTimer,Enable,,0,-1"
+                "OnGreaterThan" "TeamwipeLoseTimer,Disable,,0,-1"
+            }
+            logic_timer
+			{
+				"targetname" "TeamwipeLoseTimer"
+				"RefireTime" "2.0"
+				"StartDisabled" "1"
+				"OnTimer" "TeamwipeLoseRelay,Trigger,,0,-1"
+			}
+			logic_relay
+			{
+				"targetname" "TeamwipeLoseRelay"
 				"OnTrigger" "RedLose,RoundWin,,0,-1"
                 "startdisabled" "1"
 			}
@@ -1332,6 +1353,28 @@ WaveSchedule
 				"disableshadows" "1"
             }
 		}
+
+		PlayerTeamwipePT
+        {
+            OnSpawnOutput
+            {
+                Target "TeamWipeCounter"
+                Action "Add"
+                Param "1"
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+            OnParentKilledOutput
+            {
+                Target "TeamWipeCounter"
+                Action "Subtract"
+                Param "1"
+                Delay 0
+                Repeats 1
+                Cooldown -1
+            }
+        }
 
 		//// ROBOT PTs ////
 
@@ -2713,6 +2756,8 @@ WaveSchedule
 				"OnTrigger" "!activator,RunScriptCode,self.SetGravity(0.0001),0,-1"
 				"OnTrigger" "AlloyedGenesisFormChangeRelay,Trigger,,0.1,-1"
 				"OnTrigger" "!activatorRunScriptCodeCzUtil.KirbyBoss(self, function(){}, `bossbar1.wav`, 1)0.51"
+				"OnTrigger" "AlloyedGenesisTitleTextUpper,Display,,0.5,-1"
+				"OnTrigger" "AlloyedGenesisTitleTextLower,Display,,1.5,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil04.mp3,2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laughevil04.mp3,2,-1"
@@ -2722,7 +2767,7 @@ WaveSchedule
 				"OnTrigger" "!activator,RunScriptCode,self.SetGravity(1),3,-1"
 
 				"OnTrigger"	"tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,4.5,-1"
-				"OnTrigger" "AlloyedGenesisRingPT,ForceSpawnAtEntityOrigin,!activator,4.5,-1"
+				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,4.5,-1"
 				"OnTrigger" "AlloyedGenesisIntroExplosionDamage,FireOnce,,4.5,-1"
 				"OnTrigger" "AlloyedGenesisIntroExplosion,Start,,4.5,-1"
 				"OnTrigger" "AlloyedGenesisIntroExplosion,Stop,,4.7,-1"
@@ -2732,6 +2777,41 @@ WaveSchedule
 				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisIntroMegaLaser,6,-1"
 				"OnTrigger" "Phase2TransitionRelay,Enable,,6,-1"
                 "OnTrigger" "Phase3TransitionRelay,Enable,,6,-1"
+			}
+
+			game_text
+			{
+				"targetname" "AlloyedGenesisTitleTextUpper"
+				"message" "THE SOURCE, THE HEART"
+				"channel" "1"
+				"color" "100 50 255"
+
+				"x" "-1"
+				"y" "0.2"
+
+				"effect" "2"
+				"fxtime" "0.2"
+				"holdtime" "5"
+				"fadeout" "1"
+
+				"spawnflags" "1"
+			}
+			game_text
+			{
+				"targetname" "AlloyedGenesisTitleTextLower"
+				"message" "THE ALLOYED GENESIS"
+				"channel" "2"
+				"color" "100 50 255"
+
+				"x" "-1"
+				"y" "0.25"
+
+				"effect" "2"
+				"fadein" "0.2"
+				"holdtime" "3.8"
+				"fadeout" "1"
+
+				"spawnflags" "1"
 			}
 
 			info_particle_system
@@ -3787,6 +3867,7 @@ WaveSchedule
 				"OnTrigger" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
 
 				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisBurrow,1,-1"
+				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,1,-1"
 				"OnTrigger" "AlloyedGenesisBurrowRocks,FireMultiple,10,1,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,no_attack,1,-1"
 				"OnTrigger" "AlloyedGenesisBurrowDust,Start,,1,-1"
@@ -3800,6 +3881,7 @@ WaveSchedule
 				"targetname" "AlloyedGenesisUnBurrowRelay"
 
 				"OnTrigger" "AlloyedGenesisBurrowRocks,FireMultiple,10,0,-1"
+				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,0,-1"
 				"OnTrigger" "AlloyedGenesisBurrowDust,Start,,0,-1"
 				"OnTrigger" "!activatorRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,0,350))0-1"
 				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name=`physics/concrete/concrete_break3.wav`,channel = 6, filter_type = 5, origin =  self.GetOrigin()})0-1"
@@ -3830,6 +3912,419 @@ WaveSchedule
                 "effect_name" "hammer_impact_button"
             }
 		}
+		AlloyedGenesisLoseCondPT
+		{
+			OnSpawnOutput
+			{
+				Target bignet
+				Action RunScriptCode
+				Param "
+				IncludeScript(`textualtimer_v3`, getroottable())
+				TextualTimer.SetParams({
+					minutes = 1
+					seconds = 0
+					x = -1
+					y = 0.77
+					color = `0 255 555`
+					text_prepend = `IMMINENT DEATH AND DESTRUCTION: `
+					automatic = false
+        		})
+				"
+			}
+
+			logic_case
+            {
+                "targetname" "LoseConditionCase"
+                "OnCase01" "BombLoseConditionRelay,Trigger,,0,-1"
+                "OnCase02" "GateLoseConditionRelay,Trigger,,0,-1"
+                "OnCase03" "TeamWipeLoseConditionRelay,Trigger,,0,-1"
+            }
+			game_text
+			{
+				"targetname" "LoseConditionSwitchText"
+				"message" "SWITCHING LOSE CONDITIONS..."
+				"channel" "2"
+				"color" "255 255 255"
+
+				"x" "-1"
+				"y" "0.2"
+
+				"effect" "0"
+				"fxtime" "0.2"
+				"holdtime" "0.2"
+				"fadeout" "0.2"
+
+				"spawnflags" "1"
+			}
+
+			logic_relay
+            {
+                "targetname" "LoseConditionTimer"
+				"spawnflags" "2"
+
+                "OnTrigger" "LoseConditionSwitchRelay,Trigger,,0,-1"
+                "OnTrigger" "!self,Trigger,,90,-1"
+            }
+			logic_relay
+			{
+				"targetname" "LoseConditionSwitchRelay"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,0,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,0.05,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0.05,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,0.75,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0.75,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,1.45,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,1.45,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,2.15,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,2.15,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,2.85,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,2.85,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,3.55,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,3.55,-1"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,7,-1"
+                "OnTrigger" "LoseConditionCase,PickRandomShuffle,,7,-1"
+			}
+
+			// Bomb Lose Condition
+			logic_relay
+            {
+                "targetname" "BombLoseConditionRelay"
+
+				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.RemoveBotTag(`bot_gatebot`)0-1"
+
+                "OnTrigger" "BombLoseHintTimer,Enable,,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_BombCarriers,0,-1"
+
+				"OnTrigger" "TeamWipeLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Mobbers,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_Mobbers,0,-1"
+
+				"OnTrigger" "GateLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Gatebots,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_Gatebots,0,-1"
+
+                "OnTrigger" "TimerLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "TeamwipeLoseRelay,Disable,,0,-1"
+            }
+            logic_timer
+			{
+				"targetname" "BombLoseHintTimer"
+				"RefireTime" "2.0"
+				"StartDisabled" "1"
+				"OnTimer" "BombLoseHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "BombLoseHint"
+				"message" "[OBJECTIVE] PREVENT THE BOMB FROM DEPLOYING"
+				"spawnflags" "1"
+			}
+
+			// Gate Lose Condition
+			logic_relay
+            {
+                "targetname" "GateLoseConditionRelay"
+
+				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.RemoveBotTag(`bot_gatebot`)0-1"
+
+				"OnTrigger" "intel_classic,ForceReset,,0,-1"
+
+				"OnTrigger" "GateLoseHintTimer,Enable,,0,-1"
+				"OnTrigger" "BossGateTimer,Enable,,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_Gatebots,0,-1"
+
+				"OnTrigger" "BombLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_BombCarriers,0,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_BombCarriers,0,-1"
+
+				"OnTrigger" "TeamWipeLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Mobbers,0,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_Mobbers,0,-1"
+
+                "OnTrigger" "TimerLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "TeamwipeLoseRelay,Disable,,0,-1"
+            }
+            logic_timer
+            {
+                "targetname" "BossGateTimer"
+                "RefireTime" "0.5"
+                "StartDisabled" "1"
+
+                "OnTimer" "@p@alloyedgenesisRunScriptCodeself.AddBotTag(`bot_gatebot`)0-1"
+            }
+            logic_timer
+			{
+				"targetname" "GateLoseHintTimer"
+				"RefireTime" "2.0"
+				"StartDisabled" "1"
+				"OnTimer" "GateLoseHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "GateLoseHint"
+				"message" "[OBJECTIVE] PREVENT THE GATES FROM BEING CAPTURED"
+				"spawnflags" "1"
+			}
+
+			// Teamwipe Lose Condition
+			logic_relay
+            {
+                "targetname" "TeamWipeLoseConditionRelay"
+
+				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.RemoveBotTag(`bot_gatebot`)0-1"
+
+				"OnTrigger" "intel_classic,ForceReset,,0,-1"
+
+				"OnTrigger" "TeamWipeLoseHintTimer,Enable,,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_Mobbers,0,-1"
+
+				"OnTrigger" "GateLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "BossGateTimer,Disable,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Gatebots,0,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_Gatebots,0,-1"
+
+				"OnTrigger" "BombLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_BombCarriers,0,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_BombCarriers,0,-1"
+
+                "OnTrigger" "TimerLoseHintTimer,Disable,,0,-1"
+				"OnTrigger" "TeamwipeLoseRelay,Enable,,0,-1"
+            }
+            logic_timer
+			{
+				"targetname" "TeamWipeLoseHintTimer"
+				"RefireTime" "2.0"
+				"StartDisabled" "1"
+				"OnTimer" "TeamWipeLoseHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "TeamWipeLoseHint"
+				"message" "[OBJECTIVE] DO NOT ALL DIE AT ONCE"
+				"spawnflags" "1"
+			}
+
+			// Timer Lose Condition
+			logic_relay
+			{
+				"targetname" "TimerLoseConditionRelay"
+
+				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.RemoveBotTag(`bot_gatebot`)0-1"
+				"OnTrigger" "BossGateTimer,Disable,,0,-1"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,0,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,0.05,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0.05,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,0.75,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,0.75,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,1.45,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,1.45,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,2.15,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,2.15,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,2.85,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,2.85,-1"
+
+				"OnTrigger" "LoseConditionSwitchText,Display,,3.55,-1"
+				"OnTrigger"	"tf_gamerules,PlayVO,ambient/alarms/klaxon1.wav,3.55,-1"
+
+				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,7,-1"
+
+				"OnTrigger" "intel_classic,ForceReset,,7,-1"
+
+				"OnTrigger" "TimerLoseHintTimer,Enable,,7,-1"
+				"OnTrigger" "TimerTriggerRelay,Trigger,,7,-1"
+
+				"OnTrigger" "BombLoseHintTimer,Disable,,7,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_BombCarriers,7,-1"
+				"OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_BombCarriers,7,-1"
+
+				"OnTrigger" "TeamWipeLoseHintTimer,Disable,,7,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Mobbers,7,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_Mobbers,7,-1"
+
+				"OnTrigger" "GateLoseHintTimer,Disable,,7,-1"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave4_Gatebots,7,-1"
+                "OnTrigger" "pop_interface,$PauseWaveSpawn,Wave4_Gatebots,7,-1"
+
+				"OnTrigger" "TeamwipeLoseRelay,Disable,,7,-1"
+			}
+			logic_relay
+            {
+                "targetname" "TimerTriggerRelay"
+
+                "OnTrigger" "BigNet,RunScriptCode,TextualTimer.Start(),0,-1"
+            }
+			logic_timer
+			{
+				"targetname" "TimerLoseHintTimer"
+				"RefireTime" "2.0"
+				"StartDisabled" "1"
+				"OnTimer" "TimerLoseHint,ShowHudHint,,0,-1"
+			}
+			env_hudhint
+			{
+				"targetname" "TimerLoseHint"
+				"message" "[OBJECTIVE] PREVENT THE TIMER FROM REACHING ZERO"
+				"spawnflags" "1"
+			}
+		}
+		AlloyedGenesisRingPT
+        {
+            NoFixUp 1
+            env_entity_maker
+            {
+                "targetname" "AlloyedGenesisRingAttack"
+                "entitytemplate" "AlloyedGenesisRingAttackPT"
+            }
+            OnSpawnOutput
+            {
+                target "!activator"
+                action "RunScriptCode"
+                param "CzUtil.AddTracking(`ringOwnerGenesis`, self)"
+                delay 0.0
+            }
+            OnParentKilledOutput
+            {
+                target "ring_makerShocks"
+                action "RunScriptCode"
+                param "CzUtil.RemoveTracking(`ringOwnerGenesis`)"
+                delay 0.0
+            }
+        }
+		AlloyedGenesisRingAttackPT
+        {
+            KeepAlive 1
+            OnSpawnOutput
+            {
+                target "tf_gamerules"
+                action "PlayVO"
+                Param "ambient/energy/weld2.wav"
+                delay "0.0"
+            }
+            OnSpawnOutput
+            {
+                target "ringmarkerone"
+                action "kill"
+                delay "5.5"
+            }
+            OnSpawnOutput
+            {
+                target "ringmarkertwo"
+                action "kill"
+                delay "5.5"
+            }
+            OnSpawnOutput
+            {
+                target "roundbeamtest"
+                action "TurnOff"
+                delay "4.5"
+            }
+            OnSpawnOutput
+            {
+                target "roundbeamtest"
+                action "StrikeOnce"
+                delay "0"
+            }
+            OnSpawnOutput
+            {
+                target "roundbeamtest"
+                action "kill"
+                delay "5.0"
+            }
+            OnSpawnOutput
+            {
+                target "ringmarkerone"
+                action "RunScriptCode"
+                param "SetMoveIgnoreSolid(self, 600)"
+            }
+            OnSpawnOutput
+            {
+                target "roundbeamtest"
+                action "RunScriptCode"
+                param "RingRegister(self,500,CzUtil.GetTracking(`ringOwnerGenesis`))"
+                delay 0.0
+            }
+            OnSpawnOutput
+            {
+                target "ringmarkertwo"
+                action "RunScriptCode"
+                param "SetMoveIgnoreSolid(self, 600)"
+                //delay 0.1
+            }
+            prop_dynamic
+            {
+                "parentname" ""
+                "targetname" "ringmarkerone"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "origin" "0 0 40"
+            }
+            prop_dynamic
+            {
+                "parentname" ""
+                "targetname" "ringmarkertwo"
+                "model" "models/empty.mdl"
+                "solid" "0"
+                "angles" "0 180 0"
+                "origin" "0 0 40"
+            }
+            env_beam
+            {
+                "parentname" ""
+                "targetname" "roundbeamtest"
+                "BoltWidth" "6"
+                "LightningStart" "ringmarkerone"
+                "LightningEnd" "ringmarkertwo"
+                "origin" "0 0 40"
+                "renderamt" "200"
+                "rendercolor" "255 255 255"
+                "damage" "0"
+                "NoiseAmplitude" "0"
+                "dissolvetype" "1"
+                "texture" "sprites/laserbeam.spr"
+                "life" "4"
+                "spawnflags" "8" //8
+                "TouchType" "1"
+            }
+        }
+
+		AlloyedGenesisMinionPT
+		{
+			OnParentKilledOutput
+            {
+                Target "@p@alloyedgenesis"
+                Action $TakeDamage
+                Param "3000"
+                Repeats 1
+                Delay -1
+            }
+		}
+		AlloyedGenesisMinion2PT
+		{
+			OnParentKilledOutput
+            {
+                Target "@p@alloyedgenesis"
+                Action $TakeDamage
+                Param "300"
+                Repeats 1
+                Delay -1
+            }
+		}
+
 		AlloyedGenesisMegaLaserDamagePT
 		{
 			trigger_hurt
@@ -6740,6 +7235,225 @@ WaveSchedule
 				}
 			}
 		}
+
+		T_TFBot_Scout_JohnBaseballFragment
+		{
+			Name "John Baseball Fragment"
+			Class Scout
+			Skill Expert
+			Health 250
+			Scale 0.75
+			Attributes AlwaysCrit
+			Action Mobber
+
+			SpawnTemplate "AlloyedGenesisMinion2PT"
+
+			FireInput
+			{
+				Target !activator
+				Action $TeleportToEntity
+				Param CheckpointTarget
+				Delay 0
+				Repeats 1
+			}
+			FireInput
+			{
+				Target !self
+				Action Color
+				Param "80 80 80"
+				Delay 0
+			}
+		}
+		T_TFBot_Scout_JohnBaseballFragment_Melee
+		{
+			Name "John Baseball Fragment"
+			Class Scout
+			ClassIcon scout_stun
+			Skill Expert
+			Health 250
+			Scale 0.75
+			Attributes AlwaysCrit
+			WeaponRestrictions MeleeOnly
+			Action Mobber
+
+			SpawnTemplate "AlloyedGenesisMinion2PT"
+
+			Item "The Sandman"
+
+			FireInput
+			{
+				Target !activator
+				Action $TeleportToEntity
+				Param CheckpointTarget
+				Delay 0
+				Repeats 1
+			}
+			FireInput
+			{
+				Target !self
+				Action Color
+				Param "80 80 80"
+				Delay 0
+			}
+		}
+		T_TFBot_Soldier_Trolldier
+		{
+			Name "Larry Clone"
+			Class Soldier
+			ClassIcon soldier_gib_jumper_lite
+			Skill Expert
+			Health 500
+			Attributes AutoJump
+			AutoJumpMin 1
+			AutoJumpMax 1
+			Attributes DisableDodge
+			ExtAttr IgnoreBuildings
+			Action Mobber
+
+			AlwaysGlow 1
+
+			SpawnTemplate "AlloyedGenesisMinionPT"
+
+			Item "The Mantreads"
+			Item "The Market Gardener"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 1
+				"damage force reduction" 0.1
+				"cannot be backstabbed" 1
+
+				"blast dmg to self increased" 0.2
+				"increased jump height" 0.9
+				"cancel falling damage" 1
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+				"fire rate bonus" 1.2
+				"faster reload rate" 0.001
+				"clip size upgrade atomic" 2
+
+				"projectile speed increased HIDDEN" 2
+				"projectile no deflect" 1
+
+				"override projectile type" 3
+				"fuse bonus" 0.295
+
+				"apply look velocity on damage" 1300
+				"apply z velocity on damage" 250
+			}
+			ItemAttributes
+			{
+				ItemName "The Mantreads"
+				"increased air control" 4
+				"attach particle effect" "3042"
+			}
+			ItemAttributes
+			{
+				ItemName "The Market Gardener"
+
+				"damage bonus" 1.5
+				"dmg bonus vs buildings" 5
+				"melee range multiplier" 2.5
+
+				"deploy time decreased" 0.01
+			}
+
+			WeaponSwitch
+			{
+				Type "Melee"
+				MaxTargetRange 250
+				MinTargetRange 1
+				Delay 0.1
+				Repeats 0
+				Cooldown 0
+				IfSeeTarget 1
+			}
+			WeaponSwitch
+			{
+				Type "Primary"
+				MaxTargetRange 9999
+				MinTargetRange 301
+				Delay 0.1
+				Repeats 0
+				Cooldown 0
+				IfSeeTarget 1
+			}
+
+			FireInput
+			{
+				Target !self
+				Action Color
+				Param "80 80 80"
+				Delay 0
+			}
+			FireInput
+			{
+				Target !activator
+				Action $TeleportToEntity
+				Param @p@alloyedgenesis
+				Delay 0
+				Repeats 1
+			}
+		}
+
+		T_TFBot_Soldier_RocketShotgun
+		{
+			Name "Rocket Shotgun Soldier"
+			Class Soldier
+			ClassIcon soldier_rocketshotgun_lite
+			Skill Expert
+			Health 600
+			Scale 1.4
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+				"fire rate bonus" 0.001
+				"faster reload rate" 0.9
+				"clip size penalty" 0.75
+				"projectile spread angle penalty" 2
+				"projectile speed decreased" 0.9
+			}
+		}
+
+		T_TFBot_Demoman_Spammer_Gatebot
+		{
+			Name "Rapid Fire Demoman"
+			Class Demoman
+			ClassIcon demo_spammer_package
+			Skill Expert
+			Health 525
+			Scale 1.3
+			BehaviorModifiers Push
+			WeaponRestrictions PrimaryOnly
+
+			Tag bot_gatebot
+
+			Item "MvM GateBot Light Demoman"
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+
+				"fire rate bonus" 0.75
+				"faster reload rate" 0.001
+			}
+		}
+		T_TFBot_Demoman_Fireball_Cannon_Gatebot
+		{
+			Template T_TFBot_Demoman_Fireball_Cannon
+			BehaviorModifiers Push
+
+			Tag bot_gatebot
+
+			Item "MvM GateBot Light Demoman"
+		}
 	}
 
 	//// MISSION BOTS ////
@@ -8749,6 +9463,208 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Finalboss_Alloyed_Genesis
+			}
+		}
+
+		WaveSpawn // Trolldier Minions
+		{
+			Name "Wave4_TrolldierSummon"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 30
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 360
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Trolldier
+			}
+		}
+		WaveSpawn // John Baseball Minions
+		{
+			Name "Wave4_JohnBaseballSummon"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 140
+			MaxActive 14
+			SpawnCount 14
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 140
+
+			StartDisabled 1
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Scout_JohnBaseballFragment
+				}
+				TFBot
+				{
+					Template T_TFBot_Scout_JohnBaseballFragment_Melee
+				}
+			}
+		}
+
+		WaveSpawn // Mobber Scouts and Rocket Shotgun Soldiers
+		{
+			Name "Wave4_Mobbers"
+			Where spawnbot_scattered0
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 100
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 100
+			TotalCurrency 200
+
+			StartDisabled 1
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+                {
+                    Class Scout
+                    Skill Expert
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Class Scout
+                    Skill Expert
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Class Scout
+                    Skill Expert
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Class Scout
+                    Skill Expert
+                    Action Mobber
+                }
+                TFBot
+                {
+                    Class Scout
+                    Skill Expert
+                    Action Mobber
+                }
+				TFBot
+				{
+					Template T_TFBot_Soldier_RocketShotgun
+					Attributes AlwaysCrit
+					Action Mobber
+				}
+			}
+		}
+
+		WaveSpawn // Bomb Carrier Super Scouts
+		{
+			Name "Wave4_BombCarriers"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 20
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawnsAfterDeath 5
+			TotalCurrency 100
+
+			StartDisabled 1
+
+			TFBot
+            {
+                Template T_TFBot_Giant_Scout_Fast
+            }
+		}
+		WaveSpawn // Bomb Carrier Burst Demos, Multi-Utility Heavies and Armored League Scouts
+		{
+			Name "Wave4_BombCarriers"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 100
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 6
+			TotalCurrency 200
+
+			StartDisabled 1
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst_BiblicallyAccurate
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst_BiblicallyAccurate
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Combo
+					Skill Hard
+				}
+				TFBot
+				{
+					Template T_TFBot_Scout_Sandman_Armored
+					Attributes AlwaysCrit
+				}
+			}
+		}
+
+		WaveSpawn // Gatebot Rapid Demos and Fireball Cannon Demos
+		{
+			Name "Wave4_Gatebots"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support 1
+			TotalCount 100
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 200
+
+			StartDisabled 1
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Demoman_Spammer_Gatebot
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Fireball_Cannon_Gatebot
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Fireball_Cannon_Gatebot
+				}
 			}
 		}
 	}
