@@ -53,6 +53,9 @@ WaveSchedule
 
 	PrecacheModel "models/props_halloween/fist_projectile_purple.mdl"
 
+	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
+	PrecacheModel "models/buildables/amplifier_test/amplifier.mdl"
+
 	// Precached Sounds //
 
 	// SFX
@@ -65,6 +68,8 @@ WaveSchedule
 	PrecacheSound "megalaser_chargeup.wav"
 	PrecacheSound "megalaser_fire.wav"
 	PrecacheSound "megalaser_fireloop.wav"
+
+	PrecacheSound "nucleararmageddon.wav"
 
 	// Music
 	PrecacheSound "rustvalleynight.mp3"
@@ -283,10 +288,10 @@ WaveSchedule
 			"faster reload rate" 0.5
 			"clip size bonus" 2
 
-			"projectile speed decreased" 0.5
+			"projectile speed decreased" 0.25
 			"projectile gravity" -1
 			"projectile lifetime" 4
-			"projectile acceleration start time" 2
+			"projectile acceleration start time" 1
 			"projectile acceleration time" 2
             "projectile acceleration" -1000
 			"spread angle pattern" "0 0 0|0 15 0|0 -15 0"
@@ -323,6 +328,41 @@ WaveSchedule
 			"custom kill icon" "fireaxe"
 			"fire input on attack" "tf_gamerules^PlayVO^misc/halloween/strongman_fast_whoosh_01.wav"
 		}
+
+		"OverclockedDaveGrenadeWeapon"
+		{
+			OriginalItemName "TF_WEAPON_GRENADELAUNCHER"
+
+			"damage penalty" 0.75
+			"fuse bonus" 2.5
+
+			"projectile speed decreased" 0.65
+			"projectile spread angle penalty" 25
+			"mult projectile count" 50
+			"projectile no deflect" 1
+		}
+		"OverclockedDaveLaserBombWeapon"
+		{
+			OriginalItemName "TF_WEAPON_GRENADELAUNCHER"
+
+			"damage penalty" 0
+
+			"noclip projectiles" 1
+
+			"projectile speed decreased" 0.4
+			"projectile spread angle penalty" 130
+			"projectile gravity" -1
+			"projectile acceleration" -450
+			"projectile acceleration time" 1
+			"projectile acceleration start time" 0.2
+
+			"ignores other projectiles" 1
+			"projectile no deflect" 1
+			"no explosion particles" 1
+
+			"custom projectile model" "models/empty.mdl"
+
+		}
 	}
 
 	//// POINT TEMPLATES ////
@@ -352,11 +392,19 @@ WaveSchedule
 						PrecacheSound(`vo/mvm/mght/pyro_mvm_m_paincrticialdeath01.mp3`)
 						PrecacheSound(`ambient/explosions/explode_4.wav`)
 						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_laughhappy03.mp3`)
+
+						PrecacheSound(`mvm/mvm_tele_activate.wav`)
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_laughlong01.mp3`)
+
 						PrecacheSound(`megalaser_chargeup.wav`)
 						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_meleedare13.mp3`)
 						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_laughevil03.mp3`)
 						PrecacheSound(`mvm/mvm_deploy_giant.wav`)
 						PrecacheSound(`vo/mvm/mght/scout_mvm_m_paincrticialdeath01.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_meleeing03.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_meleeing05.mp3`)
+						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_sandwichtaunt14.mp3`)
+						PrecacheSound(`weapons/shooting_star_shoot_crit.wav`)
 
 						IncludeScript(`tankextensions_main`)
                 		IncludeScript(`tankextensions/gatetank`)
@@ -468,6 +516,20 @@ WaveSchedule
                 "Negated" "1"
                 "condition" "57"
             }
+
+			filter_tf_bot_has_tag
+			{
+				"targetname" "AlloyedGenesisFilter"
+
+				"tags" "AlloyedGenesis"
+			}
+			filter_tf_bot_has_tag
+			{
+				"targetname" "EveryoneButAlloyedGenesisFilter"
+				"Negated" "1"
+
+				"tags" "AlloyedGenesis"
+			}
 		}
 
 		MissionPT
@@ -2836,29 +2898,27 @@ WaveSchedule
 				"$OnFire" "!self,DetonateStickies,,0,-1"
 			}
 
-			// MegaLaser Sequence
+			// Megalaser Sequence
 
 			logic_relay
 			{
 				"targetname" "AlloyedGenesisIntroMegaLaserRelay"
 
 				"OnTrigger" "AlloyedGenesisBotProp,Enable,,0,-1"
+				"OnTrigger" "AlloyedGenesisGlow,Disable,,0,-1"
 				"OnTrigger" "AlloyedGenesisBotProp,SetAnimation,taunt02,0,-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_taunts04.mp3`, pitch = 50, special_dsp = 57, filter_type = 5})0-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/taunts/pyro_mvm_m_taunts04.mp3`, pitch = 50, special_dsp = 57, filter_type = 5})0-1"
 
-				"OnTrigger" "!activator,$BotCommand,interrupt_action -pos 1442 -1322 600 -lookpos 1546 544 -154 -duration 12,1,1"
+				"OnTrigger" "!activator,$BotCommand,interrupt_action -pos 1442 -1322 600 -lookpos 1442 -1222 -154 -duration 12,0,1"
+				"OnTrigger" "!activator,$Addcond,87 12,1,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,megalaser_chargeup.wav,1,-1"
 				"OnTrigger" "AlloyedGenesisMegaLaserChargeParticle,Start,,1,-1"
-				"OnTrigger" "AlloyedGenesisMegaLaserCharge,TurnOn,,1,-1"
 
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,0,1.5,-1"
 
-				"OnTrigger" "!activator,$Addcond,87 11,2,-1"
-
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,1,5.3,-1"
 				"OnTrigger" "AlloyedGenesisMegaLaserChargeParticle,Stop,,5.7,-1"
-				"OnTrigger" "AlloyedGenesisMegaLaserCharge,TurnOff,,5.7,-1"
 
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,0,6,-1"
 				"OnTrigger" "AlloyedGenesisMegaLaser,Enable,,6,-1"
@@ -2882,10 +2942,11 @@ WaveSchedule
 
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,1,12,-1"
 				"OnTrigger" "AlloyedGenesisMegaLaser,Disable,,12,-1"
-				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Trigger,,12,-1"
+				//"OnTrigger" "AlloyedGenesisLoseConditionTimer,Trigger,,12,-1"
 
 				"OnTrigger" "AlloyedGenesisBotProp,SetAnimation,run_PRIMARY,12.95,-1"
 				"OnTrigger" "AlloyedGenesisBotProp,Disable,,13,-1"
+				"OnTrigger" "AlloyedGenesisGlow,Enable,,13,-1"
 				"OnTrigger" "AlloyedGenesisAttackInit,Trigger,,13,-1"
 			}
 
@@ -2901,6 +2962,13 @@ WaveSchedule
                 "rendermode" "1"
                 "disableshadows" "1"
                 "startdisabled" "1"
+            }
+			tf_glow
+            {
+				"targetname" "AlloyedGenesisBotPropGlow"
+				"parentname" "AlloyedGenesisBotProp"
+				"target" "AlloyedGenesisBotProp"
+                "GlowColor" "219 152 250 255"
             }
 
 			prop_dynamic
@@ -2945,22 +3013,7 @@ WaveSchedule
 				"origin" "0 -40 80"
 				"effect_name" "dxhr_lightningball_parent_blue"
 			}
-			point_tesla
-            {
-                "targetname" "AlloyedGenesisMegaLaserCharge"
-                "origin" "0 -40 80"
-                "texture" "sprites/physbeam.vmt"
-				"m_Color" "255 255 255"
-				"m_flRadius" "150"
-                "beamcount_min" "3"
-                "beamcount_max" "3"
-				"thick_min" "10"
-                "thick_max" "10"
-				"lifetime_min" "0.1"
-                "lifetime_max" "0.1"
-                "interval_min" "0.01"
-                "interval_max" "0.01"
-            }
+
 
 			info_particle_system
 			{
@@ -2990,7 +3043,18 @@ WaveSchedule
                 "OnTrigger" "AlloyedGenesisPhase1AttackPool,PickRandomShuffle,,0,-1"
 
                 "spawnflags" "2"
+				"startdisabled" "1"
             }
+			logic_case
+			{
+				"targetname" "AlloyedGenesisPhase1AttackPool"
+
+				"OnCase01" "!activator,$ChangeAttributes,AlloyedGenesisObsolescenceFiringPattern,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,AlloyedGenesisObsolescenceStomp,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,AlloyedGenesisSpybaseSniper,0,-1"
+				"OnCase04" "!activator,$ChangeAttributes,AlloyedGenesisOverclockedDaveHomingGauntlet,0,-1"
+				"OnCase05" "!activator,$ChangeAttributes,AlloyedGenesisTrolldierInit,0,-1"
+			}
 
 			logic_relay
             {
@@ -2999,8 +3063,18 @@ WaveSchedule
                 "OnTrigger" "AlloyedGenesisPhase2AttackPool,PickRandomShuffle,,0,-1"
 
                 "spawnflags" "2"
-                "startdisabled" "1"
+
             }
+			logic_case
+			{
+				"targetname" "AlloyedGenesisPhase2AttackPool"
+
+				"OnCase01" "!activator,$ChangeAttributes,AlloyedGenesisVortexChamp,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,AlloyedGenesisForemanSlam,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,AlloyedGenesisJohnBaseball,0,-1"
+				"OnCase04" "!activator,$ChangeAttributes,AlloyedGenesisMechaMiner,0,-1"
+				"OnCase05" "!activator,$ChangeAttributes,AlloyedGenesisOverclockedDaveProjectileThrow,0,-1"
+			}
 
 			logic_relay
             {
@@ -3011,6 +3085,10 @@ WaveSchedule
                 "spawnflags" "2"
                 "startdisabled" "1"
             }
+			logic_case
+			{
+				"targetname" "AlloyedGenesisPhase31AttackPool"
+			}
 
 			// FORM CHANGE LOGIC //
 
@@ -3027,44 +3105,192 @@ WaveSchedule
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisFormChangeLightning"
-                "origin" "1442 -1322 700"
                 "effect_name" "wrenchmotron_teleport_beam"
             }
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisFormChangeLightning"
-                "origin" "1442 -1322 700"
 				"angles" "-31.509422 -145.224258 0"
                 "effect_name" "wrenchmotron_teleport_beam"
             }
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisFormChangeLightning"
-                "origin" "1442 -1322 700"
 				"angles" "39.090767 36.895836 0"
                 "effect_name" "wrenchmotron_teleport_beam"
             }
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisFormChangeLightning"
-                "origin" "1442 -1322 700"
 				"angles" "15.327445 -86.748405 0"
                 "effect_name" "wrenchmotron_teleport_beam"
             }
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisFormChangeLightning"
-                "origin" "1442 -1322 700"
 				"angles" "34.701805 130.318726 0"
                 "effect_name" "wrenchmotron_teleport_beam"
             }
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisFormChangeLightning"
-                "origin" "1442 -1322 700"
 				"angles" "-12.260406 -31.839474 0"
                 "effect_name" "wrenchmotron_teleport_beam"
             }
+
+			// PHASE TRANSITION LOGIC //
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisPhase2TransitionRelay"
+
+				"OnTrigger" "TimerLoseConditionRelay,Trigger,,0,-1"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Cheers,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_cheers05.mp3,1,-1"
+
+				"OnTrigger" "!activator,$AddCond,51,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_uber.wav,2,-1"
+
+				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|0,4.3,-1"
+
+				"OnTrigger" "NuclearArmageddonParticle,Start,,7,-1"
+				"OnTrigger" "NuclearArmageddonChargeParticle,TurnOn,,7,-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_activate.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_activate.wav`,channel = 6,pitch = 85,special_dsp = 25,filter_type=5})7-1"
+				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_activate.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_activate.wav`,channel = 6,pitch = 85,special_dsp = 25,filter_type=5})7-1"
+				"OnTrigger" "tf_gamerules,PlayVO,nucleararmageddon.wav,7,-1"
+				"OnTrigger" "Phase2NuclearArmageddonRelay,Trigger,,7,-1"
+			}
+
+			info_particle_system
+            {
+                "targetname" "NuclearArmageddonParticle"
+                "origin" "0 0 90"
+                "effect_name" "eyeboss_doorway_vortex"
+            }
+            info_particle_system
+            {
+                "targetname" "NuclearArmageddonParticle"
+                "origin" "0 0 90"
+                "effect_name" "eb_death_vortex04"
+            }
+            info_particle_system
+            {
+                "targetname" "NuclearArmageddonParticle"
+                "origin" "0 0 90"
+                "effect_name" "dxhr_lightningball_parent_blue"
+            }
+
+			point_tesla
+			{
+				"targetname" "NuclearArmageddonChargeParticle"
+				"origin" "0 0 90"
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 240 170"
+				"m_flRadius" "350"
+				"beamcount_min" "1"
+				"beamcount_max" "3"
+				"thick_min" "4"
+				"thick_max" "10"
+				"lifetime_min" "0.31"
+				"lifetime_max" "0.31"
+				"interval_min" "0.1"
+				"interval_max" "0.1"
+			}
+			point_tesla
+			{
+				"targetname" "NuclearArmageddonChargeParticle"
+				"origin" "0 0 90"
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 240 170"
+				"m_flRadius" "450"
+				"beamcount_min" "1"
+				"beamcount_max" "6"
+				"thick_min" "4"
+				"thick_max" "10"
+				"lifetime_min" "0.25"
+				"lifetime_max" "0.25"
+				"interval_min" "0.07"
+				"interval_max" "0.07"
+			}
+			point_tesla
+			{
+				"targetname" "NuclearArmageddonChargeParticle"
+				"origin" "0 0 90"
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 240 170"
+				"m_flRadius" "550"
+				"beamcount_min" "3"
+				"beamcount_max" "9"
+				"thick_min" "4"
+				"thick_max" "10"
+				"lifetime_min" "0.15"
+				"lifetime_max" "0.15"
+				"interval_min" "0.05"
+				"interval_max" "0.05"
+			}
+
+			logic_relay
+			{
+				"targetname" "NuclearArmageddonLossRelay"
+
+				"OnTrigger" "tf_gamerules,$StopVO,nucleararmageddon.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp`, pitch = 85, special_dsp = 57, filter_type = 5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp`, pitch = 85, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "PlayerRunScriptCodeself.ViewPunch(QAngle(-80,10,0))2-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 255, 5, 1.5, 1)21"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient\explosions\citadel_end_explosion1.wav,2,1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient\explosions\citadel_end_explosion1.wav,2,1"
+                "OnTrigger" "tf_gamerules,PlayVO,misc\doomsday_missile_explosion.wav,2,1"
+
+				"OnTrigger" "BotRemover,Enable,,2,-1"
+				"OnTrigger" "bots_win,RoundWin,,3,-1"
+			}
+			trigger_hurt // Mapwide Death
+            {
+                "targetname" "TotalNuclearDeath"
+				"filtername" "EveryoneButAlloyedGenesisFilter"
+                "mins" "-5000 -5000 -5000"
+				"maxs" "5000 5000 5000"
+
+                "damage" "3000000"
+                "damagetype" "16"
+                "spawnflags" "1"
+
+				"disableshadows" "1"
+				"startdisabled" "1"
+            }
+
+			logic_relay
+			{
+				"targetname" "Phase2NuclearArmageddonRelay"
+
+				"OnTrigger" "Phase2Zone1ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "Phase2Zone2ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "Phase2Zone3ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "Phase2Zone4ArmageddonSequenceRelay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Phase3NuclearArmageddonRelay"
+
+				"OnTrigger" "Phase3Zone1ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "Phase3Zone2ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "Phase3Zone3ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "Phase3Zone4ArmageddonSequenceRelay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "FinaleNuclearArmageddonRelay"
+
+				"OnTrigger" "FinaleZone1ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "FinaleZone2ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "FinaleZone3ArmageddonSequenceRelay,Trigger,,0,-1"
+				"OnTrigger" "FinaleZone4ArmageddonSequenceRelay,Trigger,,0,-1"
+			}
 
 			// PHASE 1 ATTACKS //
 
@@ -3080,14 +3306,14 @@ WaveSchedule
 
 				"OnTrigger" "!activator,$PlaySequence,taunt_zoomin_broom_exit,2.5,-1"
 
-				"OnTrigger" "ObsolescenceStompLaunch,Enable,,3.3,-1"
-				"OnTrigger" "ObsolescenceStompLaunch,Disable,,3.4,-1"
-				"OnTrigger" "StompParticle,Start,,3.3,-1"
-				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `ambient/explosions/explode_4.wav`, channel = 6, sound_level = 100, origin = self.GetOrigin()})3-1"
-				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 16, 5, 2, 50000, 0, true)3-1"
-
-				"OnTrigger" "StompParticle,Stop,,3.5,-1"
+				"OnTrigger" "ObsolescenceStompLaunch,Enable,,3.5,-1"
+				"OnTrigger" "StompParticle,Start,,3.5,-1"
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `ambient/explosions/explode_4.wav`, channel = 6, sound_level = 100, origin = self.GetOrigin()})3.5-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 5, 2, 50000, 0, true)3.5-1"
 				"OnTrigger" "!activator,$PlaySequence,run_primary,3.5,-1"
+
+				"OnTrigger" "ObsolescenceStompLaunch,Disable,,3.6,-1"
+				"OnTrigger" "StompParticle,Stop,,3.6,-1"
 
 				"OnTrigger" "AlloyedGenesisAttackInit,Trigger,,12,-1"
 			}
@@ -3137,7 +3363,7 @@ WaveSchedule
 			{
 				"targetname" "AlloyedGenesisTrolldierSetupRelay"
 
-				"OnTrigger" "!activator,$ChangeBotAttributes,AlloyedGenesisTrolldierPart3,15,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisTrolldierPart3,15,-1"
 			}
 
 			logic_relay
@@ -3194,6 +3420,7 @@ WaveSchedule
 				"targetname" "AlloyedGenesisVortexMegaLaserRelay"
 
 				"OnTrigger" "AlloyedGenesisBotProp,Enable,,0,-1"
+				"OnTrigger" "AlloyedGenesisGlow,Disable,,0,-1"
 				"OnTrigger" "AlloyedGenesisBotProp,SetAnimation,taunt02,0,-1"
 				"OnTrigger" "!activator,$Addcond,87 9,0,-1"
 
@@ -3202,7 +3429,6 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `megalaser_chargeup.wav`, channel = 6, pitch = 200})1.4-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `megalaser_chargeup.wav`, channel = 6, pitch = 200})1.4-1"
 				"OnTrigger" "AlloyedGenesisMegaLaserChargeParticle,Start,,1.4,-1"
-				"OnTrigger" "AlloyedGenesisMegaLaserCharge,TurnOn,,1.4,-1"
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,0,1.5,-1"
 
 				"OnTrigger" "AlloyedGenesisMegaLaserPortal,Enable,,3,-1"
@@ -3210,7 +3436,6 @@ WaveSchedule
 
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,1,3.3,-1"
 				"OnTrigger" "AlloyedGenesisMegaLaserChargeParticle,Stop,,3.7,-1"
-				"OnTrigger" "AlloyedGenesisMegaLaserCharge,TurnOff,,3.7,-1"
 
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,0,4,-1"
 				"OnTrigger" "AlloyedGenesisMegaLaser,Enable,,4,-1"
@@ -3227,6 +3452,7 @@ WaveSchedule
 				"OnTrigger" "AlloyedGenesisBotProp,SetPlaybackRate,1,8,-1"
 
 				"OnTrigger" "AlloyedGenesisBotProp,Disable,,9,-1"
+				"OnTrigger" "AlloyedGenesisGlow,Enable,,9,-1"
 				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisVortexChampPart2,9,-1"
 			}
 
@@ -3234,7 +3460,7 @@ WaveSchedule
             {
                 "targetname" "AlloyedGenesisMegaLaserPortal"
 
-                "origin" "800 0 120"
+                "origin" "1000 0 120"
 
                 "model" "models/props_lakeside_event/vortex_lakeside.mdl"
                 "modelscale" "0.6"
@@ -3249,7 +3475,7 @@ WaveSchedule
             {
                 "targetname" "AlloyedGenesisMegaLaserPortal"
 
-                "origin" "800 0 120"
+                "origin" "1000 0 120"
 
                 "model" "models/props_lakeside_event/vortex_lakeside.mdl"
                 "modelscale" "0.6"
@@ -3264,7 +3490,7 @@ WaveSchedule
             {
                 "targetname" "AlloyedGenesisMegaLaserPortal"
 
-                "origin" "800 0 120"
+                "origin" "1000 0 120"
 
                 "model" "models/props_lakeside_event/vortex_lakeside.mdl"
                 "modelscale" "0.6"
@@ -3279,7 +3505,7 @@ WaveSchedule
             {
                 "targetname" "AlloyedGenesisMegaLaserPortal"
 
-                "origin" "800 0 120"
+                "origin" "1000 0 120"
 
                 "model" "models/props_lakeside_event/vortex_lakeside.mdl"
                 "modelscale" "0.6"
@@ -3294,7 +3520,7 @@ WaveSchedule
             {
                 "targetname" "AlloyedGenesisMegaLaserPortal"
 
-                "origin" "800 0 120"
+                "origin" "1000 0 120"
 
                 "model" "models/props_lakeside_event/vortex_lakeside.mdl"
                 "modelscale" "0.6"
@@ -3309,7 +3535,7 @@ WaveSchedule
 			info_particle_system
             {
                 "targetname" "AlloyedGenesisMegaLaserPortalParticle"
-                "origin" "880 0 120"
+                "origin" "1080 0 120"
                 "effect_name" "dxhr_lightningball_parent_blue"
             }
 
@@ -3371,7 +3597,7 @@ WaveSchedule
 				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisVortexChampPart3,14,-1"
 			}
 
-			// Spinning MegaLaser Logic
+			// Spinning Megalaser Logic
 
 			func_rotating
             {
@@ -3708,9 +3934,8 @@ WaveSchedule
 				"targetname" "AlloyedGenesisForemanSlamRelay"
 
 				"OnTrigger" "!activatorRunScriptCodeself.AddCustomAttribute(`hand scale`,7,-1)0-1"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, pitch = 85, filter_type = 5})11"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, pitch = 85, filter_type = 5, flags = 4})2.51"
-				"OnTrigger" "!activator,$AddCond,87 2,3.75,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, filter_type = 5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, filter_type = 5, flags = 4})1.51"
 
                 "OnTrigger" "tf_gamerules,PlayVO,weapons/demo_sword_swing1.wav,4.2,-1"
 
@@ -3724,7 +3949,7 @@ WaveSchedule
 				"OnTrigger"	"tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laugh_addl04.mp3,4.9,-1"
 				"OnTrigger"	"tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_laugh_addl04.mp3,4.9,-1"
 
-				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisForemanAxeThrow,6.4,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisForemanAxeThrow,7.4,-1"
 			}
 
 			tf_point_weapon_mimic
@@ -3814,8 +4039,8 @@ WaveSchedule
 				"targetname" "AlloyedGenesisForemanAxeThrowRelay"
 
 				"OnTrigger" "!activatorRunScriptCodeself.AddCustomAttribute(`hand scale`,7,-1)0-1"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, pitch = 85, filter_type = 5})11"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, pitch = 85, filter_type = 5, flags = 4})2.51"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, filter_type = 5})01"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_deploy_giant.wav`, channel = 6, filter_type = 5, flags = 4})1.51"
 
 				"OnTrigger" "!activatorRunScriptCodeself.RemoveCustomAttribute(`hand scale`)6-1"
 
@@ -3856,7 +4081,7 @@ WaveSchedule
 				"targetname" "AlloyedGenesisBurrowComboRelay"
 
 				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisBurrowInit,0,-1"
-				"OnTrigger" "AlloyedGenesisAttackInit,Trigger,,18,-1"
+				"OnTrigger" "AlloyedGenesisAttackInit,Trigger,,21,-1"
 			}
 
 			logic_relay
@@ -3911,25 +4136,98 @@ WaveSchedule
                 "origin" "0 0 5"
                 "effect_name" "hammer_impact_button"
             }
+
+			// Overclocked Dave Projectile Throw
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisOverclockedDaveProjectileThrowRelay"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_table_flip_outro,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_meleeing03.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})0.1-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_meleeing03.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})0.1-1"
+				"OnTrigger" "AlloyedGenesisBurrowRocks,FireMultiple,10,0.2,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_yetipunch,1.8,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_meleeing05.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})5-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_meleeing05.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})5-1"
+				"OnTrigger" "AlloyedGenesisGrenades,FireOnce,,5.2,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_yeti,5.5,-1"
+				"OnTrigger" "!activator,$Addcond,87 6.5,5.5,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_sandwichtaunt14.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})7.8-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/heavy_mvm_m_sandwichtaunt14.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})7.8-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `ambient/explosions/explode_4.wav`, channel = 6, sound_level = 100, origin = self.GetOrigin()})10.7-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 5, 2, 50000, 0, true)10.7-1"
+				"OnTrigger" "StompParticle,Start,,10.7,-1"
+				"OnTrigger" "StompParticle,Stop,,10.8,-1"
+
+				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,10.7,-1"
+				"OnTrigger" "AlloyedGenesisLaserBombs,FireOnce,,10.7,-1"
+
+				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,11.3,-1"
+				"OnTrigger" "AlloyedGenesisLaserBombs,FireOnce,,11.3,-1"
+
+				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,11.9,-1"
+				"OnTrigger" "AlloyedGenesisLaserBombs,FireOnce,,11.9,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,run_melee,12,-1"
+
+				"OnTrigger" "AlloyedGenesisAttackInit,Trigger,,15,-1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "AlloyedGenesisGrenades"
+				"origin" "30 0 40"
+				"angles" "-60 0 0"
+
+				"teamnum" "3"
+				"$weaponname" "OverclockedDaveGrenadeWeapon"
+				"$weaponnosound" "1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "AlloyedGenesisLaserBombs"
+				"origin" "-16 0 60"
+				"angles" "-75 0 0"
+
+				"teamnum" "3"
+				"$weaponname" "OverclockedDaveLaserBombWeapon"
+				"$weaponnosound" "1"
+
+				"$OnFire" "OverclockedDaveLaserBombSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+
+			env_entity_maker
+			{
+				"targetname" "OverclockedDaveLaserBombSpawner"
+				"entitytemplate" "AlloyedGenesisLaserBombPT"
+				"$autoparent" "1"
+			}
 		}
 		AlloyedGenesisLoseCondPT
 		{
 			OnSpawnOutput
 			{
-				Target bignet
+				Target BigNet
 				Action RunScriptCode
 				Param "
-				IncludeScript(`textualtimer_v3`, getroottable())
-				TextualTimer.SetParams({
-					minutes = 1
-					seconds = 0
-					x = -1
-					y = 0.77
-					color = `0 255 555`
-					text_prepend = `IMMINENT DEATH AND DESTRUCTION: `
-					automatic = false
-        		})
-				"
+						IncludeScript(`textualtimer_v3`, getroottable())
+						TextualTimer.SetParams({
+							minutes = 0
+							seconds = 15
+							x = -1
+							y = 0.77
+							color = `255 0 0`
+							text_prepend = `NUCLEAR ARMAGEDDON: `
+							automatic = false
+							relayname = `NuclearArmageddonLossRelay`
+						})
+					  "
 			}
 
 			logic_case
@@ -3959,7 +4257,7 @@ WaveSchedule
 
 			logic_relay
             {
-                "targetname" "LoseConditionTimer"
+                "targetname" "AlloyedGenesisLoseConditionTimer"
 				"spawnflags" "2"
 
                 "OnTrigger" "LoseConditionSwitchRelay,Trigger,,0,-1"
@@ -4301,6 +4599,193 @@ WaveSchedule
                 "TouchType" "1"
             }
         }
+		AlloyedGenesisNuclearArmageddonPT
+		{
+			// ZONE 1 //
+
+			trigger_multiple
+			{
+				"targetname" "NuclearArmageddonZone1"
+				"filtername" "AlloyedGenesisFilter"
+
+				"origin" "1624 -1272 411"
+
+				"mins" "-1000 -2440 -805"
+				"maxs" "1000 2440 805"
+				"spawnflags" "1"
+
+				"OnStartTouch" "Phase2Zone1ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "Phase3Zone1ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "FinaleZone1ArmageddonSequenceRelay,Enable,,0,-1"
+
+				"OnEndTouch" "Phase2Zone1ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "Phase3Zone1ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "FinaleZone1ArmageddonSequenceRelay,Disable,,0,-1"
+
+				"disableshadows" "1"
+			}
+
+			// Phase 2 (Tutorial)
+			logic_relay
+			{
+				"targetname" "Phase2Zone1ArmageddonSequenceRelay"
+
+				"OnTrigger" "Phase2Zone1Generator1Relay,Trigger,,0,-1"
+
+				"OnTrigger" "Phase2Zone1GeneratorRandomiser,PickRandomShuffle,,4,-1"
+				"OnTrigger" "Phase2Zone1GeneratorRandomiser,PickRandomShuffle,,7,-1"
+				"OnTrigger" "Phase2Zone1GeneratorRandomiser,PickRandomShuffle,,10,-1"
+
+				"OnTrigger" "Phase2Zone1Generator5Relay,Trigger,,14,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "Phase2Zone1GeneratorRandomiser"
+
+				"OnCase01" "Phase2Zone1Generator2Relay,Trigger,,0,-1"
+				"OnCase02" "Phase2Zone1Generator3Relay,Trigger,,0,-1"
+				"OnCase03" "Phase2Zone1Generator4Relay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Phase2Zone1Generator1Relay"
+
+				"OnTrigger" "Phase2Zone1Generator1Indicator,Enable,,0,-1"
+				"OnTrigger" "Phase2Zone1Generator1Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Phase2Generator1Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Phase2Zone1Generator1Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Phase2Zone1Generator1Indicator,Disable,,4,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE UBER GENERATORS TO PREVENT NUCLEAR ARMAGEDDON`, lifetime = 5, worldPosX = -1256, worldPosY = 2445, worldPosZ = -76})6,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Phase2Zone1Generator1Indicator"
+				"origin" "0 0 20"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			// ZONE 2 //
+
+			trigger_multiple
+			{
+				"targetname" "NuclearArmageddonZone2"
+				"filtername" "AlloyedGenesisFilter"
+
+				"origin" "-860 352 411"
+
+				"mins" "-1484 -784 -805"
+				"maxs" "1484 784 805"
+				"spawnflags" "1"
+
+				"OnStartTouch" "Phase2Zone2ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "Phase3Zone2ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "FinaleZone2ArmageddonSequenceRelay,Enable,,0,-1"
+
+				"OnEndTouch" "Phase2Zone2ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "Phase3Zone2ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "FinaleZone2ArmageddonSequenceRelay,Disable,,0,-1"
+
+				"disableshadows" "1"
+			}
+
+			// ZONE 3 //
+
+			trigger_multiple
+			{
+				"targetname" "NuclearArmageddonZone3"
+				"filtername" "AlloyedGenesisFilter"
+
+				"origin" "-2708 1868 411"
+
+				"mins" "-1860 -732 -805"
+				"maxs" "1860 732 805"
+				"spawnflags" "1"
+
+				"OnStartTouch" "Phase2Zone3ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "Phase3Zone3ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "FinaleZone3ArmageddonSequenceRelay,Enable,,0,-1"
+
+				"OnEndTouch" "Phase2Zone3ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "Phase3Zone3ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "FinaleZone3ArmageddonSequenceRelay,Disable,,0,-1"
+
+				"disableshadows" "1"
+			}
+
+			// ZONE 4 //
+
+			trigger_multiple
+			{
+				"targetname" "NuclearArmageddonZone4"
+				"filtername" "AlloyedGenesisFilter"
+
+				"origin" "-3624 108 411"
+
+				"mins" "-1224 -1028 -805"
+				"maxs" "1224 1028 805"
+				"spawnflags" "1"
+
+				"OnStartTouch" "Phase2Zone4ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "Phase3Zone4ArmageddonSequenceRelay,Enable,,0,-1"
+				"OnStartTouch" "FinaleZone4ArmageddonSequenceRelay,Enable,,0,-1"
+
+				"OnEndTouch" "Phase2Zone4ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "Phase3Zone4ArmageddonSequenceRelay,Disable,,0,-1"
+				"OnEndTouch" "FinaleZone4ArmageddonSequenceRelay,Disable,,0,-1"
+
+				"disableshadows" "1"
+			}
+		}
+		AlloyedGenesisUberGeneratorPT
+		{
+			RemoveIfKilled "UberGenerator"
+
+			OnSpawnOutput
+			{
+				Target UberGeneratorActivateRelay
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "UberGeneratorActivateRelay"
+
+				"OnTrigger" "UberGeneratorRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `Uber Generator!`, lifetime = 3, follow_entindex = self.entindex()})0,-1"
+				"OnTrigger" "UberGenerator,SetHealth,1000,0,-1"
+			}
+
+			obj_dispenser
+			{
+				"targetname" "UberGenerator"
+
+				"teamnum" "3"
+				"defaultupgrade" "1"
+				"$radiusmult" "100"
+				"$dispensermodelprefix" "models/buildables/amplifier_test/amplifier.mdl"
+			}
+			tf_glow
+			{
+				"targetname" "UberGeneratorGlow"
+				"target" "UberGenerator"
+				"GlowColor" "0 176 199 255"
+			}
+			info_particle_system
+			{
+				"targetname" "UberGeneratorBeam"
+				"effect_name" "teleporter_mvm_bot_persist"
+				"start_active" "1"
+			}
+		}
 
 		AlloyedGenesisMinionPT
 		{
@@ -4382,7 +4867,7 @@ WaveSchedule
 				"origin" "0 0 -40"
 				"maxspeed" "400"
 				"fanfriction" "100"
-                "spawnflags" "65"
+                "spawnflags" "73"
             }
 			prop_dynamic
             {
@@ -4496,6 +4981,269 @@ WaveSchedule
                 "targetname" "CheckpointTarget"
                 "origin" "0 0 10"
             }
+		}
+		AlloyedGenesisLaserBombPT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "LaserBombTelegraphBeamSetup"
+
+			OnSpawnOutput
+			{
+				Target "LaserBombRelay"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "LaserBombRelay"
+
+				"OnTrigger" "LaserBombTelegraphBeamSetup,Trigger,,0,-1"
+
+				"OnTrigger" "LaserBombTelegraphBeam1RunScriptCodeEmitSoundEx({sound_name = `weapons/shooting_star_shoot_crit.wav`, channel = 6, sound_level = 100, origin = self.GetOrigin()})3.5-1"
+				"OnTrigger" "LaserBombTelegraphBeam1RunScriptCodeEmitSoundEx({sound_name = `weapons/shooting_star_shoot_crit.wav`, channel = 6, sound_level = 100, origin = self.GetOrigin()})3.5-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 5, 1, 50000, 0, true)3.5-1"
+				"OnTrigger" "LaserBombDamageBeamSetup,Trigger,,3.5,-1"
+				"OnTrigger" "LaserBombDamageBeamDamage1,Enable,,3.5,-1"
+				"OnTrigger" "LaserBombDamageBeamDamage2,Enable,,3.5,-1"
+				"OnTrigger" "LaserBombDamageBeamDamage3,Enable,,3.5,-1"
+
+				"OnTrigger" "LaserBombTelegraphBeamSetup,Kill,,11.5,-1"
+			}
+
+			// Telegraph Beams
+			logic_relay
+			{
+				"targetname" "LaserBombTelegraphBeamSetup"
+
+				"OnTrigger" "LaserBombTelegraphBeam1,StrikeOnce,,0,-1"
+				"OnTrigger" "LaserBombTelegraphBeam2,StrikeOnce,,0,-1"
+				"OnTrigger" "LaserBombTelegraphBeam3,StrikeOnce,,0,-1"
+				"OnTrigger" "!self,Trigger,,1.01,-1"
+				"spawnflags" "2"
+			}
+
+			env_beam
+			{
+				"targetname" "LaserBombTelegraphBeam1"
+
+				"LightningStart" "LaserBombTelegraphBeamStart1"
+				"LightningEnd" "LaserBombTelegraphBeamEnd1"
+
+				"life" "1"
+				"BoltWidth" "6"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "110"
+				"rendercolor" "255 255 255"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombTelegraphBeamStart1"
+				"origin" "0 0 1024"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombTelegraphBeamEnd1"
+				"origin" "0 0 -1024"
+				"model" "models/empty.mdl"
+			}
+
+			env_beam
+			{
+				"targetname" "LaserBombTelegraphBeam2"
+
+				"LightningStart" "LaserBombTelegraphBeamStart2"
+				"LightningEnd" "LaserBombTelegraphBeamEnd2"
+
+				"life" "1"
+				"BoltWidth" "6"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "110"
+				"rendercolor" "255 255 255"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombTelegraphBeamStart2"
+				"origin" "0 1024 0"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombTelegraphBeamEnd2"
+				"origin" "0 -1024 0"
+				"model" "models/empty.mdl"
+			}
+
+			env_beam
+			{
+				"targetname" "LaserBombTelegraphBeam3"
+
+				"LightningStart" "LaserBombTelegraphBeamStart3"
+				"LightningEnd" "LaserBombTelegraphBeamEnd3"
+
+				"life" "1"
+				"BoltWidth" "6"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "110"
+				"rendercolor" "255 255 255"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombTelegraphBeamStart3"
+				"origin" "1024 0 0"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombTelegraphBeamEnd3"
+				"origin" "-1024 0 0"
+				"model" "models/empty.mdl"
+			}
+
+			// Damage Beams
+			logic_relay
+			{
+				"targetname" "LaserBombDamageBeamSetup"
+
+				"OnTrigger" "LaserBombDamageBeam1,StrikeOnce,,0,-1"
+				"OnTrigger" "LaserBombDamageBeam2,StrikeOnce,,0,-1"
+				"OnTrigger" "LaserBombDamageBeam3,StrikeOnce,,0,-1"
+				"OnTrigger" "!self,Trigger,,1.01,-1"
+				"spawnflags" "2"
+			}
+
+			env_beam
+			{
+				"targetname" "LaserBombDamageBeam1"
+
+				"LightningStart" "LaserBombDamageBeamStart1"
+				"LightningEnd" "LaserBombDamageBeamEnd1"
+
+				"life" "1"
+				"BoltWidth" "24"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "128"
+				"rendercolor" "255 64 64"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombDamageBeamStart1"
+				"origin" "0 0 1024"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombDamageBeamEnd1"
+				"origin" "0 0 -1024"
+				"model" "models/empty.mdl"
+			}
+			trigger_hurt
+			{
+				"targetname" "LaserBombDamageBeamDamage1"
+				"filtername" "filter_redteam_nouber"
+				"origin" "0 0 0"
+				"mins" "-32 -32 -1024"
+				"maxs" "32 32 1024"
+
+				"damagetype" "1048576"
+                "damage" "90"
+                "spawnflags" "64"
+
+				"disablebonefollowers" "1"
+                "disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "LaserBombDamageBeam2"
+
+				"LightningStart" "LaserBombDamageBeamStart2"
+				"LightningEnd" "LaserBombDamageBeamEnd2"
+
+				"life" "1"
+				"BoltWidth" "24"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "128"
+				"rendercolor" "255 64 64"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombDamageBeamStart2"
+				"origin" "0 1024 0"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombDamageBeamEnd2"
+				"origin" "0 -1024 0"
+				"model" "models/empty.mdl"
+			}
+			trigger_hurt
+			{
+				"targetname" "LaserBombDamageBeamDamage2"
+				"filtername" "filter_redteam_nouber"
+				"origin" "0 0 0"
+				"mins" "-1024 -32 -32"
+				"maxs" "1024 32 32"
+
+				"damagetype" "1048576"
+                "damage" "90"
+                "spawnflags" "64"
+
+				"disablebonefollowers" "1"
+                "disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "LaserBombDamageBeam3"
+
+				"LightningStart" "LaserBombDamageBeamStart3"
+				"LightningEnd" "LaserBombDamageBeamEnd3"
+
+				"life" "1"
+				"BoltWidth" "24"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "128"
+				"rendercolor" "255 64 64"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombDamageBeamStart3"
+				"origin" "1024 0 0"
+				"model" "models/empty.mdl"
+			}
+			prop_dynamic
+			{
+				"targetname" "LaserBombDamageBeamEnd3"
+				"origin" "-1024 0 0"
+				"model" "models/empty.mdl"
+			}
+			trigger_hurt
+			{
+				"targetname" "LaserBombDamageBeamDamage3"
+				"filtername" "filter_redteam_nouber"
+				"origin" "0 0 0"
+				"mins" "-32 -1024 -32"
+				"maxs" "-32 1024 32"
+
+				"damagetype" "1048576"
+                "damage" "90"
+                "spawnflags" "64"
+
+				"disablebonefollowers" "1"
+                "disableshadows" "1"
+				"startdisabled" "1"
+			}
 		}
 	}
 
@@ -4644,6 +5392,8 @@ WaveSchedule
 			SpawnTemplate "AlloyedGenesisLoseCondPT"
 			SpawnTemplate "AlloyedGenesisRingPT"
 
+			Tag bot_giant
+			Tag AlloyedGenesis
 			Tag dontdoublehp
 			Tag dontdoublehp_damageres
 
@@ -4673,22 +5423,19 @@ WaveSchedule
 				Repeats 1
 			}
 
-			FireInput
+			ChangeAttributes
 			{
-				Target "Phase2TransitionRelay"
-				Action "Trigger"
+				Name "AlloyedGenesisPhase2Transition"
 				Delay 0
-				Repeats 0
-				Cooldown 1
+				Repeats 1
 				IfHealthBelow 85001
 			}
-			FireInput
+
+			ChangeAttributes
 			{
-				Target "Phase3TransitionRelay"
-				Action "Trigger"
+				Name "AlloyedGenesisPhase3Transition"
 				Delay 0
-				Repeats 0
-				Cooldown 1
+				Repeats 1
 				IfHealthBelow 40001
 			}
 
@@ -4708,6 +5455,7 @@ WaveSchedule
 				}
 				AlloyedGenesisIntroMegaLaser [$SIGSEGV]
 				{
+					Attributes IgnoreEnemies
 					Attributes SuppressFire
 					WeaponRestrictions MeleeOnly
 
@@ -4862,7 +5610,7 @@ WaveSchedule
 						Delay 1
 						Duration 0.1
 						Repeats 0
-						Cooldown 0.7
+						Cooldown 1.5
 					}
 
 					ChangeAttributes
@@ -4907,7 +5655,7 @@ WaveSchedule
 						Delay 1
 						Duration 0.1
 						Repeats 0
-						Cooldown 0.4
+						Cooldown 2
 					}
 
 					FireInput
@@ -4921,6 +5669,7 @@ WaveSchedule
 
 				AlloyedGenesisOverclockedDaveHomingGauntlet [$SIGSEGV]
 				{
+					Attributes SuppressFire
 					WeaponRestrictions MeleeOnly
 
 					Item "TF_WEAPON_MINIGUN"
@@ -4931,19 +5680,22 @@ WaveSchedule
 
 					ItemAttributes
 					{
-						ItemName "TF_WEAPON_MINIGUN"
-						"damage bonus" 2
-						"attack projectiles" 2
-					}
-
-					ItemAttributes
-					{
 						ItemName "Fists of Steel"
 						"always crit" 1
 						"fire rate bonus" 0.4
 						"gesture speed increase" 3
 
 						"fire input on attack" "AlloyedGenesisHomingGauntlet^FireOnce"
+					}
+
+					FireWeapon
+					{
+						Type "Primary"
+						IfSeeTarget 1
+						Delay 1
+						Duration 0.1
+						Repeats 0
+						Cooldown 0.5
 					}
 
 					FireInput
@@ -5063,6 +5815,15 @@ WaveSchedule
 						"fire input on hit" "!activator^$ChangeAttributes^AlloyedGenesisTrolldierPart2"
 					}
 
+					FireInput
+					{
+						Target "!activator"
+						Action SetModelScale
+						Param 1
+						Delay 0
+						Repeats 1
+					}
+
 					WeaponSwitch
 					{
 						Type "Melee"
@@ -5129,6 +5890,15 @@ WaveSchedule
 						"apply z velocity on damage" -2000
 
 						"fire input on hit" "AlloyedGenesisTrolldierHitRelay^Trigger"
+					}
+
+					FireInput
+					{
+						Target "!activator"
+						Action SetModelScale
+						Param 1
+						Delay 0
+						Repeats 1
 					}
 
 					FireInput
@@ -5220,6 +5990,29 @@ WaveSchedule
 					}
 				}
 
+				// Phase 2 Transition //
+
+				AlloyedGenesisPhase2Transition [$SIGSEGV]
+				{
+					UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
+					FireInput
+					{
+						Target "AlloyedGenesisFormChangeRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisPhase2TransitionRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+				}
+
 				// Phase 2 Attacks //
 
 				AlloyedGenesisVortexChamp [$SIGSEGV]
@@ -5250,6 +6043,7 @@ WaveSchedule
 					Item "TF_WEAPON_MINIGUN"
 					Item "The Killing Gloves of Boxing"
 
+					Attributes AlwaysFireWeapon
 					WeaponRestrictions MeleeOnly
 
 					UseCustomModel "models/bots/heavy_boss/bot_heavy_boss.mdl"
@@ -5284,17 +6078,16 @@ WaveSchedule
 						Delay 0
 						Repeats 1
 					}
-
-					FireWeapon
-					{
-						Type "Primary"
-						Delay 0
-						Duration 9.6
-						Repeats 1
-					}
 				}
 				AlloyedGenesisVortexChampPart3 [$SIGSEGV]
 				{
+					Item "TF_WEAPON_MINIGUN"
+					Item "The Killing Gloves of Boxing"
+
+					WeaponRestrictions MeleeOnly
+
+					UseCustomModel "models/bots/heavy_boss/bot_heavy_boss.mdl"
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.5
@@ -5345,14 +6138,15 @@ WaveSchedule
 					{
 						Target "AlloyedGenesisForemanSlamRelay"
 						Action Trigger
-						Delay 0
+						Delay 1
 						Repeats 1
 					}
 
 					FireWeapon
                     {
                         Type "Primary"
-                        Delay 4
+                        Delay 5
+						Duration 0.1
                         Repeats 1
                     }
 				}
@@ -5441,6 +6235,7 @@ WaveSchedule
 						"faster reload rate" 0.01
 
 						"mult projectile count" 8
+						"projectile spread angle penalty" 2
 						"custom projectile size" 3
 						"no explosion particles" 1
 
@@ -5514,12 +6309,17 @@ WaveSchedule
 					CharacterAttributes
 					{
 						"move speed penalty" 0.75
+
+						"voice pitch scale"	0
+						"head scale" 0.7
+						"hand scale" 1.1
 					}
 
 					ItemAttributes
 					{
 						ItemName "The Frontier Justice"
 
+						"dmg pierces resists absorbs" 1
 						"dmg bonus vs buildings" 2.5
 						"blast radius decreased" 0.01
 						"no damage falloff" 1
@@ -5538,6 +6338,7 @@ WaveSchedule
 						"projectile no deflect" 1
 						"no explosion particles" 1
 
+						"custom projectile model" "models/empty.mdl"
 						"custom item model" "models/weapons/c_models/c_biobreaker/c_biobreaker.mdl"
 						"custom kill icon" "robot_arm_blender_kill"
 					}
@@ -5591,7 +6392,7 @@ WaveSchedule
 
 						"override footstep sound set" 4
                 		"voice pitch scale"	0
-						"head scale" 0
+						"head scale" 0.7
 
 						"dmg from ranged reduced" 0.25
 						"dmg from melee increased" 0.25
@@ -5640,6 +6441,7 @@ WaveSchedule
 					WeaponRestrictions SecondaryOnly
 
 					Item "The Frontier Justice"
+					Item "TF_WEAPON_PISTOL"
 
 					UseCustomModel "models/bots/engineer/bot_engineer.mdl"
 
@@ -5669,6 +6471,7 @@ WaveSchedule
 
 						"is_passive_weapon" 1
 
+						"dmg pierces resists absorbs" 1
 						"dmg bonus vs buildings" 2.5
 						"blast radius decreased" 0.01
 						"no damage falloff" 1
@@ -5687,6 +6490,7 @@ WaveSchedule
 						"projectile no deflect" 1
 						"no explosion particles" 1
 
+						"custom projectile model" "models/empty.mdl"
 						"custom item model" "models/weapons/c_models/c_biobreaker/c_biobreaker.mdl"
 						"custom kill icon" "robot_arm_blender_kill"
 					}
@@ -5718,6 +6522,36 @@ WaveSchedule
 					{
 						Name "AlloyedGenesisBurrowInit"
 						Delay 3
+						Repeats 1
+					}
+				}
+
+				AlloyedGenesisOverclockedDaveProjectileThrow [$SIGSEGV]
+				{
+					Item "TF_WEAPON_FISTS"
+
+					WeaponRestrictions MeleeOnly
+
+					UseCustomModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisFormChangeRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisOverclockedDaveProjectileThrowRelay"
+						Action Trigger
+						Delay 0
 						Repeats 1
 					}
 				}
@@ -5799,7 +6633,7 @@ WaveSchedule
 
 						"override footstep sound set" 4
                 		"voice pitch scale"	0
-						"head scale" 0
+						"head scale" 0.7
 
 						"dmg from ranged reduced" 0.25
 						"dmg from melee increased" 0.25
@@ -5877,6 +6711,7 @@ WaveSchedule
 
 						"is_passive_weapon" 1
 
+						"dmg pierces resists absorbs" 1
 						"dmg bonus vs buildings" 2.5
 						"blast radius decreased" 0.01
 						"no damage falloff" 1
@@ -5895,6 +6730,7 @@ WaveSchedule
 						"projectile no deflect" 1
 						"no explosion particles" 1
 
+						"custom projectile model" "models/empty.mdl"
 						"custom item model" "models/weapons/c_models/c_biobreaker/c_biobreaker.mdl"
 						"custom kill icon" "robot_arm_blender_kill"
 					}
@@ -6391,7 +7227,7 @@ WaveSchedule
 
 						"override footstep sound set" 4
                 		"voice pitch scale"	0
-						"head scale" 0
+						"head scale" 0.7
 
 						"dmg from ranged reduced" 0.25
 						"dmg from melee increased" 0.25
@@ -6464,6 +7300,7 @@ WaveSchedule
 
 						"is_passive_weapon" 1
 
+						"dmg pierces resists absorbs" 1
 						"dmg bonus vs buildings" 2.5
 						"blast radius decreased" 0.01
 						"no damage falloff" 1
@@ -6482,6 +7319,7 @@ WaveSchedule
 						"projectile no deflect" 1
 						"no explosion particles" 1
 
+						"custom projectile model" "models/empty.mdl"
 						"custom item model" "models/weapons/c_models/c_biobreaker/c_biobreaker.mdl"
 						"custom kill icon" "robot_arm_blender_kill"
 					}
@@ -7117,7 +7955,7 @@ WaveSchedule
 						"ignored by enemy sentries" 1
 
                 		"voice pitch scale"	0
-						"head scale" 0
+						"head scale" 0.7
 
 						"dmg from ranged reduced" 0.25
 						"dmg from melee increased" 0.25
@@ -7187,6 +8025,7 @@ WaveSchedule
 
 						"is_passive_weapon" 1
 
+						"dmg pierces resists absorbs" 1
 						"dmg bonus vs buildings" 2.5
 						"blast radius decreased" 0.01
 						"no damage falloff" 1
@@ -7205,6 +8044,7 @@ WaveSchedule
 						"projectile no deflect" 1
 						"no explosion particles" 1
 
+						"custom projectile model" "models/empty.mdl"
 						"custom item model" "models/weapons/c_models/c_biobreaker/c_biobreaker.mdl"
 						"custom kill icon" "robot_arm_blender_kill"
 					}
@@ -7250,14 +8090,6 @@ WaveSchedule
 
 			FireInput
 			{
-				Target !activator
-				Action $TeleportToEntity
-				Param CheckpointTarget
-				Delay 0
-				Repeats 1
-			}
-			FireInput
-			{
 				Target !self
 				Action Color
 				Param "80 80 80"
@@ -7280,14 +8112,6 @@ WaveSchedule
 
 			Item "The Sandman"
 
-			FireInput
-			{
-				Target !activator
-				Action $TeleportToEntity
-				Param CheckpointTarget
-				Delay 0
-				Repeats 1
-			}
 			FireInput
 			{
 				Target !self
@@ -7389,14 +8213,6 @@ WaveSchedule
 				Action Color
 				Param "80 80 80"
 				Delay 0
-			}
-			FireInput
-			{
-				Target !activator
-				Action $TeleportToEntity
-				Param @p@alloyedgenesis
-				Delay 0
-				Repeats 1
 			}
 		}
 
@@ -9445,6 +10261,8 @@ WaveSchedule
             Line "{yellow}IT WILL DYNAMICALLY SWITCH LOSE CONDITIONS."
         }
 
+		SpawnTemplate "AlloyedGenesisNuclearArmageddonPT"
+
 		CustomWaveNumber 4
         CustomMaxWaveNumber 0
 
@@ -9484,6 +10302,15 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Soldier_Trolldier
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param AlloyedGenesisTarget
+					Delay 0
+					Repeats 1
+				}
 			}
 		}
 		WaveSpawn // John Baseball Minions
@@ -9507,11 +10334,29 @@ WaveSchedule
 
 				TFBot
 				{
-					Template T_TFBot_Scout_JohnBaseballFragment
+					Template T_TFBot_Scout_JohnBaseballFragment_Melee
+
+					FireInput
+					{
+						Target !activator
+						Action $TeleportToEntity
+						Param CheckpointTarget
+						Delay 0
+						Repeats 1
+					}
 				}
 				TFBot
 				{
-					Template T_TFBot_Scout_JohnBaseballFragment_Melee
+					Template T_TFBot_Scout_JohnBaseballFragment
+
+					FireInput
+					{
+						Target !activator
+						Action $TeleportToEntity
+						Param CheckpointTarget
+						Delay 0
+						Repeats 1
+					}
 				}
 			}
 		}
