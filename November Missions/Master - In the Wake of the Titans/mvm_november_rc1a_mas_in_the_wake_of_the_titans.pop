@@ -22,6 +22,8 @@ WaveSchedule
 	BonusRatioHalf 1.01
 	BonusRatioFull 1.01
 
+	FixWavespawnReserveSlotsOnDisabledSpawnbot 1
+
 	ClassLimit
 	{
 		Medic 0
@@ -309,6 +311,22 @@ WaveSchedule
 			// W3 Logic //
 
 			logic_relay
+			{
+				"targetname" "W3TankDeathRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_GBurstSoldier,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_GBurstSoldier,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_GPyro,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_GPyro,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_GRapidSoldier,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_GRapidSoldier,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_Heavies,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_Heavies,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave1_Heavies2,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave1_Heavies2,0,-1"
+			}
+
+			logic_relay
             {
                 "targetname" "W3ChampionPyroRelay"
 
@@ -328,6 +346,16 @@ WaveSchedule
                 "OnTrigger" "tf_gamerules,PlayVO,#november_master_champion_pyro.mp3,6.5,-1"
                 "OnTrigger" "bignetRunScriptCodeClientPrint(null,3, `/x07800080Now Playing: /x07FFFFFFThe World Looks Red - Heaven Pierce Her`)6.5-1"
             }
+
+			logic_relay
+			{
+				"targetname" "W3ChampionDeathRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave2_Soldiers,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave2_Soldiers,0,-1"
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Wave3_Subwave2_Scouts,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Wave3_Subwave2_Scouts,0,-1"
+			}
 
 			logic_relay
             {
@@ -2166,6 +2194,40 @@ WaveSchedule
 			}
 		}
 
+		//// MINIGIANTS ////
+
+		T_TFBot_Demoman_Stickybomb_Spammer
+		{
+			Name "Rapid Fire Stickybomb Demoman"
+			Class Demoman
+			ClassIcon demo_stickybomb_spammer_kai
+			Skill Expert
+			Health 525
+			Scale 1.4
+			WeaponRestrictions SecondaryOnly
+
+			Item "The Shrapnel Shell"
+
+			ItemAttributes
+            {
+                ItemName "TF_WEAPON_GRENADELAUNCHER"
+
+                "is_passive_weapon" 1
+                "override projectile type" 27.0
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_PIPEBOMBLAUNCHER"
+
+                "fire rate bonus" 0.75
+                "faster reload rate" 0.001
+                "stickybomb charge rate" 0.01
+                "projectile range decreased" 0.35
+                "max pipebombs decreased" -7
+            }
+		}
+
 		//// COMMONS ////
 
 		T_TFBot_Heavy_Shotgun_Statless
@@ -3524,6 +3586,204 @@ WaveSchedule
 				Target tank_tutorial_message1
 				Action Show
 			}
+			DoneOutput
+			{
+				Target W3TankDeathRelay
+				Action Trigger
+			}
+		}
+
+		WaveSpawn // 1 GBurst Soldier (Spawn E)
+		{
+			Name "Wave3_Subwave1_GBurstSoldier"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_e
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_Supercharged
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // 8 GBurst Soldiers (Spawn E)
+		{
+			Name "Wave3_Subwave1_GBurstSoldier"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_e
+			Support Limited
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 40
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst_Supercharged
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+		WaveSpawn // Support GPyros, Rapid Sticky Demos and Big-Heal Medics (Spawn D)
+		{
+			Name "Wave3_Subwave1_GPyro"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_d
+			Support 1
+			TotalCount 18
+			MaxActive 7
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 18
+			TotalCurrency 20
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_FLAMETHROWER"
+
+						"airblast disabled" 1
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb_Spammer
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Stickybomb_Spammer
+					Attributes IgnoreFlag
+					BehaviorModifiers Push
+					Tag capbot
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_BigHeal
+				}
+			}
+		}
+
+		WaveSpawn // Support GRapid Soldiers (Spawn C)
+		{
+			Name "Wave3_Subwave1_GRapidSoldier"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_c
+			Where spawnbot_flank_c
+			Support 1
+			TotalCount 5
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // Support GRapid Soldiers (Spawn B)
+		{
+			Name "Wave3_Subwave1_GRapidSoldier"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_b
+			Support 1
+			TotalCount 5
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Spammer
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+
+		WaveSpawn // 10 Heavies (Spawn A)
+		{
+			Name "Wave3_Subwave1_Heavies"
+			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_a
+			Where spawnbot_flank_a
+			Support Limited
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
+		}
+		WaveSpawn // Support Heavies (Spawn A)
+		{
+			Name "Wave3_Subwave1_Heavies2"
+			WaitForAllSpawned "Wave3_Subwave1_Heavies"
+			Where spawnbot_a
+			Support 1
+			TotalCount 20
+			MaxActive 4
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Heavy
+				Skill Normal
+				Attributes IgnoreFlag
+				BehaviorModifiers Push
+				Tag capbot
+			}
 		}
 
 		// Subwave 2
@@ -3531,7 +3791,7 @@ WaveSchedule
 		{
 			Name "Wave3_Subwave2_ChampionPyroStinger"
 			WaitForAllDead "Wave3_Subwave1_RocketTank"
-			WaitBeforeStarting 2
+			WaitBeforeStarting 3
 
 			FirstSpawnOutput
 			{
@@ -3595,11 +3855,78 @@ WaveSchedule
 						})
 					  "
 			}
+			DoneOutput
+			{
+				Target W3ChampionDeathRelay
+				Action Trigger
+			}
+		}
+		WaveSpawn // Support Soldiers (Spawn D)
+		{
+			Name "Wave3_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave3_Subwave2_ChampionPyro"
+			Where spawnbot_d
+			Support 1
+			TotalCount 20
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+				Action Mobber
+
+				InterruptAction
+                {
+                    Target "ChampionPyroTarget"
+                    Delay 0.5
+					Repeats 0
+					Duration 25
+					Cooldown 0.3
+					Distance 80
+                }
+			}
+		}
+		WaveSpawn // Support Scouts (All Spawns)
+		{
+			Name "Wave3_Subwave2_Scouts"
+			WaitForAllSpawned "Wave3_Subwave2_ChampionPyro"
+			Where spawnbot_a
+			Where spawnbot_b
+			Where spawnbot_c
+			Where spawnbot_d
+			Where spawnbot_e
+			Support 1
+			TotalCount 20
+			MaxActive 5
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 2
+			TotalCurrency 20
+
+			RandomChoice
+			{
+				TFBot
+				{
+					Class Scout
+					Skill Normal
+				}
+				TFBot
+				{
+					Template T_TFBot_Scout_Melee
+					Attributes AlwaysCrit
+				}
+			}
 		}
 
 		WaveSpawn
 		{
 			Name "Wave3_Subwave2_VoidSequence"
+			WaitForAllDead "Wave3_Subwave2_ChampionPyro"
 			WaitBeforeStarting 3
 
 			FirstSpawnOutput
