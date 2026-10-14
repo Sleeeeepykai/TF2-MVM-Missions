@@ -119,22 +119,24 @@ WaveSchedule
 
 				"OnTrigger" "spawnbot_front_main,$SetLocalAngles,0 270 0,0,-1"
 
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_main:Disable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_upper:Disable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_sentrybuster:Disable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_sniper:Disable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_spy:Disable::0:-1,0,-1"
+				"OnTrigger" "tank_path_gate_1,AddOutput,OnPass gate0_entrance_door:Open::0:-1,0,-1"
+
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_main:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_upper:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_sentrybuster:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_sniper:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_spy:Enable::0:-1,0,-1"
 
 				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_main:Disable::0:-1,0,-1"
 				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_mission_sentrybuster:Disable::0:-1,0,-1"
 				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_mission_sniper:Disable::0:-1,0,-1"
 				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_mission_spy:Disable::0:-1,0,-1"
 
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_main:Enable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_upper:Enable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_sentrybuster:Enable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_sniper:Enable::0:-1,0,-1"
-				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_spy:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_main:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_upper:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_sentrybuster:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_sniper:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_spy:Disable::0:-1,0,-1"
 
 				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_main:Disable::0:-1,0,-1"
 				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_upper:Disable::0:-1,0,-1"
@@ -160,7 +162,7 @@ WaveSchedule
 				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_sniper:Enable::0:-1,0,-1"
 				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_spy:Enable::0:-1,0,-1"
 
-				"OnTrigger" "gate1_relay,AddOutput,OnTrigger BombardmentGateBTimer:Enable:0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger BombardmentGateBTimer:Enable:0:-1,0,-1"
 			}
 
 			logic_relay
@@ -169,6 +171,8 @@ WaveSchedule
 
 				"OnTrigger" "pop_interface,$KillWaveSpawn,Subwave1_ScoutRunner,0,-1"
 				"OnTrigger" "pop_interface,$FinishWaveSpawn,Subwave1_ScoutRunner,0,-1"
+
+				"OnTrigger" "holograms_3way_relay,Trigger,,0,-1"
 
 				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `You've earned a break. Rebuild, upgrade and prepare.`, lifetime = 5, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_get_to_upgrade09.mp3,0,-1"
@@ -180,6 +184,8 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_wave_start03.mp3,27,-1"
 				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `The war continues.`, lifetime = 5, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})30,-1"
 				"OnTrigger" "FrontUpgradeClose,Trigger,,30,-1"
+
+				"OnTrigger" "wave_start_relay,Trigger,,30,-1"
 			}
 
 			logic_timer
@@ -1174,13 +1180,20 @@ WaveSchedule
 						EntFire(`fog_controller`, `SetStartDist`, `100`)
 						EntFire(`fog_controller`, `SetEndDist`, `5000`)
 
-						EntFire(`tf_gamerules`, `$StopVO`, `ambient/rain.wav`)
-						EntFire(`tf_gamerules`, `$PlayVO`, `ambient/rain.wav`)
+						EntFire(`StormSoundRelay`, `Trigger`)
 
 						EntFire(`env_soundscape*`, `Disable`)
 
 						EntFire(`subway_car_relay`, `Kill`)
 					  "
+			}
+
+			logic_relay
+			{
+				"targetname" "StormSoundRelay"
+
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/rain.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/rain.wav,0.1,-1"
 			}
 
 			// Skybox
@@ -1209,7 +1222,7 @@ WaveSchedule
                 "targetname" "StormCC"
 
 				"filename" "materials/colorcorrection/stormlight.raw"
-                "maxweight" "1"
+                "maxweight" "0.5"
 
                 "minfalloff" "-1"
                 "maxfalloff" "-1"
@@ -1704,13 +1717,13 @@ WaveSchedule
 		Node "-400 -2600 -212"
 		Node "-400 -2880 -212"
 		Node "-360 -2968 -212"
-		Node "-272 -2032 -212"
-		Node "-136 -2032 -212"
+		Node "-272 -3032 -212"
+		Node "-136 -3032 -212"
 		Node "-64 -3008 -212"
 		Node "24 -2936 -212"
 		Node "88 -2488 -212"
 		Node "144 -2368 -212"
-		Node "-224 -2312 -212"
+		Node "224 -2312 -212"
 		Node "736 -2312 -212"
 		Node "848 -2344 -212"
 		Node "920 -2464 -212"
@@ -1903,7 +1916,7 @@ WaveSchedule
 			ClassIcon soldier_accel_barrage_giant
 			Skill Expert
 			Health 45000
-			Scale 2
+			Scale 1.9
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
 			Attributes HoldFireUntilFullReload
@@ -1949,7 +1962,7 @@ WaveSchedule
 			Class Heavy
 			ClassIcon heavy_golden_titanium
 			Health 15000
-			Scale 2
+			Scale 1.9
 			Attributes MiniBoss
 			Attributes UseBossHealthBar
 			WeaponRestrictions PrimaryOnly
@@ -1994,7 +2007,7 @@ WaveSchedule
 			ClassIcon soldier_barrage_golden_lite_giant
 			Skill Expert
 			Health 30000
-			Scale 2
+			Scale 1.9
 			Attributes MiniBoss
 			Attributes DisableDodge
 			Attributes UseBossHealthBar
@@ -2250,6 +2263,13 @@ WaveSchedule
 
 			Item "MvM GateBot Light Pyro"
 
+			CharacterAttributes
+			{
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+			}
+
 			EventChangeAttributes
 			{
 				Default
@@ -2419,23 +2439,23 @@ WaveSchedule
 	//// WAVES ////
 	Wave
 	{
+		InitWaveOutput
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`holograms_3way_relay`, `Trigger`)
+                  "
+		}
 		StartWaveOutput
         {
             Target BigNet
             Action RunScriptCode
             Param "
                     EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`FrontUpgradeClose`, `Trigger`)
 
-					EntFire(`tf_gamerules`, `$StopVO`, `ambient/rain.wav`)
-					EntFire(`tf_gamerules`, `$PlayVO`, `ambient/rain.wav`)
-                  "
-        }
-        DoneOutput
-        {
-            Target BigNet
-            Action RunScriptCode
-            Param "
-                    EntFire(`wave_finished_relay`, `Trigger`)
+					EntFire(`StormSoundRelay`, `Trigger`)
                   "
         }
 
@@ -2478,6 +2498,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Miniboss_Soldier_Accelerator_Barrage
+
+				ClassIcon soldier_giant
 			}
 		}
 
@@ -2498,6 +2520,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavy_Heater_Gatebot
+
+				ClassIcon heavy_giant
 			}
 		}
 
@@ -2518,6 +2542,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy
 			}
 		}
 		WaveSpawn // 15 Pyros
@@ -2563,6 +2589,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					ClassIcon demo_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -2575,6 +2603,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -2595,6 +2625,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
 			}
 		}
 
@@ -2619,21 +2651,29 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 			}
 		}
@@ -2656,6 +2696,8 @@ WaveSchedule
 			{
 				Name "Razorback Sydney Sniper"
 				Template T_TFBot_Sniper_Sydney_Sleeper
+
+				ClassIcon sniper
 
 				Item "The Razorback"
 			}
@@ -2681,6 +2723,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					ClassIcon demo_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -2693,6 +2737,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -2713,6 +2759,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
 			}
 		}
 
@@ -2737,21 +2785,29 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 			}
 		}
@@ -2776,6 +2832,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					ClassIcon demo_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -2788,6 +2846,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -2808,6 +2868,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
 			}
 		}
 
@@ -2832,21 +2894,29 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 			}
 		}
@@ -2869,6 +2939,8 @@ WaveSchedule
 			{
 				Name "Razorback Sydney Sniper"
 				Template T_TFBot_Sniper_Sydney_Sleeper
+
+				ClassIcon sniper
 
 				Item "The Razorback"
 			}
@@ -2894,6 +2966,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Giant_Demoman_Spammer
 
+					ClassIcon demo_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -2906,6 +2980,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -2926,6 +3002,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
 			}
 		}
 
@@ -2950,21 +3028,29 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 				TFBot
 				{
 					Template T_TFBot_Heavy_Deflector
 					Skill Easy
+
+					ClassIcon heavy
 				}
 			}
 		}
@@ -3011,6 +3097,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Pyro
 					Attributes AlwaysCrit
 
+					ClassIcon pyro_giant
+
 					Tag bot_giant
 					Tag noflank_ledge
 
@@ -3024,6 +3112,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+
+					ClassIcon medic_giant
 
 					Tag bot_giant
 
@@ -3053,6 +3143,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Demoman_Burst
+
+				ClassIcon demo
 			}
 		}
 		WaveSpawn // 18 Burst Soldiers
@@ -3072,6 +3164,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Soldier_Burst
+
+				ClassIcon soldier
 			}
 		}
 
@@ -3096,6 +3190,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Pyro
 					Attributes AlwaysCrit
 
+					ClassIcon pyro_giant
+
 					Tag bot_giant
 					Tag noflank_ledge
 
@@ -3109,6 +3205,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+
+					ClassIcon medic_giant
 
 					Tag bot_giant
 
@@ -3143,6 +3241,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Soldier_Extended_Battalion_Spammer
 
+					ClassIcon soldier
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -3153,10 +3253,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
 				}
 			}
 		}
@@ -3202,6 +3306,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Pyro
 					Attributes AlwaysCrit
 
+					ClassIcon pyro_giant
+
 					Tag bot_giant
 					Tag noflank_ledge
 
@@ -3215,6 +3321,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+
+					ClassIcon medic_giant
 
 					Tag bot_giant
 
@@ -3249,6 +3357,8 @@ WaveSchedule
 				{
 					Template T_TFBot_Soldier_Extended_Battalion_Spammer
 
+					ClassIcon soldier
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -3259,10 +3369,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
 				}
 			}
 		}
@@ -3291,6 +3405,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Soldier_Spammer
 					Attributes AlwaysCrit
 
+					ClassIcon soldier_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -3303,10 +3419,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 			}
 		}
@@ -3328,6 +3448,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Soldier_Extended_Concheror_Gatebot
 				Skill Expert
+
+				ClassIcon soldier
 
 				Tag GateAtoBFlankUpper
 			}
@@ -3356,6 +3478,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Soldier_Spammer
 					Attributes AlwaysCrit
 
+					ClassIcon soldier_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -3368,10 +3492,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 			}
 		}
@@ -3393,6 +3521,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Soldier_Burst_Gatebot
 				Skill Expert
+
+				ClassIcon soldier
 
 				Tag GateAtoBFlankLower
 			}
@@ -3421,6 +3551,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Soldier_Spammer
 					Attributes AlwaysCrit
 
+					ClassIcon soldier_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -3433,10 +3565,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 			}
 		}
@@ -3458,6 +3594,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Soldier_Extended_Concheror_Gatebot
 				Skill Expert
+
+				ClassIcon soldier
 
 				Tag GateAtoBFlankUpper
 			}
@@ -3486,6 +3624,8 @@ WaveSchedule
 					Template T_TFBot_Giant_Soldier_Spammer
 					Attributes AlwaysCrit
 
+					ClassIcon soldier_giant
+
 					Tag bot_giant
 
 					CharacterAttributes
@@ -3498,10 +3638,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 				TFBot
 				{
 					Template T_TFBot_Pyro_Airblast
+
+					ClassIcon pyro
 				}
 			}
 		}
@@ -3523,6 +3667,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Soldier_Burst_Gatebot
 				Skill Expert
+
+				ClassIcon soldier
 
 				Tag GateAtoBFlankLower
 			}
@@ -3548,10 +3694,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Miniboss_Heavy_Juggernaut
+
+					ClassIcon heavy_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Shield
+
+					ClassIcon medic_giant
 				}
 			}
 		}
@@ -3574,10 +3724,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman_Ballista
+
+					ClassIcon sniper_bow
 				}
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -3598,6 +3752,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Scout_Spammer
+				ClassIcon scout
 			}
 		}
 
@@ -3620,10 +3775,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Miniboss_Heavy_Juggernaut
+
+					ClassIcon heavy_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Shield
+
+					ClassIcon medic_giant
 				}
 			}
 		}
@@ -3646,10 +3805,14 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman_Ballista
+
+					ClassIcon sniper_bow
 				}
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -3670,6 +3833,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Scout_Spammer
+
+				ClassIcon scout
 			}
 		}
 
@@ -3702,7 +3867,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Subwave5_Check"
-			WaitForAllDead "Subwave5_RapidScouts"
+			WaitForAllDead "Subwave5_RapidScouts2"
 		}
 
 		// First Break
@@ -3745,13 +3910,15 @@ WaveSchedule
 		WaveSpawn // 1 Tank
 		{
 			Name "Subwave6_Tank"
-			WaitForAllSpawned "Subwave5_Break" [$SIGSEGV]
+			WaitForAllSpawned "Subwave5_Break"
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
 			WaitBeforeStarting 30
 			WaitBetweenSpawns 0
 			TotalCurrency 100
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
 
 			Tank
 			{
@@ -3784,6 +3951,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
 			}
 		}
 		WaveSpawn // 4 Shield Squads and 12 Supercharged Demomen
@@ -3807,18 +3976,26 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 			}
 		}
@@ -3829,6 +4006,7 @@ WaveSchedule
 			Where spawnbot_front_upper [$SIGSEGV]
 			Where spawnbot_gatea_main [$SIGSEGV]
 			Where spawnbot_gateb_upper [$SIGSEGV]
+			Support Limited
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 2
@@ -3846,6 +4024,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -3892,6 +4072,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
 			}
 		}
 		WaveSpawn // 4 Shield Squads and 12 Supercharged Demomen
@@ -3915,18 +4097,26 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 			}
 		}
@@ -3973,6 +4163,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
 			}
 		}
 		WaveSpawn // 4 Shield Squads and 12 Supercharged Demomen
@@ -3996,18 +4188,26 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 			}
 		}
@@ -4018,6 +4218,7 @@ WaveSchedule
 			Where spawnbot_front_upper [$SIGSEGV]
 			Where spawnbot_gatea_main [$SIGSEGV]
 			Where spawnbot_gateb_upper [$SIGSEGV]
+			Support Limited
 			TotalCount 6
 			MaxActive 6
 			SpawnCount 2
@@ -4035,6 +4236,8 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
 				}
 			}
 		}
@@ -4081,6 +4284,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
 			}
 		}
 		WaveSpawn // 4 Shield Squads and 12 Supercharged Demomen
@@ -4104,18 +4309,26 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 				TFBot
 				{
 					Template T_TFBot_Demoman_Supercharged
+
+					ClassIcon demo
 				}
 			}
 		}
@@ -4138,6 +4351,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Miniboss_Soldier_Bombardment
+
+				ClassIcon soldier_giant
 			}
 		}
 		WaveSpawn // 5 GDeflector Heavies and 10 GLaser Scouts (Gatebot)
@@ -4161,14 +4376,20 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Heavy_Deflector_Gatebot
+
+					ClassIcon heavy_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Scout_Laser
+
+					ClassIcon scout_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Scout_Laser
+
+					ClassIcon scout_giant
 				}
 			}
 		}
@@ -4189,6 +4410,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Pyro_Supercharged
+
+				ClassIcon pyro
 
 				ItemAttributes
 				{
@@ -4216,6 +4439,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Scout_Bonk_Scatter
 				Skill Normal
+
+				ClassIcon scout
 			}
 		}
 
@@ -4239,14 +4464,20 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+
+					ClassIcon demo_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+
+					ClassIcon medic_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Kritzkrieg
+
+					ClassIcon medic_giant
 				}
 			}
 		}
@@ -4267,6 +4498,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy_giant
 			}
 		}
 		WaveSpawn // 18 Fury Pyros
@@ -4287,6 +4520,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Pyro_Dragon_Fury
 				Skill Expert
+
+				ClassIcon pyro
 			}
 		}
 
@@ -4309,14 +4544,20 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+
+					ClassIcon demo_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+
+					ClassIcon medic_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Kritzkrieg
+
+					ClassIcon medic_giant
 				}
 			}
 		}
@@ -4337,6 +4578,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy_giant
 			}
 		}
 		WaveSpawn // 18 Fury Pyros
@@ -4357,6 +4600,8 @@ WaveSchedule
 			{
 				Template T_TFBot_Pyro_Dragon_Fury
 				Skill Expert
+
+				ClassIcon pyro
 			}
 		}
 
@@ -4379,14 +4624,20 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+
+					ClassIcon demo_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Charged [$SIGSEGV]
+
+					ClassIcon medic_giant
 				}
 				TFBot
 				{
 					Template T_TFBot_Giant_Medic_Kritzkrieg
+
+					ClassIcon medic_giant
 				}
 			}
 		}
@@ -4407,6 +4658,8 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy_giant
 			}
 		}
 		WaveSpawn // 18 Fury Pyros
@@ -4427,35 +4680,9 @@ WaveSchedule
 			{
 				Template T_TFBot_Pyro_Dragon_Fury
 				Skill Expert
+
+				ClassIcon pyro
 			}
 		}
-	}
-	Wave
-	{
-
-		// Subwave 9
-		//WaveSpawn // 1 Homing Rocket Tank
-		//{
-		//	Name "Subwave9_HomingRocketTank"
-		//	WaitForAllDead "Subwave8_GShotgunDemo3"
-		//	TotalCount 1
-		//	MaxActive 1
-		//	SpawnCount 1
-		//	WaitBeforeStarting 2
-		//	WaitBetweenSpawns 0
-		//	TotalCurrency 100
-		//
-		//	Tank
-		//	{
-				Template Tank_Combat_Rocket_Homing
-				Health 50000
-				Speed 75
-				StartingPathTrackNode "tank_path_gate_1"
-
-				IsCrit 1
-
-				SpawnTemplate "CritHomingRocketTankPT"
-		//	}
-		//}
 	}
 }

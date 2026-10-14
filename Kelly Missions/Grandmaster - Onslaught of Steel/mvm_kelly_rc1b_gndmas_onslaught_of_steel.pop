@@ -68,6 +68,31 @@ WaveSchedule
 			"custom weapon fire sound" "common/null.wav"
 			"custom kill icon" "sledgehammer"
 		}
+
+		"NukeLauncher"
+		{
+			OriginalItemName "Upgradeable TF_WEAPON_PIPEBOMBLAUNCHER"
+
+			"damage bonus" 10
+			"damage causes airblast" 1
+			"airblast pushback scale" 5
+			"blast radius increased" 5
+			"no self blast dmg" 1
+			"fire rate penalty" 7
+			"mod max primary clip override" -1
+
+			"mult projectile scale" 3
+			"projectile range decreased" 0.5
+			"max pipebombs decreased" -7
+			"projectile detonate time" 6
+			"sticky arm time penalty" 4.6
+			"use large smoke explosion" 1
+			"projectile no deflect" 1
+
+			"custom weapon fire sound" "MVM.GiantDemoman_GrenadeShoot"
+			"explosion particle" "fireSmokeExplosion"
+			"custom kill icon" "megaton"
+		}
 	}
 
 	//// POINT TEMPLATES ////
@@ -105,7 +130,7 @@ WaveSchedule
 							function OnDeath()
 							{
 								local flDamage = 600
-								local flRange  = 450
+								local flRange  = 500
 
 								local vecOrigin = self.GetOrigin()
 								local vecCenter = self.GetCenter()
@@ -513,6 +538,11 @@ WaveSchedule
 		}
 		ButHeresTheForcer
 		{
+			info_target
+			{
+				"targetname" "ForcingThemHere"
+				"origin"     "0 0 0"
+			}
 			OnSpawnOutput
 			{
 				Target Kablooey
@@ -559,6 +589,79 @@ WaveSchedule
 				"spawnflags" "2"
 			}
 		}
+
+		StickyNukePT
+		{
+			RemoveIfKilled "StickyNukeHitbox"
+
+			OnSpawnOutput
+			{
+				Target "StickyNukeRelay"
+				Action "Trigger"
+			}
+			OnSpawnOutput
+			{
+				Target "StickyNukeIndicator"
+				Action "$SetFakeParent"
+				Param "StickyNukeHitbox"
+			}
+			OnSpawnOutput
+            {
+                Target "StickyNukeIndicator"
+                Action "$SetLocalAngles"
+                Param "0 0 0"
+                Delay 0.05
+            }
+
+			logic_relay
+			{
+				"targetname" "StickyNukeRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,0.5,-1"
+				"OnTrigger" "StickyNukeCharge,Start,,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/bomb_warning.wav,5.3,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,items/bomb_warning.wav,6,-1"
+			}
+
+			obj_sentrygun
+			{
+				"targetname" "StickyNukeHitbox"
+				"TeamNum" "3"
+				"defaultupgrade" "2"
+				"health" "1500"
+				"SolidToPlayer" "0"
+				"rendermode" "10"
+				"$sentrymodelprefix" "models/weapons/w_models/w_stickybomb.mdl"
+
+				"damagefilter" "filter_red"
+
+				"OnDamaged" "Player,$DisplayTextCenter,$$=test(!caller.m_iHealth>1,'Nuke HP: '..string(max(!caller.m_iHealth, 0)),''),0,-1"
+                "OnDamaged" "!parentRunScriptCodetry{if(caller.GetHealth()<1){self.Kill()}}catch(e){}0-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "StickyNukeIndicator"
+				"origin" "0 0 50"
+				"model" "models/props_gameplay/cap_circle_768.mdl"
+				"modelscale" "2"
+
+				"$modules" "fakeparent"
+				"$fakeparentoffset" "0 0 50"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			info_target
+			{
+				"targetname" "StickyNukeCharge"
+				"origin" "0 0 0"
+				"effect_name" "charge_up"
+				"start_active" "0"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -573,6 +676,20 @@ WaveSchedule
 		ItemName "HomewreckerRangedWeapon"
 	}
 
+	//// EXTRA SPAWN POINTS ////
+
+	ExtraSpawnPoint
+	{
+		Name "spawnbot_backshots"
+		X 158 Y -676 Z 0
+		TeamNum 3
+	}
+	ExtraSpawnPoint
+	{
+		Name "spawnbot_backshots"
+		X -580 Y -934 Z 256
+		TeamNum 3
+	}
 	//// EXTRA TANK PATHS ////
 
 	ExtraTankPath // Tank Path B (Right Path)
@@ -624,6 +741,41 @@ WaveSchedule
 		Node "-320 -2560 68"
 		Node "-152 -2456 68"
 	}
+	ExtraTankPath // Tank Path D (Upper Left Path)
+	{
+		Name "tank_path_d"
+
+		Node "-128 2688 -60"
+		Node "-128 576 36"
+		Node "-104 512 36"
+		Node "-64 448 36"
+		Node "0 408 36"
+		Node "104 384 36"
+		Node "992 384 92"
+		Node "1072 360 92"
+		Node "1120 320 92"
+		Node "1152 256 92"
+		Node "1152 -432 156"
+		Node "1168 -472 156"
+		Node "1208 -528 156"
+		Node "1376 -720 156"
+		Node "1408 -768 156"
+		Node "1432 -840 156"
+		Node "1432 -1096 212"
+		Node "1424 -1152 212"
+		Node "1408 -1248 212"
+		Node "1408 -1472 212"
+		Node "1416 -1512 212"
+		Node "1432 -1552 212"
+		Node "1432 -2400 212"
+		Node "1408 -2440 212"
+		Node "1368 -2464 212"
+		Node "896 -2464 212"
+		Node "832 -2448 212"
+		Node "776 -2400 212"
+		Node "704 -2368 212"
+		Node "176 -2368 212"
+	}
 
 	//// ROBOT TEMPLATES ////
 
@@ -634,7 +786,7 @@ WaveSchedule
 		Tank_Tiny_Kamikaze
 		{
 			Name "painttank|255 255 255^tankexplosion$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
-
+			ClassIcon tank_dynamite_entropy
 			SpawnTemplate "KamikazeTankPT"
 
 			IsMiniBoss 0
@@ -2837,7 +2989,7 @@ WaveSchedule
 			TotalCount 1
 			MaxActive 1
 			SpawnCount 1
-			WaitBeforeStarting 4
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			FirstSpawnWarningSound music\hl1_song17.mp3
 			LastSpawnWarningSound ambient\alarms\razortrain_horn1.wav
@@ -2861,13 +3013,566 @@ WaveSchedule
 			SpawnCount 25
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-
+			HideIcon 1
 			TotalCurrency 0
 
 			TFBot
 			{
 				Template T_TFBot_Scout_Sandman
 				Attributes AlwaysCrit
+				Action Mobber
+				CharacterAttributes
+				{
+					"move speed bonus" 1.5
+				}
+				InterruptAction // Guides them to Repair the Drill Tank
+				{
+					Target "ForcingThemHere"
+					AimTarget "ForcingThemHere"
+					Delay 5.1
+					Repeats 1
+					Duration 10
+					KillAimTarget 1
+					Distance 50
+				}
+				AddCond
+				{
+					Index 51
+					Duration 8.9
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave2_Giant"
+			WaitForAllDead "Wave4_Subwave1_CEMENT"
+			FirstSpawnWarningSound vo\mvm\mght\demoman_mvm_m_gibberish13.mp3
+			Where spawnbot_any
+			TotalCount 24
+			MaxActive 15
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 16
+
+			TotalCurrency 300
+			Squad
+			{
+				TFBot
+				{
+					Class Demoman
+					Name "Giant Charging Rapid Burst Demo"
+					Action Mobber
+					ClassIcon demo_burst_targe_spammer
+					Health 3300
+					Skill Expert
+					WeaponRestrictions PrimaryOnly
+					Attributes MiniBoss
+					Attributes HoldFireUntilFullReload
+					Attributes SpawnWithFullCharge
+					Item "The Chargin' Targe"
+					ItemAttributes
+					{
+						ItemName "The Chargin' Targe"
+						"charge recharge rate increased" 2
+					}
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_GRENADELAUNCHER"
+						"faster reload rate" 0.3
+						"fire rate bonus" 0.1
+						"clip size upgrade atomic" 5
+						"projectile spread angle penalty" 5
+						"Projectile speed increased"	1.1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction" 0.4
+						"airblast vulnerability multiplier" 0.4
+						"override footstep sound set" 4
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Stickybomb_Burst
+				}
+				TFBot
+				{
+					Class Demoman
+					Name "Extended Conch Demo"
+					ClassIcon demo_banner_trio_lite
+					Attributes SpawnWithFullCharge
+					Item "The Concheror"
+
+					CharacterAttributes
+					{
+						"deploy time increased" 0.5
+						"increase buff duration"	9.0
+					}
+					Skill Expert
+					Item "Jumper's Jeepcap"
+				}
+				TFBot
+				{
+					Class Demoman
+					Name "Extended Conch Demo"
+					ClassIcon demo_banner_trio_lite
+					Attributes SpawnWithFullCharge
+					Item "The Concheror"
+
+					CharacterAttributes
+					{
+						"deploy time increased" 0.5
+						"increase buff duration"	9.0
+					}
+					Skill Expert
+					Item "Jumper's Jeepcap"
+				}
+				TFBot
+				{
+					Class Demoman
+					Name "Extended Buff Demo"
+					ClassIcon demo_banner_trio_lite
+					Attributes SpawnWithFullCharge
+					Item "The Buff Banner"
+
+					CharacterAttributes
+					{
+						"deploy time increased" 0.5
+						"increase buff duration"	9.0
+					}
+					Skill Expert
+					Item "Jumper's Jeepcap"
+				}
+				TFBot
+				{
+					Class Demoman
+					Name "Extended Backup Demo"
+					ClassIcon demo_banner_trio_lite
+					Attributes SpawnWithFullCharge
+					Item "The Battalion's Backup"
+
+					CharacterAttributes
+					{
+						"deploy time increased" 0.5
+						"increase buff duration"	9.0
+					}
+					Skill Expert
+					Item "Jumper's Jeepcap"
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave2_Commons"
+			WaitForAllDead "Wave4_Subwave1_CEMENT"
+			Where spawnbot
+			TotalCount 45
+			MaxActive 22
+			SpawnCount 15
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 13
+
+			TotalCurrency 100
+
+			TFBot
+			{
+				Name "Bonk! Demo"
+				Class Demoman
+				Attributes SpawnWithFullCharge
+				Item "Bonk! Atomic Punch"
+				ClassIcon demo_bonk_nys
+				CharacterAttributes
+				{
+					"move speed bonus" 1.25
+					"deploy time increased" 0.5
+					"mult effect duration" 1.3
+				}
+				Skill Expert
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave2"
+			WaitForAllDead "Wave4_Subwave1_CEMENT"
+			Where spawnbot
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 15
+			TotalCurrency 0
+			RandomChoice
+			{
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_a_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_b_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_c_1"
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave3_Giants"
+			WaitForAllDead "Wave4_Subwave2_Giant"
+			WaitForAllSpawned "Wave4_Subwave2_Commons"
+			Where spawnbot_backshots [$SIGSEGV]
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 11
+
+			TotalCurrency 100
+
+			TFBot
+			{
+				MaxVisionRange	400
+				Action Mobber
+				Name	"Giant Cloaking Demoknight"
+				ClassIcon demoknight_d
+				Template T_TFBot_Giant_Demoman_Knight
+				Attributes AlwaysCrit
+				CharacterAttributes
+				{
+					"melee cleave attack" 1
+				}
+				AddCond
+				{
+					Index 66
+				}
+				AddCond
+				{
+					Index 6
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave3_Commons"
+			WaitForAllDead "Wave4_Subwave2_Giant"
+			WaitForAllSpawned "Wave4_Subwave2_Commons"
+			Where spawnbot
+			TotalCount 75
+			MaxActive 20
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 1
+
+			TotalCurrency 200
+
+			TFBot
+			{
+				Class Demoman
+				Name "Burst Fire Demo"
+				ClassIcon demo_burst_ubercanteen_entropy
+				Skill Expert
+				WeaponRestrictions PrimaryOnly
+				Attributes HoldFireUntilFullReload
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_GRENADELAUNCHER"
+					"faster reload rate" 1.25
+					"fire rate bonus" 0.05
+					"projectile spread angle penalty" 3
+				}
+				Item "Battery Canteens"
+				ItemAttributes
+                {
+                    ItemName "Battery Canteens"
+                    "ubercharge" 1
+                    "powerup duration" 8
+                    "powerup charges" 1
+                }
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_Subwave3"
+			WaitForAllDead "Wave4_Subwave2_Giant"
+			WaitForAllSpawned "Wave4_Subwave2_Commons"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 8
+			TotalCurrency 0
+			RandomChoice
+			{
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_a_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_b_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_c_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_d_1"
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_SubwaveFinal"
+			WaitForAllDead "Wave4_Subwave3_Giants"
+			WaitForAllSpawned "Wave4_Subwave3_Commons"
+			Where spawnbot
+			TotalCount 5
+			MaxActive 5
+			SpawnCount 5
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			FirstSpawnWarningSound mvm/giant_heavy/giant_heavy_entrance.wav
+			TotalCurrency 100
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman
+					ClassIcon 	demo_sticky_nuke_giant
+					Health 60000
+					Attributes UseBossHealthBar
+					Name "The Exclusion Zone"
+					Item "The Loch-n-Load"
+					Item "Upgradeable TF_WEAPON_GRENADELAUNCHER"
+					WeaponRestrictions SecondaryOnly
+					CustomEyeGlowColor "13 229 229"
+					Item "NukeLauncher"
+
+					CharacterAttributes
+					{
+						"hand scale" 2.25
+					}
+
+					ItemAttributes
+					{
+						ItemName "Upgradeable TF_WEAPON_GRENADELAUNCHER"
+						"fire rate penalty" 100
+						"is_passive_weapon" 1
+						"override projectile type" 27
+					}
+
+					ShootTemplate
+					{
+						Name "StickyNukePT"
+						ItemName "NukeLauncher"
+						AttachToProjectile 1
+					}
+				}
+				TFBot
+				{
+					Name "Giant Persian Demoknight"
+					Class Demoman
+					ClassIcon demoknight_persian_nys_giant
+					Skill Expert
+					Health 3300
+					WeaponRestrictions MeleeOnly
+					Item "Sultan's Ceremonial"
+					Item "Ali Baba's Wee Booties"
+					Item "The Persian Persuader"
+					Item "The Splendid Screen"
+					Attributes MiniBoss
+					Tag bot_giant
+
+					ItemAttributes
+					{
+						ItemName "The Splendid Screen"
+						"attack not cancel charge" 1
+						"charge time increased" 1
+						"charge recharge rate increased" 4
+						"melee cleave attack" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction" 0.25
+						"airblast vulnerability multiplier" 0.25
+						"airblast vertical vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+					}
+				}
+				TFBot
+				{
+					Name "Giant Persian Demoknight"
+					Class Demoman
+					ClassIcon demoknight_persian_nys_giant
+					Skill Expert
+					Health 3300
+					WeaponRestrictions MeleeOnly
+					Item "Sultan's Ceremonial"
+					Item "Ali Baba's Wee Booties"
+					Item "The Persian Persuader"
+					Item "The Splendid Screen"
+					Attributes MiniBoss
+					Tag bot_giant
+
+					ItemAttributes
+					{
+						ItemName "The Splendid Screen"
+						"attack not cancel charge" 1
+						"charge time increased" 1
+						"charge recharge rate increased" 4
+						"melee cleave attack" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction" 0.25
+						"airblast vulnerability multiplier" 0.25
+						"airblast vertical vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+					}
+				}
+				TFBot
+				{
+					Name "Giant Persian Demoknight"
+					Class Demoman
+					ClassIcon demoknight_persian_nys_giant
+					Skill Expert
+					Health 3300
+					WeaponRestrictions MeleeOnly
+					Item "Sultan's Ceremonial"
+					Item "Ali Baba's Wee Booties"
+					Item "The Persian Persuader"
+					Item "The Splendid Screen"
+					Attributes MiniBoss
+					Tag bot_giant
+
+					ItemAttributes
+					{
+						ItemName "The Splendid Screen"
+						"attack not cancel charge" 1
+						"charge time increased" 1
+						"charge recharge rate increased" 4
+						"melee cleave attack" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction" 0.25
+						"airblast vulnerability multiplier" 0.25
+						"airblast vertical vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+					}
+				}
+				TFBot
+				{
+					Name "Giant Persian Demoknight"
+					Class Demoman
+					ClassIcon demoknight_persian_nys_giant
+					Skill Expert
+					Health 3300
+					WeaponRestrictions MeleeOnly
+					Item "Sultan's Ceremonial"
+					Item "Ali Baba's Wee Booties"
+					Item "The Persian Persuader"
+					Item "The Splendid Screen"
+					Attributes MiniBoss
+					Tag bot_giant
+
+					ItemAttributes
+					{
+						ItemName "The Splendid Screen"
+						"attack not cancel charge" 1
+						"charge time increased" 1
+						"charge recharge rate increased" 4
+						"melee cleave attack" 1
+					}
+
+					CharacterAttributes
+					{
+						"move speed bonus"	0.5
+						"damage force reduction" 0.25
+						"airblast vulnerability multiplier" 0.25
+						"airblast vertical vulnerability multiplier" 0.5
+						"override footstep sound set" 4
+					}
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave4_SubwaveFinal"
+			WaitForAllDead "Wave4_Subwave3_Giants"
+			WaitForAllSpawned "Wave4_Subwave3_Commons"
+			Where spawnbot
+			TotalCount 8
+			MaxActive 3
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 0
+			RandomChoice
+			{
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_a_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_b_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_c_1"
+				}
+				Tank
+				{
+					Template Tank_Tiny_Kamikaze
+					Health 10000
+					Speed 175
+					StartingPathTrackNode "tank_path_d_1"
+				}
 			}
 		}
 	}

@@ -54,7 +54,16 @@ WaveSchedule
 	PrecacheModel "models/props_halloween/fist_projectile_purple.mdl"
 
 	PrecacheModel "models/props_mvm/indicator/indicator_circle.mdl"
+
 	PrecacheModel "models/buildables/amplifier_test/amplifier.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib1.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib2.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib3.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib4.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib5.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib6.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib7.mdl"
+	PrecacheModel "models/buildables/amplifier_test/gibs/amp_gib8.mdl"
 
 	// Precached Sounds //
 
@@ -2766,9 +2775,46 @@ WaveSchedule
 				Action SetParent
 				Param !activator
 			}
+
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisIntroExplosionDamage
+				Action SetParent
+				Param !activator
+			}
 			OnSpawnOutput
 			{
 				Target AlloyedGenesisHomingGauntlet
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisForemanSlamRocks
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisForemanSlamDamage
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisBurrowRocks
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisGrenades
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target AlloyedGenesisLaserBombs
 				Action SetParent
 				Param !activator
 			}
@@ -2903,6 +2949,9 @@ WaveSchedule
 			logic_relay
 			{
 				"targetname" "AlloyedGenesisIntroMegaLaserRelay"
+
+				"OnTrigger" "AlloyedGenesisPhase2TransitionActivateRelay,Enable,,0,-1"
+				"OnTrigger" "AlloyedGenesisPhase3TransitionActivateRelay,Enable,,0,-1"
 
 				"OnTrigger" "AlloyedGenesisBotProp,Enable,,0,-1"
 				"OnTrigger" "AlloyedGenesisGlow,Disable,,0,-1"
@@ -3142,49 +3191,81 @@ WaveSchedule
 
 			logic_relay
 			{
+				"targetname" "AlloyedGenesisPhase2TransitionActivateRelay"
+
+				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisPhase2Transition,0,-1"
+
+				"startdisabled" "1"
+			}
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisPhase3TransitionActivateRelay"
+
+				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisPhase3Transition,0,-1"
+
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
 				"targetname" "AlloyedGenesisPhase2TransitionRelay"
 
 				"OnTrigger" "TimerLoseConditionRelay,Trigger,,0,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|0,0,-1"
 
-				"OnTrigger" "!activator,$TauntFromItem,Taunt: Cheers,1,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_cheers05.mp3,1,-1"
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Cheers!,0.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_cheers05.mp3,0.1,-1"
 
-				"OnTrigger" "!activator,$AddCond,51,2,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_uber.wav,2,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|1,0.2,-1"
 
-				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|0,4.3,-1"
+				"OnTrigger" "!activator,$AddCond,57,3.3,-1"
+				"OnTrigger" "!activator,$AddCond,87,3.3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/powerup_pickup_uber.wav,3.3,-1"
+				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|0,3.3,-1"
 
 				"OnTrigger" "NuclearArmageddonParticle,Start,,7,-1"
 				"OnTrigger" "NuclearArmageddonChargeParticle,TurnOn,,7,-1"
-				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_activate.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_activate.wav`,channel = 6,pitch = 85,special_dsp = 25,filter_type=5})7-1"
-				"OnTrigger" "BigNetRunScriptCodePrecacheSound(`mvm/mvm_tele_activate.wav`);EmitSoundEx({sound_name=`mvm/mvm_tele_activate.wav`,channel = 6,pitch = 85,special_dsp = 25,filter_type=5})7-1"
-				"OnTrigger" "tf_gamerules,PlayVO,nucleararmageddon.wav,7,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_tele_activate.wav`, channel = 6, pitch = 85, special_dsp = 25, filter_type = 5})7-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_tele_activate.wav`, channel = 6, pitch = 85, special_dsp = 25, filter_type = 5})7-1"
 				"OnTrigger" "Phase2NuclearArmageddonRelay,Trigger,,7,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,nucleararmageddon.wav,8,-1"
 			}
 
 			info_particle_system
             {
                 "targetname" "NuclearArmageddonParticle"
-                "origin" "0 0 90"
+                "origin" "0 0 250"
                 "effect_name" "eyeboss_doorway_vortex"
             }
             info_particle_system
             {
                 "targetname" "NuclearArmageddonParticle"
-                "origin" "0 0 90"
+                "origin" "0 0 250"
                 "effect_name" "eb_death_vortex04"
             }
             info_particle_system
             {
                 "targetname" "NuclearArmageddonParticle"
-                "origin" "0 0 90"
+                "origin" "0 0 250"
+                "effect_name" "dxhr_lightningball_parent_blue"
+            }
+			info_particle_system
+            {
+                "targetname" "NuclearArmageddonParticle"
+                "origin" "0 0 250"
+                "effect_name" "dxhr_lightningball_parent_blue"
+            }
+			info_particle_system
+            {
+                "targetname" "NuclearArmageddonParticle"
+                "origin" "0 0 250"
                 "effect_name" "dxhr_lightningball_parent_blue"
             }
 
 			point_tesla
 			{
 				"targetname" "NuclearArmageddonChargeParticle"
-				"origin" "0 0 90"
+				"origin" "0 0 250"
 				"texture" "sprites/physbeam.vmt"
 				"m_Color" "255 240 170"
 				"m_flRadius" "350"
@@ -3200,7 +3281,7 @@ WaveSchedule
 			point_tesla
 			{
 				"targetname" "NuclearArmageddonChargeParticle"
-				"origin" "0 0 90"
+				"origin" "0 0 250"
 				"texture" "sprites/physbeam.vmt"
 				"m_Color" "255 240 170"
 				"m_flRadius" "450"
@@ -3216,7 +3297,7 @@ WaveSchedule
 			point_tesla
 			{
 				"targetname" "NuclearArmageddonChargeParticle"
-				"origin" "0 0 90"
+				"origin" "0 0 250"
 				"texture" "sprites/physbeam.vmt"
 				"m_Color" "255 240 170"
 				"m_flRadius" "550"
@@ -3235,8 +3316,10 @@ WaveSchedule
 				"targetname" "NuclearArmageddonLossRelay"
 
 				"OnTrigger" "tf_gamerules,$StopVO,nucleararmageddon.wav,0,-1"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp`, pitch = 85, special_dsp = 57, filter_type = 5})0-1"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp`, pitch = 85, special_dsp = 57, filter_type = 5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp3`, pitch = 85, special_dsp = 57, filter_type = 5, flags = 4})2-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_laughlong01.mp3`, pitch = 85, special_dsp = 57, filter_type = 5, flags = 4})2-1"
 
 				"OnTrigger" "PlayerRunScriptCodeself.ViewPunch(QAngle(-80,10,0))2-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 255, 5, 1.5, 1)21"
@@ -3244,7 +3327,10 @@ WaveSchedule
                 "OnTrigger" "tf_gamerules,PlayVO,ambient\explosions\citadel_end_explosion1.wav,2,1"
                 "OnTrigger" "tf_gamerules,PlayVO,misc\doomsday_missile_explosion.wav,2,1"
 
-				"OnTrigger" "BotRemover,Enable,,2,-1"
+				"OnTrigger" "NuclearArmageddonParticle,Stop,,2,-1"
+				"OnTrigger" "NuclearArmageddonChargeParticle,TurnOff,,2,-1"
+
+				"OnTrigger" "TotalNuclearDeath,Enable,,2,-1"
 				"OnTrigger" "bots_win,RoundWin,,3,-1"
 			}
 			trigger_hurt // Mapwide Death
@@ -3256,6 +3342,7 @@ WaveSchedule
 
                 "damage" "3000000"
                 "damagetype" "16"
+				"$killicon" "megaton"
                 "spawnflags" "1"
 
 				"disableshadows" "1"
@@ -3290,6 +3377,71 @@ WaveSchedule
 				"OnTrigger" "FinaleZone2ArmageddonSequenceRelay,Trigger,,0,-1"
 				"OnTrigger" "FinaleZone3ArmageddonSequenceRelay,Trigger,,0,-1"
 				"OnTrigger" "FinaleZone4ArmageddonSequenceRelay,Trigger,,0,-1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "AlloyedGenesisSummonBeam"
+				"origin" "0 0 200"
+				"effect_name" "teleporter_mvm_bot_persist"
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisStunRelay"
+
+				"OnTrigger" "BigNet,RunScriptCode,TextualTimer.Set(15),0,-1"
+				"OnTrigger" "BigNet,RunScriptCode,TextualTimer.End(),0,-1"
+
+				"OnTrigger" "@p@AlloyedGenesisTarget,$RemoveCond,7,0,-1"
+				"OnTrigger" "@p@AlloyedGenesisTarget,$RemoveCond,57,0,-1"
+				"OnTrigger" "@p@AlloyedGenesisTarget,$RemoveCond,87,0,-1"
+
+				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.AddCustomAttribute(`gesture speed increase`,1,-1)0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_painsevere01.mp3,0,-1"
+
+				"OnTrigger" "tf_gamerules,$StopVO,nucleararmageddon.wav,0,-1"
+				"OnTrigger" "NuclearArmageddonParticle,Stop,,0,-1"
+				"OnTrigger" "NuclearArmageddonChargeParticle,TurnOff,,0,-1"
+
+				"OnTrigger" "AlloyedGenesisPhase2ActivationRelay,Trigger,,0,-1"
+				"OnTrigger" "AlloyedGenesisPhase3ActivationRelay,Trigger,,0,-1"
+
+				"OnTrigger" "@p@AlloyedGenesisTarget,$AddCond,71 4.9,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisPhase2ActivationRelay"
+
+				"OnTrigger" "AlloyedGenesisPhase1AttackPoolRelay,Disable,,0,-1"
+                "OnTrigger" "AlloyedGenesisPhase2AttackPoolRelay,Enable,,0,-1"
+
+				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Enable,,0,-1"
+
+                "OnTrigger" "AlloyedGenesisPhase3ActivationRelay,Enable,,0.1,-1"
+                "OnTrigger" "!self,Disable,,0.2,-1"
+
+                "OnTrigger" "AlloyedGenesisAttackInit,Trigger,,5,-1"
+				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Trigger,,5,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisPhase3ActivationRelay"
+
+				"OnTrigger" "AlloyedGenesisPhase2AttackPoolRelay,Disable,,0,-1"
+                "OnTrigger" "AlloyedGenesisPhase3AttackPoolRelay,Enable,,0,-1"
+
+				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Enable,,0,-1"
+
+                "OnTrigger" "!self,Disable,,0.2,-1"
+
+                "OnTrigger" "@p@AlloyedGenesis,$ChangeAttributes,AlloyedGenesisPhase3Transformation,5,-1"
+				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Trigger,,5,-1"
+
+				"startdisabled" "1"
 			}
 
 			// PHASE 1 ATTACKS //
@@ -3355,6 +3507,7 @@ WaveSchedule
 				"origin" "0 20 100"
 				"teamnum" "3"
 				"$weaponname" "HomingGauntletWeapon"
+				"$preventshootparent" "1"
 			}
 
 			// Trolldier
@@ -3960,6 +4113,7 @@ WaveSchedule
 
 				"teamnum" "3"
 				"$weaponname" "MechaMinerRockWeapon"
+				"$preventshootparent" "1"
 			}
 			tf_point_weapon_mimic
 			{
@@ -4198,6 +4352,7 @@ WaveSchedule
 				"teamnum" "3"
 				"$weaponname" "OverclockedDaveLaserBombWeapon"
 				"$weaponnosound" "1"
+				"$preventshootparent" "1"
 
 				"$OnFire" "OverclockedDaveLaserBombSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
 			}
@@ -4418,6 +4573,9 @@ WaveSchedule
 				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.RemoveBotTag(`bot_gatebot`)0-1"
 				"OnTrigger" "BossGateTimer,Disable,,0,-1"
 
+				"OnTrigger" "AlloyedGenesisLoseConditionTimer,CancelPending,,0,-1"
+				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Disable,,0,-1"
+
 				"OnTrigger"	"tf_gamerules,PlayVO,mvm/mvm_warning.wav,0,-1"
 
 				"OnTrigger" "LoseConditionSwitchText,Display,,0.05,-1"
@@ -4630,40 +4788,116 @@ WaveSchedule
 			{
 				"targetname" "Phase2Zone1ArmageddonSequenceRelay"
 
-				"OnTrigger" "Phase2Zone1Generator1Relay,Trigger,,0,-1"
+				"OnTrigger" "Zone1Generator1Relay,Trigger,,0,-1"
 
-				"OnTrigger" "Phase2Zone1GeneratorRandomiser,PickRandomShuffle,,4,-1"
-				"OnTrigger" "Phase2Zone1GeneratorRandomiser,PickRandomShuffle,,7,-1"
-				"OnTrigger" "Phase2Zone1GeneratorRandomiser,PickRandomShuffle,,10,-1"
+				"OnTrigger" "Zone1GeneratorRandomiser,PickRandomShuffle,,4,-1"
+				"OnTrigger" "Zone1GeneratorRandomiser,PickRandomShuffle,,7,-1"
+				"OnTrigger" "Zone1GeneratorRandomiser,PickRandomShuffle,,10,-1"
 
-				"OnTrigger" "Phase2Zone1Generator5Relay,Trigger,,14,-1"
+				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
 			}
 
+			// Generator Locations
 			logic_case
 			{
-				"targetname" "Phase2Zone1GeneratorRandomiser"
+				"targetname" "Zone1GeneratorRandomiser"
 
-				"OnCase01" "Phase2Zone1Generator2Relay,Trigger,,0,-1"
-				"OnCase02" "Phase2Zone1Generator3Relay,Trigger,,0,-1"
-				"OnCase03" "Phase2Zone1Generator4Relay,Trigger,,0,-1"
+				"OnCase01" "Zone1Generator2Relay,Trigger,,0,-1"
+				"OnCase02" "Zone1Generator3Relay,Trigger,,0,-1"
+				"OnCase03" "Zone1Generator4Relay,Trigger,,0,-1"
 			}
 
 			logic_relay
 			{
-				"targetname" "Phase2Zone1Generator1Relay"
+				"targetname" "Zone1Generator1Relay"
 
-				"OnTrigger" "Phase2Zone1Generator1Indicator,Enable,,0,-1"
-				"OnTrigger" "Phase2Zone1Generator1Indicator,SetAnimation,start,0,-1"
-				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Phase2Generator1Indicator,3,-1"
+				"OnTrigger" "Zone1Generator1Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone1Generator1Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone1Generator1Indicator,3,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
-				"OnTrigger" "Phase2Zone1Generator1Indicator,SetAnimation,end,3,-1"
-				"OnTrigger" "Phase2Zone1Generator1Indicator,Disable,,4,-1"
-				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE UBER GENERATORS TO PREVENT NUCLEAR ARMAGEDDON`, lifetime = 5, worldPosX = -1256, worldPosY = 2445, worldPosZ = -76})6,-1"
+				"OnTrigger" "Zone1Generator1Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE UBER GENERATORS TO PREVENT NUCLEAR ARMAGEDDON`, lifetime = 5, worldPosX = 1130, worldPosY = -256, worldPosZ = -80})3.05,-1"
+				"OnTrigger" "Zone1Generator1Indicator,Disable,,4,-1"
 			}
 			prop_dynamic
 			{
-				"targetname" "Phase2Zone1Generator1Indicator"
+				"targetname" "Zone1Generator1Indicator"
 				"origin" "1130 -256 -146"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone1Generator2Relay"
+
+				"OnTrigger" "Zone1Generator2Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone1Generator2Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone1Generator2Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone1Generator2Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone1Generator2Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone1Generator2Indicator"
+				"origin" "1898 384 -154"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone1Generator3Relay"
+
+				"OnTrigger" "Zone1Generator3Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone1Generator3Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone1Generator3Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone1Generator3Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone1Generator3Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone1Generator3Indicator"
+				"origin" "1210 -1040 -244"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone1Generator4Relay"
+
+				"OnTrigger" "Zone1Generator4Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone1Generator4Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone1Generator4Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone1Generator4Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone1Generator4Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone1Generator4Indicator"
+				"origin" "946 768 -68"
 				"model" "models/props_mvm/indicator/indicator_circle.mdl"
 				"modelscale" "4"
 				"skin" "1"
@@ -4698,6 +4932,131 @@ WaveSchedule
 				"disableshadows" "1"
 			}
 
+			// Phase 2 (Tutorial)
+			logic_relay
+			{
+				"targetname" "Phase2Zone2ArmageddonSequenceRelay"
+
+				"OnTrigger" "Zone2Generator1Relay,Trigger,,0,-1"
+
+				"OnTrigger" "Zone2GeneratorRandomiser,PickRandomShuffle,,4,-1"
+				"OnTrigger" "Zone2GeneratorRandomiser,PickRandomShuffle,,7,-1"
+				"OnTrigger" "Zone2GeneratorRandomiser,PickRandomShuffle,,10,-1"
+
+				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+			}
+
+			// Generator Locations
+			logic_case
+			{
+				"targetname" "Zone2GeneratorRandomiser"
+
+				"OnCase01" "Zone2Generator2Relay,Trigger,,0,-1"
+				"OnCase02" "Zone2Generator3Relay,Trigger,,0,-1"
+				"OnCase03" "Zone2Generator4Relay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone2Generator1Relay"
+
+				"OnTrigger" "Zone2Generator1Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone2Generator1Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone2Generator1Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone2Generator1Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE UBER GENERATORS TO PREVENT NUCLEAR ARMAGEDDON`, lifetime = 5, worldPosX = -494, worldPosY = -280, worldPosZ = -80})3.05,-1"
+				"OnTrigger" "Zone2Generator1Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone2Generator1Indicator"
+				"origin" "-494 -280 -118"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone2Generator2Relay"
+
+				"OnTrigger" "Zone2Generator2Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone2Generator2Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone2Generator2Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone2Generator2Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone2Generator2Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone2Generator2Indicator"
+				"origin" "-358 864 -122"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone2Generator3Relay"
+
+				"OnTrigger" "Zone2Generator3Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone2Generator3Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone2Generator3Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone2Generator3Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone2Generator3Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone2Generator3Indicator"
+				"origin" "-1430 -320 -122"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone2Generator4Relay"
+
+				"OnTrigger" "Zone2Generator4Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone2Generator4Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone2Generator4Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone2Generator4Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone2Generator4Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone2Generator4Indicator"
+				"origin" "-22 304 -140"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
 			// ZONE 3 //
 
 			trigger_multiple
@@ -4720,6 +5079,131 @@ WaveSchedule
 				"OnEndTouch" "FinaleZone3ArmageddonSequenceRelay,Disable,,0,-1"
 
 				"disableshadows" "1"
+			}
+
+			// Phase 2 (Tutorial)
+			logic_relay
+			{
+				"targetname" "Phase2Zone3ArmageddonSequenceRelay"
+
+				"OnTrigger" "Zone3Generator1Relay,Trigger,,0,-1"
+
+				"OnTrigger" "Zone3GeneratorRandomiser,PickRandomShuffle,,4,-1"
+				"OnTrigger" "Zone3GeneratorRandomiser,PickRandomShuffle,,7,-1"
+				"OnTrigger" "Zone3GeneratorRandomiser,PickRandomShuffle,,10,-1"
+
+				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+			}
+
+			// Generator Locations
+			logic_case
+			{
+				"targetname" "Zone3GeneratorRandomiser"
+
+				"OnCase01" "Zone3Generator2Relay,Trigger,,0,-1"
+				"OnCase02" "Zone3Generator3Relay,Trigger,,0,-1"
+				"OnCase03" "Zone3Generator4Relay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone3Generator1Relay"
+
+				"OnTrigger" "Zone3Generator1Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone3Generator1Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone3Generator1Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone3Generator1Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE UBER GENERATORS TO PREVENT NUCLEAR ARMAGEDDON`, lifetime = 5, worldPosX = -1270, worldPosY = 2392, worldPosZ = -114})3.05,-1"
+				"OnTrigger" "Zone3Generator1Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone3Generator1Indicator"
+				"origin" "-1270 2392 -194"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone3Generator2Relay"
+
+				"OnTrigger" "Zone3Generator2Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone3Generator2Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone3Generator2Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone3Generator2Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone3Generator2Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone3Generator2Indicator"
+				"origin" "-1646 1216 -122"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone3Generator3Relay"
+
+				"OnTrigger" "Zone3Generator3Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone3Generator3Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone3Generator3Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone3Generator3Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone3Generator3Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone3Generator3Indicator"
+				"origin" "-942 1208 -122"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone3Generator4Relay"
+
+				"OnTrigger" "Zone3Generator4Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone3Generator4Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone3Generator4Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone3Generator4Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone3Generator4Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone3Generator4Indicator"
+				"origin" "-2086 2112 -188"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
 			}
 
 			// ZONE 4 //
@@ -4745,9 +5229,150 @@ WaveSchedule
 
 				"disableshadows" "1"
 			}
+
+			// Phase 2 (Tutorial)
+			logic_relay
+			{
+				"targetname" "Phase2Zone4ArmageddonSequenceRelay"
+
+				"OnTrigger" "Zone4Generator1Relay,Trigger,,0,-1"
+
+				"OnTrigger" "Zone4GeneratorRandomiser,PickRandomShuffle,,4,-1"
+				"OnTrigger" "Zone4GeneratorRandomiser,PickRandomShuffle,,7,-1"
+				"OnTrigger" "Zone4GeneratorRandomiser,PickRandomShuffle,,10,-1"
+
+				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+			}
+
+			// Generator Locations
+			logic_case
+			{
+				"targetname" "Zone4GeneratorRandomiser"
+
+				"OnCase01" "Zone4Generator2Relay,Trigger,,0,-1"
+				"OnCase02" "Zone4Generator3Relay,Trigger,,0,-1"
+				"OnCase03" "Zone4Generator4Relay,Trigger,,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone4Generator1Relay"
+
+				"OnTrigger" "Zone4Generator1Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone4Generator1Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone4Generator1Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone4Generator1Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE UBER GENERATORS TO PREVENT NUCLEAR ARMAGEDDON`, lifetime = 5, worldPosX = -3590, worldPosY = 608, worldPosZ = -210})3.05,-1"
+				"OnTrigger" "Zone4Generator1Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone4Generator1Indicator"
+				"origin" "-3590 608 -290"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone4Generator2Relay"
+
+				"OnTrigger" "Zone4Generator2Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone4Generator2Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone4Generator2Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone4Generator2Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone4Generator2Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone4Generator2Indicator"
+				"origin" "-3198 1312 -56"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone4Generator3Relay"
+
+				"OnTrigger" "Zone4Generator3Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone4Generator3Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone4Generator3Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone4Generator3Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone4Generator3Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone4Generator3Indicator"
+				"origin" "-2894 416 -178"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "Zone4Generator4Relay"
+
+				"OnTrigger" "Zone4Generator4Indicator,Enable,,0,-1"
+				"OnTrigger" "Zone4Generator4Indicator,SetAnimation,start,0,-1"
+				"OnTrigger" "AlloyedGenesisUberGeneratorPT,ForceSpawnAtEntityOrigin,Zone4Generator4Indicator,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,3,-1"
+				"OnTrigger" "Zone4Generator4Indicator,SetAnimation,end,3,-1"
+				"OnTrigger" "Zone4Generator4Indicator,Disable,,4,-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "Zone4Generator4Indicator"
+				"origin" "-4390 1000 -298"
+				"model" "models/props_mvm/indicator/indicator_circle.mdl"
+				"modelscale" "4"
+				"skin" "1"
+				"defaultanim" "start"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+
+			// MINIBOSS RELAYS //
+
+			logic_relay
+			{
+				"targetname" "Phase2MinibossRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,0,-1"
+				"OnTrigger" "AlloyedGenesisSummonBeam,Start,,0,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_GRapidBurstSoldier,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,2,-1"
+				"OnTrigger" "AlloyedGenesisSummonBeam,Stop,,2,-1"
+			}
 		}
 		AlloyedGenesisUberGeneratorPT
 		{
+			KeepAlive 1
+
 			RemoveIfKilled "UberGenerator"
 
 			OnSpawnOutput
@@ -4770,9 +5395,15 @@ WaveSchedule
 				"targetname" "UberGenerator"
 
 				"teamnum" "3"
-				"defaultupgrade" "1"
+				"defaultupgrade" "2"
+				"solidtoplayer" "0"
+
 				"$radiusmult" "100"
 				"$dispensermodelprefix" "models/buildables/amplifier_test/amplifier.mdl"
+
+				"OnDestroyed" "BigNet,RunScriptCode,TextualTimer.Add(8),0,-1"
+				"OnDestroyed" "tf_gamerules,PlayVO,weapons/dispenser_explode.wav,0,-1"
+                "OnDestroyed" "tf_gamerules,PlayVO,vo/announcer_time_added.mp3,0,-1"
 			}
 			tf_glow
 			{
@@ -4794,6 +5425,7 @@ WaveSchedule
 
                 "teamnum" "3"
 				"defaultupgrade" "2"
+				"solidtoplayer" "0"
 
 				"$fireratemult" "2.76"
                 "$bulletweapon" "tf_weapon_rocketlauncher"
@@ -5417,8 +6049,13 @@ WaveSchedule
 				"move speed penalty" 0.5
 				"damage force reduction" 0.1
 				"airblast vulnerability multiplier" 0.1
-				"override footstep sound set" 2
+
 				"cancel falling damage" 1
+				"no_jump" 1
+				"displace touched enemies" 1
+
+				"override footstep sound set" 2
+				"voice pitch scale" 0
 			}
 
 			FireInput
@@ -5437,20 +6074,22 @@ WaveSchedule
 				Delay 0
 				Repeats 1
 			}
-
-			ChangeAttributes
+			FireInput
 			{
-				Name "AlloyedGenesisPhase2Transition"
+				Target "AlloyedGenesisPhase2TransitionActivateRelay"
+				Action "Trigger"
 				Delay 0
-				Repeats 1
+				Repeats 0
+				Cooldown 1
 				IfHealthBelow 85001
 			}
-
-			ChangeAttributes
+			FireInput
 			{
-				Name "AlloyedGenesisPhase3Transition"
+				Target "AlloyedGenesisPhase3TransitionActivateRelay"
+				Action "Trigger"
 				Delay 0
-				Repeats 1
+				Repeats 0
+				Cooldown 1
 				IfHealthBelow 40001
 			}
 
@@ -6011,6 +6650,15 @@ WaveSchedule
 				{
 					UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
 
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					Item "TF_WEAPON_SHOVEL"
+
+					CharacterAttributes
+					{
+						"always allow taunt" 1
+					}
+
 					FireInput
 					{
 						Target "AlloyedGenesisFormChangeRelay"
@@ -6565,6 +7213,38 @@ WaveSchedule
 					FireInput
 					{
 						Target "AlloyedGenesisOverclockedDaveProjectileThrowRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+				}
+
+				// Phase 3 Transition //
+
+				AlloyedGenesisPhase3Transition [$SIGSEGV]
+				{
+					UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					Item "TF_WEAPON_SHOVEL"
+
+					CharacterAttributes
+					{
+						"always allow taunt" 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisFormChangeRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisPhase3TransitionRelay"
 						Action Trigger
 						Delay 0
 						Repeats 1
@@ -7716,6 +8396,38 @@ WaveSchedule
 				Cooldown 1
 				IfSeeTarget 0
 				Type "Melee"
+			}
+		}
+
+		T_TFBot_Giant_Soldier_Burst_Spammer
+		{
+			Name "Giant Rapid Burst Fire Soldier"
+			Class Soldier
+			ClassIcon soldier_burstfire_spammer_giant
+			Skill Expert
+			Health 4000
+			Attributes MiniBoss
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			Tag bot_giant
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+				"fire rate bonus" 0.1
+				"faster reload rate" 0.33
+				"clip size penalty" 0.75
+				"projectile speed decreased" 0.65
 			}
 		}
 
@@ -10258,7 +10970,7 @@ WaveSchedule
 			Action RunScriptCode
 			Param "
 					EntFire(`wave_start_relay_classic`, `Trigger`)
-					EntFire(`AlloyedGenesisIntroPT`, `ForceSpawn`)
+					//EntFire(`AlloyedGenesisIntroPT`, `ForceSpawn`)
 				  "
 		}
 		DoneOutput
@@ -10288,7 +11000,7 @@ WaveSchedule
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 12.5
+            //WaitBeforeStarting 12.5
             WaitBetweenSpawns 0
 
             TotalCurrency 0
@@ -10373,6 +11085,53 @@ WaveSchedule
 						Repeats 1
 					}
 				}
+			}
+		}
+
+		WaveSpawn // GRapid Burst Soldier Miniboss
+		{
+			Name "Wave4_GRapidBurstSoldier"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 150
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Name "Prototype S-L4MT"
+				Template T_TFBot_Giant_Soldier_Burst_Spammer
+				Health 10000
+				Attributes UseBossHealthBar
+				Action Mobber
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param "AlloyedGenesisTarget"
+					Delay 0
+					Repeats 1
+				}
+				FireInput
+				{
+					Target !activator
+					Action RunScriptCode
+					Param "SendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE MINIBOSS TO STUN THE ALLOYED GENESIS`, lifetime = 5, follow_entindex = self.entindex()})"
+					Delay 0
+					Repeats 1
+				}
+			}
+			DoneOutput
+			{
+				Target AlloyedGenesisStunRelay
+				Action Trigger
 			}
 		}
 
