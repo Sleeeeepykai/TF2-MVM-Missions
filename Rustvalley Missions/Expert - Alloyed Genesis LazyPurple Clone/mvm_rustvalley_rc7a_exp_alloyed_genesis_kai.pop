@@ -50,6 +50,7 @@ WaveSchedule
 	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
 	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+	PrecacheModel "models/bots/soldier/major_shocks/bot_major_shocks_02_attacks.mdl"
 
 	PrecacheModel "models/props_halloween/fist_projectile_purple.mdl"
 
@@ -79,6 +80,8 @@ WaveSchedule
 	PrecacheSound "megalaser_fireloop.wav"
 
 	PrecacheSound "nucleararmageddon.wav"
+
+	PrecacheSound "major_shocks.wav"
 
 	// Music
 	PrecacheSound "rustvalleynight.mp3"
@@ -414,6 +417,8 @@ WaveSchedule
 						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_meleeing05.mp3`)
 						PrecacheSound(`vo/mvm/mght/heavy_mvm_m_sandwichtaunt14.mp3`)
 						PrecacheSound(`weapons/shooting_star_shoot_crit.wav`)
+
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_paincrticialdeath01.mp3`)
 
 						IncludeScript(`tankextensions_main`)
                 		IncludeScript(`tankextensions/gatetank`)
@@ -3466,6 +3471,29 @@ WaveSchedule
 				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Trigger,,5,-1"
 
 				"startdisabled" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisShocksTransformationRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Mourning Mercs,0,-1"
+				"OnTrigger" "!activator,$AddCond,51 10,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_paincrticialdeath01.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_paincrticialdeath01.mp3`, pitch = 60, special_dsp = 57, filter_type = 5})0-1"
+
+				"OnTrigger" "!activatorRunScriptCodeself.SetModelScale(4,4)31"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/giant_heavy/giant_heavy_entrance.wav,3,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 2, 16, 5, 50000, 0, true)3-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,major_shocks.wav,4.5,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,major_shocks.wav,4.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,6.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,6.5,-1"
+
+				"OnTrigger" "!activator,$RemoveCond,7,10,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,ShocksMegalaserRain,10.1,-1"
 			}
 
 			// PHASE 1 ATTACKS //
@@ -7385,6 +7413,36 @@ WaveSchedule
 					FireInput
 					{
 						Target "AlloyedGenesisPhase3TransitionRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+				}
+
+				AlloyedGenesisPhase3Transformation [$SIGSEGV]
+				{
+					UseCustomModel "models/bots/soldier/major_shocks/bot_major_shocks_02_attacks.mdl"
+
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					Item "TF_WEAPON_SHOVEL"
+
+					CharacterAttributes
+					{
+						"always allow taunt" 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisFormChangeRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisShocksTransformationRelay"
 						Action Trigger
 						Delay 0
 						Repeats 1
