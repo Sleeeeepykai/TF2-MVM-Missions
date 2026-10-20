@@ -70,7 +70,7 @@ const MAX_WEAPONS = 8
 
 		return Weapon
 	}
-	
+
 	function GivePlayerCosmetic(Player, ItemID, ModelPath = null)
 	{
 		local Weapon = CreateByClassname("tf_weapon_parachute")
@@ -119,6 +119,27 @@ const MAX_WEAPONS = 8
 				TraceLineEx(TraceParams)
 
 				if(TraceParams.hit)
+				{
+					Child.ValidateScriptScope()
+					Child.GetScriptScope().OriginalPosition <- Child.GetLocalOrigin()
+
+					Child.SetLocalOrigin(Vector())
+
+					EntFireByHandle(Child, "RunScriptCode", "self.SetLocalOrigin(OriginalPosition)", 0.5, null, null)
+				}
+
+				local TraceBoxParams =
+				{
+					start = Child.GetOrigin()
+					end = Child.GetOrigin()
+					hullmin = Vector(0 0 0)
+					hullmax = Vector(64 64 64)
+					ignore = Target
+				}
+
+				TraceHull(TraceBoxParams)
+
+				if(TraceBoxParams.hit)
 				{
 					Child.ValidateScriptScope()
 					Child.GetScriptScope().OriginalPosition <- Child.GetLocalOrigin()

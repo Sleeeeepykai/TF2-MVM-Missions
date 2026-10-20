@@ -2026,9 +2026,11 @@ WaveSchedule
 
 				"OnTrigger" "TimedDisasterNukeWeapon,FireOnce,,8.8,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)9-1"
+				"OnTrigger" "TimedDisasterNukeParticle,Start,,9,-1"
 				"OnTrigger" "!activator,$RemoveCond,7,9.2,-1"
 				"OnTrigger" "TimedDisasterChargeParticle*,TurnOff,,9.3,-1"
 
+				"OnTrigger" "TimedDisasterNukeParticle,Stop,,11,-1"
 				"OnTrigger" "TimedDisasterAttackInit,Trigger,,11,-1"
 
 				"spawnflags" "2"
@@ -2096,6 +2098,22 @@ WaveSchedule
 				"lifetime_max" "0.15"
 				"interval_min" "0.05"
 				"interval_max" "0.05"
+			}
+
+			info_particle_system
+			{
+				"targetname" "TimedDisasterNukeParticle"
+				"effect_name" "hightower_explosion"
+			}
+			info_particle_system
+			{
+				"targetname" "TimedDisasterNukeParticle"
+				"effect_name" "cinefx_goldrush"
+			}
+			info_particle_system
+			{
+				"targetname" "TimedDisasterNukeParticle"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
 			}
 
 			// CANNON SPRAY ATTACK //
@@ -4415,6 +4433,74 @@ WaveSchedule
 				"entitytemplate" "AlloyedGenesisLaserBombPT"
 				"$autoparent" "1"
 			}
+
+			// PHASE 3 ATTACKS //
+
+			// Fallen Shocks Megalaser Rain
+
+			// Megalaser Rain
+
+            logic_relay
+            {
+                "targetname" "AlloyedGenesisMegaLaserRainAttackRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Unleashed Rage,0,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_paincrticialdeath02.mp3,0.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,1.15,-1"
+				"OnTrigger" "FallenShocksLightningGigaTesla,TurnOn,,1.15,-1"
+				"OnTrigger" "FallenShocksLightningGigaOrb,Start,,1.15,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,megalaser_fire.wav,2.25,-1"
+                "OnTrigger" "AlloyedMegaLaser,Enable,,2.25,-1"
+                "OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)2.25-1"
+                "OnTrigger" "FallenShocksLightningGigaTesla,TurnOff,,5.25,-1"
+				"OnTrigger" "FallenShocksLightningGigaOrb,Stop,,5.25,-1"
+                "OnTrigger" "AlloyedMegaLaser,Disable,,5.25,-1"
+                "OnTrigger" "!activatorRunScriptCodeforeach(player in CzUtil.GetClosestPlayersToBot(self,6))EntFire(`AlloyedGenesisMegalaserRainPT`, `ForceSpawnAtEntityOrigin`, `!activator`, 0, player)8.25-1"
+                "OnTrigger" "!activatorRunScriptCodeforeach(player in CzUtil.GetClosestPlayersToBot(self,6))EntFire(`AlloyedGenesisMegalaserRainPT`, `ForceSpawnAtEntityOrigin`, `!activator`, 0, player)15.75-1"
+                "OnTrigger" "!activatorRunScriptCodeforeach(player in CzUtil.GetClosestPlayersToBot(self,6))EntFire(`AlloyedGenesisMegalaserRainPT`, `ForceSpawnAtEntityOrigin`, `!activator`, 0, player)23.25-1"
+                "OnTrigger" "AlloyedGenesisAttackInit,Trigger,,24,-1"
+            }
+
+            point_tesla
+			{
+				"targetname" "FallenShocksLightningGigaTesla"
+				"origin" "-40 0 375"
+				"texture" "sprites/physbeam.vmt"
+				"beamcount_min" 10
+				"beamcount_max" 10
+				"interval_min" 0.01
+				"interval_max" 0.01
+				"lifetime_min" 0.1
+				"lifetime_max" 0.1
+				"thick_min" 10
+				"thick_max" 10
+				"m_bOn" 0
+				"m_Color" "255 255 255"
+				"m_flRadius" 150
+			}
+            info_particle_system
+			{
+				"targetname" "FallenShocksLightningGigaOrb"
+				"origin" "-40 0 375"
+				"effect_name" "dxhr_lightningball_parent_blue"
+				"start_active" "0"
+			}
+            prop_dynamic
+            {
+                "targetname" "AlloyedMegaLaser"
+                "origin" "-40 0 375"
+                "angles" "-90 90 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "rendermode" "1"
+                "renderamt" "110"
+                "modelscale" "1.5"
+                "solid" "0"
+                "rendermode" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
 		}
 		AlloyedGenesisLoseCondPT
 		{
@@ -6060,6 +6146,145 @@ WaveSchedule
 				"startdisabled" "1"
 			}
 		}
+		AlloyedGenesisMegalaserRainPT
+		{
+			KeepAlive 1
+			RemoveIfKilled "MegaLaserAttackPoint"
+
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackPoint"
+				Action "$setkey$angles"
+                Param "180 0 0"
+                Delay 0.1
+			}
+			prop_dynamic
+            {
+                "targetname" "MegaLaserAttackPoint"
+                "origin" "0 0 25"
+                "angles" "0 0 0"
+                "model" "models/props_mvm/indicator/indicator_circle.mdl"
+                "modelscale" "3"
+                "skin" "1"
+                "defaultanim" "start"
+                "solid" "0"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+            info_particle_system
+            {
+                "targetname" "MegalaserRainParticle"
+                "origin" "0 0 1500"
+                "effect_name" "dxhr_lightningball_parent_blue"
+                "start_active" "1"
+            }
+			prop_dynamic
+			{
+				"targetname" "MegaLaserRainAttack"
+                "origin" "0 0 1500"
+                "angles" "90 0 0"
+
+                "model" "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
+                "rendermode" "1"
+                "renderamt" "110"
+                "modelscale" "0.75"
+                "solid" "0"
+                "rendermode" "1"
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+			trigger_hurt
+			{
+				"targetname" "MegaLaserRainDamage"
+				"origin" "0 0 500"
+				"mins" "-96 -96 -996"
+                "maxs" "96 96 996"
+
+                "damagetype" "1048576"
+                "damage" "333"
+                "filtername" "filter_is_red_not_ubered"
+                "spawnflags" "64"
+                "disableshadows" "1"
+                "startdisabled" "1"
+			}
+            ambient_generic
+			{
+				"targetname" "MegaLaserAttackPing"
+				"origin" "0 0 0"
+				"message" "weapons/rescue_ranger_teleport_receive_01.wav"
+				"radius" "4096"
+				"health" "10"
+				"spawnflags" "16"
+			}
+			ambient_generic
+			{
+				"targetname" "MegaLaserAttackSound"
+				"origin" "0 0 0"
+				"message" "megalaser_fire.wav"
+				"radius" "4096"
+				"health" "10"
+				"spawnflags" "16"
+			}
+
+            OnSpawnOutput
+			{
+				Target "MegaLaserAttackPing"
+				Action "PlaySound"
+				Delay 0.1
+				Repeats 1
+				Cooldown -1
+			}
+            OnSpawnOutput
+			{
+				Target "MegaLaserAttackSound"
+				Action "PlaySound"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserRainAttack"
+				Action "Enable"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserRainDamage"
+				Action "Enable"
+				Delay 2
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackDamage"
+				Action "Disable"
+				Delay 4
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackPoint"
+				Action "SetAnimation"
+				Param "end"
+				Delay 4
+				Repeats 1
+				Cooldown -1
+			}
+			OnSpawnOutput
+			{
+				Target "MegaLaserAttackPoint"
+				Action "Kill"
+				Delay 5
+				Repeats 1
+				Cooldown -1
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
@@ -7446,6 +7671,48 @@ WaveSchedule
 						Action Trigger
 						Delay 0
 						Repeats 1
+					}
+				}
+
+				// Phase 3 Attacks //
+
+				AlloyedGenesisShocksMegalaserRain [$SIGSEGV]
+				{
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					Item "TF_WEAPON_SHOVEL"
+
+					UseCustomModel "models/bots/soldier/major_shocks/bot_major_shocks_02_attacks.mdl"
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+						"fire rate bonus" 0.0001
+						"faster reload rate" 0.2
+						"clip size upgrade atomic" 16
+						"ignores other projectiles" 1
+						"projectile spread angle penalty" 35
+						"projectile gravity" 400
+						"hold fire until full reload" 1
+					}
+
+					FireInput
+					{
+						Target "!activator"
+						Action "SetModelScale"
+						Param "4"
+						Delay 0.015
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisMegalaserRainAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+						Cooldown -1
 					}
 				}
 			}
@@ -11332,7 +11599,6 @@ WaveSchedule
 				Action Trigger
 			}
 		}
-
 		WaveSpawn // Mobber Scouts and Rocket Shotgun Soldiers
 		{
 			Name "Wave4_Mobbers"

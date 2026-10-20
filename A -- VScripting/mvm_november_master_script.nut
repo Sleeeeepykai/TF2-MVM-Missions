@@ -45,10 +45,24 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	OnGameEvent_recalculate_holidays = function(_) { if (GetRoundState() == 3) Cleanup() }
 
+	VoidEnabled = false
+
 	// MAIN FUNCTIONS //
+
+	function OnGameEvent_player_spawn(params)
+	{
+		local Player = GetPlayerFromUserID(params.userid)
+
+		if(VoidEnabled)
+		{
+			SetPropInt(Player, "m_Local.m_audio.soundscapeIndex", 153)
+		}
+	}
 
 	function SetAmbienceNormal()
 	{
+		VoidEnabled = false
+
 		SetSkyboxTexture("sky_november_01")
 		EntFire("env_sun", "AddOutput", "rendercolor 251 226 200 400")
 		EntFire("env_soundscape*", "Enable")
@@ -67,6 +81,8 @@ if (!("ConstantNamingConvention" in ROOT)) // make sure folding is only done onc
 
 	function SetAmbienceVoid()
 	{
+		VoidEnabled = true
+
 		SetSkyboxTexture("sky_void_01")
 		EntFire("env_sun", "AddOutput", "rendercolor 234 200 251 400")
 		EntFire("env_soundscape*", "Disable")
