@@ -42,6 +42,8 @@ WaveSchedule
 
 	PrecacheSound "music/mutuallyassureddestruction/abandoned_in_place.mp3"
 
+	PrecacheSound "mvm_tank_deploy_slow.wav"
+
 	//// LUA SCRIPTS ////
 
 	LuaScriptFile "tank_repair_script.lua"
@@ -113,6 +115,8 @@ WaveSchedule
 
 						PrecacheSound(`misc/halloween/strongman_fast_impact_01.wav`)
 						PrecacheSound(`items/cart_explode_trigger.wav`)
+						PrecacheSound(`misc/halloween/spell_teleport.wav`)
+						PrecacheSound(`mvm/mvm_tank_deploy.wav`)
 
                         Convars.SetValue(`tf_playergib`, 0)
 
@@ -121,12 +125,16 @@ WaveSchedule
 
 						EntFire(`tf_gamerules`, `$StopVO`, `music/mutuallyassureddestruction/abandoned_in_place.mp3`)
 
+						IncludeScript(`tankhealthbars`)
+
 						IncludeScript(`tankextensions_main`)
 
+						IncludeScript(`tankextensions/blimp`)
 						IncludeScript(`tankextensions/combattank`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
 						IncludeScript(`tankextensions/combattank_weapons/cannon`)
 						IncludeScript(`tankextensions/painttank`)
+						IncludeScript(`tankextensions/ubertank`)
 
 						TankExt.NewTankType(`tankexplosion`,
 						{
@@ -237,6 +245,12 @@ WaveSchedule
 
 		MissionPT
 		{
+			logic_relay
+			{
+				"targetname" "FranceRelay"
+
+				"OnTrigger" "pop_interface,ChangeDefaultEventAttributes,theyjumpingme,0,-1"
+			}
 			func_nav_prefer
 			{
 				"targetname" "nav_prefer_lowerleft"
@@ -254,6 +268,26 @@ WaveSchedule
 				"maxs" "313 1368 72"
 				"team" "3"
 				"tags" "nav_prefer_flank_lower_right"
+			}
+
+			trigger_multiple
+			{
+				"targetname" "UberTankDeployTrigger"
+				"filtername" "UberTankFilter"
+
+				"origin" "0 -2368 96"
+
+				"mins" "-64 -64 -64"
+				"maxs" "64 64 64"
+
+				"spawnflags" "64"
+
+				"OnStartTouch" "BenedictUberTankDeployRelay,Trigger,,0,-1"
+			}
+			filter_activator_name
+			{
+				"targetname" "UberTankFilter"
+				"filtername" "BenedictUberTank"
 			}
 
 			// ENGINEER HINTS //
@@ -483,6 +517,7 @@ WaveSchedule
 				Target BigBadSetupRelay
 				Action Trigger
 			}
+
 			logic_relay
 			{
 				"targetname" "BigBadSetupRelay"
@@ -540,34 +575,30 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 2000})4-1"
 				"OnTrigger" "BenedictTank,SetSpeed,75,5,1"
 			}
+
 			info_particle_system
 			{
-				"targetname"   "HesSoFuckingMad"
-				"origin"       "0 0 0"
-				"effect_name"  "grenade_smoke_cycle"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"effect_name" "grenade_smoke_cycle"
 			}
 			info_particle_system
 			{
-				"targetname"   "HesSoFuckingmMad"
-				"origin"       "0 0 0"
-				"effect_name"  "grenade_smoke"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"effect_name" "grenade_smoke"
 			}
             info_particle_system
 			{
-				"targetname"   "HesSoFuckingMad"
-				"origin"       "0 0 100"
-				"effect_name"  "grenade_smoke_cycle"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"origin" "0 0 100"
+				"effect_name" "grenade_smoke_cycle"
 			}
 			info_particle_system
 			{
-				"targetname"   "HesSoFuckingMad"
-				"origin"       "0 0 100"
-				"effect_name"  "grenade_smoke"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"origin" "0 0 100"
+				"effect_name" "grenade_smoke"
 			}
+
 			info_target
 			{
 				"targetname" "CombatTankBossTarget"
@@ -778,6 +809,7 @@ WaveSchedule
 				Target BigBadSetupRelay
 				Action Trigger
 			}
+
 			logic_relay
 			{
 				"targetname" "BigBadSetupRelay"
@@ -843,33 +875,249 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 3000})4-1"
 				"OnTrigger" "BenedictTank,SetSpeed,75,5,1"
 			}
+
 			info_particle_system
 			{
-				"targetname"   "HesSoFuckingMad"
-				"origin"       "0 0 0"
-				"effect_name"  "grenade_smoke_cycle"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"effect_name" "grenade_smoke_cycle"
 			}
 			info_particle_system
 			{
-				"targetname"   "HesSoFuckingmMad"
-				"origin"       "0 0 0"
-				"effect_name"  "grenade_smoke"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"effect_name" "grenade_smoke"
 			}
             info_particle_system
 			{
-				"targetname"   "HesSoFuckingMad"
-				"origin"       "0 0 100"
-				"effect_name"  "grenade_smoke_cycle"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"origin" "0 0 100"
+				"effect_name" "grenade_smoke_cycle"
 			}
 			info_particle_system
 			{
-				"targetname"   "HesSoFuckingMad"
-				"origin"       "0 0 100"
-				"effect_name"  "grenade_smoke"
-				"start_active" "0"
+				"targetname" "HesSoFuckingMad"
+				"origin" "0 0 100"
+				"effect_name" "grenade_smoke"
+			}
+		}
+
+		CombatTankBossPart3PT
+		{
+			NoFixUp 1
+
+			OnSpawnOutput
+			{
+				Target BigBadSetupRelay
+				Action Trigger
+			}
+
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankSmoke"
+				"origin" "-96 16 176"
+				"effect_name" "smoke_train"
+				"start_active" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "BigBadSetupRelay"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,rendermode 1,0,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,rendermode 1,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,0,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,0,-1"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,OnHealthBelow90Percent BenedictUberTankStunRelay:Trigger::0:1,0,-1"
+				"OnTrigger" "BenedictUberTank,AddOutput,OnHealthBelow70Percent BenedictUberTankStunRelay:Trigger::0:1,0,-1"
+				"OnTrigger" "BenedictUberTank,AddOutput,OnHealthBelow40Percent BenedictUberTankStunRelay:Trigger::0:1,0,-1"
+				"OnTrigger" "BenedictUberTank,AddOutput,OnHealthBelow10Percent MyPlanetNeedsMe:Trigger::0:1,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "TankTeleportLeftSideRelay"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 5,0,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 6,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player/spy_cloak.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_teleport.wav`, channel = 6, pitch = 85, special_dsp = 10})0-1"
+
+				"OnTrigger" "BenedictUberTankVanishingTrick,Start,,0,-1"
+				"OnTrigger" "BenedictUberTankSmoke,Stop,,0,-1"
+
+				"OnTrigger" "BenedictUberTankVanishingTrick,Stop,,1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,2,-1"
+
+				"OnTrigger" "BenedictUberTank,$SetLocalOrigin,1344 -2688 120,2,-1"
+				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,0 -2368 116,2,-1"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 8,2,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 8,2,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,2.1,-1"
+				"OnTrigger" "BenedictUberTankSmoke,Start,,2.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_bomb_warning.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_tank_alerts07.mp3,3,-1"
+			}
+			logic_relay
+			{
+				"targetname" "TankTeleportRightSideRelay"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 5,0,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 6,0,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player/spy_cloak.wav,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_teleport.wav`, channel = 6, pitch = 85, special_dsp = 10})0-1"
+
+				"OnTrigger" "BenedictUberTankVanishingTrick,Start,,0,-1"
+				"OnTrigger" "BenedictUberTankSmoke,Stop,,0,-1"
+
+				"OnTrigger" "BenedictUberTankVanishingTrick,Stop,,1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,2,-1"
+
+				"OnTrigger" "BenedictUberTank,$SetLocalOrigin,-1088 -2624 120,2,-1"
+				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,0 -2368 116,2,-1"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 8,2,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 8,2,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,2.1,-1"
+				"OnTrigger" "BenedictUberTankSmoke,Start,,2.1,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_bomb_warning.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_tank_alerts06.mp3,3,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "BenedictUberTankDeployRelay"
+
+				"OnTrigger" "BenedictUberTank,SetSpeed,0,0,-1"
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_bomb_alerts07.mp3,0,-1"
+
+				"OnTrigger" "@c@BenedictUberTank,SetAnimation,deploy,0,-1"
+
+				"OnTrigger" "BenedictUberTankRunScriptCodeself.ResetSequence(1)0-1"
+
+				"OnTrigger" "@c@BenedictUberTank,SetPlaybackRate,0.5,0.1,-1"
+
+				"OnTrigger" "BenedictUberTankRunScriptCodeself.StopAnimation()2-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,mvm_tank_deploy_slow.wav,0.015,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm_tank_deploy_slow.wav,0.015,-1"
+
+				"OnTrigger" "@c@BenedictUberTank,SetPlaybackRate,1,13.66,-1"
+
+				"OnTrigger" "boss_deploy_relay,Trigger,,16,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "BenedictUberTankStunRelay"
+
+				"OnTrigger" "BenedictUberTankDeployRelay,CancelPending,,0,-1"
+				"OnTrigger" "BenedictUberTankRunScriptCodeself.ResetSequence(2)0-1"
+				"OnTrigger" "@c@BenedictUberTank,SetAnimation,ref,0,-1"
+				"OnTrigger" "BenedictUberTankStunParticle,Start,,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
+
+				"OnTrigger" "tf_gamerules,$StopVO,mvm_tank_deploy_slow.wav,0,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,mvm_tank_deploy_slow.wav,0.01,-1"
+
+				"OnTrigger" "BenedictUberTankStunParticle,Stop,,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_alert4.wav,1,-1"
+
+				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 5,3,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 6,3,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,player/spy_cloak.wav,3,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_teleport.wav`, channel = 6, pitch = 85, special_dsp = 10})3-1"
+
+				"OnTrigger" "BenedictUberTankVanishingTrick,Start,,3,-1"
+				"OnTrigger" "BenedictUberTankSmoke,Stop,,3,-1"
+
+				"OnTrigger" "BenedictUberTankVanishingTrick,Stop,,4,-1"
+
+				"OnTrigger" "BenedictUberTank,$SetLocalOrigin,-128 2688 -60,4,-1"
+				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 8,4,-1"
+				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 8,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,4,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,4.1,-1"
+				"OnTrigger" "BenedictUberTankSmoke,Start,,4.1,-1"
+
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,5,-1"
+				"OnTrigger" "@c@BenedictUberTank,SetAnimation,forward,5,-1"
+
+				"OnTrigger" "BenedictUberTank,SetSpeed,25,5,-1"
+				"OnTrigger" "BenedictUberTank,SetSpeed,50,5.5,-1"
+				"OnTrigger" "BenedictUberTank,SetSpeed,75,6,-1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankStunParticle"
+				"effect_name" "hightower_explosion"
+			}
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankStunParticle"
+				"effect_name" "cinefx_goldrush"
+			}
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankStunParticle"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+			}
+
+			logic_relay
+			{
+				"targetname" "MyPlanetNeedsMe"
+
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,0,-1"
+				"OnTrigger" "BenedictUberTank,SetSpeed,0,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROTATE_SPEED_DEFAULT = 0.4})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 1})0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_pain2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/striderx_pain2.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/scanner/scanner_siren1.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/scanner/scanner_siren1.wav,2,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/charging.wav,3,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,4.99,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,4.99,-1"
+				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,4.99,-1"
+				"OnTrigger" "BenedictUberTank,Kill,,5,1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankVanishingTrick"
+				"effect_name" "grenade_smoke_cycle"
+			}
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankVanishingTrick"
+				"effect_name" "grenade_smoke"
+			}
+            info_particle_system
+			{
+				"targetname" "BenedictUberTankVanishingTrick"
+				"origin" "0 0 100"
+				"effect_name" "grenade_smoke_cycle"
+			}
+			info_particle_system
+			{
+				"targetname" "BenedictUberTankVanishingTrick"
+				"origin" "0 0 100"
+				"effect_name" "grenade_smoke"
 			}
 		}
 	}
@@ -900,6 +1148,7 @@ WaveSchedule
 		X -580 Y -934 Z 256
 		TeamNum 3
 	}
+
 	//// EXTRA TANK PATHS ////
 
 	ExtraTankPath // Tank Path B (Right Path)
@@ -985,6 +1234,63 @@ WaveSchedule
 		Node "776 -2400 212"
 		Node "704 -2368 212"
 		Node "176 -2368 212"
+	}
+	ExtraTankPath // EVIL ASS FUCKING UBER TANK
+	{
+		Name "tank_path_uber"
+
+		Node "-128 2688 -60"
+		Node "-128 256 36"
+		Node "-41 -4013 142"
+	}
+
+	ExtraTankPath // Blimp Path A (Left Path)
+	{
+		Name "tank_path_blimp_a"
+
+		Node "-128 2688 556"
+		Node "-128 256 556"
+		Node "64 64 556"
+		Node "448 64 556"
+		Node "640 -192 556"
+		Node "640 -1152 556"
+		Node "832 -1664 556"
+		Node "832 -2240 556"
+		Node "704 -2368 556"
+		Node "176 -2368 556"
+	}
+	ExtraTankPath // Blimp Path B (Right Path)
+	{
+		Name "tank_path_blimp_b"
+
+		Node "-128 2688 556"
+		Node "-128 256 556"
+		Node "-320 64 556"
+		Node "-704 64 556"
+		Node "-896 -192 556"
+		Node "-960 -448 556"
+		Node "-960 -1344 556"
+		Node "-896 -1536 556"
+		Node "-896 -2432 556"
+		Node "-768 -2560 556"
+		Node "-320 -2560 556"
+		Node "-152 -2456 556"
+	}
+	ExtraTankPath // Blimp Path C (Over the Barn Path)
+	{
+		Name "tank_path_blimp_c"
+
+		Node "-128 2688 556"
+		Node "-128 256 556"
+		Node "-128 -232 812"
+		Node "-128 -1176 812"
+		Node "-128 -1344 748"
+		Node "-128 -1984 196"
+		Node "-104 -2024 196"
+		Node "-80 -2048 196"
+		Node "-64 -2080 196"
+		Node "-56 -2168 196"
+		Node "-48 -2192 196"
 	}
 
 	//// ROBOT TEMPLATES ////
@@ -1301,7 +1607,7 @@ WaveSchedule
 		}
 	}
 
-	Mission // For Wave 3
+	Mission // Engineer (Wave 3)
 	{
 		Objective Engineer
 		Where spawnbot_any
@@ -1359,7 +1665,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 200
+			TotalCurrency 300
 
 			Squad
 			{
@@ -1614,7 +1920,7 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
-			TotalCurrency 200
+			TotalCurrency 300
 
 			Squad
 			{
@@ -1982,7 +2288,42 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 2
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 30
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo"
+			WaitForAllDead "Wave2_Subwave1_SledgeThrower"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 30
 
 			Squad
 			{
@@ -2039,7 +2380,42 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 12
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 30
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo2"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo"
+			Where spawnbot_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 30
 
 			Squad
 			{
@@ -2096,7 +2472,42 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 12
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 30
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo3"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo2"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 30
 
 			Squad
 			{
@@ -2153,7 +2564,42 @@ WaveSchedule
 			SpawnCount 3
 			WaitBeforeStarting 12
 			WaitBetweenSpawns 0
-			TotalCurrency 60
+			TotalCurrency 30
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 1 GRicochet Demo and 2 Full-Uber Medics
+		{
+			Name "Wave2_Subwave2_GRicochetDemo3"
+			WaitForAllSpawned "Wave2_Subwave2_GRicochetDemo2"
+			Where spawnbot_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 12
+			WaitBetweenSpawns 0
+			TotalCurrency 30
 
 			Squad
 			{
@@ -3733,8 +4179,8 @@ WaveSchedule
 			MaxActive 12
 			SpawnCount 1
 			WaitBeforeStarting 4
-			WaitBetweenSpawns 0.1
-			TotalCurrency 100
+			WaitBetweenSpawns 1
+			TotalCurrency 60
 
 			TFBot
 			{
@@ -3785,175 +4231,17 @@ WaveSchedule
 				}
 			}
 		}
-
-		// Subwave 2
-		WaveSpawn // 2 GBrass Heavies and 8 GBurst Soldiers
+		WaveSpawn // 30 Supercharged Pyros
 		{
-			Name "Wave5_Subwave2_GBrassHeavy"
-			WaitForAllDead "Wave5_Subwave1_TheMan"
-			Where spawnbot_left
-			TotalCount 10
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 18
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_BrassBeast
-					BehaviorModifiers Push
-
-					Tag nav_prefer_flank_lower_left
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-			}
-		}
-		WaveSpawn // 2 GBrass Heavies and 8 GBurst Soldiers
-		{
-			Name "Wave5_Subwave2_GBrassHeavy"
-			WaitForAllDead "Wave5_Subwave1_TheMan"
-			Where spawnbot_right
-			TotalCount 10
-			MaxActive 5
-			SpawnCount 5
-			WaitBeforeStarting 2
-			WaitBetweenSpawns 18
-			TotalCurrency 100
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				FormationSize 200
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Heavy_BrassBeast
-					BehaviorModifiers Push
-
-					Tag nav_prefer_flank_lower_left
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Soldier_Burst_Modded
-
-					CharacterAttributes
-					{
-						"damage force reduction" 0.01
-						"airblast vulnerability multiplier" 0.01
-						"airblast vertical vulnerability multiplier" 0.01
-					}
-				}
-			}
-		}
-		WaveSpawn // 50 Supercharged Pyros
-		{
-			Name "Wave5_Subwave2_Pyros"
-			WaitForAllDead "Wave5_Subwave1_TheMan"
+			Name "Wave5_Subwave1_Pyros"
+			WaitForAllSpawned "Wave5_Subwave1_TheMan"
 			Where spawnbot_any
-			TotalCount 50
-			MaxActive 6
+			TotalCount 30
+			MaxActive 8
 			SpawnCount 2
-			WaitBeforeStarting 2
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 1
-			TotalCurrency 100
+			TotalCurrency 60
 
 			TFBot
 			{
@@ -3962,16 +4250,198 @@ WaveSchedule
 			}
 		}
 
+		// Subwave 2
+		WaveSpawn // 1 Blimp
+		{
+			Name "Wave5_Subwave2_Blimp"
+			WaitForAllDead "Wave5_Subwave1_TheMan"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Name "blimp"
+				ClassIcon blimp2_lite
+				Health 25000
+				StartingPathTrackNode "tank_path_blimp_a_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 Blimp
+		{
+			Name "Wave5_Subwave2_Blimp"
+			WaitForAllDead "Wave5_Subwave1_TheMan"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Name "blimp"
+				ClassIcon blimp2_lite
+				Health 25000
+				StartingPathTrackNode "tank_path_blimp_b_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 1 Blimp
+		{
+			Name "Wave5_Subwave2_Blimp"
+			WaitForAllDead "Wave5_Subwave1_TheMan"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Name "blimp"
+				ClassIcon blimp2_lite
+				Health 25000
+				StartingPathTrackNode "tank_path_blimp_c_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave5_Subwave2_BlimpsDead"
+			WaitForAllDead "Wave5_Subwave2_Blimp"
+			FirstSpawnOutput
+			{
+				Target FranceRelay
+				Action Trigger
+			}
+		}
+
+		WaveSpawn // 4 GRicochet Demos and 8 Supercharged Pyros
+		{
+			Name "Wave5_Subwave2_GRicochetDemos"
+			WaitForAllDead "Wave5_Subwave1_TheMan"
+			Where spawnbot
+			TotalCount 12
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Burst_Ricochet
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0.01
+						"airblast vulnerability multiplier" 0.01
+						"airblast vertical vulnerability multiplier" 0.01
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 60 Spies
+		{
+			Name "Wave5_Subwave2_Spies"
+			WaitForAllDead "Wave5_Subwave1_TheMan"
+			Where spawnbot_mission_spy
+			TotalCount 60
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 0
+
+			TFBot
+			{
+				Template T_TFBot_Spy
+				Attributes AlwaysCrit
+				Attributes IgnoreFlag
+
+				EventChangeAttributes
+				{
+					theyjumpingme [$SIGSEGV]
+					{
+						WeaponRestrictions PrimaryOnly
+						ActionOverride FetchFlag
+						CharacterAttributes
+						{
+							"fire rate bonus" 0.5
+							"cannot disguise" 1
+						}
+					}
+				}
+			}
+		}
+		WaveSpawn // 30 Forceweight Champs
+		{
+			Name "Wave5_Subwave2_ForceweightChamps"
+			WaitForAllDead "Wave5_Subwave1_TheMan"
+			Where spawnbot_any
+			TotalCount 30
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavy_Forceweight_Champ
+
+				CharacterAttributes
+				{
+					"damage force reduction" 0.01
+					"airblast vulnerability multiplier" 0.01
+					"airblast vertical vulnerability multiplier" 0.01
+				}
+			}
+		}
+
 		// Subwave 3
 		WaveSpawn // 6 GSledge Pyros and 6 GCharged Medics
 		{
 			Name "Wave5_Subwave3_SledgeThrower"
-			WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy"
+			WaitForAllDead "Wave5_Subwave2_Blimp"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 6
 			SpawnCount 2
-			WaitBeforeStarting 18
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 8
 			TotalCurrency 100
 
@@ -4005,12 +4475,12 @@ WaveSchedule
 		WaveSpawn // 24 Bazooka Soldiers
 		{
 			Name "Wave5_Subwave3_Soldiers"
-			WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy"
+			WaitForAllDead "Wave5_Subwave2_Blimp"
 			Where spawnbot_left
 			TotalCount 24
 			MaxActive 8
 			SpawnCount 8
-			WaitBeforeStarting 18
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 16
 			TotalCurrency 60
 
@@ -4027,12 +4497,12 @@ WaveSchedule
 		WaveSpawn // 24 Bazooka Soldiers
 		{
 			Name "Wave5_Subwave3_Soldiers"
-			WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy"
+			WaitForAllDead "Wave5_Subwave2_Blimp"
 			Where spawnbot_right
 			TotalCount 24
 			MaxActive 8
 			SpawnCount 8
-			WaitBeforeStarting 26
+			WaitBeforeStarting 4
 			WaitBetweenSpawns 16
 			TotalCurrency 60
 
@@ -4084,9 +4554,9 @@ WaveSchedule
 
 			FirstSpawnOutput
 			{
-				Target Player
-				Action $DisplayTextChat
-				Param "??? has been RETOOLED into a Cannon Tank!"
+				Target BigNet
+				Action RunScriptCode
+				Param "ClientPrint(null,3,`\x075885A2??? \x01has been \x03RETOOLED \x01into a\x03 Cannon Tank!`)"
 			}
 		}
 		WaveSpawn // Support GScouts
@@ -4161,6 +4631,92 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Engineer_Gunslinger_Battle_Speed
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
+					EntFire(`tf_gamerules`,`$StopVO`,`lastlegs_alt_cmprsd.mp3`, 0.5)
+            	  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`tf_gamerules`,`PlayVO`,`lastlegs_alt_cmprsd.mp3`, 5)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		WaveSpawn // Big Bad Warning
+		{
+			Name "Wave6_Subwave1_WarningCall"
+			WaitBeforeStarting 0
+
+			StartWaveWarningSound "npc/strider/striderx_pain8.wav"
+			FirstSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`tf_gamerules`,`PlayVO`,`vehicles/tank_readyfire1.wav`, 3.5)
+						EntFire(`tf_gamerules`,`PlayVO`,`npc/strider/striderx_pain5.wav`, 2.5)
+					"
+			}
+		}
+
+		WaveSpawn // Benedict Tank (Part 3)
+		{
+			Name "Wave6_Subwave1_UberTank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Tank
+			{
+				Name "ubertank|0|-1$targetname|BenedictUberTank^pingsound|npc/combine_gunship/ping_search.wav^disablesmokestack|1"
+				ClassIcon tank_uber_lite_hyper
+				Health 150000
+				Speed 75
+				Skin 1
+				StartingPathTrackNode "tank_path_uber_1"
+
+				SpawnTemplate "CombatTankBossPart3PT"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+
+			FirstSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "ClientPrint(null,3,`\x075885A2??? \x01has been \x03RETOOLED \x01into a\x03 Reality-Warping Uber Tank!`)"
 			}
 		}
 	}

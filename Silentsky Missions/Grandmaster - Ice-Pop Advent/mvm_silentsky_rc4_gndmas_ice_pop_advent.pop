@@ -16,7 +16,7 @@ WaveSchedule
 	RespawnWaveTime 1
 	CanBotsAttackWhileInSpawnRoom No
 
-	AddSentryBusterWhenDamageDealtExceeds 3000
+	AddSentryBusterWhenDamageDealtExceeds 2500
     AddSentryBusterWhenKillCountExceeds 10
 
 	AllowBotExtraSlots 1
@@ -33,6 +33,13 @@ WaveSchedule
 			  "
 		Delay -1
 	}
+
+	//// PRECACHES ////
+
+	// Precached Models
+
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
 
 	//// POINT TEMPLATES ////
 
@@ -75,11 +82,135 @@ WaveSchedule
 				"OnTrigger" "route2,Disable,,0,-1"
 			}
 		}
+
+		// ROBOT PTs //
+
+		MagmaProjectilePT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "MagmaFireTarget"
+
+			OnParentKilledOutput
+			{
+				Target MagmaFirePT
+				Action ForceSpawnAtEntityOrigin
+				Param "MagmaFireTarget"
+			}
+			OnParentKilledOutput
+			{
+				Target MagmaFireTarget
+				Action Kill
+				Delay 0.1
+			}
+
+			info_target
+			{
+				"targetname" "MagmaFireTarget"
+			}
+		}
+		MagmaFirePT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "MagmaFireDamage"
+
+			OnSpawnOutput
+			{
+				Target MagmaFireParticle
+				Action Start
+			}
+			OnSpawnOutput
+			{
+				Target MagmaFireDamage
+				Action Kill
+				Delay 5
+			}
+
+			trigger_hurt
+			{
+				"targetname" "MagmaFireDamage"
+				"filtername" "filter_redteam_nouber"
+				"mins" "-60 -60 -60"
+				"maxs" "60 60 60"
+				"damage" "40"
+				"damagetype" "8"
+				"$killicon" "firedeath"
+				"spawnflags" "64"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+
+				"OnHurtPlayer" "!activator,$IgnitePlayerDuration,5,0,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "MagmaFireParticle"
+				"effect_name" "lava_fireball_01"
+				"start_active" "0"
+			}
+		}
 	}
 
 	//// SPAWNED POINT TEMPLATES ////
 
 	SpawnTemplate "CorePT"
+	SpawnTemplate "MissionPT"
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		T_TFBot_Giant_Pyro_Magma
+		{
+			Name "Giant Magma Blaster Pyro"
+			Class Pyro
+			ClassIcon pyro_magma_entropy_giant
+			Skill Expert
+			Health 3000
+			Attributes MiniBoss
+			WeaponRestrictions SecondaryOnly
+
+			ShootTemplate
+			{
+				Name "MagmaProjectilePT"
+				ItemName "TF_WEAPON_SHOTGUN_PYRO"
+				AttachToProjectile 1
+			}
+
+			CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+            }
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_SHOTGUN_PYRO"
+
+				"damage bonus" 10
+				"add damage type" 2056
+				"remove damage type" 64
+
+				"fire rate penalty" 1.25
+				"mod max primary clip override" -1
+
+				"override projectile type" 2
+				"blast radius decreased" 0.5
+				"projectile speed decreased" 0.65
+				"mult projectile scale" 2
+				"penetrate teammates" 1
+
+				"custom item model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+				"custom projectile model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
+				"projectile trail particle" "~spell_fireball_small_trail_red"
+				"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
+				"custom kill icon" "firedeath"
+			}
+		}
+	}
 
 	//// MISSION BOTS ////
 
@@ -89,8 +220,8 @@ WaveSchedule
 		Where spawnbot_mission_sentrybuster
 		BeginAtWave 1
 		RunForThisManyWaves 6
-		InitialCooldown 30
-		CooldownTime 30
+		InitialCooldown 25
+		CooldownTime 25
 		DesiredCount 1
 
 		TFBot
@@ -457,6 +588,598 @@ WaveSchedule
 			TFBot
 			{
 				Class Scout
+				Skill Normal
+			}
+		}
+	}
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_right_init_relay`, `Trigger`)
+                "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 GMagma Pyro and 8 Full-Uber Medics
+		{
+			Name "Wave2_Subwave1_GMagmaPyro"
+			Where spawnbot
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 9
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Magma
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 GBurst Soldiers
+		{
+			Name "Wave2_Subwave1_GBurstSoldier"
+			Where spawnbot_side
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst
+			}
+		}
+
+		WaveSpawn // 6 Supercharged Soldiers and 12 Bowmen
+		{
+			Name "Wave2_Subwave1_SuperchargedSoldiers"
+			Where spawnbot
+			TotalCount 18
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Tag nav_spawn_right
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+						"projectile speed decreased" 0.65
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+			}
+		}
+
+		WaveSpawn // 1 GMagma Pyro and 8 Full-Uber Medics
+		{
+			Name "Wave2_Subwave1_GMagmaPyro2"
+			WaitForAllSpawned "Wave2_Subwave1_GMagmaPyro"
+			Where spawnbot
+			TotalCount 9
+			MaxActive 9
+			SpawnCount 9
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Magma
+
+					Tag nav_spawn_right
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 2 GBurst Soldiers
+		{
+			Name "Wave2_Subwave1_GBurstSoldier2"
+			WaitForAllSpawned "Wave2_Subwave1_GMagmaPyro2"
+			Where spawnbot_side
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Soldier_Burst
+			}
+		}
+		WaveSpawn // 6 Supercharged Soldiers and 12 Bowmen
+		{
+			Name "Wave2_Subwave1_SuperchargedSoldiers2"
+			WaitForAllSpawned "Wave2_Subwave1_GMagmaPyro2"
+			Where spawnbot
+			TotalCount 18
+			MaxActive 12
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+					Tag nav_spawn_left
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+						"projectile speed decreased" 0.65
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 2 GSandman Scouts
+		{
+			Name "Wave2_Subwave2_GSandmanScout"
+			WaitForAllSpawned "Wave2_Subwave1_GMagmaPyro2"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 15
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+				Attributes AlwaysCrit
+				Tag nav_spawn_right
+			}
+		}
+		WaveSpawn // 2 GBarrage Demos and 4 Firebrand Pyros
+		{
+			Name "Wave2_Subwave2_GBarrageDemo"
+			WaitForAllSpawned "Wave2_Subwave1_GMagmaPyro2"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 15
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Barrage
+					Tag nav_spawn_left
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+			}
+		}
+		WaveSpawn // 9 Direct Hit Soldiers and 9 Bowmen
+		{
+			Name "Wave2_Subwave2_SoldiersandBowmen"
+			WaitForAllSpawned "Wave2_Subwave1_GMagmaPyro2"
+			Where spawnbot_invasion
+			TotalCount 18
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_DirectHit
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+			}
+		}
+
+		WaveSpawn // 2 GSandman Scouts
+		{
+			Name "Wave2_Subwave2_GSandmanScout2"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+				Attributes AlwaysCrit
+				Tag nav_spawn_right
+			}
+		}
+		WaveSpawn // 2 GBarrage Demos and 4 Firebrand Pyros
+		{
+			Name "Wave2_Subwave2_GBarrageDemo2"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Barrage
+					Tag nav_spawn_left
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+			}
+		}
+		WaveSpawn // 9 Direct Hit Soldiers and 9 Bowmen
+		{
+			Name "Wave2_Subwave2_SoldiersandBowmen2"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout"
+			Where spawnbot_invasion
+			TotalCount 18
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_DirectHit
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+			}
+		}
+
+		WaveSpawn // 2 GSandman Scouts
+		{
+			Name "Wave2_Subwave2_GSandmanScout3"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout2"
+			Where spawnbot
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_Baseball
+				Attributes AlwaysCrit
+				Tag nav_spawn_right
+			}
+		}
+		WaveSpawn // 2 GBarrage Demos and 4 Firebrand Pyros
+		{
+			Name "Wave2_Subwave2_GBarrageDemo3"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout2"
+			Where spawnbot
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 15
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Barrage
+					Tag nav_spawn_left
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+				}
+			}
+		}
+		WaveSpawn // 9 Direct Hit Soldiers and 9 Bowmen
+		{
+			Name "Wave2_Subwave2_SoldiersandBowmen3"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout2"
+			Where spawnbot_invasion
+			TotalCount 18
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 15
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			RandomChoice
+			{
+				Shuffle 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_DirectHit
+				}
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman
+					Skill Expert
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 GMagma Pyro, 1 GBigheal Medic and 2 Supercharged Soldiers
+		{
+			Name "Wave2_Subwave3_GMagmaPyro"
+			WaitForAllSpawned "Wave2_Subwave2_GSandmanScout3"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				FormationSize 200
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Magma
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 15 Demomen
+		{
+			Name "Wave2_Subwave3_Demomen"
+			WaitForAllSpawned "Wave2_Subwave3_GMagmaPyro"
+			Where spawnbot
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
+				Skill Normal
+			}
+		}
+
+		WaveSpawn // 1 GMagma Pyro, 1 GBigheal Medic and 2 Supercharged Soldiers
+		{
+			Name "Wave2_Subwave3_GMagmaPyro2"
+			WaitForAllSpawned "Wave2_Subwave3_GMagmaPyro"
+			Where spawnbot
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+				FormationSize 200
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro_Magma
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_BigHeal
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+				}
+			}
+		}
+		WaveSpawn // 10 Demomen
+		{
+			Name "Wave2_Subwave3_Demomen2"
+			WaitForAllSpawned "Wave2_Subwave3_GMagmaPyro2"
+			Where spawnbot
+			TotalCount 10
+			MaxActive 10
+			SpawnCount 10
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
 				Skill Normal
 			}
 		}
