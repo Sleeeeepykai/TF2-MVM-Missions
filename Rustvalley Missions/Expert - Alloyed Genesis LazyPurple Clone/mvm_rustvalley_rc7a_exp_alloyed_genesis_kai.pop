@@ -50,6 +50,7 @@ WaveSchedule
 	PrecacheModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
 	PrecacheModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
 	PrecacheModel "models/bots/heavy_boss/bot_heavy_boss_gibby.mdl"
+	PrecacheModel "models/bots/engineer/bot_engineer_gray.mdl"
 	PrecacheModel "models/bots/soldier/major_shocks/bot_major_shocks_02_attacks.mdl"
 
 	PrecacheModel "models/props_halloween/fist_projectile_purple.mdl"
@@ -419,6 +420,8 @@ WaveSchedule
 						PrecacheSound(`weapons/shooting_star_shoot_crit.wav`)
 
 						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_paincrticialdeath01.mp3`)
+
+						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_directhittaunt02.mp3`)
 
 						IncludeScript(`tankextensions_main`)
                 		IncludeScript(`tankextensions/gatetank`)
@@ -3115,7 +3118,6 @@ WaveSchedule
                 "OnTrigger" "AlloyedGenesisPhase1AttackPool,PickRandomShuffle,,0,-1"
 
                 "spawnflags" "2"
-				"startdisabled" "1"
             }
 			logic_case
 			{
@@ -3135,7 +3137,7 @@ WaveSchedule
                 "OnTrigger" "AlloyedGenesisPhase2AttackPool,PickRandomShuffle,,0,-1"
 
                 "spawnflags" "2"
-
+				"startdisabled" "1"
             }
 			logic_case
 			{
@@ -3233,6 +3235,7 @@ WaveSchedule
 			{
 				"targetname" "AlloyedGenesisPhase2TransitionRelay"
 
+				"OnTrigger" "AlloyedGenesisPhase2TransitionActivateRelay,Disable,,0,-1"
 				"OnTrigger" "TimerLoseConditionRelay,Trigger,,0,-1"
 				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|0,0,-1"
 
@@ -3257,6 +3260,7 @@ WaveSchedule
 			{
 				"targetname" "AlloyedGenesisPhase3TransitionRelay"
 
+				"OnTrigger" "AlloyedGenesisPhase3TransitionActivateRelay,Disable,,0,-1"
 				"OnTrigger" "TimerLoseConditionRelay,Trigger,,0,-1"
 				"OnTrigger" "!activator,$AddPlayerAttribute,gesture speed increase|0,0,-1"
 
@@ -3468,9 +3472,9 @@ WaveSchedule
 				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Enable,,0,-1"
 
                 "OnTrigger" "AlloyedGenesisPhase3ActivationRelay,Enable,,0.1,-1"
-                "OnTrigger" "!self,Disable,,0.2,-1"
+				"OnTrigger" "!self,Disable,,0.2,-1"
 
-                "OnTrigger" "AlloyedGenesisAttackInit,Trigger,,5,-1"
+                "OnTrigger" "@p@AlloyedGenesisTarget,$ChangeAttributes,AlloyedGenesisPhase2Activation,5,-1"
 				"OnTrigger" "AlloyedGenesisLoseConditionTimer,Trigger,,5,-1"
 			}
 
@@ -3510,8 +3514,8 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,6.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/alarms/razortrain_horn1.wav,6.5,-1"
 
-				"OnTrigger" "!activator,$RemoveCond,7,10,-1"
-				"OnTrigger" "!activator,$ChangeAttributes,ShocksMegalaserRain,10.1,-1"
+				"OnTrigger" "!activator,$RemoveCond,7,7,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisShocksMegalaserRain,7.1,-1"
 			}
 
 			// PHASE 1 ATTACKS //
@@ -4316,7 +4320,6 @@ WaveSchedule
 				"OnTrigger" "!activator,$AddPlayerAttribute,no_attack|1,0,-1"
 
 				"OnTrigger" "!activator,$ChangeAttributes,AlloyedGenesisBurrow,1,-1"
-				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,1,-1"
 				"OnTrigger" "AlloyedGenesisBurrowRocks,FireMultiple,10,1,-1"
 				"OnTrigger" "!activator,$RemovePlayerAttribute,no_attack,1,-1"
 				"OnTrigger" "AlloyedGenesisBurrowDust,Start,,1,-1"
@@ -4330,7 +4333,6 @@ WaveSchedule
 				"targetname" "AlloyedGenesisUnBurrowRelay"
 
 				"OnTrigger" "AlloyedGenesisBurrowRocks,FireMultiple,10,0,-1"
-				"OnTrigger" "AlloyedGenesisRingAttack,ForceSpawnAtEntityOrigin,!activator,0,-1"
 				"OnTrigger" "AlloyedGenesisBurrowDust,Start,,0,-1"
 				"OnTrigger" "!activatorRunScriptCodeself.ApplyAbsVelocityImpulse(Vector(0,0,350))0-1"
 				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name=`physics/concrete/concrete_break3.wav`,channel = 6, filter_type = 5, origin =  self.GetOrigin()})0-1"
@@ -4412,6 +4414,7 @@ WaveSchedule
 				"teamnum" "3"
 				"$weaponname" "OverclockedDaveGrenadeWeapon"
 				"$weaponnosound" "1"
+				"$preventshootparent" "1"
 			}
 			tf_point_weapon_mimic
 			{
@@ -4436,8 +4439,6 @@ WaveSchedule
 
 			// PHASE 3 ATTACKS //
 
-			// Fallen Shocks Megalaser Rain
-
 			// Megalaser Rain
 
             logic_relay
@@ -4451,7 +4452,7 @@ WaveSchedule
 				"OnTrigger" "FallenShocksLightningGigaOrb,Start,,1.15,-1"
                 "OnTrigger" "tf_gamerules,PlayVO,megalaser_fire.wav,2.25,-1"
                 "OnTrigger" "AlloyedMegaLaser,Enable,,2.25,-1"
-                "OnTrigger" "playerrunscriptcodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)2.25-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)2.25-1"
                 "OnTrigger" "FallenShocksLightningGigaTesla,TurnOff,,5.25,-1"
 				"OnTrigger" "FallenShocksLightningGigaOrb,Stop,,5.25,-1"
                 "OnTrigger" "AlloyedMegaLaser,Disable,,5.25,-1"
@@ -4501,6 +4502,63 @@ WaveSchedule
                 "disableshadows" "1"
                 "startdisabled" "1"
             }
+
+			// Slam
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisMegaSlamRelay"
+
+				"OnTrigger" "!activator,$TauntFromItem,Taunt: Yeti Smash,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_directhittaunt02.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})1-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/soldier_mvm_m_directhittaunt02.mp3`, pitch = 85, special_dsp = 57, filter_type = 5})1-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc\doomsday_missile_explosion.wav,5.33,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 16, 20, 3, 50000, 0, true)5.33-1"
+				"OnTrigger" "AlloyedGenesisMegaSlamParticle,Start,5.33,-1"
+				"OnTrigger" "AlloyedGenesisMegaSlamDamage,Enable,,5.33,-1"
+				"OnTrigger" "AlloyedGenesisMegaSlamDamage,Disable,,5.43,-1"
+
+				"OnTrigger" "AlloyedGenesisMegaSlamParticle,Stop,6.33,-1"
+			}
+
+			trigger_hurt
+			{
+				"targetname" "AlloyedGenesisMegaSlamDamage"
+				"filtername" "filter_redteam_nouber"
+				"origin" "200 0 0"
+
+				"mins" "-256 -256 -256"
+				"maxs" "256 256 256"
+
+				"damagetype" "64"
+				"damage" "1000"
+				"$killicon" "hale_charge"
+
+				"spawnflags" "1"
+
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "AlloyedGenesisMegaSlamParticle"
+				"origin" "200 0 0"
+				"effect_name" "hightower_explosion"
+			}
+			info_particle_system
+			{
+				"targetname" "AlloyedGenesisMegaSlamParticle"
+				"origin" "200 0 0"
+				"effect_name" "cinefx_goldrush"
+			}
+			info_particle_system
+			{
+				"targetname" "AlloyedGenesisMegaSlamParticle"
+				"origin" "200 0 0"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+			}
 		}
 		AlloyedGenesisLoseCondPT
 		{
@@ -4933,6 +4991,8 @@ WaveSchedule
 				"OnTrigger" "Zone1GeneratorRandomiser,PickRandomShuffle,,10,-1"
 
 				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Phase 3
@@ -4947,6 +5007,8 @@ WaveSchedule
 				"OnTrigger" "Zone1GeneratorRandomiser,PickRandomShuffle,,9,-1"
 
 				"OnTrigger" "Phase3MinibossRelay,Trigger,,12,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Generator Locations
@@ -5108,6 +5170,8 @@ WaveSchedule
 				"OnTrigger" "Zone2GeneratorRandomiser,PickRandomShuffle,,10,-1"
 
 				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Phase 3
@@ -5122,6 +5186,8 @@ WaveSchedule
 				"OnTrigger" "Zone2GeneratorRandomiser,PickRandomShuffle,,9,-1"
 
 				"OnTrigger" "Phase3MinibossRelay,Trigger,,12,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Generator Locations
@@ -5283,6 +5349,8 @@ WaveSchedule
 				"OnTrigger" "Zone3GeneratorRandomiser,PickRandomShuffle,,10,-1"
 
 				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Phase 3
@@ -5297,6 +5365,8 @@ WaveSchedule
 				"OnTrigger" "Zone3GeneratorRandomiser,PickRandomShuffle,,9,-1"
 
 				"OnTrigger" "Phase3MinibossRelay,Trigger,,12,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Generator Locations
@@ -5458,6 +5528,8 @@ WaveSchedule
 				"OnTrigger" "Zone4GeneratorRandomiser,PickRandomShuffle,,10,-1"
 
 				"OnTrigger" "Phase2MinibossRelay,Trigger,,14,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Phase 3
@@ -5472,6 +5544,8 @@ WaveSchedule
 				"OnTrigger" "Zone4GeneratorRandomiser,PickRandomShuffle,,9,-1"
 
 				"OnTrigger" "Phase3MinibossRelay,Trigger,,12,-1"
+
+				"startdisabled" "1"
 			}
 
 			// Generator Locations
@@ -5618,7 +5692,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,0,-1"
 				"OnTrigger" "AlloyedGenesisSummonBeam,Start,,0,-1"
 
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_GRapidBurstSoldier,2,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_WarMachineEngineer,2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,2,-1"
 				"OnTrigger" "AlloyedGenesisSummonBeam,Stop,,2,-1"
 			}
@@ -5692,22 +5766,22 @@ WaveSchedule
 		{
 			OnParentKilledOutput
             {
-                Target "@p@alloyedgenesis"
+                Target "@p@AlloyedGenesisTarget"
                 Action $TakeDamage
                 Param "3000"
                 Repeats 1
-                Delay -1
+                Delay 0.1
             }
 		}
 		AlloyedGenesisMinion2PT
 		{
 			OnParentKilledOutput
             {
-                Target "@p@alloyedgenesis"
+                Target "@p@AlloyedGenesisTarget"
                 Action $TakeDamage
                 Param "300"
                 Repeats 1
-                Delay -1
+                Delay 0.1
             }
 		}
 
@@ -6164,7 +6238,7 @@ WaveSchedule
                 "origin" "0 0 25"
                 "angles" "0 0 0"
                 "model" "models/props_mvm/indicator/indicator_circle.mdl"
-                "modelscale" "3"
+                "modelscale" "4"
                 "skin" "1"
                 "defaultanim" "start"
                 "solid" "0"
@@ -6440,8 +6514,9 @@ WaveSchedule
 			CharacterAttributes
 			{
 				"move speed penalty" 0.5
-				"damage force reduction" 0.1
-				"airblast vulnerability multiplier" 0.1
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
 
 				"cancel falling damage" 1
 				"no_jump" 1
@@ -7063,6 +7138,27 @@ WaveSchedule
 					FireInput
 					{
 						Target "AlloyedGenesisPhase2TransitionRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+				}
+				AlloyedGenesisPhase2Activation [$SIGSEGV]
+				{
+					UseCustomModel "models/bots/soldier_boss/bot_soldier_boss_gibby.mdl"
+
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					Item "TF_WEAPON_SHOVEL"
+
+					CharacterAttributes
+					{
+						"always allow taunt" 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisAttackInit"
 						Action Trigger
 						Delay 0
 						Repeats 1
@@ -8258,6 +8354,80 @@ WaveSchedule
 				}
 			}
 		}
+
+		T_TFBot_Giant_Engineer_WarMachine
+        {
+            Name "Prototype RSC-5ST"
+            Class Engineer
+            ClassIcon engineer_ranger_electric_hyper_giant
+            Skill Expert
+			Health 25000
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Action Mobber
+
+            MaxVisionRange 1500
+
+            UseCustomModel "models/bots/engineer/bot_engineer_gray.mdl"
+
+            Item	"The Rescue Ranger"
+            Item	"Hazard Handler"
+            Item	"Cargo Constructor"
+
+
+            CharacterAttributes
+            {
+                "move speed bonus"	0.5
+                "damage force reduction"	0.5
+                "airblast vulnerability multiplier"	0.5
+                "override footstep sound set"	4
+                "voice pitch scale"	0.2
+                "engy building health bonus" 5
+                "engineer sentry build rate multiplier" 7
+                "engy disposable sentries" 5
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Rescue Ranger"
+                "damage bonus" 1.6
+                "faster reload rate" 0.5
+                "fire rate bonus" 0.1
+                "clip size bonus" 2
+                "Projectile speed increased" 0.8
+                "hold fire until full reload" 1
+            }
+
+            WeaponSwitch
+            {
+                Delay 14.9
+                Repeats 99
+                Cooldown 20
+                Type "PDA"
+            }
+            WeaponSwitch
+            {
+                Delay 15.9
+                Repeats 99
+                Cooldown 20
+                Type "Primary" // Weapon slot, possible values:
+            }
+            ClientCommand
+            {
+                Name "build 2 0"
+                Delay 15
+                Repeats 99
+                Cooldown 20
+            }
+            FireWeapon
+            {
+                Delay 15.5
+                Repeats 99
+                Cooldown 20
+                Duration 0.4
+                Type "Primary"
+            }
+        }
 
 		//// TANKS ////
 		Tank_Gate
@@ -11599,6 +11769,49 @@ WaveSchedule
 				Action Trigger
 			}
 		}
+		WaveSpawn // War Machine Engineer Miniboss
+		{
+			Name "Wave4_WarMachineEngineer"
+			Where spawnbot_boss0
+			Where spawnbot_main_slow1
+			Support Limited
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 150
+
+			StartDisabled 1
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Engineer_WarMachine
+
+				FireInput
+				{
+					Target !activator
+					Action $TeleportToEntity
+					Param "AlloyedGenesisTarget"
+					Delay 0
+					Repeats 1
+				}
+				FireInput
+				{
+					Target !activator
+					Action RunScriptCode
+					Param "SendGlobalGameEvent(`show_annotation`, {text = `DESTROY THE MINIBOSS TO STUN THE ALLOYED GENESIS`, lifetime = 5, follow_entindex = self.entindex()})"
+					Delay 0
+					Repeats 1
+				}
+			}
+			DoneOutput
+			{
+				Target AlloyedGenesisStunRelay
+				Action Trigger
+			}
+		}
+
 		WaveSpawn // Mobber Scouts and Rocket Shotgun Soldiers
 		{
 			Name "Wave4_Mobbers"
