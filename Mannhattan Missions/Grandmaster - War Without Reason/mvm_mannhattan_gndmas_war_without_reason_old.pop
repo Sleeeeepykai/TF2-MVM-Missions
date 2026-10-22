@@ -1,0 +1,4688 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1500
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 3000
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+    BodyPartScaleSpeed 10
+
+	CustomNavFile "mvm_blazehattan_v2.nav"
+
+	MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+
+				SetSkyboxTexture(`sky_well_01`)
+				EntFire(`fog_controller`, `SetColor`, `130 134 172`)
+				EntFire(`fog_controller`, `SetStartDist`, `100`)
+				EntFire(`fog_controller`, `SetEndDist`, `8500`)
+
+				EntFire(`env_soundscape*`, `Enable`)
+			  "
+		Delay -1
+	}
+
+	//// PRECACHES ////
+
+	// Precached Colour Correction
+
+	PrecacheGeneric "materials/colorcorrection/stormlight.raw"
+
+	//// CUSTOM WEAPONS ////
+
+	CustomWeapon
+	{
+		"GoldenJuggernautHelm"
+		{
+			OriginalItemName "The Bunsen Brave"
+
+			"set item tint RGB" "15185211"
+		}
+		"GoldenJuggernautBeard"
+		{
+			OriginalItemName "The All-Father"
+
+			"set item tint RGB" "15185211"
+		}
+
+		"CaptainBombardmentHat"
+		{
+			OriginalItemName "The Patriot Peak"
+
+			"set item tint RGB" "15185211"
+		}
+		"CaptainBombardmentSuit"
+		{
+			OriginalItemName "The Diplomat"
+
+			"set item tint RGB" "15185211"
+		}
+	}
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `(Grandmaster) War Without Reason`)
+
+                        Convars.SetValue(`tf_playergib`, 0)
+
+						IncludeScript(`tankextensions_main`)
+
+						IncludeScript(`tankextensions/combattank`)
+						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
+
+						IncludeScript(`tankextensions/gatetank`)
+					  "
+			}
+		}
+
+		MissionPT
+		{
+			OnSpawnOutput
+			{
+				Target MissionSetupRelay
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "MissionSetupRelay"
+
+				"OnTrigger" "spawnbot_front_main,$SetLocalAngles,0 270 0,0,-1"
+
+				"OnTrigger" "tank_path_gate_1,AddOutput,OnPass gate0_entrance_door:Open::0:-1,0,-1"
+
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_main:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_upper:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_sentrybuster:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_sniper:Enable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_front_mission_spy:Enable::0:-1,0,-1"
+
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_main:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_mission_sentrybuster:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_mission_sniper:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gatea_mission_spy:Disable::0:-1,0,-1"
+
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_main:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_upper:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_sentrybuster:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_sniper:Disable::0:-1,0,-1"
+				"OnTrigger" "wave_finished_reset_spawns,AddOutput,OnTrigger spawnbot_gateb_mission_spy:Disable::0:-1,0,-1"
+
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_main:Disable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_upper:Disable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_mission_sentrybuster:Disable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_mission_sniper:Disable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_front_mission_spy:Disable::0:-1,0,-1"
+
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_gatea_main:Enable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_gatea_mission_sentrybuster:Enable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_gatea_mission_sniper:Enable::0:-1,0,-1"
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger spawnbot_gatea_mission_spy:Enable::0:-1,0,-1"
+
+				"OnTrigger" "gate1_relay,AddOutput,OnTrigger BombardmentGateATimer:Enable:0:-1,0,-1"
+
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gatea_main:Disable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gatea_mission_sentrybuster:Disable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gatea_mission_sniper:Disable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gatea_mission_spy:Disable::0:-1,0,-1"
+
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_main:Enable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_upper:Enable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_sentrybuster:Enable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_sniper:Enable::0:-1,0,-1"
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger spawnbot_gateb_mission_spy:Enable::0:-1,0,-1"
+
+				"OnTrigger" "gate2_relay,AddOutput,OnTrigger BombardmentGateBTimer:Enable:0:-1,0,-1"
+
+				"OnTrigger" "wave_finished_reset_spawns,Trigger,,0.2,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "FirstBreakRelay"
+
+				"OnTrigger" "pop_interface,$KillWaveSpawn,Subwave1_ScoutRunner,0,-1"
+				"OnTrigger" "pop_interface,$FinishWaveSpawn,Subwave1_ScoutRunner,0,-1"
+
+				"OnTrigger" "holograms_3way_relay,Trigger,,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `You've earned a break. Rebuild, upgrade and prepare.`, lifetime = 5, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_get_to_upgrade09.mp3,0,-1"
+				"OnTrigger" "FrontUpgradeOpen,Trigger,,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `10 seconds remain.`, lifetime = 5, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})20,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `5 seconds.`, lifetime = 5, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})25,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_wave_start03.mp3,27,-1"
+				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `The war continues.`, lifetime = 5, worldPosX = -48, worldPosY = -1992, worldPosZ = 840})30,-1"
+				"OnTrigger" "FrontUpgradeClose,Trigger,,30,-1"
+
+				"OnTrigger" "wave_start_relay,Trigger,,30,-1"
+			}
+
+			logic_timer
+			{
+				"targetname" "BombardmentGateATimer"
+				"refiretimer" "5"
+
+				"OnTimer" "pop_interface,ChangeBotAttributes,GateAPosition,0,-1"
+
+				"startdisabled" "1"
+			}
+			logic_timer
+			{
+				"targetname" "BombardmentGateBTimer"
+				"refiretimer" "5"
+
+				"OnTimer" "pop_interface,ChangeBotAttributes,GateBPosition,0,-1"
+
+				"startdisabled" "1"
+			}
+		}
+
+		MapLayoutPT // Credit to Yoovy for the Layout (Seen in Scorched Skies & Atomic Aftermath)
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`sentry_nest_main3`, `Kill`)
+					  "
+			}
+			// Nav Avoids
+
+			func_nav_avoid
+			{
+				"targetname" "FronttoGateALedgeAvoid"
+				"origin" "-112 -3344 17"
+                "mins" "-336 -90 -100"
+                "maxs" "336 90 100"
+
+				"tags" "noflank_ledge bomb_carrier1 bomb_carrier2 bomb_carrier3"
+			}
+			func_nav_avoid
+			{
+				"targetname" "FronttoGateALedgeAvoid"
+				"origin" "320 -3016 17"
+                "mins" "-112 -280 -100"
+                "maxs" "112 280 100"
+
+				"tags" "noflank_ledge bomb_carrier1 bomb_carrier2 bomb_carrier3"
+			}
+
+			func_nav_avoid
+			{
+				"targetname" "GateAtoGateBLowerAvoid"
+				"origin" "966 -784 86"
+                "mins" "-74 -336 -190"
+                "maxs" "74 336 190"
+
+				"tags" "GateAtoBFlankLower bomb_carrier1 bomb_carrier2 bomb_carrier3"
+			}
+			func_nav_avoid
+			{
+				"targetname" "GateAtoGateBUpperAvoid"
+				"origin" "400 -1640 8"
+                "mins" "-208 -312 -108"
+                "maxs" "208 312 108"
+
+				"tags" "GateAtoBFlankUpper"
+			}
+
+			func_nav_avoid
+			{
+				"targetname" "GateBtoHatchRampAvoid"
+				"origin" "-1032 -736 36"
+                "mins" "-184 -48 -104"
+                "maxs" "184 48 104"
+
+				"tags" "bomb_carrier1 bomb_carrier2 bomb_carrier3"
+			}
+
+			// Map Front Props
+
+			prop_dynamic // Front Railing Fence
+            {
+				"origin" "-568 -3265 -240"
+				"angles" "0 270 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Front Railing Fence
+            {
+                "origin" "-568 -3265 -177"
+                "mins" "-1.5 -127 -63"
+                "maxs" "1.5 127 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic // Front Railing Fence
+            {
+				"origin" "-568 -2888 -240"
+				"angles" "0 270 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Front Railing Fence
+            {
+                "origin" "-568 -2888 -177"
+                "mins" "-1.5 -127 -63"
+                "maxs" "1.5 127 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Front Keg
+            {
+				"origin" "-412 -3216 -184"
+				"angles" "0 120 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Front Crate
+            {
+				"origin" "-340 -3225 -240"
+				"angles" "0 255 0"
+                "model" "models/props_2fort/miningcrate002.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Front Keg
+            {
+				"origin" "-954 -2271 -183"
+				"angles" "0 27 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Front Keg
+            {
+				"origin" "-875 -2269 -183"
+				"angles" "0 102 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Front Barrels
+            {
+				"origin" "-800 -2269 -296"
+                "model" "models/props_hydro/water_barrel_cluster2.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Front Barrels
+            {
+				"origin" "-724 -2269 -296"
+                "model" "models/props_hydro/water_barrel_cluster2.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Front Crate
+            {
+				"origin" "-648 -2269 -241"
+				"angles" "0 90 0"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Upper Front Railing Fence
+            {
+				"origin" "-3 -3271 -64"
+				"angles" "90 0 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Upper Front Railing Fence
+            {
+                "origin" "57 -3272 -1"
+                "mins" "-58 -1 -63.5"
+                "maxs" "58 1 63.5"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic // Upper Front Railing Fence
+            {
+				"origin" "231 -3196 -64"
+				"angles" "0 270 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Upper Front Railing Fence
+            {
+                "origin" "232 -3196 -1"
+                "mins" "-1 -127 -63"
+                "maxs" "1 127 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Upper Front Railing Fence
+            {
+                "origin" "407 -2772 -70"
+				"angles" "90 90 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Upper Front Railing Fence
+            {
+                "origin" "407 -2529 -64"
+				"angles" "0 270 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Upper Front Railing Fence
+            {
+                "origin" "408 -2586 -1"
+                "mins" "-1 -183.5 -63"
+                "maxs" "1 183.5 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic // Upper Front Railing Fence
+            {
+                "origin" "932 -2561 -64"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Upper Front Railing Fence
+            {
+                "origin" "933 -2560 -1"
+                "mins" "-127 -1 -63"
+                "maxs" "127 1 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Upper Front Crate
+            {
+				"origin" "192 -3309 -65"
+				"angles" "0 360 0"
+                "model" "models/props_hydro/barrel_crate_half.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Upper Front Keg
+            {
+				"origin" "-24 -3624 -8"
+				"angles" "0 15 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Sniper Van Metal Sheet
+            {
+				"origin" "320 -2713 -93"
+				"angles" "-68 90 0"
+                "model" "models/props_2fort/corrugated_metal007.mdl"
+				"solid"	"6"
+
+				"fademindist" "2400"
+                "fademaxdist" "2800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Gate A Railing Fence
+            {
+                "origin" "1340 -2347 -16"
+				"angles" "0 0 -180"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Gate A Railing Fence
+            {
+                "origin" "1340 -2348 -41"
+                "mins" "-127 -1 -23"
+                "maxs" "127 1 23"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			// Gate A to Gate B Props
+
+			prop_dynamic // Intersection Barrels
+            {
+				"origin" "652 -1985 -64"
+				"angles" "0 90 0"
+                "model" "models/props_hydro/water_barrel_cluster2.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Intersection Keg
+            {
+				"origin" "706 -1619 -9"
+				"angles" "0 77 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Intersection Crate
+            {
+				"origin" "632 -1621 -65"
+                "model" "models/props_hydro/barrel_crate_half.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Deathpit Keg
+            {
+				"origin" "348 -721 -150"
+				"angles" "0 152 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Deathpit Crate
+            {
+				"origin" "344 -792 -220"
+				"angles" "-15 83 0"
+                "model" "models/props_hydro/barrel_crate_half.mdl"
+				"solid"	"6"
+
+				"fademindist" "1600"
+                "fademaxdist" "1800"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Container Barrels
+            {
+				"origin" "-272 -1385 206"
+				"angles" "0 270 0"
+                "model" "models/props_hydro/water_barrel_cluster3.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Container Barrels
+            {
+				"origin" "-16 -1109 206"
+				"angles" "0 270 0"
+                "model" "models/props_hydro/water_barrel_cluster3.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Container Barrels
+            {
+				"origin" "-93 -1109 206"
+				"angles" "0 270 0"
+                "model" "models/props_hydro/water_barrel_cluster3.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Container Keg
+            {
+				"origin" "-168 -1108 262"
+				"angles" "0 12 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Container Crate
+            {
+				"origin" "-27 -1045 98"
+				"angles" "0 -90 0"
+                "model" "models/props_2fort/miningcrate002.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Container Oildrum
+            {
+				"origin" "-315 -1440 69"
+				"angles" "0 45 0"
+                "model" "models/props_2fort/oildrum.mdl"
+				"solid"	"6"
+                "skin" "2"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic // Container Oildrum
+            {
+				"origin" "-354 -1440 69"
+                "model" "models/props_2fort/oildrum.mdl"
+				"solid"	"6"
+                "skin" "1"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic // Container Oildrum
+            {
+				"origin" "-315 -1440 124"
+				"angles" "0 70 0"
+                "model" "models/props_2fort/oildrum.mdl"
+				"solid"	"6"
+                "skin" "3"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			// Gate B to Hatch Props
+
+			prop_dynamic // Gate B Railing Fence
+            {
+                "origin" "-552 -1436 -64"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Gate B Railing Fence
+            {
+                "origin" "-551 -1436 -1"
+                "mins" "-127 -1 -63"
+                "maxs" "127 1 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Hatch Overlook Railing Fence
+            {
+                "origin" "-224 -249 -64"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Hatch Overlook Railing Fence
+            {
+                "origin" "-224 -249 -1"
+                "mins" "-127 -1 -63"
+                "maxs" "127 1 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Hatch Pit Ramp Railing Fence
+            {
+                "origin" "-359 106 -160"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Hatch Pit Ramp Railing Fence
+            {
+                "origin" "-359 106 -97"
+                "mins" "-127 -1 -63"
+                "maxs" "127 1 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Hatch Pit Ramp Keg
+            {
+				"origin" "-212 69 -102"
+				"angles" "0 102 0"
+                "model" "models/props_hydro/keg_large.mdl"
+				"solid"	"6"
+
+				"fademindist" "2800"
+                "fademaxdist" "3000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Hatch Pit Container Door
+            {
+				"origin" "-668 1023 -381"
+				"angles" "-60 0 0"
+                "model" "models/props_vehicles/train_flatcar_container_doorr.mdl"
+				"skin" "1"
+				"solid"	"6"
+
+				"fademindist" "1400"
+                "fademaxdist" "1600"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Hatch Pit Barrels
+            {
+				"origin" "-755 998 -468"
+                "model" "models/props_hydro/water_barrel_cluster2.mdl"
+				"solid"	"6"
+
+				"fademindist" "1400"
+                "fademaxdist" "1600"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Hatch Pit Crate
+            {
+				"origin" "-844 1000 -298"
+                "model" "models/props_2fort/miningcrate002.mdl"
+				"solid"	"6"
+
+				"fademindist" "1400"
+                "fademaxdist" "1600"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Left Path Railing Fence
+            {
+                "origin" "584 240 -64"
+				"angles" "0 90 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2400"
+                "fademaxdist" "2600"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Left Path Railing Fence
+            {
+                "origin" "584 239 -1"
+                "mins" "-1 -127 -63"
+                "maxs" "1 127 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+			prop_dynamic // Left Path Railing Fence
+            {
+                "origin" "148 111 -160"
+				"angles" "0 90 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2400"
+                "fademaxdist" "2600"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Left Path Railing Fence
+            {
+                "origin" "148 111 -97"
+                "mins" "-1 -127 -63"
+                "maxs" "1 127 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Left Path Tank
+            {
+                "origin" "-880 140 -162"
+				"angles" "0 270 0"
+                "model" "models/props_2fort/tank002.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Right Path Railing Fence
+            {
+                "origin" "-810 1063 -160"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Right Path Railing Fence
+            {
+                "origin" "-809 1063 -97"
+                "mins" "-127 -1 -63"
+                "maxs" "127 1 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Right Path Tank
+            {
+                "origin" "843 563 -63"
+                "model" "models/props_2fort/tank002.mdl"
+				"solid"	"6"
+
+				"fademindist" "2000"
+                "fademaxdist" "2200"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic // Hatch Fence
+            {
+                "origin" "439 1404 -160"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"fademindist" "2400"
+                "fademaxdist" "2600"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_wall // Hatch Fence
+            {
+                "origin" "439 1404 -97"
+                "mins" "-127 -1 -63"
+                "maxs" "127 1 63"
+
+                "disablerecieveshadows" "1"
+                "disableshadows" "1"
+            }
+
+			prop_dynamic // Hatch Crate
+            {
+                "origin" "228 1084 -159"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"fademindist" "1800"
+                "fademaxdist" "2000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Hatch Crate
+            {
+                "origin" "-278 1091 -159"
+				"angles" "0 45 0"
+                "model" "models/props_hydro/barrel_crate_half.mdl"
+				"solid"	"6"
+
+				"fademindist" "1800"
+                "fademaxdist" "2000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Hatch Crate
+            {
+                "origin" "-206 1064 -159"
+				"angles" "0 90 0"
+                "model" "models/props_2fort/miningcrate002.mdl"
+				"solid"	"6"
+
+				"fademindist" "1800"
+                "fademaxdist" "2000"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+		}
+
+		MapPickupsPT
+		{
+			OnSpawnOutput
+			{
+				Target item_healthkit_small*
+				Action Kill
+			}
+			OnSpawnOutput
+			{
+				Target item_ammopack_small*
+				Action Kill
+			}
+
+			// Map Front
+
+			item_ammopack_medium
+            {
+                "origin" "-520 -2890 -226"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_healthkit_medium
+            {
+                "origin" "-723 -2206 -226"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_healthkit_medium
+            {
+                "origin" "-808 -2032 -226"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_healthkit_medium
+            {
+                "origin" "872 -2528 -56"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_ammopack_medium
+            {
+                "origin" "1160 -1935 -56"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+
+			// Gate A to Gate B
+
+			item_healthkit_full
+            {
+                "origin" "814 -329 248"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_ammopack_full
+            {
+                "origin" "960 -329 248"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_healthkit_medium
+            {
+                "origin" "-456 -1240 -12"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_ammopack_medium
+			{
+				"origin" "-1070 -1169 -54"
+				"teamnum" "2"
+				"automaterialize" "1"
+			}
+
+			// Gate B to Hatch
+			item_healthkit_medium
+            {
+                "origin" "920 -416 -54"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_healthkit_medium
+            {
+                "origin" "-1154 706 -124"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_ammopack_full
+            {
+                "origin" "-127 597 -402"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_healthkit_medium
+            {
+                "origin" "-545 1090 -150"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_ammopack_medium
+			{
+				"origin" "-496 1090 -150"
+				"teamnum" "2"
+				"automaterialize" "1"
+			}
+			item_healthkit_medium
+            {
+                "origin" "448 1096 -147"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+
+			item_healthkit_medium
+            {
+                "origin" "529 1539 -147"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+			item_ammopack_full
+            {
+                "origin" "475 1539 -147"
+				"teamnum" "2"
+
+				"automaterialize" "1"
+            }
+		}
+
+		MapDecorationPT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`StormSkybox`, `ActivateSkybox`)
+						SetSkyboxTexture(`sky_day02_09`)
+						EntFire(`fog_controller`, `SetColor`, `80 80 80`)
+						EntFire(`fog_controller`, `SetStartDist`, `100`)
+						EntFire(`fog_controller`, `SetEndDist`, `5000`)
+
+						EntFire(`StormSoundRelay`, `Trigger`)
+
+						EntFire(`env_soundscape*`, `Disable`)
+
+						EntFire(`subway_car_relay`, `Kill`)
+					  "
+			}
+
+			logic_relay
+			{
+				"targetname" "StormSoundRelay"
+
+				"OnTrigger" "tf_gamerules,$StopVO,ambient/rain.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/rain.wav,0.1,-1"
+			}
+
+			// Skybox
+
+			sky_camera
+            {
+                "targetname" "StormSkybox"
+                "origin" "-8304 24 -309"
+                "angles" "0 0 0"
+                "scale" "16"
+
+                "fogenable" "1"
+                "fogstart" "100"
+                "fogend" "15000"
+                "fogmaxdensity" "1"
+                "fogcolor" "80 80 80"
+                "fogblend" "0"
+                "fogdir" "1 0 0"
+                "fogRadial" "1"
+            }
+
+			// Colour Correction
+
+			color_correction
+            {
+                "targetname" "StormCC"
+
+				"filename" "materials/colorcorrection/stormlight.raw"
+                "maxweight" "0.5"
+
+                "minfalloff" "-1"
+                "maxfalloff" "-1"
+                "fadeInDuration" "0"
+                "fadeOutDuration" "0"
+            }
+
+			// Searchlights
+
+			point_spotlight
+			{
+				"origin" "-8769 313 -309"
+				"angles" "-45 300 0"
+
+				"spotlightlength" "1500"
+				"spotlightwidth" "150"
+
+				"spawnflags" "1"
+			}
+
+			point_spotlight
+			{
+				"origin" "-7920 -116 -224"
+				"angles" "-75 180 0"
+
+				"spotlightlength" "1500"
+				"spotlightwidth" "150"
+
+				"spawnflags" "1"
+			}
+
+			point_spotlight
+			{
+				"origin" "-7928 244 -224"
+				"angles" "-60 225 0"
+
+				"spotlightlength" "1500"
+				"spotlightwidth" "150"
+
+				"spawnflags" "1"
+			}
+
+			point_spotlight
+			{
+				"origin" "-8504 468 -288"
+				"angles" "-75 285 0"
+
+				"spotlightlength" "1500"
+				"spotlightwidth" "150"
+
+				"spawnflags" "1"
+			}
+
+			point_spotlight
+			{
+				"origin" "-8336 -536 36"
+				"angles" "-45 105 0"
+
+				"spotlightlength" "1500"
+				"spotlightwidth" "150"
+
+				"spawnflags" "1"
+			}
+
+			point_spotlight
+			{
+				"origin" "-8024 -480 -64"
+				"angles" "-45 45 0"
+
+				"spotlightlength" "1500"
+				"spotlightwidth" "150"
+
+				"spawnflags" "1"
+			}
+
+			// Randomised Thunder
+
+			logic_timer
+			{
+				"targetname" "ThunderTimer"
+
+				"UseRandomTime" "1"
+                "LowerRandomBound" "20"
+                "UpperRandomBound" "30"
+
+				"OnTimer" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 25, 0.6, 0.1, 1)0-1"
+				"OnTimer" "ThunderSoundCase,PickRandomShuffle,,0,-1"
+			}
+
+			logic_case
+			{
+				"targetname" "ThunderSoundCase"
+
+				"OnCase01" "tf_gamerules,PlayVO,ambient/thunder4.wav,1,-1"
+                "OnCase02" "tf_gamerules,PlayVO,ambient/thunder3.wav,1,-1"
+                "OnCase03" "tf_gamerules,PlayVO,ambient/thunder2.wav,1,-1"
+			}
+
+			// Rain Particles
+
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-1064 712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-4 712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "840 712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-1064 0 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-4 0 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "840 0 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-1064 -712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-4 -712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "840 -712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-1064 -1424 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-4 -1424 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "840 -1424 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-2128 712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-2128 0 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-2128 -712 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-2128 -1424 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-2128 -2136 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StormRainParticle"
+				"origin" "-2128 -2848 1950"
+				"flag_as_weather" "1"
+
+				"effect_name" "env_rain_001"
+				"start_active" "1"
+			}
+		}
+
+		MapForwardUpgradeStationPT
+		{
+			logic_relay
+			{
+				"targetname" "FrontUpgradeOpen"
+
+				"OnTrigger" "FrontUpgradeStationLockFence,Disable,,0,-1"
+				"OnTrigger" "FrontUpgradeStation,Enable,,0,-1"
+			}
+			logic_relay
+			{
+				"targetname" "FrontUpgradeClose"
+
+				"OnTrigger" "FrontUpgradeStationLockFence,Enable,,0,-1"
+				"OnTrigger" "FrontUpgradeStation,Disable,,0,-1"
+			}
+
+			prop_dynamic // Upgrade Station
+            {
+				"origin" "488 -3664 -64"
+				"angles" "0 90 0"
+                "model" "models/props_mvm/mvm_upgrade_center.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Upgrade Station
+            {
+				"origin" "488 -3664 -64"
+				"angles" "0 90 0"
+                "model" "models/props_mvm/mvm_upgrade_tools.mdl"
+				"solid"	"0"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic // Upgrade Station
+            {
+				"origin" "399 -3662 -8"
+				"angles" "0 180 0"
+                "model" "models/props_soho/door002.mdl"
+				"solid"	"0"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			func_upgradestation // Upgrade Station
+			{
+				"targetname" "FrontUpgradeStation"
+				"origin" "488 -3604 28"
+				"mins" "-140 -60 -92"
+				"maxs" "140 60 92"
+			}
+			prop_dynamic // Upgrade Station Fence
+            {
+				"targetname" "FrontUpgradeStationLockFence"
+				"origin" "488 -3616 -64"
+				"angles" "0 0 0"
+                "model" "models/props_gameplay/security_fence_section01.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+            }
+
+			prop_dynamic
+            {
+				"origin" "664 -3624 -64"
+				"angles" "0 0 0"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "664 -3624 50"
+				"angles" "0 90 0"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "316 -3626 -64"
+				"angles" "0 180 0"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "316 -3626 50"
+				"angles" "0 270 0"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "352 -3626 132"
+				"angles" "0 90 90"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "628 -3626 132"
+				"angles" "0 270 90"
+                "model" "models/props_hydro/barrel_crate.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "490 -3626 98"
+				"angles" "0 0 0"
+                "model" "models/props_2fort/miningcrate001.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+
+			prop_dynamic
+            {
+				"origin" "748 -3550 -120"
+				"angles" "0 0 0"
+                "model" "models/props_hydro/water_barrel_cluster2.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "748 -3626 -64"
+				"angles" "0 0 0"
+                "model" "models/props_hydro/water_barrel_cluster2.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+			prop_dynamic
+            {
+				"origin" "728 -3638 50"
+				"angles" "0 270 0"
+                "model" "models/props_2fort/miningcrate002.mdl"
+				"solid"	"6"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+		}
+
+		//// ROBOT PTs ////
+
+		CritHomingRocketTankPT
+		{
+			OnSpawnOutput
+			{
+				Target "CritHomingRocketTankSetup"
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "CritHomingRocketTankSetup"
+
+				"OnTrigger" "tf_point_weapon_mimic*,AddOutput,Crits 1,0,-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_SND_FIRE = `MVM.GiantSoldierRocketShootCrit`});TankExt.PrecacheSound(COMBATTANK_ROCKETPOD_SND_FIRE)0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 180})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_ROCKET_SPEED = 1350})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.16})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_RELOAD_DELAY = 0.5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_HOMING_SPEED_MULT = 1})0-1"
+				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_HOMING_DURATION = 0.75})0-1"
+			}
+		}
+	}
+
+	//// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+	SpawnTemplate "MissionPT"
+	SpawnTemplate "MapLayoutPT"
+	SpawnTemplate "MapPickupsPT"
+	SpawnTemplate "MapDecorationPT"
+	SpawnTemplate "MapForwardUpgradeStationPT"
+
+	//// EXTRA TANK PATHS ////
+
+	ExtraTankPath
+	{
+		Name "tank_path_gate"
+
+		// Map Front to Gate A
+		Node "-2112 -3520 -68"
+		Node "-2136 -3264 -68"
+		Node "-2136 -3112 -68"
+		Node "-2112 -3048 -68"
+		Node "-2064 -3000 -68"
+		Node "-1984 -2976 -68"
+		Node "-1368 -2976 -68"
+		Node "-1216 -2976 -68"
+		Node "-1120 -2952 -324"
+		Node "-1016 -2872 -324"
+		Node "-696 -2544 -212"
+		Node "-616 -2480 -212"
+		Node "-520 -2472 -212"
+		Node "-448 -2520 -212"
+		Node "-400 -2600 -212"
+		Node "-400 -2880 -212"
+		Node "-360 -2968 -212"
+		Node "-272 -3032 -212"
+		Node "-136 -3032 -212"
+		Node "-64 -3008 -212"
+		Node "24 -2936 -212"
+		Node "88 -2488 -212"
+		Node "144 -2368 -212"
+		Node "224 -2312 -212"
+		Node "736 -2312 -212"
+		Node "848 -2344 -212"
+		Node "920 -2464 -212"
+		Node "920 -2848 -212"
+		Node "936 -2920 -212"
+		Node "992 -2968 -212"
+		Node "1464 -2968 -212"
+		Node "1544 -2928 -212"
+		Node "1600 -2856 -212"
+		Node "1600 -2136 -36"
+		Node "1560 -2056 -36"
+		Node "1488 -1992 -36" // Path 36 - Gate A Capture Point
+
+		// Gate A to Gate B
+		Node "1432 -1936 -36"
+		Node "1392 -1872 -36"
+		Node "1344 -1712 -36"
+		Node "1304 -1616 -36"
+		Node "1240 -1536 -36"
+		Node "1136 -1456 -36"
+		Node "576 -1456 -36"
+		Node "512 -1480 -36"
+		Node "432 -1688 -36"
+		Node "376 -1760 -36"
+		Node "288 -1808 -36"
+		Node "-144 -1808 -36"
+		Node "-200 -1784 -36"
+		Node "-264 -1720 -36"
+		Node "-336 -1672 -36"
+		Node "-440 -1648 -36"
+		Node "-752 -1648 -36"
+		Node "-840 -1624 -36"
+		Node "-920 -1576 -36"
+		Node "-1320 -1368 -36"
+		Node "-1376 -1312 -36"
+		Node "-1416 -1248 -36"
+		Node "-1448 -1152 -36"
+		Node "-1448 -1048 -36" // Path 60 - Gate B Capture Point
+
+		// Gate B to Hatch
+		Node "-1448 -1016 -36"
+		Node "-1416 -952 -36"
+		Node "-1352 -912 -36"
+		Node "-784 -912 -36"
+		Node "-720 -888 -36"
+		Node "-664 -832 -36"
+		Node "-624 -736 -36"
+		Node "-624 -192 -36"
+		Node "-592 -128 -36"
+		Node "-520 -88 -36"
+		Node "-432 -64 -36"
+		Node "-128 -64 -36"
+		Node "-64 -32 -36"
+		Node "-40 32 -36"
+		Node "-30 88 -36"
+		Node "-30 1248 -36"
+	}
+
+	//// EXTRA SPAWN POINTS ////
+
+	ExtraSpawnPoint // Front Main Spawn
+	{
+		Name "spawnbot_front_main"
+		X -2916 Y -2432 Z 160
+		TeamNum 3
+ 	}
+	ExtraSpawnPoint // Front Upper Spawn
+	{
+		Name "spawnbot_front_upper"
+		X -1536 Y -2720 Z 504
+		TeamNum 3
+	}
+	ExtraSpawnPoint // Front Sentry Buster Spawn
+	{
+		Name "spawnbot_front_mission_sentrybuster"
+		X -2916 Y -2432 Z 160
+		TeamNum 3
+ 	}
+	ExtraSpawnPoint // Front Sniper Spawn
+	{
+		Name "spawnbot_front_mission_sniper"
+		X -1536 Y -2720 Z 504
+		TeamNum 3
+	}
+	ExtraSpawnPoint // Front Spy Spawn
+	{
+		Name "spawnbot_front_mission_spy"
+		X -1536 Y -2920 Z 504
+		TeamNum 3
+	}
+
+	ExtraSpawnPoint // Gate A Main Spawn
+	{
+		Name "spawnbot_gatea_main"
+		X 2336 Y -1248 Z 32
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate A Main Spawn
+	{
+		Name "spawnbot_gatea_main"
+		X 1840 Y -2272 Z 32
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate A Sentry Buster Spawn
+	{
+		Name "spawnbot_gatea_mission_sentrybuster"
+		X 2336 Y -1248 Z 32
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate A Sniper Spawn
+	{
+		Name "spawnbot_gatea_mission_sniper"
+		X 1840 Y -2272 Z 32
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate A Spy Spawn
+	{
+		Name "spawnbot_gatea_mission_spy"
+		X 1840 Y -2272 Z 32
+		TeamNum 3
+		StartDisabled 1
+ 	}
+
+	ExtraSpawnPoint // Gate B Main Spawn
+	{
+		Name "spawnbot_gateb_main"
+		X -1850 Y -1664 Z 0
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate B Upper Spawn
+	{
+		Name "spawnbot_gateb_upper"
+		X -1792 Y -2384 Z 0
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate B Sentry Buster Spawn
+	{
+		Name "spawnbot_gateb_mission_sentrybuster"
+		X -1850 Y -1664 Z 0
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate B Sniper Spawn
+	{
+		Name "spawnbot_gateb_mission_sniper"
+		X -1792 Y -2384 Z 0
+		TeamNum 3
+		StartDisabled 1
+ 	}
+	ExtraSpawnPoint // Gate B Spy Spawn
+	{
+		Name "spawnbot_gateb_mission_spy"
+		X -1850 Y -1664 Z 0
+		TeamNum 3
+		StartDisabled 1
+ 	}
+
+	//// ROBOT TEMPLATES ////
+
+	Templates
+	{
+		//// TANKS ////
+
+		Tank_Gate
+		{
+			Name "gatetank|tank_path_gate_36|tank_path_gate_60"
+			ClassIcon tank_gate
+			Speed 75
+
+			OnBombDroppedOutput
+			{
+				Target boss_deploy_relay
+				Action Trigger
+			}
+		}
+
+		//// BOMB BOTS ////
+
+		// MINIBOSSES //
+		T_TFBot_Miniboss_Soldier_Accelerator_Barrage
+		{
+			Name "Lieutenant Accelerator"
+			Class Soldier
+			ClassIcon soldier_accel_barrage_giant
+			Skill Expert
+			Health 45000
+			Scale 1.9
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			Tag bot_giant
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.4
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+				"mult stun resistance" 0
+				"mod weapon blocks healing" 1
+				"rage giving scale" 0.5
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+				"damage bonus" 1.5
+				"fire rate bonus" 0.2
+				"faster reload rate" 0.22
+				"clip size upgrade atomic" 26.0
+
+				"projectile speed decreased" 0.25
+				"projectile spread angle penalty" 3
+
+				"projectile acceleration" 5000
+				"projectile acceleration start time" 0.75
+				"projectile acceleration time" 1
+
+				"ignores other projectiles" 1
+			}
+		}
+
+		T_TFBot_Miniboss_Heavy_Juggernaut
+		{
+			Name "Golden Gatling Juggernaut"
+			Class Heavy
+			ClassIcon heavy_golden_titanium
+			Health 15000
+			Scale 1.9
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			WeaponRestrictions PrimaryOnly
+
+			Tag bot_giant
+
+			Item "GoldenJuggernautHelm" [$SIGSEGV]
+			Item "GoldenJuggernautBeard" [$SIGSEGV]
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.4
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+				"mult stun resistance" 0
+				"mod weapon blocks healing" 1
+				"rage giving scale" 0.5
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_MINIGUN"
+
+				"damage bonus" 1.25
+				"fire rate bonus" 0.75
+				"minigun spinup time increased" 2
+				"fire rate bonus with reduced health" 0.1
+
+				"item style override" 1
+				"is australium item" 1
+				"turn to gold" 1
+				"attach particle effect" "3083"
+			}
+		}
+
+		T_TFBot_Miniboss_Soldier_Bombardment
+		{
+			Name "Captain Bombardment"
+			Class Soldier
+			ClassIcon soldier_barrage_golden_lite_giant
+			Skill Expert
+			Health 30000
+			Scale 1.9
+			Attributes MiniBoss
+			Attributes DisableDodge
+			Attributes UseBossHealthBar
+			Attributes HoldFireUntilFullReload
+			WeaponRestrictions PrimaryOnly
+
+			Item "CaptainBombardmentHat" [$SIGSEGV]
+			Item "CaptainBombardmentSuit" [$SIGSEGV]
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+				"mult stun resistance" 0
+				"mod weapon blocks healing" 1
+				"rage giving scale" 0.5
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+				"damage bonus" 1.5
+				"fire rate bonus" 0.2
+				"faster reload rate" 0.22
+				"clip size upgrade atomic" 26.0
+
+				"projectile speed decreased" 0.65
+				"projectile spread angle penalty" 5
+
+				"item style override" 1
+				"is australium item" 1
+				"turn to gold" 1
+				"attach particle effect" "3083"
+			}
+
+			ChangeAttributes
+			{
+				Name "MapFrontPosition"
+				Delay 0
+				Repeats 1
+			}
+
+			EventChangeAttributes
+			{
+				MapFrontPosition [$SIGSEGV]
+				{
+					InterruptAction
+					{
+						Target "-1018 -2281 192"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 1
+					}
+				}
+				GateAPosition [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target BombardmentGateATimer
+						Action Disable
+						Delay 0
+						Repeats 1
+					}
+					InterruptAction
+					{
+						Target "928 -512 232"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 1
+					}
+				}
+				GateBPosition [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target BombardmentGateBTimer
+						Action Disable
+						Delay 0
+						Repeats 1
+					}
+					InterruptAction
+					{
+						Target "-952 -160 60"
+						Delay 0.5
+						Repeats 0
+						Duration 25
+						Cooldown 0.3
+						Distance 1
+					}
+				}
+			}
+		}
+
+		// GIANTS //
+		T_TFBot_Giant_Heavyweight_Champ_Concheror
+		{
+			Name "Super Concheror Champ"
+			Class Heavy
+			ClassIcon heavy_champ_conch2_giant
+			Skill Expert
+			Health 5000
+			Attributes MiniBoss
+			Attributes AlwaysCrit
+			Attributes SpawnWithFullCharge
+			WeaponRestrictions MeleeOnly
+
+			Item "The Concheror"
+			Item "The Killing Gloves of Boxing"
+
+			Item "Pugilist's Protector"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Concheror"
+
+				"increase buff duration" 9
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Killing Gloves of Boxing"
+
+				"damage bonus" 1.2
+				"fire rate bonus" 0.6
+			}
+		}
+
+		// COMMONS //
+		T_TFBot_Heavyweight_Champ_Concheror
+		{
+			Name "Concheror Champ"
+			Class Heavy
+			ClassIcon heavy_champ_conch2
+			Skill Expert
+			Attributes AlwaysCrit
+			Attributes SpawnWithFullCharge
+			WeaponRestrictions MeleeOnly
+
+			Item "The Concheror"
+			Item "The Killing Gloves of Boxing"
+
+			Item "Pugilist's Protector"
+
+			ItemAttributes
+			{
+				ItemName "The Concheror"
+
+				"increase buff duration" 9
+			}
+		}
+
+		T_TFBot_Pyro_Airblast
+		{
+			Class Pyro
+			ClassIcon pyro_reflect_daan_nolod
+			Skill Expert
+
+			Item "Traffic Cone"
+		}
+
+		//// GATEBOTS ////
+
+		// GIANTS //
+		T_TFBot_Giant_Heavy_Heater_Gatebot
+		{
+			Template T_TFBot_Giant_Heavy_Heater
+
+			Tag bot_giant
+
+			Item "MvM GateBot Light Heavy"
+			Item "Big Steel Jaw of Summer Fun"
+
+			CharacterAttributes
+			{
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+			}
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Heavy"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Giant_Scout_FAN_Gatebot
+		{
+			Template T_TFBot_Giant_Scout_FAN
+
+			Tag bot_giant
+
+			Item "MvM GateBot Light Scout"
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Scout"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+		{
+			Template T_TFBot_Giant_Pyro_Dragon_Fury
+
+			Tag bot_giant
+
+			Item "MvM GateBot Light Pyro"
+
+			CharacterAttributes
+			{
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+			}
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Pyro"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Giant_Heavy_Deflector_Gatebot
+		{
+			Template T_TFBot_Giant_Heavy_Deflector
+
+			Tag bot_giant
+
+			Item "MvM GateBot Light Heavy"
+			Item "Big Steel Jaw of Summer Fun"
+
+			CharacterAttributes
+			{
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+				"airblast vertical vulnerability multiplier" 0
+			}
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Heavy"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		// COMMONS //
+		T_TFBot_Soldier_Extended_Concheror_Gatebot
+		{
+			Template T_TFBot_Soldier_Extended_Concheror
+
+			Item "MvM GateBot Light Soldier"
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Soldier"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Soldier_Burst_Gatebot
+		{
+			Template T_TFBot_Soldier_Burst
+
+			Item "MvM GateBot Light Soldier"
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Soldier"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+
+		T_TFBot_Pyro_Supercharged_Gatebot
+		{
+			Template T_TFBot_Pyro_Supercharged
+
+			Item "MvM GateBot Light Pyro"
+
+			EventChangeAttributes
+			{
+				Default
+				{
+					BehaviorModifiers Push
+					Attributes IgnoreFlag
+
+					Tag bot_gatebot
+					Tag nav_prefer_gate1_flank
+				}
+				RevertGateBotsBehavior
+				{
+					ItemAttributes
+					{
+						ItemName "MvM GateBot Light Pyro"
+
+						"item style override" 1
+					}
+				}
+			}
+		}
+	}
+
+	//// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_front_mission_sentrybuster [$SIGSEGV]
+		Where spawnbot_gatea_mission_sentrybuster [$SIGSEGV]
+		Where spawnbot_gateb_mission_sentrybuster [$SIGSEGV]
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 30
+		CooldownTime 30
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+	//// WAVES ////
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`holograms_3way_relay`, `Trigger`)
+                  "
+		}
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+					EntFire(`FrontUpgradeClose`, `Trigger`)
+
+					EntFire(`StormSoundRelay`, `Trigger`)
+                  "
+        }
+
+		//// PHASE 1 ////
+
+		// Subwave 1
+		WaveSpawn // Support Scouts
+		{
+			Name "Subwave1_ScoutRunner"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			Support 1
+			TotalCount 40
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+				Attributes AlwaysCrit
+			}
+		}
+
+		WaveSpawn // Lieutenant Accelerator
+		{
+			Name "Subwave1_LieutenantAccelerator"
+			Where spawnbot_front_main [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_Soldier_Accelerator_Barrage
+
+				ClassIcon soldier_giant
+			}
+		}
+
+		WaveSpawn // 3 GHeater Heavies (Gatebot)
+		{
+			Name "Subwave1_GHeaterHeavy"
+			WaitForAllSpawned "Subwave1_LieutenantAccelerator"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 3
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 12
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavy_Heater_Gatebot
+
+				ClassIcon heavy_giant
+			}
+		}
+
+		WaveSpawn // 30 Concheror Champs
+		{
+			Name "Subwave1_ConcherorChamps"
+			WaitForAllSpawned "Subwave1_LieutenantAccelerator"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 30
+			MaxActive 15
+			SpawnCount 10
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 12
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy
+			}
+		}
+		WaveSpawn // 15 Pyros
+		{
+			Name "Subwave1_Pyro"
+			WaitForAllSpawned "Subwave1_LieutenantAccelerator"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 15
+			MaxActive 8
+			SpawnCount 5
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 12
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Pyro
+				Skill Expert
+				Attributes AlwaysFireWeapon
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 3 GRapid Demos and 3 Full-Uber Medics
+		{
+			Name "Subwave2_GRapidDemo"
+			WaitForAllDead "Subwave1_LieutenantAccelerator"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+
+					ClassIcon demo_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+		WaveSpawn // 2 GPyros
+		{
+			Name "Subwave2_GPyro"
+			WaitForAllSpawned "Subwave2_GRapidDemo"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+			}
+		}
+		WaveSpawn // 2 GFAN Scouts (Gatebot)
+		{
+			Name "Subwave2_GFANScout"
+			WaitForAllSpawned "Subwave2_GRapidDemo"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
+			}
+		}
+
+		WaveSpawn // 15 Deflector Heavies
+		{
+			Name "Subwave2_DeflectorHeavies"
+			WaitForAllSpawned "Subwave2_GRapidDemo"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+			}
+		}
+
+		WaveSpawn // 3 GRapid Demos and 3 Full-Uber Medics
+		{
+			Name "Subwave2_GRapidDemo2"
+			WaitForAllSpawned "Subwave2_GRapidDemo"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+
+					ClassIcon demo_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+		WaveSpawn // 10 Shortstop Scouts
+		{
+			Name "Subwave2_ShortstopScouts"
+			WaitForAllSpawned "Subwave2_GRapidDemo2"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+
+				ClassIcon scout
+			}
+		}
+		WaveSpawn // 2 GFAN Scouts (Gatebot)
+		{
+			Name "Subwave2_GFANScout2"
+			WaitForAllSpawned "Subwave2_GRapidDemo2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
+			}
+		}
+
+		WaveSpawn // 15 Deflector Heavies
+		{
+			Name "Subwave2_DeflectorHeavies2"
+			WaitForAllSpawned "Subwave2_GRapidDemo2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+			}
+		}
+
+		WaveSpawn // 3 GRapid Demos and 3 Full-Uber Medics
+		{
+			Name "Subwave2_GRapidDemo3"
+			WaitForAllSpawned "Subwave2_GRapidDemo2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+
+					ClassIcon demo_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+		WaveSpawn // 2 GPyros
+		{
+			Name "Subwave2_GPyro2"
+			WaitForAllSpawned "Subwave2_GRapidDemo3"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro
+			}
+		}
+		WaveSpawn // 2 GFAN Scouts (Gatebot)
+		{
+			Name "Subwave2_GFANScout3"
+			WaitForAllSpawned "Subwave2_GRapidDemo3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
+			}
+		}
+
+		WaveSpawn // 15 Deflector Heavies
+		{
+			Name "Subwave2_DeflectorHeavies3"
+			WaitForAllSpawned "Subwave2_GRapidDemo3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+			}
+		}
+
+		WaveSpawn // 3 GRapid Demos and 3 Full-Uber Medics
+		{
+			Name "Subwave2_GRapidDemo4"
+			WaitForAllSpawned "Subwave2_GRapidDemo3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 1
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Spammer
+
+					ClassIcon demo_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+		WaveSpawn // 10 Shortstop Scouts
+		{
+			Name "Subwave2_ShortstopScouts2"
+			WaitForAllSpawned "Subwave2_GRapidDemo4"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Shortstop
+
+				ClassIcon scout
+			}
+		}
+		WaveSpawn // 2 GFAN Scouts (Gatebot)
+		{
+			Name "Subwave2_GFANScout4"
+			WaitForAllSpawned "Subwave2_GRapidDemo4"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 10
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Scout_FAN_Gatebot
+
+				ClassIcon scout_giant
+			}
+		}
+
+		WaveSpawn // 15 Deflector Heavies
+		{
+			Name "Subwave2_DeflectorHeavies4"
+			WaitForAllSpawned "Subwave2_GRapidDemo4"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+				TFBot
+				{
+					Template T_TFBot_Heavy_Deflector
+					Skill Easy
+
+					ClassIcon heavy
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 Gate Tank
+		{
+			Name "Subwave3_GateTank"
+			WaitForAllDead "Subwave2_GRapidDemo4"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Template Tank_Gate
+				Health 60000
+				StartingPathTrackNode "tank_path_gate_1"
+			}
+		}
+		WaveSpawn // 1 GPyro and 1 GCharged Medic
+		{
+			Name "Subwave3_GPyro"
+			WaitForAllSpawned "Subwave3_GateTank"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					ClassIcon pyro_giant
+
+					Tag bot_giant
+					Tag noflank_ledge
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					ClassIcon medic_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 18 Burst Demos
+		{
+			Name "Subwave3_BurstDemos"
+			WaitForAllSpawned "Subwave3_GateTank"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Demoman_Burst
+
+				ClassIcon demo
+			}
+		}
+		WaveSpawn // 18 Burst Soldiers
+		{
+			Name "Subwave3_BurstSoldiers"
+			WaitForAllSpawned "Subwave3_GateTank"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 6
+			SpawnCount 1
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Burst
+
+				ClassIcon soldier
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 1 GCharged Medic
+		{
+			Name "Subwave3_GPyro2"
+			WaitForAllSpawned "Subwave3_GPyro"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					ClassIcon pyro_giant
+
+					Tag bot_giant
+					Tag noflank_ledge
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					ClassIcon medic_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 6 Rapid Battalion Soldiers and 12 Burst Demos
+		{
+			Name "Subwave3_BackupSquads"
+			WaitForAllSpawned "Subwave3_GPyro2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 10
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					ClassIcon soldier
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.75
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
+				}
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 1 GCharged Medic
+		{
+			Name "Subwave3_GPyro3"
+			WaitForAllSpawned "Subwave3_GPyro2"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+					Attributes AlwaysCrit
+
+					ClassIcon pyro_giant
+
+					Tag bot_giant
+					Tag noflank_ledge
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					ClassIcon medic_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+			}
+		}
+		WaveSpawn // 6 Rapid Battalion Soldiers and 12 Burst Demos
+		{
+			Name "Subwave3_BackupSquads2"
+			WaitForAllSpawned "Subwave3_GPyro3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 10
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Soldier_Extended_Battalion_Spammer
+
+					ClassIcon soldier
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"move speed penalty" 0.75
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
+				}
+				TFBot
+				{
+					Template T_TFBot_Demoman_Burst
+
+					ClassIcon demo
+				}
+			}
+		}
+
+		// Subwave 4
+		WaveSpawn // 2 GRapid Soldiers and 4 Firebrand Pyros
+		{
+			Name "Subwave4_GRapidSoldier"
+			WaitForAllDead "Subwave3_GPyro3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					ClassIcon soldier_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+			}
+		}
+		WaveSpawn // 12 Conch Soldiers
+		{
+			Name "Subwave4_ConchSoldiers"
+			WaitForAllSpawned "Subwave4_GRapidSoldier"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Concheror_Gatebot
+				Skill Expert
+
+				ClassIcon soldier
+
+				Tag GateAtoBFlankUpper
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 Firebrand Pyros
+		{
+			Name "Subwave4_GRapidSoldier2"
+			WaitForAllSpawned "Subwave4_GRapidSoldier"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					ClassIcon soldier_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+			}
+		}
+		WaveSpawn // 14 Burst Soldiers
+		{
+			Name "Subwave4_BurstSoldiers"
+			WaitForAllSpawned "Subwave4_GRapidSoldier2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 14
+			MaxActive 14
+			SpawnCount 7
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Burst_Gatebot
+				Skill Expert
+
+				ClassIcon soldier
+
+				Tag GateAtoBFlankLower
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 Firebrand Pyros
+		{
+			Name "Subwave4_GRapidSoldier3"
+			WaitForAllSpawned "Subwave4_GRapidSoldier2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					ClassIcon soldier_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+			}
+		}
+		WaveSpawn // 12 Conch Soldiers
+		{
+			Name "Subwave4_ConchSoldiers2"
+			WaitForAllSpawned "Subwave4_GRapidSoldier3"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Extended_Concheror_Gatebot
+				Skill Expert
+
+				ClassIcon soldier
+
+				Tag GateAtoBFlankUpper
+			}
+		}
+
+		WaveSpawn // 2 GRapid Soldiers and 4 Firebrand Pyros
+		{
+			Name "Subwave4_GRapidSoldier4"
+			WaitForAllSpawned "Subwave4_GRapidSoldier3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 6
+			WaitBeforeStarting 16
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Soldier_Spammer
+					Attributes AlwaysCrit
+
+					ClassIcon soldier_giant
+
+					Tag bot_giant
+
+					CharacterAttributes
+					{
+						"damage force reduction" 0
+						"airblast vulnerability multiplier" 0
+						"airblast vertical vulnerability multiplier" 0
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Pyro_Firebrand
+
+					ClassIcon pyro
+				}
+			}
+		}
+		WaveSpawn // 12 Burst Soldiers
+		{
+			Name "Subwave4_BurstSoldiers2"
+			WaitForAllSpawned "Subwave4_GRapidSoldier4"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 12
+			MaxActive 12
+			SpawnCount 6
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 10
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Burst_Gatebot
+				Skill Expert
+
+				ClassIcon soldier
+
+				Tag GateAtoBFlankLower
+			}
+		}
+
+		// Subwave 5
+
+		WaveSpawn // Golden Gatling Juggernaut & 1 GShield Medic
+		{
+			Name "Subwave5_GGJuggernaut"
+			WaitForAllDead "Subwave4_GRapidSoldier4"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Miniboss_Heavy_Juggernaut
+
+					ClassIcon heavy_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Shield
+
+					ClassIcon medic_giant
+				}
+			}
+		}
+		WaveSpawn // 5 Ballista Bowmen and 5 Full-Uber Medics
+		{
+			Name "Subwave5_BallistaBowmen"
+			WaitForAllSpawned "Subwave5_GGJuggernaut"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman_Ballista
+
+					ClassIcon sniper_bow
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+		WaveSpawn // 24 Demomen
+		{
+			Name "Subwave5_Demomen"
+			WaitForAllSpawned "Subwave5_GGJuggernaut"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 24
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // Golden Gatling Juggernaut & 1 GShield Medic
+		{
+			Name "Subwave5_GGJuggernaut2"
+			WaitForAllSpawned "Subwave5_GGJuggernaut"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Miniboss_Heavy_Juggernaut
+
+					ClassIcon heavy_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Shield
+
+					ClassIcon medic_giant
+				}
+			}
+		}
+		WaveSpawn // 5 Ballista Bowmen and 5 Full-Uber Medics
+		{
+			Name "Subwave5_BallistaBowmen2"
+			WaitForAllSpawned "Subwave5_GGJuggernaut2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 10
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 4
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Sniper_Huntsman_Ballista
+
+					ClassIcon sniper_bow
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+		WaveSpawn // 24 Demomen
+		{
+			Name "Subwave5_Demomen2"
+			WaitForAllSpawned "Subwave5_GGJuggernaut2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 24
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Class Demoman
+				Skill Expert
+			}
+		}
+
+		// Subwave 5 Check
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_GGJuggernaut"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_GGJuggernaut2"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_BallistaBowmen"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_BallistaBowmen2"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_Demomen"
+		}
+		WaveSpawn
+		{
+			Name "Subwave5_Check"
+			WaitForAllDead "Subwave5_Demomen2"
+		}
+
+		// First Break
+		WaveSpawn
+		{
+			Name "Subwave5_Break"
+			WaitForAllSpawned "Subwave5_Check"
+
+			FirstSpawnOutput
+			{
+				Target FirstBreakRelay
+				Action Trigger
+			}
+		}
+
+		//// PHASE 2 ////
+
+		// Subwave 6
+		WaveSpawn // Support Burst Fury Pyros
+		{
+			Name "Subwave6_PyroRunner"
+			WaitForAllSpawned "Subwave5_Break" [$SIGSEGV]
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			Support 1
+			TotalCount 40
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury_Burst
+			}
+		}
+
+		WaveSpawn // 1 Tank
+		{
+			Name "Subwave6_Tank"
+			WaitForAllSpawned "Subwave5_Break"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 30
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			FirstSpawnWarningSound "mvm/mvm_tank_start.wav"
+
+			Tank
+			{
+				Name "tankboss"
+				Health 35000
+				Speed 75
+				StartingPathTrackNode "tank_path_gate_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 GFury Pyros (Gatebot)
+		{
+			Name "Subwave6_GFuryPyro"
+			WaitForAllSpawned "Subwave6_Tank"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
+			}
+		}
+		WaveSpawn // 4 Shield Squads and 12 Supercharged Soldiers
+		{
+			Name "Subwave6_ShieldSquads"
+			WaitForAllSpawned "Subwave6_Tank"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+			}
+		}
+		WaveSpawn // 3 Walk-In Engineers and 3 Full-Uber Medics
+		{
+			Name "Subwave6_Engineer"
+			WaitForAllSpawned "Subwave6_Tank"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			Support Limited
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 2
+			TotalCurrency 0
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Sentry_Battle_WalkIn
+					Health 500
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+
+		WaveSpawn // 1 Tank
+		{
+			Name "Subwave6_Tank2"
+			WaitForAllSpawned "Subwave6_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Name "tankboss"
+				Health 35000
+				Speed 75
+				StartingPathTrackNode "tank_path_gate_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 GFury Pyros (Gatebot)
+		{
+			Name "Subwave6_GFuryPyro2"
+			WaitForAllSpawned "Subwave6_Tank2"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
+			}
+		}
+		WaveSpawn // 4 Bulwark Medics and 12 Supercharged Soldiers
+		{
+			Name "Subwave6_ShieldSquads2"
+			WaitForAllSpawned "Subwave6_Tank2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+			}
+		}
+
+		WaveSpawn // 1 Tank
+		{
+			Name "Subwave6_Tank3"
+			WaitForAllSpawned "Subwave6_Tank2"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Name "tankboss"
+				Health 35000
+				Speed 75
+				StartingPathTrackNode "tank_path_gate_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 GFury Pyros (Gatebot)
+		{
+			Name "Subwave6_GFuryPyro3"
+			WaitForAllSpawned "Subwave6_Tank3"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
+			}
+		}
+		WaveSpawn // 4 Bulwark Medics and 12 Supercharged Soldiers
+		{
+			Name "Subwave6_ShieldSquads3"
+			WaitForAllSpawned "Subwave6_Tank3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+			}
+		}
+		WaveSpawn // 3 Walk-In Engineers and 3 Full-Uber Medics
+		{
+			Name "Subwave6_Engineer2"
+			WaitForAllSpawned "Subwave6_Tank3"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_upper [$SIGSEGV]
+			Support Limited
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 2
+			WaitBeforeStarting 10
+			WaitBetweenSpawns 2
+			TotalCurrency 0
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Engineer_Sentry_Battle_WalkIn
+					Health 500
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+
+					ClassIcon medic
+				}
+			}
+		}
+
+		WaveSpawn // 1 Tank
+		{
+			Name "Subwave6_Tank4"
+			WaitForAllSpawned "Subwave6_Tank3"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Name "tankboss"
+				Health 35000
+				Speed 75
+				StartingPathTrackNode "tank_path_gate_1"
+
+				OnBombDroppedOutput
+				{
+					Target boss_deploy_relay
+					Action Trigger
+				}
+			}
+		}
+		WaveSpawn // 2 GFury Pyros (Gatebot)
+		{
+			Name "Subwave6_GFuryPyro4"
+			WaitForAllSpawned "Subwave6_Tank4"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 8
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Pyro_Dragon_Fury_Gatebot
+
+				ClassIcon pyro_giant
+			}
+		}
+		WaveSpawn // 4 Shield Squads and 12 Supercharged Soldiers
+		{
+			Name "Subwave6_ShieldSquads4"
+			WaitForAllSpawned "Subwave6_Tank4"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 16
+			MaxActive 12
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield_Bulwark
+
+					ClassIcon medic
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Supercharged
+
+					ClassIcon soldier
+				}
+			}
+		}
+
+		// Subwave 7
+		WaveSpawn // Captain Bombardment
+		{
+			Name "Subwave7_CaptainBombardment"
+			WaitForAllSpawned "Subwave6_Tank4"
+			Where spawnbot_front_upper [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 25
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Miniboss_Soldier_Bombardment
+
+				ClassIcon soldier_giant
+			}
+		}
+		WaveSpawn // 5 GDeflector Heavies and 10 GLaser Scouts (Gatebot)
+		{
+			Name "Subwave7_GDeflectorHeavy"
+			WaitForAllSpawned "Subwave7_CaptainBombardment"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 15
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 10
+			TotalCurrency 60
+
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Heavy_Deflector_Gatebot
+
+					ClassIcon heavy_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Scout_Laser
+
+					ClassIcon scout_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Scout_Laser
+
+					ClassIcon scout_giant
+				}
+			}
+		}
+		WaveSpawn // 27 Supercharged Pyros (Gatebot)
+		{
+			Name "Subwave7_Pyros"
+			WaitForAllSpawned "Subwave7_CaptainBombardment"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 27
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 5
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Supercharged
+
+				ClassIcon pyro
+
+				ItemAttributes
+				{
+					ItemName "TF_WEAPON_FLAMETHROWER"
+
+					"airblast disabled" 1
+				}
+			}
+		}
+		WaveSpawn // 40 Scatter-Bonk Scouts
+		{
+			Name "Subwave7_Scatterbonks"
+			WaitForAllSpawned "Subwave7_CaptainBombardment"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 40
+			MaxActive 10
+			SpawnCount 2
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 2
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Scout_Bonk_Scatter
+				Skill Normal
+
+				ClassIcon scout
+			}
+		}
+
+		// Subwave 8
+		WaveSpawn // 1 GShotgun Demo, 1 GCharged Medic and 1 GKritz Medic
+		{
+			Name "Subwave8_GShotgunDemo"
+			WaitForAllDead "Subwave7_CaptainBombardment"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 4
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+
+					ClassIcon demo_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					ClassIcon medic_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Kritzkrieg
+
+					ClassIcon medic_giant
+				}
+			}
+		}
+		WaveSpawn // 8 GConch Champs
+		{
+			Name "Subwave8_GConchChamps"
+			WaitForAllSpawned "Subwave8_GShotgunDemo"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy_giant
+			}
+		}
+		WaveSpawn // 18 Fury Pyros
+		{
+			Name "Subwave8_FuryPyros"
+			WaitForAllSpawned "Subwave8_GShotgunDemo"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury
+				Skill Expert
+
+				ClassIcon pyro
+			}
+		}
+
+		WaveSpawn // 1 GShotgun Demo, 1 GCharged Medic and 1 GKritz Medic
+		{
+			Name "Subwave8_GShotgunDemo2"
+			WaitForAllSpawned "Subwave8_GShotgunDemo"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 22
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+
+					ClassIcon demo_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					ClassIcon medic_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Kritzkrieg
+
+					ClassIcon medic_giant
+				}
+			}
+		}
+		WaveSpawn // 8 GConch Champs
+		{
+			Name "Subwave8_GConchChamps2"
+			WaitForAllSpawned "Subwave8_GShotgunDemo2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy_giant
+			}
+		}
+		WaveSpawn // 18 Fury Pyros
+		{
+			Name "Subwave8_FuryPyros2"
+			WaitForAllSpawned "Subwave8_GShotgunDemo2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury
+				Skill Expert
+
+				ClassIcon pyro
+			}
+		}
+
+		WaveSpawn // 1 GShotgun Demo, 1 GCharged Medic and 1 GKritz Medic
+		{
+			Name "Subwave8_GShotgunDemo3"
+			WaitForAllSpawned "Subwave8_GShotgunDemo2"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 22
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_GrenadeShotgun
+
+					ClassIcon demo_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Charged
+
+					ClassIcon medic_giant
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_Kritzkrieg
+
+					ClassIcon medic_giant
+				}
+			}
+		}
+		WaveSpawn // 8 GConch Champs
+		{
+			Name "Subwave8_GConchChamps3"
+			WaitForAllSpawned "Subwave8_GShotgunDemo3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 8
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Giant_Heavyweight_Champ_Concheror
+
+				ClassIcon heavy_giant
+			}
+		}
+		WaveSpawn // 18 Fury Pyros
+		{
+			Name "Subwave8_FuryPyros3"
+			WaitForAllSpawned "Subwave8_GShotgunDemo3"
+			Where spawnbot_front_main [$SIGSEGV]
+			Where spawnbot_gatea_main [$SIGSEGV]
+			Where spawnbot_gateb_main [$SIGSEGV]
+			TotalCount 18
+			MaxActive 9
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 3
+			TotalCurrency 60
+
+			TFBot
+			{
+				Template T_TFBot_Pyro_Dragon_Fury
+				Skill Expert
+
+				ClassIcon pyro
+			}
+		}
+	}
+}

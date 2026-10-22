@@ -4,11 +4,26 @@ WaveSchedule
     {
         GChargedMedicPT
         {
+            KeepAlive 1
+
+            RemoveIfKilled "GChargedMedicTarget"
+
             OnSpawnOutput
             {
                 Target GChargedMedicTarget
                 Action SetParent
                 Param !activator
+            }
+
+            OnParentKilledOutput
+            {
+                Target UberchargeRelay
+                Action CancelPending
+            }
+            OnParentKilledOutput
+            {
+                Target GChargedMedicTarget
+                Delay 0.1
             }
 
             info_target
@@ -668,8 +683,8 @@ WaveSchedule
             FireWeapon
 			{
 				Type "Special"
+                Delay 0.5
 				Duration 0.5
-				Delay 0.5
 				Repeats 0
 				Cooldown 0.5
 			}
