@@ -338,7 +338,7 @@ WaveSchedule
 
 			logic_relay
             {
-                "targetname" "W3ChampionPyroRelay"
+                "targetname" "W3HomewreckerPyroRelay"
 
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/pyro_mvm_m_moveup01.mp3`,pitch = 85,special_dsp = 22,filter_type = 5})0-1"
 
@@ -1448,60 +1448,60 @@ WaveSchedule
             }
         }
 
-		ChampionPyroPT
+		HomewreckerPyroPT
 		{
 			KeepAlive 1
 			NoFixUp 1
 
-			RemoveIfKilled "ChampionPyroTarget"
+			RemoveIfKilled "HomewreckerPyroTarget"
 
 			OnSpawnOutput
             {
-                Target "ChampionPyroTarget"
+                Target "HomewreckerPyroTarget"
 				Action SetParent
 				Param "!activator"
             }
 
 			OnSpawnOutput
             {
-                Target "ChampionPyroSpellRelay"
+                Target "HomewreckerPyroSpellRelay"
 				Action Trigger
 				Delay 1
             }
 
 			OnParentKilledOutput
 			{
-				Target "ChampionPyroDeathRelay"
+				Target "HomewreckerPyroDeathRelay"
 				Action Trigger
 				Delay 0
 			}
 
 			OnParentKilledOutput
             {
-                Target "ChampionPyroTarget"
+                Target "HomewreckerPyroTarget"
 				Action Kill
 				Delay 0.2
             }
 
 			info_target
 			{
-				"targetname" "ChampionPyroTarget"
+				"targetname" "HomewreckerPyroTarget"
 			}
 
 			logic_relay
 			{
-				"targetname" "ChampionPyroSpellRelay"
+				"targetname" "HomewreckerPyroSpellRelay"
 
 				"spawnflags" "2"
 
-				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,SpellPrepare,3,-1"
-				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.4,3,-1"
-				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, `spellbook_major_burning`, `weapon_bone`)3-1"
+				"OnTrigger" "@p@HomewreckerPyroTarget,$ChangeAttributes,SpellPrepare,3,-1"
+				"OnTrigger" "@p@HomewreckerPyroTarget,$AddPlayerAttribute,move speed penalty|0.4,3,-1"
+				"OnTrigger" "@p@HomewreckerPyroTargetRunScriptCodeDispatchParticleAttached(self, `spellbook_major_burning`, `weapon_bone`)3-1"
 				"OnTrigger" "SpellTickingRelay,Trigger,,3,-1"
-				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,SpellMeteor,5,-1"
-				"OnTrigger" "@p@ChampionPyroTarget,$AddPlayerAttribute,move speed penalty|0.5,8,-1"
-				"OnTrigger" "@p@ChampionPyroTarget,$ChangeAttributes,Default,8,-1"
-				"OnTrigger" "@p@ChampionPyroTargetRunScriptCodeDispatchParticleAttached(self, null, `weapon_bone`)8-1"
+				"OnTrigger" "@p@HomewreckerPyroTarget,$ChangeAttributes,SpellMeteor,5,-1"
+				"OnTrigger" "@p@HomewreckerPyroTarget,$AddPlayerAttribute,move speed penalty|0.5,8,-1"
+				"OnTrigger" "@p@HomewreckerPyroTarget,$ChangeAttributes,Default,8,-1"
+				"OnTrigger" "@p@HomewreckerPyroTargetRunScriptCodeDispatchParticleAttached(self, null, `weapon_bone`)8-1"
 				"OnTrigger" "!self,Trigger,,8,-1"
 			}
 
@@ -1538,14 +1538,14 @@ WaveSchedule
 
 			logic_relay
 			{
-				"targetname" "ChampionPyroDeathRelay"
+				"targetname" "HomewreckerPyroDeathRelay"
 
 				"OnTrigger" "SpellTickingRelay,CancelPending,,0,-1"
-				"OnTrigger" "ChampionPyroSpellRelay,CancelPending,,0,-1"
+				"OnTrigger" "HomewreckerPyroSpellRelay,CancelPending,,0,-1"
 			}
 		}
 
-		ChampionPyroGMedPT
+		HomewreckerPyroGMedPT
 		{
 			KeepAlive 1
 			RemoveIfKilled "GMedicTarget"
@@ -1565,7 +1565,7 @@ WaveSchedule
 			{
 				"targetname" "GMedicDeadRelay"
 
-				"OnTrigger" "ChampionPyroRageRelay,Trigger,,0,-1"
+				"OnTrigger" "HomewreckerPyroRageRelay,Trigger,,0,-1"
 				"OnTrigger" "GMedicTarget,Kill,,1,-1"
 			}
 		}
@@ -2136,96 +2136,6 @@ WaveSchedule
             }
 		}
 
-		T_TFBot_Giant_Pyro_Dragon_Fury_Champion
-		{
-			Name "Champion Pyro"
-			Class Pyro
-			ClassIcon pyro_dragon_fury_champion_kai
-			Skill Expert
-			Health 6000
-			Scale 1.8
-			Attributes MiniBoss
-			Attributes UseBossHealthBar
-			Attributes DisableDodge
-			WeaponRestrictions PrimaryOnly
-
-			Tag ChampionGiant
-
-			UseMeleeThreatPrioritization 1
-
-            SpawnTemplate "ChampionGiantPT"
-			SpawnTemplate "ChampionPyroPT"
-
-			Item "The Dragon's Fury"
-
-            Item "Prince Tavish's Crown"
-            Item "Forgotten King's Pauldrons"
-
-			CharacterAttributes
-			{
-				"move speed penalty" 0.4
-				"damage force reduction" 0.1
-				"airblast vulnerability multiplier" 0.1
-				"override footstep sound set" 6
-				"voice pitch scale" 0
-			}
-
-			EventChangeAttributes
-			{
-				Default
-				{
-					Item "The Dragon's Fury"
-
-					WeaponRestrictions PrimaryOnly
-				}
-
-				SpellPrepare [$SIGSEGV]
-				{
-					Attributes SuppressFire
-					WeaponRestrictions MeleeOnly
-
-					Item "Necro Smasher"
-					Item "TF_WEAPON_SPELLBOOK"
-
-					ItemAttributes
-					{
-						ItemName "Necro Smasher"
-						"is invisible" 1
-					}
-				}
-
-				SpellMeteor [$SIGSEGV]
-				{
-					WeaponRestrictions MeleeOnly
-
-					Item "Necro Smasher"
-					Item "TF_WEAPON_SPELLBOOK"
-
-					ItemAttributes
-					{
-						ItemName "TF_WEAPON_SPELLBOOK"
-						"is_passive_weapon" 1
-					}
-
-					ItemAttributes
-					{
-						ItemName "Necro Smasher"
-						"is invisible" 1
-					}
-
-					Spell [$SIGSEGV]
-					{
-						Type "Meteor Shower"
-						Delay 0
-						Cooldown 2
-						Repeats 2
-						Charges 1
-						Limit 1
-					}
-				}
-			}
-		}
-
 		//// MINIGIANTS ////
 
 		T_TFBot_Demoman_Stickybomb_Spammer
@@ -2629,7 +2539,7 @@ WaveSchedule
 			WaitForAllDead "Wave1_Subwave2_Soldiers"
 		}
 
-		WaveSpawn // 1 GHeavy and 1 GRegen Medic
+		WaveSpawn // 1 GHeavy and 1 GBig-Heal Medic
 		{
 			Name "Wave1_Subwave3_GHeavy"
 			WaitForAllSpawned "Wave1_Subwave2_Check"
@@ -2652,7 +2562,7 @@ WaveSchedule
 				}
 				TFBot
 				{
-					Template T_TFBot_Giant_Medic_Regen
+					Template T_TFBot_Giant_Medic_BigHeal
 				}
 			}
 		}
@@ -3662,153 +3572,27 @@ WaveSchedule
 			}
 		}
 
-		WaveSpawn // Support GPyros, Rapid Sticky Demos and Big-Heal Medics (Spawn D)
+		WaveSpawn // Support Direct Hit Soldiers (All Spawns)
 		{
-			Name "Wave3_Subwave1_GPyro"
+			Name "Wave3_Subwave1_DirectHitSoldiers"
 			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
-			Where spawnbot_d
-			Support 1
-			TotalCount 18
-			MaxActive 7
-			SpawnCount 6
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 24
-			TotalCurrency 20
-
-			Squad
-			{
-				NoWaitForFormation 1 [$SIGSEGV]
-
-				TFBot
-				{
-					Template T_TFBot_Giant_Pyro
-					Attributes IgnoreFlag
-					BehaviorModifiers Push
-					Tag capbot
-
-					ItemAttributes
-					{
-						ItemName "TF_WEAPON_FLAMETHROWER"
-
-						"airblast disabled" 1
-					}
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-					Attributes IgnoreFlag
-					BehaviorModifiers Push
-					Tag capbot
-				}
-				TFBot
-				{
-					Template T_TFBot_Demoman_Stickybomb_Spammer
-					Attributes IgnoreFlag
-					BehaviorModifiers Push
-					Tag capbot
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-				TFBot
-				{
-					Template T_TFBot_Medic_BigHeal
-				}
-			}
-		}
-
-		WaveSpawn // Support GRapid Soldiers (Spawn C)
-		{
-			Name "Wave3_Subwave1_GRapidSoldier"
-			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
-			Where spawnbot_c
-			Where spawnbot_flank_c
-			Support 1
-			TotalCount 5
-			MaxActive 2
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 10
-			TotalCurrency 10
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-				Attributes IgnoreFlag
-				BehaviorModifiers Push
-				Tag capbot
-			}
-		}
-		WaveSpawn // Support GRapid Soldiers (Spawn B)
-		{
-			Name "Wave3_Subwave1_GRapidSoldier"
-			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
+			Where spawnbot_a
 			Where spawnbot_b
+			Where spawnbot_c
+			Where spawnbot_d
+			Where spawnbot_e
 			Support 1
-			TotalCount 5
-			MaxActive 2
-			SpawnCount 1
+			TotalCount 50
+			MaxActive 6
+			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 10
-			TotalCurrency 10
-
-			TFBot
-			{
-				Template T_TFBot_Giant_Soldier_Spammer
-				Attributes IgnoreFlag
-				BehaviorModifiers Push
-				Tag capbot
-			}
-		}
-
-		WaveSpawn // 10 Heavies (Spawn A)
-		{
-			Name "Wave3_Subwave1_Heavies"
-			WaitForAllSpawned "Wave3_Subwave1_RocketTank"
-			Where spawnbot_a
-			Where spawnbot_flank_a
-			Support Limited
-			TotalCount 10
-			MaxActive 10
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Heavy
-				Skill Normal
-				Attributes IgnoreFlag
-				BehaviorModifiers Push
-				Tag capbot
-			}
-		}
-		WaveSpawn // Support Heavies (Spawn A)
-		{
-			Name "Wave3_Subwave1_Heavies2"
-			WaitForAllSpawned "Wave3_Subwave1_Heavies"
-			Where spawnbot_a
-			Support 1
-			TotalCount 20
-			MaxActive 4
-			SpawnCount 1
-			WaitBeforeStarting 4
 			WaitBetweenSpawns 3
-			TotalCurrency 20
+			TotalCurrency 50
 
 			TFBot
 			{
-				Class Heavy
-				Skill Normal
-				Attributes IgnoreFlag
-				BehaviorModifiers Push
-				Tag capbot
+				Template T_TFBot_Soldier_DirectHit
+				Skill Expert
 			}
 		}
 
@@ -3827,25 +3611,25 @@ WaveSchedule
 		}
 		WaveSpawn
 		{
-			Name "Wave3_Subwave2_ChampionPyroStinger"
+			Name "Wave3_Subwave2_HomewreckerPyroStinger"
 			WaitForAllDead "Wave3_Subwave1_RocketTank"
 			WaitBeforeStarting 5
 
 			FirstSpawnOutput
 			{
-				Target W3ChampionPyroRelay
+				Target W3HomewreckerPyroRelay
 				Action Trigger
 			}
 		}
 
-		WaveSpawn // 1 Champion Pyro and 1 GCharged Medic (Spawn E)
+		WaveSpawn // 1 Homewrecker Pyro Miniboss (Spawn E)
 		{
-			Name "Wave3_Subwave2_ChampionPyro"
-			WaitForAllSpawned "Wave3_Subwave2_ChampionPyroStinger"
+			Name "Wave3_Subwave2_HomewreckerPyro"
+			WaitForAllSpawned "Wave3_Subwave2_HomewreckerPyroStinger"
 			Where spawnbot_e
-			TotalCount 2
-			MaxActive 2
-			SpawnCount 2
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
 			WaitBeforeStarting 6.5
 			WaitBetweenSpawns 0
 			TotalCurrency 20
@@ -3854,14 +3638,10 @@ WaveSchedule
 			{
 				TFBot
 				{
-					Template T_TFBot_Giant_Pyro_Dragon_Fury_Champion
+					Template T_TFBot_Miniboss_Pyro_Homewrecker
 					Attributes IgnoreFlag
 					BehaviorModifiers Push
 					Tag capbot
-				}
-				TFBot
-				{
-					Template T_TFBot_Giant_Medic_Charged
 				}
 			}
 
@@ -3894,74 +3674,11 @@ WaveSchedule
 					  "
 			}
 		}
-		WaveSpawn // Support Soldiers (Spawn E)
-		{
-			Name "Wave3_Subwave2_Soldiers"
-			WaitForAllSpawned "Wave3_Subwave2_ChampionPyro"
-			Where spawnbot_e
-			Support 1
-			TotalCount 20
-			MaxActive 3
-			SpawnCount 3
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 0
-			TotalCurrency 20
-
-			TFBot
-			{
-				Class Soldier
-				Skill Expert
-				Action Mobber
-
-				InterruptAction
-                {
-                    Target "ChampionPyroTarget"
-                    Delay 0.5
-					Repeats 0
-					Duration 25
-					Cooldown 0.3
-					Distance 80
-                }
-			}
-		}
-		WaveSpawn // Support Scouts (All Spawns)
-		{
-			Name "Wave3_Subwave2_Scouts"
-			WaitForAllSpawned "Wave3_Subwave2_ChampionPyroStinger"
-			Where spawnbot_a
-			Where spawnbot_b
-			Where spawnbot_c
-			Where spawnbot_d
-			Where spawnbot_e
-			Support 1
-			TotalCount 20
-			MaxActive 4
-			SpawnCount 1
-			WaitBeforeStarting 0
-			WaitBetweenSpawns 2
-			TotalCurrency 20
-
-			RandomChoice
-			{
-				TFBot
-				{
-					Class Scout
-					Skill Normal
-					Action Mobber
-				}
-				TFBot
-				{
-					Template T_TFBot_Scout_Melee
-					Attributes AlwaysCrit
-					Action Mobber
-				}
-			}
-		}
 
 		WaveSpawn
 		{
-			Name "Wave3_Subwave2_ChampionPyroDead"
-			WaitForAllDead "Wave3_Subwave2_ChampionPyro"
+			Name "Wave3_Subwave2_HomewreckerPyroDead"
+			WaitForAllDead "Wave3_Subwave2_HomewreckerPyro"
 			WaitBeforeStarting 0
 
 			FirstSpawnOutput
@@ -3973,7 +3690,7 @@ WaveSchedule
 		WaveSpawn
 		{
 			Name "Wave3_Subwave2_VoidSequence"
-			WaitForAllDead "Wave3_Subwave2_ChampionPyro"
+			WaitForAllDead "Wave3_Subwave2_HomewreckerPyro"
 			WaitBeforeStarting 3
 
 			FirstSpawnOutput
