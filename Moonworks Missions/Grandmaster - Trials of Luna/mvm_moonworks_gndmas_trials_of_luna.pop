@@ -262,6 +262,31 @@ WaveSchedule
                 "OnTrigger" "@c@!activator,AddOutput,$fireratemult 3,0,-1"
             }
         }
+
+        //// ROBOT PTs ////
+
+        ArmageddonPT
+        {
+            KeepAlive 1
+            RemoveIfKilled "NukeExplodeParticle"
+
+            OnParentKilledOutput
+            {
+                Target NukeExplodeRelay
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "NukeExplodeRelay"
+
+                "OnTrigger" "NukeExplodeParticle,$SetKey$angles,0 0 0,0,-1"
+                "OnTrigger" "NukeExplodeParticle,Start,,0,-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 10, 10, 2, 800, 0, true)0-1"
+
+                "OnTrigger" "NukeExplodeParticle,Kill,,5,-1"
+            }
+        }
     }
 
     //// SPAWNED POINT TEMPLATES ////
@@ -290,6 +315,7 @@ WaveSchedule
 
             UseMeleeThreatPrioritization 1
             AimTrackingInterval 0.001
+            FOV 346
             AimLeadProjectileSpeed 1
 
             SpawnTemplate "BlastMasterPT"
@@ -324,17 +350,15 @@ WaveSchedule
             }
         }
 
-        T_TFBot_Miniboss_Pyro_Blaster
+        T_TFBot_Miniboss_Pyro_Forgeborn
         {
             Name "Forgeborn Pyro"
             Class Pyro
             ClassIcon pyro_head_dead_heat_nys_giant
             Health 30000
             Scale 2
-
             Attributes MiniBoss
             Attributes UseBossHealthBar
-
             WeaponRestrictions SecondaryOnly
 
             CustomEyeGlowColor "255 0 0"
@@ -342,7 +366,7 @@ WaveSchedule
 
             UseMeleeThreatPrioritization 1
             AimTrackingInterval 0.001
-            AimLeadProjectileSpeed 1
+            FOV 346
 
             SpawnTemplate "ForgebornPT"
 
@@ -353,7 +377,8 @@ WaveSchedule
 				"airblast vulnerability multiplier" 0
                 "airblast vertical vulnerability multiplier" 0
                 "mult stun resistance" 0
-                "rage giving scale" 0.6
+                "rage giving scale" 0.5
+                "override footstep sound set" 6
             }
 
             ItemAttributes
@@ -361,7 +386,7 @@ WaveSchedule
 				ItemName "TF_WEAPON_SHOTGUN_PYRO"
 
 				"damage bonus" 10
-                "Set DamageType Ignite" 1
+                "set damagetype ignite" 1
 				"add damage type" 2056
 				"remove damage type" 64
 
@@ -382,6 +407,51 @@ WaveSchedule
 				"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
 				"custom kill icon" "firedeath"
 			}
+        }
+
+        T_TFBot_Miniboss_Engineer_Widowmaker
+        {
+            Name "Widowmaker Maniac"
+            Class Engineer
+            ClassIcon engineer_widowmaker_spammer_hyper_nys_giant
+            Skill Expert
+            Health 30000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+
+            CustomEyeGlowColor "255 0 0"
+            UseHumanAnimations 1
+
+            MaxVisionRange 1200
+
+            UseMeleeThreatPrioritization 1
+            FOV 346
+
+            Item "The Widowmaker"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+                "damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+                "airblast vertical vulnerability multiplier" 0
+                "mult stun resistance" 0
+                "rage giving scale" 0.5
+				"override footstep sound set" 7
+				"voice pitch scale" 0
+				"head scale" 0.7
+				"hand scale" 1.1
+			}
+
+            ItemAttributes
+            {
+                ItemName "The Widowmaker"
+
+                "damage bonus" 1.25
+                "fire rate bonus" 0.6
+            }
         }
 
         //// GIANTS ////
@@ -415,7 +485,7 @@ WaveSchedule
                 "damage bonus" 1.5
                 "damage penalty" 1
 
-                "Set DamageType Ignite" 1
+                "set damagetype ignite" 1
                 "dmg taken from fire reduced on active" 1
             }
         }
@@ -482,6 +552,70 @@ WaveSchedule
                 "clip size upgrade atomic" 8
                 "projectile speed decreased" 0.41
                 "projectile gravity" -1
+            }
+        }
+        T_TFBot_Giant_Heavy_Heater_Supercharged
+        {
+            Name "Supercharged Heater Heavy"
+            Class Heavy
+            ClassIcon heavy_deflector_heater_hyper_giant
+            Skill Expert
+            Health 5000
+            Attributes MiniBoss
+            WeaponRestrictions PrimaryOnly
+
+            MaxVisionRange 1200
+
+            Item "The Huo Long Heatmaker"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+                "damage force reduction" 0.3
+                "airblast vulnerability multiplier" 0.3
+                "override footstep sound set" 2
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Huo Long Heatmaker"
+
+                "damage bonus" 1.5
+                "damage penalty" 1
+                "damage bonus vs burning" 2
+                "set damagetype ignite" 1
+
+                "fire rate penalty" 1.5
+
+                "attack projectiles" 1
+            }
+        }
+        T_TFBot_Giant_Demoman_Lochnload_Spammer
+        {
+            Name "Giant Rapid Loch-n-Load Demoman"
+            Class Demoman
+            ClassIcon demo_loch_spammer_nys_giant
+            Skill Expert
+            Health 3300
+            Attributes MiniBoss
+            WeaponRestrictions PrimaryOnly
+
+            Item "The Loch-n-Load"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 4
+			}
+
+            ItemAttributes
+            {
+                ItemName "The Loch-n-Load"
+
+                "fire rate bonus" 0.75
+                "faster reload rate" 0.001
             }
         }
 
@@ -570,6 +704,67 @@ WaveSchedule
                 "override projectile type" 13
                 "energy weapon penetration" 1
                 "particle color rgb" 57855
+            }
+        }
+        T_TFBot_Soldier_Nuclear
+        {
+            Name "Armageddon Soldier"
+            Class Soldier
+            ClassIcon soldier_nuclear
+            Skill Expert
+            Health 1500
+            Scale 1.5
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+
+            CustomEyeGlowColor "255 0 0"
+
+            UseMeleeThreatPrioritization 1
+            AimTrackingInterval 0.001
+            FOV 346
+
+            Item "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+
+            WeaponResist
+            {
+                "TF_WEAPON_KNIFE" 0.0125
+            }
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.75
+            }
+
+            ShootTemplate
+            {
+                Name "ArmageddonPT"
+                AttachToProjectile 1
+            }
+
+            ItemAttributes
+            {
+                ItemName "Upgradeable TF_WEAPON_ROCKETLAUNCHER"
+
+                "damage bonus" 10
+                "damage blast push" 1000
+                "blast radius increased" 3
+
+                "set damagetype ignite" 1
+                "weapon burn dmg increased" 2
+
+                "reload time increased" 5
+                "clip size penalty" 0.25
+
+                "projectile speed decreased" 0.5
+                "penetrate teammates" 1
+
+                "item style override" 1
+                "attach particle effect" "3045"
+                
+                "custom weapon fire sound" "npc/env_headcrabcanister/launch.wav"
+                "projectile trail particle" "burningplayer_blue"
+                "custom impact sound" "misc/doomsday_missile_explosion.wav"
+                "custom kill icon" "megaton"
             }
         }
 
@@ -674,6 +869,21 @@ WaveSchedule
 			Template T_TFBot_Sniper_Anti_Materiel
 		}
 	}
+    Mission // Spy (Wave 3)
+    {
+        Objective Spy
+        Where spawnbot_mission_spy
+        BeginAtWave 3
+        RunForThisManyWaves 1
+        InitialCooldown 30
+        CooldownTime 30
+        DesiredCount 3
+
+        TFBot
+        {
+            Template T_TFBot_Spy
+        }
+    }
 
     //// WAVES ////
 
@@ -1920,7 +2130,7 @@ WaveSchedule
         }
 
         // Subwave 3
-        WaveSpawn // Forgeborn Pyro and 3 Burst Pomson Engineers (Necrodancer and Leonheart)
+        WaveSpawn // Forgeborn Pyro (Necrodancer)
         {
             Name "Wave3_Subwave3_ForgebornPyro"
             WaitForAllSpawned "Wave3_Subwave2_GFuryPyro3"
@@ -1932,11 +2142,11 @@ WaveSchedule
             WaitBetweenSpawns 0
             TotalCurrency 400
 
-            FirstSpawnWarningSound "mvm/mvm_giant_heavy/giant_heavy_entrance.wav"
+            FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
 
             TFBot
             {
-                Template T_TFBot_Miniboss_Pyro_Blaster
+                Template T_TFBot_Miniboss_Pyro_Forgeborn
             }
         }
         WaveSpawn // 10 Burst Demos (Table)
@@ -1999,6 +2209,558 @@ WaveSchedule
             Param "
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
+        }
+
+        // Subwave 1
+        WaveSpawn // Support GSnipers (Arlecchino)
+        {
+            Name "Wave4_Subwave1_GSniper"
+            Where spawnbot_right
+            Support 1
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawnsAfterDeath 15
+            TotalCurrency 0
+
+            TFBot
+            {
+                Name "Experiment 'Promeia'"
+                Template T_TFBot_Giant_Sniper_Explosive_Headshot
+                Action Sniper
+            }
+        }
+
+        WaveSpawn // 1 GHeater Heavy and 1 Shield Medic (Mike and DhzSquared)
+        {
+            Name "Wave4_Subwave1_GHeaterHeavy"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            FirstSpawnWarningSound "vo/mvm/mght/heavy_mvm_m_specialcompleted04.mp3"
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_Heater_Supercharged
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Shield
+                }
+            }
+        }
+        
+        WaveSpawn // 12 Soldiers (Kai)
+        {
+            Name "Wave4_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+            }
+        }
+        WaveSpawn // 6 Rapid Fire Soldiers (Package)
+        {
+            Name "Wave4_Subwave1_Soldiers"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer
+                Attributes AlwaysCrit
+            }
+        }
+
+        WaveSpawn // 1 GHeater Heavy and 1 Shield Medic (Mike and DhzSquared)
+        {
+            Name "Wave4_Subwave1_GHeaterHeavy2"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_Heater_Supercharged
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Shield
+                }
+            }
+        }
+        
+        WaveSpawn // 12 Soldiers (Kai)
+        {
+            Name "Wave4_Subwave1_Soldiers2"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy2"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+            }
+        }
+        WaveSpawn // 6 Rapid Fire Soldiers (Package)
+        {
+            Name "Wave4_Subwave1_Soldiers2"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy2"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer
+                Attributes AlwaysCrit
+            }
+        }
+
+        WaveSpawn // 1 GHeater Heavy and 1 Shield Medic (Mike and DhzSquared)
+        {
+            Name "Wave4_Subwave1_GHeaterHeavy3"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy2"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_Heater_Supercharged
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Shield
+                }
+            }
+        }
+        
+        WaveSpawn // 12 Soldiers (Kai)
+        {
+            Name "Wave4_Subwave1_Soldiers3"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy3"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Class Soldier
+                Skill Expert
+            }
+        }
+        WaveSpawn // 6 Rapid Fire Soldiers (Package)
+        {
+            Name "Wave4_Subwave1_Soldiers3"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy3"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 2
+            WaitBeforeStarting 3
+            WaitBetweenSpawns 6
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer
+                Attributes AlwaysCrit
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GRapid Scout (Kai)
+        {
+            Name "Wave4_Subwave2_GRapidScout"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy3"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 10
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Spammer
+            }
+        }
+        WaveSpawn // 1 GRapid Scout (Kai)
+        {
+            Name "Wave4_Subwave2_GRapidScout"
+            WaitForAllSpawned "Wave4_Subwave1_GHeaterHeavy3"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 10
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Spammer
+            }
+        }
+
+        WaveSpawn // 1 Armageddon Soldier (Table)
+        {
+            Name "Wave4_Subwave2_Armageddon"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout"
+            Where spawnbot_tank
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Nuclear
+            }
+        }
+
+        WaveSpawn // 10 Fury Pyros (Kai)
+        {
+            Name "Wave4_Subwave2_FuryPyros"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Dragon_Fury
+            }
+        }
+        WaveSpawn // 10 Demomen (Kai)
+        {
+            Name "Wave4_Subwave2_Demomen"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Supercharged
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GRapid Scout (Kai)
+        {
+            Name "Wave4_Subwave2_GRapidScout2"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 10
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Spammer
+            }
+        }
+        WaveSpawn // 1 GRapid Scout (Kai)
+        {
+            Name "Wave4_Subwave2_GRapidScout2"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout"
+            Where spawnbot_right
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 10
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Scout_Spammer
+            }
+        }
+
+        WaveSpawn // 1 Armageddon Soldier (Table)
+        {
+            Name "Wave4_Subwave2_Armageddon2"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout2"
+            Where spawnbot_tank
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Nuclear
+            }
+        }
+
+        WaveSpawn // 10 Fury Pyros (Kai)
+        {
+            Name "Wave4_Subwave2_FuryPyros2"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Dragon_Fury
+            }
+        }
+        WaveSpawn // 10 Demomen (Kai)
+        {
+            Name "Wave4_Subwave2_Demomen2"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Supercharged
+            }
+        }
+
+        WaveSpawn // 4 GRapid Loch Demos (Datlad11)
+        {
+            Name "Wave4_Subwave2_GLochDemos"
+            WaitForAllSpawned "Wave4_Subwave2_GRapidScout2"
+            Where spawnbot
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 4
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+                FormationSize 200
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Lochnload_Spammer
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Lochnload_Spammer
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Lochnload_Spammer
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Lochnload_Spammer
+                    Attributes AlwaysCrit
+                }
+            }
+        }
+
+        WaveSpawn // 1 Armageddon Soldier (Table)
+        {
+            Name "Wave4_Subwave2_Armageddon3"
+            WaitForAllSpawned "Wave4_Subwave2_GLochDemos"
+            Where spawnbot_tank
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Nuclear
+            }
+        }
+
+        WaveSpawn // 10 Fury Pyros (Kai)
+        {
+            Name "Wave4_Subwave2_FuryPyros3"
+            WaitForAllSpawned "Wave4_Subwave2_GLochDemos"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Dragon_Fury
+            }
+        }
+        WaveSpawn // 10 Demomen (Kai)
+        {
+            Name "Wave4_Subwave2_Demomen3"
+            WaitForAllSpawned "Wave4_Subwave2_GLochDemos"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 6
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Supercharged
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_force_left`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // Support Master-Weapons Engineer (Kai and Wooper)
+        {
+            Name "Wave5_Subwave1_MasterWeapons"
+            Where spawnbot
+            Support 1
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 15
+            WaitBetweenSpawnsAfterDeath 15
+            TotalCurrency 0
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Engineer_MasterWeapons
+                Attributes TeleportToHint
+                TeleportWhere spawnbot_left
+                TeleportWhere spawnbot_right
+            }
+        }
+
+        WaveSpawn
+        {
+            Name "Wave5_Subwave1_Widowmaker"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Miniboss_Engineer_Widowmaker
+                Action FetchFlag
+            }
         }
     }
 }
