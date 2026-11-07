@@ -49,6 +49,44 @@ WaveSchedule
 
     PrecacheSound "planned_obsolescence_death.mp3"
 
+    //// CUSTOM WEAPONS ////
+
+    CustomWeapon
+    {
+        //// WEAPONS ////
+
+        "RocketAttack"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+			"damage bonus" 1.5
+			"projectile speed decreased" 0.65
+			"mod projectile heat seek power" 360
+			"mod projectile heat aim error" 360
+			"mod projectile heat aim time" 0.75
+			"mod projectile heat no predict target speed" 1
+			"projectile trail particle" "eyeboss_projectile"
+		}
+
+        //// COSMETICS ////
+
+        "BackpackRocket1"
+        {
+            OriginalItemName "Highland High Heels"
+            "custom item model" "models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl"
+            "attachment name" "flag"
+            "attachment angles" "0 270 0"
+            "attachment offset" "25 0 0"
+        }
+        "BackpackRocket2"
+        {
+            OriginalItemName "Potato of Labor"
+            "custom item model" "models/weapons/c_models/c_rocketlauncher/c_rocketlauncher.mdl"
+            "attachment name" "flag"
+            "attachment angles" "0 270 0"
+            "attachment offset" "-25 0 0"
+        }
+    }
+
     //// POINT TEMPLATES ////
 
     PointTemplates
@@ -245,6 +283,67 @@ WaveSchedule
 			}
         }
 
+        HyperionPT
+        {
+
+            // Rocket Attack //
+
+            OnSpawnOutput
+			{
+				Target "RocketAttackLeft"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+			OnSpawnOutput
+			{
+				Target "RocketAttackRight"
+				Action "$SetOwner"
+				Param "!activator"
+				Delay 0.02
+			}
+
+            logic_relay
+			{
+				"targetname" "RocketBarrageRelay"
+
+				"OnTrigger" "RocketAttack*,FireOnce,,0,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,0.2,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,0.4,-1"
+
+				"OnTrigger" "RocketAttack*,FireOnce,,1.4,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1.6,-1"
+				"OnTrigger" "RocketAttack*,FireOnce,,1.8,-1"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketAttackLeft"
+				"origin" "25 50 150"
+				"angles" "315 0 0"
+
+				"$weaponname" "RocketAttack"
+				"teamnum" "3"
+				"crits" "false"
+				"$preventshootparent" "1"
+
+				"spawnflags" "1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketAttackRight"
+				"origin" "25 -50 150"
+				"angles" "315 0 0"
+
+				"$weaponname" "RocketAttack"
+				"teamnum" "3"
+				"crits" "false"
+				"$preventshootparent" "1"
+
+				"spawnflags" "1"
+			}
+        }
+
         //// TANK PTs ////
 
         RocketSentryTankPT
@@ -311,7 +410,6 @@ WaveSchedule
             WeaponRestrictions PrimaryOnly
 
             CustomEyeGlowColor "255 0 0"
-            UseHumanAnimations 1
 
             UseMeleeThreatPrioritization 1
             AimTrackingInterval 0.001
@@ -362,7 +460,6 @@ WaveSchedule
             WeaponRestrictions SecondaryOnly
 
             CustomEyeGlowColor "255 0 0"
-            UseHumanAnimations 1
 
             UseMeleeThreatPrioritization 1
             AimTrackingInterval 0.001
@@ -422,7 +519,6 @@ WaveSchedule
             WeaponRestrictions PrimaryOnly
 
             CustomEyeGlowColor "255 0 0"
-            UseHumanAnimations 1
 
             MaxVisionRange 1200
 
@@ -451,6 +547,115 @@ WaveSchedule
 
                 "damage bonus" 1.25
                 "fire rate bonus" 0.6
+            }
+        }
+
+        T_TFBot_Miniboss_Heavy_Hyperion
+        {
+            Name "Experiment 'Hyperion'"
+            Class Heavy
+            ClassIcon heavy_head_nys_giant
+            Skill Expert
+            Health 45000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            WeaponRestrictions PrimaryOnly
+
+            CustomEyeGlowColor "255 0 0"
+
+            MaxVisionRange 1200
+
+            UseMeleeThreatPrioritization 1
+            FOV 346
+
+            SpawnTemplate "HyperionPT"
+
+            Item "Upgradeable TF_WEAPON_MINIGUN"
+
+            Item "BackpackRocket1" [$SIGSEGV]
+            Item "BackpackRocket2" [$SIGSEGV]
+
+            ChangeAttributes
+            {
+                Name "OppressorPhase"
+                Delay 0
+                Repeats 1
+            }
+            FireInput
+            {
+                Target !activator
+                Action $ChangeAttributes
+                Param "IncineratorPhase"
+                Delay 0
+                Repeats 1
+                IfHealthBelow 20000
+            }
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.4
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+                "airblast vertical vulnerability multiplier" 0
+                "mult stun resistance" 0
+                "rage giving scale" 0.5
+                "override footstep sound set" 2
+            }
+
+            EventChangeAttributes
+            {
+                OppressorPhase [$SIGSEGV]
+                {
+                    ItemAttributes
+                    {
+                        ItemName "Upgradeable TF_WEAPON_MINIGUN"
+
+                        "damage bonus" 2
+
+                        "fire rate penalty" 1.5
+
+                        "item style override" 1
+                    }
+
+                    AddAttribute
+                    {
+                        Item "BackpackRocket1"
+                        Name "attachment scale"
+                        Value "2.35"
+                        Delay 0.1
+                        Repeats 1
+                        Cooldown -1
+                    }
+                    AddAttribute
+                    {
+                        Item "BackpackRocket2"
+                        Name "attachment scale"
+                        Value "2.35"
+                        Delay 0.1
+                        Repeats 1
+                        Cooldown -1
+                    }
+
+                    FireInput
+					{
+						Target "RocketBarrageRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 0
+						Cooldown 5
+						IfLeftSpawn 1
+					}
+                }
+                IncineratorPhase [$SIGSEGV]
+                {
+                    Item "The Huo Long Heatmaker"
+
+                    ItemAttributes
+                    {
+                        ItemName "The Huo Long Heatmaker"
+                    }
+                }
             }
         }
 
@@ -616,6 +821,102 @@ WaveSchedule
 
                 "fire rate bonus" 0.75
                 "faster reload rate" 0.001
+            }
+        }
+        T_TFBot_Giant_Heavy_BrassBeast
+		{
+			Name "Giant Brass Beast Heavy"
+			Class Heavy
+			ClassIcon heavy_brass_nys_giant
+			Skill Expert
+			Health 5000
+			Attributes MiniBoss
+			WeaponRestrictions PrimaryOnly
+
+			MaxVisionRange 1200
+
+			Item "The Brass Beast"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Brass Beast"
+
+				"damage bonus" 2.5
+				"minigun spinup time increased" 3.5
+			}
+		}
+        T_TFBot_Giant_Soldier_Burst_Arc_Accel
+        {
+            Name "Giant Accelerator Arc Soldier"
+            Class Soldier
+            ClassIcon soldier_rocketrain_accel_giant
+            Skill Expert
+            Health 4000
+            Attributes MiniBoss
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 3
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_ROCKETLAUNCHER"
+				"fire rate bonus" 0.4
+				"faster reload rate" 0.8
+				"projectile speed decreased" 0.25
+
+                "projectile acceleration" 5000
+				"projectile acceleration start time" 0.75
+				"projectile acceleration time" 1
+
+				"ignores other projectiles" 1
+				"mult projectile count" 5
+				"spread angle pattern" "0 -6 0|0 -3 0|0 0 0|0 3 0|0 6 0"
+			}
+        }
+        T_TFBot_Giant_Heavy_Natascha_Magnetic
+        {
+            Name "Giant Magnetic Natascha Heavy"
+            Class Heavy
+            ClassIcon heavy_natascha_magnetic_nys_giant
+            Skill Expert
+            Health 5000
+            Attributes MiniBoss
+            WeaponRestrictions PrimaryOnly
+
+            MaxVisionRange 1200
+
+            Item "Natascha"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.3
+				"airblast vulnerability multiplier" 0.3
+				"override footstep sound set" 2
+			}
+
+            ItemAttributes
+            {
+                ItemName "Natascha"
+
+                "damage bonus" 1.5
+                "apply look velocity on damage" -500
+                "apply z velocity on damage" -500
             }
         }
 
@@ -797,7 +1098,6 @@ WaveSchedule
                 "uber duration bonus" -7
             }
         }
-
         T_TFBot_Soldier_Stunner
         {
             Name "Stunner Soldier"
@@ -815,7 +1115,6 @@ WaveSchedule
                 "projectile speed decreased" 0.9
             }
         }
-
         T_TFBot_Pyro_Phlogistinator
         {
             Name "Phlogistinator Pyro"
@@ -829,6 +1128,48 @@ WaveSchedule
 			{
 				Type "Secondary"
                 IfSeeTarget 1
+				Delay 0.5
+				Duration 0.5
+				Repeats 0
+				Cooldown 0.5
+			}
+        }
+        T_TFBot_Medic_Uber_Shield
+        {
+            Name "Uber-Shield Medic"
+            Class Medic
+            ClassIcon medic_uber_shield
+            Skill Normal
+            Attributes SpawnWithFullCharge
+            Attributes ProjectileShield
+
+            CharacterAttributes
+            {
+				"bot medic uber health threshold" 50000
+                "bot medic uber deploy delay duration" 900
+                "mod weapon blocks healing" 1
+            }
+
+            ItemAttributes
+			{
+				ItemName "TF_WEAPON_SYRINGEGUN_MEDIC"
+
+				"damage penalty" 0.1
+			}
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_MEDIGUN"
+
+                "heal rate bonus" 5
+				"ubercharge rate bonus" 2
+                "generate rage on heal" 1
+                "increase buff duration" 100
+            }
+
+			FireWeapon
+			{
+				Type "Special"
 				Delay 0.5
 				Duration 0.5
 				Repeats 0
@@ -1842,6 +2183,8 @@ WaveSchedule
             WaitBetweenSpawns 0
             TotalCurrency 40
 
+            FirstSpawnWarningSound "ambient/alarms/manhack_alert_pass1.wav"
+
             Tank
             {
                 Template Tank_Combat_Minigun_Tiny
@@ -2732,7 +3075,7 @@ WaveSchedule
             TotalCount 1
             MaxActive 1
             SpawnCount 1
-            WaitBeforeStarting 15
+            WaitBeforeStarting 20
             WaitBetweenSpawnsAfterDeath 15
             TotalCurrency 0
 
@@ -2745,7 +3088,7 @@ WaveSchedule
             }
         }
 
-        WaveSpawn
+        WaveSpawn // Widowmaker Maniac (DhzSquared)
         {
             Name "Wave5_Subwave1_Widowmaker"
             Where spawnbot
@@ -2756,11 +3099,293 @@ WaveSchedule
             WaitBetweenSpawns 0
             TotalCurrency 100
 
+            FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
             TFBot
             {
                 Template T_TFBot_Miniboss_Engineer_Widowmaker
                 Action FetchFlag
             }
         }
+
+        WaveSpawn // 12 Rapid Demomen (Hoshi)
+        {
+            Name "Wave5_Subwave1_Demomen"
+            WaitForAllSpawned "Wave5_Subwave1_Widowmaker"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 12
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Spammer
+            }
+        }
+        WaveSpawn // 30 Conch Soldiers (Leonheart)
+        {
+            Name "Wave5_Subwave1_ConchSoldiers"
+            WaitForAllSpawned "Wave5_Subwave1_Widowmaker"
+            Where spawnbot
+            TotalCount 30
+            MaxActive 8
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 1
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Extended_Concheror
+                Attributes AlwaysCrit
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GBrass Heavy and 1 GKritz Medic (Owy)
+        {
+            Name "Wave5_Subwave2_GBrassHeavy"
+            WaitForAllDead "Wave5_Subwave1_Widowmaker"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_BrassBeast
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Kritzkrieg
+                }
+            }
+        }
+        WaveSpawn // 1 GBurst Arc Accel Soldier (Package, had to stretch this one)
+        {
+            Name "Wave5_Subwave2_GBurstArcSoldier"
+            WaitForAllDead "Wave5_Subwave1_Widowmaker"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst_Arc_Accel
+            }
+        }
+        WaveSpawn // 14 Scouts (The Fat)
+        {
+            Name "Wave5_Subwave2_Scouts"
+            WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 14
+            MaxActive 9
+            SpawnCount 7
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Blaster_Supercharged
+            }
+        }
+
+        WaveSpawn // 1 GNatascha Heavy and 1 Uber-Shield Medic (DhzSquared and Mike)
+        {
+            Name "Wave5_Subwave2_GNataschaHeavy"
+            WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_Natascha_Magnetic
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Shield
+                }
+            }
+        }
+        WaveSpawn // 1 GBurst Arc Accel Soldier (Package, had to stretch this one)
+        {
+            Name "Wave5_Subwave2_GBurstArcSoldier2"
+            WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst_Arc_Accel
+            }
+        }
+        WaveSpawn // 14 Pyros (Mike and Leonheart)
+        {
+            Name "Wave5_Subwave2_Pyros"
+            WaitForAllSpawned "Wave5_Subwave2_GNataschaHeavy"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 14
+            MaxActive 9
+            SpawnCount 7
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Supercharged
+            }
+        }
+
+        WaveSpawn // 1 GBrass Heavy and 1 GKritz Medic (Owy)
+        {
+            Name "Wave5_Subwave2_GBrassHeavy2"
+            WaitForAllSpawned "Wave5_Subwave2_GNataschaHeavy"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_BrassBeast
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Kritzkrieg
+                }
+            }
+        }
+        WaveSpawn // 1 GBurst Arc Accel Soldier (Package, had to stretch this one)
+        {
+            Name "Wave5_Subwave2_GBurstArcSoldier3"
+            WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy2"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst_Arc_Accel
+            }
+        }
+        WaveSpawn // 14 Scouts (The Fat)
+        {
+            Name "Wave5_Subwave2_Scouts2"
+            WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy2"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 14
+            MaxActive 9
+            SpawnCount 7
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Blaster_Supercharged
+            }
+        }
+
+        WaveSpawn // 1 GNatascha Heavy and 1 Uber-Shield Medic (DhzSquared and Mike)
+        {
+            Name "Wave5_Subwave2_GNataschaHeavy2"
+            WaitForAllSpawned "Wave5_Subwave2_GBrassHeavy2"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy_Natascha_Magnetic
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Shield
+                }
+            }
+        }
+        WaveSpawn // 1 GBurst Arc Accel Soldier (Package, had to stretch this one)
+        {
+            Name "Wave5_Subwave2_GBurstArcSoldier4"
+            WaitForAllSpawned "Wave5_Subwave2_GNataschaHeavy2"
+            Where spawnbot_left
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst_Arc_Accel
+            }
+        }
+        WaveSpawn // 14 Pyros (Mike and Leonheart)
+        {
+            Name "Wave5_Subwave2_Pyros2"
+            WaitForAllSpawned "Wave5_Subwave2_GNataschaHeavy2"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 14
+            MaxActive 9
+            SpawnCount 7
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Supercharged
+            }
+        }
+
+        // Subwave 3
     }
 }
