@@ -46,6 +46,9 @@ WaveSchedule
 	// Precached Sounds //
 
 	PrecacheSound "music/mutuallyassureddestruction/abandoned_in_place.mp3"
+	PrecacheSound "music/mutuallyassureddestruction/king_tank_prelude.mp3"
+	PrecacheSound "music/mutuallyassureddestruction/king_tank_phase_1.mp3"
+	PrecacheSound "music/mutuallyassureddestruction/king_tank_phase_2.mp3"
 	PrecacheSound "lastlegs_alt_cmprsd.mp3"
 
 	PrecacheSound "mvm_tank_deploy_slow.wav"
@@ -212,7 +215,7 @@ WaveSchedule
 
 						TankExt.NewTankType(`tankexplosion`,
 						{
-							function Kablooey()
+							function OnDeath()
 							{
 								local flDamage = 600
 								local flRange  = 500
@@ -907,7 +910,6 @@ WaveSchedule
 				"OnTrigger" "!activator,Color,255 0 0,1.9,-1"
 
 				"OnTrigger" "!activator,$PlaySound,items/cart_explode.wav,1.99,-1"
-				"OnTrigger" "!activator,CallScriptFunction,Kablooey,1.99,-1"
 				"OnTrigger" "!activator,RemoveHealth,9999999,2,-1"
 
 				"spawnflags" "2"
@@ -1211,6 +1213,7 @@ WaveSchedule
 				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 8,2,-1"
 				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,2.1,-1"
 				"OnTrigger" "BenedictUberTankSmoke,Start,,2.1,-1"
+				"OnTrigger" "BenedictUberTank,SetSpeed,90,2.1,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_bomb_warning.wav,3,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_tank_alerts07.mp3,3,-1"
@@ -1242,6 +1245,7 @@ WaveSchedule
 				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 8,2,-1"
 				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,2.1,-1"
 				"OnTrigger" "BenedictUberTankSmoke,Start,,2.1,-1"
+				"OnTrigger" "BenedictUberTank,SetSpeed,90,2.1,-1"
 
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_bomb_warning.wav,3,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_tank_alerts06.mp3,3,-1"
@@ -1291,9 +1295,6 @@ WaveSchedule
 				"OnTrigger" "BenedictUberTankStunParticle,Start,,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_1.wav,0,-1"
-
-				"OnTrigger" "TankTeleportLeftSideRelay,Enable,,0,-1"
-				"OnTrigger" "TankTeleportRightSideRelay,Enable,,0,-1"
 
 				"OnTrigger" "tf_gamerules,$StopVO,mvm_tank_deploy_slow.wav,0,-1"
 				"OnTrigger" "tf_gamerules,$StopVO,mvm_tank_deploy_slow.wav,0.01,-1"
@@ -1353,10 +1354,14 @@ WaveSchedule
 			{
 				"targetname" "BenedictUberTankPhase1Relay"
 
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_UberMaintainers,5,-1"
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_TankSupport,5,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_UberMaintainers,0,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_TankSupport,0,-1"
 
 				"OnTrigger" "BenedictUberTankPhase2Relay,Enable,,1,-1"
+
+				"OnTrigger" "TankTeleportLeftSideRelay,Enable,,5,-1"
+				"OnTrigger" "TankTeleportRightSideRelay,Enable,,5,-1"
+
 				"OnTrigger" "!self,Disable,,1.1,-1"
 			}
 			logic_relay
@@ -2202,34 +2207,6 @@ WaveSchedule
             }
 		}
 
-		T_TFBot_MercenaryBuster
-		{
-			Name "Mercenary Buster"
-			Template T_TFBot_SentryBuster
-			ClassIcon sentrybuster_mercenary
-			Health 1250
-			Action SuicideBomber
-
-			UseBusterModel 1
-
-			Item "MercBusterHelmet" [$SIGSEGV]
-
-			CharacterAttributes
-			{
-				"move speed bonus" 2
-				"head scale" 3
-				"torso scale" 0.1
-			}
-
-			InterruptAction
-			{
-				AimTarget "ClosestPlayer"
-				Delay 0
-				Repeats 1
-				Duration 3
-			}
-		}
-
 		T_TFBot_Miniboss_Heavy_MegaLaser
 		{
 			Name "Prototype XL-27M"
@@ -2615,6 +2592,9 @@ WaveSchedule
                   "
         }
 
+		CustomWaveNumber 1
+		CustomMaxWaveNumber 6
+
 		// Subwave 1
 		WaveSpawn // 1 GBrassBeast Heavy and 2 GCharged Medics
 		{
@@ -2993,6 +2973,9 @@ WaveSchedule
                     EntFire(`wave_finished_relay`, `Trigger`)
                   "
         }
+
+		CustomWaveNumber 2
+		CustomMaxWaveNumber 6
 
 		// Subwave 1
 		WaveSpawn // 1 Tank
@@ -3883,6 +3866,9 @@ WaveSchedule
                   "
         }
 
+		CustomWaveNumber 3
+		CustomMaxWaveNumber 6
+
 		// Subwave 1
 		WaveSpawn // Big Bad Warning
 		{
@@ -4434,6 +4420,9 @@ WaveSchedule
                   "
         }
 
+		CustomWaveNumber 4
+		CustomMaxWaveNumber 6
+
 		// Subwave 1
 		WaveSpawn
 		{
@@ -4563,7 +4552,7 @@ WaveSchedule
 				{
 					Class Demoman
 					Name "Extended Conch Demo"
-					ClassIcon demo_banner_trio_lite
+					ClassIcon demo_conch
 					Attributes SpawnWithFullCharge
 					Item "The Concheror"
 
@@ -4579,7 +4568,7 @@ WaveSchedule
 				{
 					Class Demoman
 					Name "Extended Conch Demo"
-					ClassIcon demo_banner_trio_lite
+					ClassIcon demo_conch
 					Attributes SpawnWithFullCharge
 					Item "The Concheror"
 
@@ -4595,7 +4584,7 @@ WaveSchedule
 				{
 					Class Demoman
 					Name "Extended Buff Demo"
-					ClassIcon demo_banner_trio_lite
+					ClassIcon demo_buff
 					Attributes SpawnWithFullCharge
 					Item "The Buff Banner"
 
@@ -4611,7 +4600,7 @@ WaveSchedule
 				{
 					Class Demoman
 					Name "Extended Backup Demo"
-					ClassIcon demo_banner_trio_lite
+					ClassIcon demo_backup
 					Attributes SpawnWithFullCharge
 					Item "The Battalion's Backup"
 
@@ -4735,11 +4724,11 @@ WaveSchedule
 			WaitForAllDead "Wave4_Subwave2_Giant"
 			WaitForAllSpawned "Wave4_Subwave2_Commons"
 			Where spawnbot
-			TotalCount 75
+			TotalCount 50
 			MaxActive 20
 			SpawnCount 1
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 0.5
+			WaitBetweenSpawns 1
 
 			TotalCurrency 200
 
@@ -4820,7 +4809,7 @@ WaveSchedule
 			TotalCount 5
 			MaxActive 5
 			SpawnCount 5
-			WaitBeforeStarting 2
+			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
 			FirstSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
 			TotalCurrency 300
@@ -4896,6 +4885,23 @@ WaveSchedule
 				}
 			}
 		}
+		WaveSpawn
+        {
+            WaitForAllDead "Wave4_Subwave3_Giants"
+            Where spawnbot
+            TotalCount 100
+            MaxActive 20
+            SpawnCount 5
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 10
+            Support Limited
+            TotalCurrency 0
+
+            TFBot
+            { 
+                Template T_TFBot_Spy
+            }
+        }
 	}
 	Wave
 	{
@@ -4983,6 +4989,7 @@ WaveSchedule
 			TFBot
 			{
 				Template T_TFBot_Giant_Medic_Crossbow_Barrage
+				Action FetchFlag
 
 				CharacterAttributes
 				{
@@ -5250,48 +5257,42 @@ WaveSchedule
 				}
 			}
 		}
-		WaveSpawn // 24 Bazooka Soldiers
-		{
-			Name "Wave5_Subwave3_Soldiers"
-			WaitForAllDead "Wave5_Subwave2_Blimp"
-			Where spawnbot_left
-			TotalCount 24
-			MaxActive 8
-			SpawnCount 8
-			WaitBeforeStarting 4
-			WaitBetweenSpawns 16
-			TotalCurrency 60
-
-			TFBot
-			{
-				Template T_TFBot_Soldier_Bazooka
-				Skill Expert
-				BehaviorModifiers Push
-				Attributes IgnoreFlag
-
-				Tag nav_prefer_flank_lower_left
-			}
-		}
-		WaveSpawn // 24 Bazooka Soldiers
+		WaveSpawn // 6 Bulwark Medics and 18 Rapid Fire Soldiers
 		{
 			Name "Wave5_Subwave3_Soldiers"
 			WaitForAllDead "Wave5_Subwave2_Blimp"
 			Where spawnbot_right
 			TotalCount 24
 			MaxActive 8
-			SpawnCount 8
+			SpawnCount 4
 			WaitBeforeStarting 4
-			WaitBetweenSpawns 16
-			TotalCurrency 60
+			WaitBetweenSpawns 8
+			TotalCurrency 120
 
-			TFBot
+			Squad
 			{
-				Template T_TFBot_Soldier_Bazooka
-				Skill Expert
-				BehaviorModifiers Push
-				Attributes IgnoreFlag
+				NoWaitForFormation 1 [$SIGSEGV]
+				TFBot
+				{
+					Template T_TFBot_Medic_Shield_Bulwark
 
-				Tag nav_prefer_flank_lower_right
+					CharacterAttributes
+					{
+						"move speed penalty" 0.75
+					}
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Spammer
+				}
 			}
 		}
 
@@ -5447,6 +5448,9 @@ WaveSchedule
                   "
         }
 
+		CustomWaveNumber 6
+		CustomMaxWaveNumber 6
+
 		WaveSpawn // Big Bad Warning
 		{
 			Name "Wave6_Subwave1_WarningCall"
@@ -5480,7 +5484,7 @@ WaveSchedule
 			{
 				Name "ubertank|0|-1$targetname|BenedictUberTank^maxturnrate|75^pingsound|npc/combine_gunship/ping_search.wav^disablesmokestack|1"
 				ClassIcon tank_uber_lite_hyper
-				Health 150000
+				Health 225000
 				Speed 75
 				Skin 1
 				StartingPathTrackNode "tank_path_uber_1"
@@ -5513,7 +5517,7 @@ WaveSchedule
 			MaxActive 2
 			SpawnCount 2
 			WaitBeforeStarting 0
-			WaitBetweenSpawns 15
+			WaitBetweenSpawns 0
 			TotalCurrency 40
 
 			StartDisabled 1
@@ -6021,6 +6025,37 @@ WaveSchedule
 					Template T_TFBot_Soldier_Blast
 					Action Mobber
 				}
+			}
+		}
+		Wave
+		{
+			CustomWaveNumber 7
+			CustomMaxWaveNumber 0
+			InitWaveOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+						EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+						EntFire(`bombpath_left_upper_relay`, `Trigger`, null, 6.1)
+					"
+			}
+			StartWaveOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`wave_start_relay`, `Trigger`)
+					"
+			}
+			DoneOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						EntFire(`wave_finished_relay`, `Trigger`)
+					"
 			}
 		}
 	}

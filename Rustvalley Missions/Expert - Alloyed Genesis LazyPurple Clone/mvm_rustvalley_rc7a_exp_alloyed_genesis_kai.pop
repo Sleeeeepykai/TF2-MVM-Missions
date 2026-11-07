@@ -423,6 +423,23 @@ WaveSchedule
 			"custom weapon fire sound" "=55|weapons/rpg/rocketfire1.wav"
             "custom impact sound" "=75|weapons/explode4.wav"
 		}
+
+		"MajorShocksProjectileOrbWeapon"
+		{
+			OriginalItemName "The Cow Mangler 5000"
+
+			"damage bonus" 1.5
+			
+			"projectile speed decreased" 0.4
+			"projectile spread angle penalty" 360
+
+			"mod projectile heat seek power" 360
+			"mod projectile heat aim error" 99999
+			"mod projectile heat aim time" 1.5
+			"mod projectile heat no predict target speed" 1
+
+			"projectile trail particle" "eyeboss_projectile"
+		}
 	}
 
 	//// POINT TEMPLATES ////
@@ -470,6 +487,7 @@ WaveSchedule
 
 						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_directhittaunt02.mp3`)
 						PrecacheSound(`vo/mvm/mght/soldier_mvm_m_battlecry06.mp3`)
+						PrecacheSound(`vo/mvm/mght/taunts/soldier_mvm_m_taunts08.mp3`)
 
 						IncludeScript(`tankextensions_main`)
                 		IncludeScript(`tankextensions/gatetank`)
@@ -4565,7 +4583,6 @@ WaveSchedule
 				"targetname" "FallenShocksLightningGigaOrb"
 				"origin" "-40 0 375"
 				"effect_name" "dxhr_lightningball_parent_blue"
-				"start_active" "0"
 			}
             prop_dynamic
             {
@@ -4773,6 +4790,41 @@ WaveSchedule
 				"targetname" "AlloyedGenesisLaserBombKickParticle"
 				"origin" "50 0 50"
 				"effect_name" "hammer_dust_kickup"
+			}
+
+			// Projectile Orb
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisProjectileOrbAttackRelay"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_yetipunch,0,-1"
+				"OnTrigger" "!activator,$Addcond,87 4,0,-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/taunts/soldier_mvm_m_taunts08.mp3`, pitch = 85, special_dsp = 10, filter_type = 5})0-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `vo/mvm/mght/taunts/soldier_mvm_m_taunts08.mp3`, pitch = 85, special_dsp = 10, filter_type = 5})0-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,misc/halloween/spell_spawn_boss.wav,3.75,-1"
+				"OnTrigger" "FallenShocksLightningGigaTesla,TurnOn,,3.75,-1"
+				"OnTrigger" "FallenShocksLightningGigaOrb,Start,,3.75,-1"
+				
+				"OnTrigger" "!activator,$PlaySequence,run_primary,4,-1"
+				"OnTrigger" "AlloyedGenesisProjectileOrbWeapon,$StartFiring,,4,-1"
+
+				"OnTrigger" "FallenShocksLightningGigaTesla,TurnOff,,12,-1"
+				"OnTrigger" "FallenShocksLightningGigaOrb,Stop,,12,-1"
+				"OnTrigger" "AlloyedGenesisProjectileOrbWeapon,$StopFiring,,12,-1"
+				"OnTrigger" "AlloyedGenesisAttackInit,Trigger,,13,-1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "AlloyedGenesisProjectileOrbWeapon"
+				"origin" "-40 0 375"
+
+				"teamnum" "3"
+				"$weaponname" "MajorShocksProjectileOrbWeapon"
+				"$firetime" "0.33"
+				"$preventshootparent" "1"
 			}
 		}
 		AlloyedGenesisLoseCondPT
@@ -8602,6 +8654,54 @@ WaveSchedule
 					FireInput
 					{
 						Target "AlloyedGenesisLaserBombKickAttackRelay"
+						Action "Trigger"
+						Delay 0
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				AlloyedGenesisShocksProjectileOrb [$SIGSEGV]
+				{
+					Item "TF_WEAPON_ROCKETLAUNCHER"
+					Item "TF_WEAPON_SHOTGUN_SOLDIER"
+					Item "TF_WEAPON_SHOVEL"
+
+					Item "The Hellmet"
+            		Item "Big Steel Jaw of Summer Fun"
+
+					UseCustomModel "models/bots/soldier/major_shocks/bot_major_shocks_02_attacks.mdl"
+
+					ItemAttributes
+					{
+						ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+						"fire rate bonus" 0.75
+						"mult projectile count" 3
+						"spread angle pattern" "5 -5 0|5 5 0|-5 0 0|0 -3 0|0 0 0|0 3 0|-5 -5 0|-5 5 0|5 0 0|0 -3 0|0 0 0|0 3 0"
+						"shoot pattern reset time" 5
+
+						"projectile speed decreased" 0.25
+						"projectile spread angle penalty" 3
+
+						"projectile acceleration" 1500
+						"projectile acceleration start time" 0.75
+						"projectile acceleration time" 1
+
+						"ignores other projectiles" 1
+					}
+
+					FireInput
+					{
+						Target "!activator"
+						Action "SetModelScale"
+						Param "4"
+						Delay 0.015
+						Repeats 1
+					}
+
+					FireInput
+					{
+						Target "AlloyedGenesisProjectileOrbAttackRelay"
 						Action "Trigger"
 						Delay 0
 						Repeats 1

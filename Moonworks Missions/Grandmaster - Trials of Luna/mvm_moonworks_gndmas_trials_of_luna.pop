@@ -1,0 +1,2004 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 400
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 2500
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+    BodyPartScaleSpeed 10
+
+    MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+    //// PRECACHES ////
+
+    // Precached Models
+
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+	PrecacheModel "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
+
+	// Precached Particles
+
+	PrecacheParticle "spell_fireball_small_trail_red"
+
+    // Precached Sounds
+
+    PrecacheSound "planned_obsolescence_death.mp3"
+
+    //// POINT TEMPLATES ////
+
+    PointTemplates
+    {
+        CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `(Grandmaster) Trials of Luna`)
+
+                        Convars.SetValue(`tf_playergib`, 0)
+
+                        IncludeScript(`tankhealthbars`)
+						IncludeScript(`tankextensions_main`)
+                        IncludeScript(`tankextensions/combattank`)
+                        IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
+                        IncludeScript(`tankextensions/combattank_weapons/minigun`)
+                        IncludeScript(`tankextensions/sentrytank`)
+
+                        TankExt.SetValueOverrides({
+                            COMBATTANK_ROCKETPOD_ROCKET_DAMAGE = 30
+                            COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.2
+                            COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_RPG.Single`
+                            COMBATTANK_ROCKETPOD_ROCKET = `models/weapons/w_models/w_rocket.mdl`
+
+                            COMBATTANK_MINIGUN_BULLET_DAMAGE = 10
+                            COMBATTANK_MINIGUN_FIRE_DELAY = 0.105
+                            COMBATTANK_MINIGUN_SND_SPINUP = `)weapons/minigun_wind_up.wav`
+                            COMBATTANK_MINIGUN_SND_SPINNING = `)weapons/minigun_spin.wav`
+                            COMBATTANK_MINIGUN_SND_SPINDOWN = `)weapons/minigun_wind_down.wav`
+                            COMBATTANK_MINIGUN_SND_FIRE = `)weapons/minigun_shoot.wav`
+
+                            SENTRYTANK_SENTRY_DEFAULTUPGRADE = 0
+                            SENTRYTANK_SENTRY_HEALTH = 3000
+                        })
+
+                        TANKHEALTHBARS_TEXT_HEIGHT_OFFSET = 72
+					  "
+			}
+		}
+
+        //// MINIBOSS PTs ////
+
+        BlastMasterPT
+        {
+            KeepAlive 1
+
+            RemoveIfKilled "BlastMaster"
+
+            OnSpawnOutput
+            {
+                Target BlastMasterBotModel
+                Action TurnOff
+            }
+            OnParentKilledOutput
+            {
+                Target BlastMasterDeathRelay
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "BlastMasterDeathRelay"
+
+                "OnTrigger" "BlastMasterBotModel,TurnOn,,0,-1"
+                "OnTrigger" "BlastMaster,SetAnimation,primary_death_backstab,0,-1"
+                "OnTrigger" "BlastMaster,SetPlaybackRate,0.5,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/scout_mvm_m_paincrticialdeath03.mp3,0,-1"
+                
+                "OnTrigger" "tf_gamerules,$StopVO,vo/mvm/mght/scout_mvm_m_paincrticialdeath03.mp3,2.33,-1"
+                "OnTrigger" "BlastMasterBotModel,TurnOff,,2.33,-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)2.33-1"
+                "OnTrigger" "BlastMasterDeathParticle,Start,,2.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,planned_obsolescence_death.mp3,2.33,-1"
+
+                "OnTrigger" "BlastMaster,Kill,,3.33,-1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "BlastMaster"
+
+                "model" "models/player/scout.mdl"
+                "modelscale" "2"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "BlastMasterBotModel"
+				"initialowner" "BlastMaster"
+
+                "model" "models/bots/scout_boss/bot_scout_boss.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            info_particle_system
+			{
+				"targetname" "BlastMasterDeathParticle"
+				"origin" "0 0 70"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "BlastMasterDeathParticle"
+				"origin" "0 0 120"
+				"effect_name" "hammer_bell_ring_shockwave"
+				"start_active" "0"
+			}
+        }
+
+        ForgebornPT
+        {
+            KeepAlive 1
+
+            RemoveIfKilled "Forgeborn"
+
+            OnSpawnOutput
+            {
+                Target ForgebornBotModel
+                Action TurnOff
+            }
+            OnParentKilledOutput
+            {
+                Target ForgebornDeathRelay
+                Action Trigger
+            }
+
+            logic_relay
+            {
+                "targetname" "ForgebornDeathRelay"
+
+                "OnTrigger" "ForgebornBotModel,TurnOn,,0,-1"
+                "OnTrigger" "Forgeborn,SetAnimation,primary_death_headshot,0,-1"
+                "OnTrigger" "Forgeborn,SetPlaybackRate,0.5,0,-1"
+
+                "OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/pyro_mvm_m_paincrticialdeath03.mp3,0,-1"
+                
+                "OnTrigger" "tf_gamerules,$StopVO,vo/mvm/mght/pyro_mvm_m_paincrticialdeath03.mp3,3.4,-1"
+                "OnTrigger" "ForgebornBotModel,TurnOff,,3.4,-1"
+                "OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 110, 0.7, 0.1, 1)3.4-1"
+                "OnTrigger" "ForgebornDeathParticle,Start,,3.4,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,planned_obsolescence_death.mp3,3.4,-1"
+
+                "OnTrigger" "Forgeborn,Kill,,4.4,-1"
+            }
+
+            prop_dynamic
+            {
+                "targetname" "Forgeborn"
+
+                "model" "models/player/pyro.mdl"
+                "modelscale" "2"
+
+                "rendermode" "10"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            prop_dynamic_ornament
+            {
+                "targetname" "ForgebornBotModel"
+				"initialowner" "Forgeborn"
+
+                "model" "models/bots/pyro_boss/bot_pyro_boss.mdl"
+                "skin" "1"
+
+                "disablebonefollowers" "1"
+				"disableshadows" "1"
+            }
+            info_particle_system
+			{
+				"targetname" "ForgebornDeathParticle"
+				"origin" "0 0 70"
+				"effect_name" "mvm_tank_destroy"
+				"start_active" "0"
+			}
+			info_particle_system
+			{
+				"targetname" "ForgebornDeathParticle"
+				"origin" "0 0 120"
+				"effect_name" "hammer_bell_ring_shockwave"
+				"start_active" "0"
+			}
+        }
+
+        //// TANK PTs ////
+
+        RocketSentryTankPT
+        {
+            OnSpawnOutput
+            {
+                Target SentryTankSetupRelay
+                Action Trigger
+            }
+            logic_relay
+            {
+                "targetname" "SentryTankSetupRelay"
+
+                "OnTrigger" "@c@!activator,AddOutput,$bulletweapon TF_WEAPON_ROCKETLAUNCHER,0,-1"
+                "OnTrigger" "@c@!activator,AddOutput,$fireratemult 3,0,-1"
+            }
+        }
+    }
+
+    //// SPAWNED POINT TEMPLATES ////
+
+    SpawnTemplate "CorePT"
+
+    //// ROBOT TEMPLATES ////
+    
+    Templates
+    {
+        //// MINIBOSSES ////
+        T_TFBot_Miniboss_Scout_Rocket
+        {
+            Name "Blast-Master Scout"
+            Class Scout
+            ClassIcon scout_head_lite_giant
+            Health 20000
+            Scale 2
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+
+            CustomEyeGlowColor "255 0 0"
+            UseHumanAnimations 1
+
+            UseMeleeThreatPrioritization 1
+            AimTrackingInterval 0.001
+            AimLeadProjectileSpeed 1
+
+            SpawnTemplate "BlastMasterPT"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.75
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+                "airblast vertical vulnerability multiplier" 0
+                "mult stun resistance" 0
+                "rage giving scale" 0.5
+				"override footstep sound set" 5
+
+			}
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_SCATTERGUN"
+                
+                "damage bonus" 5
+                "override projectile type" 2
+                "blast radius decreased" 0.5
+                "mini rockets" 1
+
+                "fire rate penalty" 1.5
+                "clip size penalty" 0.66
+
+                "projectile speed decreased" 0.5
+                "mult projectile count" 10
+                "projectile spread angle penalty" 3
+            }
+        }
+
+        T_TFBot_Miniboss_Pyro_Blaster
+        {
+            Name "Forgeborn Pyro"
+            Class Pyro
+            ClassIcon pyro_head_dead_heat_nys_giant
+            Health 30000
+            Scale 2
+
+            Attributes MiniBoss
+            Attributes UseBossHealthBar
+
+            WeaponRestrictions SecondaryOnly
+
+            CustomEyeGlowColor "255 0 0"
+            UseHumanAnimations 1
+
+            UseMeleeThreatPrioritization 1
+            AimTrackingInterval 0.001
+            AimLeadProjectileSpeed 1
+
+            SpawnTemplate "ForgebornPT"
+
+            CharacterAttributes
+            {
+                "move speed penalty" 0.5
+				"damage force reduction" 0
+				"airblast vulnerability multiplier" 0
+                "airblast vertical vulnerability multiplier" 0
+                "mult stun resistance" 0
+                "rage giving scale" 0.6
+            }
+
+            ItemAttributes
+			{
+				ItemName "TF_WEAPON_SHOTGUN_PYRO"
+
+				"damage bonus" 10
+                "Set DamageType Ignite" 1
+				"add damage type" 2056
+				"remove damage type" 64
+
+				"fire rate penalty" 2.5
+				"mod max primary clip override" -1
+
+				"override projectile type" 2
+				"blast radius decreased" 0.5
+				"projectile speed decreased" 0.65
+				"mult projectile scale" 2
+				"penetrate teammates" 1
+
+                "mult projectile count" 5
+                "spread angle pattern" "0 -6 0|0 -3 0|0 0 0|0 3 0|0 6 0"
+				"custom item model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun.mdl"
+				"custom projectile model" "models/weapons/c_models/c_cryo_gun/c_cryo_gun_fireball.mdl"
+				"projectile trail particle" "~spell_fireball_small_trail_red"
+				"custom weapon fire sound" "MVM.GiantSoldierRocketShootCrit"
+				"custom kill icon" "firedeath"
+			}
+        }
+
+        //// GIANTS ////
+
+        T_TFBot_Scout_Sunstick_Supercharged
+        {
+            Name "Supercharged Sunstick Scout"
+            Class Scout
+            ClassIcon scout_sunstick_hyper_swordstone_giant
+            Skill Expert
+            Health 1600
+            Attributes MiniBoss
+            WeaponRestrictions MeleeOnly
+
+            Item "Sun-on-a-Stick"
+
+            Item "The Bolt Boy"
+
+			CharacterAttributes
+			{
+				"move speed bonus" 2
+				"damage force reduction" 0.7
+				"airblast vulnerability multiplier" 0.7
+				"override footstep sound set" 5
+			}
+
+            ItemAttributes
+            {
+                ItemName "Sun-on-a-Stick"
+
+                "damage bonus" 1.5
+                "damage penalty" 1
+
+                "Set DamageType Ignite" 1
+                "dmg taken from fire reduced on active" 1
+            }
+        }
+        T_TFBot_Giant_Demoman_GrenadeRain
+        {
+            Name "Giant Grenade Rain Demoman"
+            Class Demoman
+            ClassIcon demo_grenaderain_giant
+            Skill Expert
+            Health 3500
+            Attributes MiniBoss
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+
+            AimOffset "0 0 600"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.4
+				"airblast vulnerability multiplier" 0.4
+				"override footstep sound set" 4
+                "gesture speed increase" 5
+			}
+
+			ItemAttributes
+			{
+				ItemName "TF_WEAPON_GRENADELAUNCHER"
+
+				"fire rate bonus" 0.0001
+				"faster reload rate" 0.3
+				"clip size upgrade atomic" 12
+				"projectile speed decreased" 0.6
+				"projectile spread angle penalty" 5
+			}
+        }
+        T_TFBot_Giant_Medic_Crossbow_Burst
+        {
+            Name "Giant Burst Fire Crossbow Medic"
+            Class Medic
+            ClassIcon medic_bow_burstfire_giant
+            Skill Expert
+            Health 4500
+            Attributes MiniBoss
+            Attributes HoldFireUntilFullReload
+            WeaponRestrictions PrimaryOnly
+
+            Item "The Crusader's Crossbow"
+
+            CharacterAttributes
+            {
+                "health drain medic" -3
+                "move speed penalty" 0.5
+                "damage force reduction" 0.6
+                "airblast vulnerability multiplier" 0.6
+            }
+
+            ItemAttributes
+            {
+                ItemName "The Crusader's Crossbow"
+                "add damage type" 2097154
+                "fire rate bonus" 0.66
+                "faster reload rate" 0.2
+                "clip size upgrade atomic" 8
+                "projectile speed decreased" 0.41
+                "projectile gravity" -1
+            }
+        }
+
+        //// MINIGIANTS ////
+
+        T_TFBot_Heavy_Mafia
+        {
+            Name "Mafia Goon Heavy"
+            Class Heavy
+            ClassIcon heavy_accurate_hyper_lite
+            Skill Normal
+            Health 900
+            Scale 1.5
+            WeaponRestrictions PrimaryOnly
+
+            Item "Tomislav"
+            Item "Capone's Capper"
+
+            CharacterAttributes
+            {
+                "move speed bonus" 1.5
+            }
+
+            ItemAttributes
+			{
+				ItemName	"Tomislav"
+				"aiming movespeed increased" 3.0
+				"weapon spread bonus" 0.5
+			}
+
+            FireWeapon
+			{
+				Type "Secondary"
+				Delay 0.5
+				Duration 0.5
+				Repeats 0
+				Cooldown 0.5
+			}
+        }
+        T_TFBot_Heavy_Steelfist_Concheror
+        {
+            Name "Steel Conch Gauntlet"
+            Class Heavy
+            ClassIcon heavy_steelfist_conch
+            Skill Hard
+            Health 900
+            Scale 1.5
+            Attributes SpawnWithFullCharge
+            WeaponRestrictions MeleeOnly
+
+            Item "Fists of Steel"
+
+            Item "The Concheror"
+
+			CharacterAttributes
+			{
+				"deploy time decreased" 0.33
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Concheror"
+
+				"increase buff duration" 9.0
+			}
+        }
+        T_TFBot_Soldier_Spammer_Laser
+        {
+            Name "Rapid Fire Laser Soldier"
+            Class Soldier
+            ClassIcon soldier_bison_spammer
+            Skill Expert
+            Health 600
+            Scale 1.4
+            WeaponRestrictions PrimaryOnly
+
+            Item "The Cow Mangler 5000"
+
+            ItemAttributes
+            {
+                ItemName "The Cow Mangler 5000"
+
+                "dmg penalty vs players" 0.75
+                "fire rate bonus" 0.5
+                "faster reload rate" 0.001
+                "override projectile type" 13
+                "energy weapon penetration" 1
+                "particle color rgb" 57855
+            }
+        }
+
+        //// COMMONS ////
+
+        T_TFBot_Medic_Uber_Flash
+        {
+            Name "Flash-Uber Medic"
+            Class Medic
+            ClassIcon medic_uber_flash
+            Skill Normal
+            Attributes IgnoreEnemies
+
+            CharacterAttributes
+			{
+				"mod weapon blocks healing" 1
+			}
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_SYRINGEGUN_MEDIC"
+
+                "damage penalty" 0.1
+            }
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_MEDIGUN"
+
+                "ubercharge rate bonus" 13.32
+                "uber duration bonus" -7
+            }
+        }
+
+        T_TFBot_Soldier_Stunner
+        {
+            Name "Stunner Soldier"
+            Class Soldier
+            ClassIcon soldier_stun
+            Skill Easy
+            WeaponRestrictions PrimaryOnly
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+                "damage penalty" 0.75
+                "rocket specialist" 1
+                "projectile speed decreased" 0.9
+            }
+        }
+
+        T_TFBot_Pyro_Phlogistinator
+        {
+            Name "Phlogistinator Pyro"
+            Class Pyro
+            ClassIcon pyro_atomic
+            Skill Normal
+            Attributes SpawnWithFullCharge
+            WeaponRestrictions PrimaryOnly
+
+            FireWeapon
+			{
+				Type "Secondary"
+                IfSeeTarget 1
+				Delay 0.5
+				Duration 0.5
+				Repeats 0
+				Cooldown 0.5
+			}
+        }
+    }
+
+    //// MISSION BOTS ////
+
+	Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot
+		BeginAtWave 1
+		RunForThisManyWaves 6
+		InitialCooldown 25
+		CooldownTime 25
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+    Mission // Sniper (Wave 1)
+	{
+		Objective Sniper
+		Where spawnbot_mission_sniper
+		BeginAtWave 1
+		RunForThisManyWaves 1
+		InitialCooldown 10
+		CooldownTime 35
+		DesiredCount 2
+
+		TFBot
+		{
+			Template T_TFBot_Sniper_Anti_Materiel
+		}
+	}
+
+    //// WAVES ////
+
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_force_right`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 4 GRapid Burst Soldiers (Arlecchino)
+        {
+            Name "Wave1_Subwave1_GRapidBurstSoldier"
+            Where spawnbot
+            TotalCount 4
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 16
+            TotalCurrency 100
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst_Spammer
+            }
+        }
+        WaveSpawn // 16 Pyros and 16 Kritz Medics (Mike & Package)
+        {
+            Name "Wave1_Subwave1_Pyros"
+            Where spawnbot
+            TotalCount 32
+            MaxActive 18
+            SpawnCount 6
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 8
+            TotalCurrency 60
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Pyro
+                    Skill Normal
+
+                    ItemAttributes
+                    {
+                        ItemName "TF_WEAPON_FLAMETHROWER"
+
+                        "airblast disabled" 1
+                    }
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Kritzkrieg
+                }
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 Tank (Kai)
+        {
+            Name "Wave1_Subwave2_Tank"
+            WaitForAllSpawned "Wave1_Subwave1_GRapidBurstSoldier"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            Tank
+            {
+                Name "tankboss"
+                Health 32000
+                Speed 75
+                StartingPathTrackNode "boss_path_same"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+        WaveSpawn // 3 GSunstick Scouts (Package)
+        {
+            Name "Wave1_Subwave2_GSunstickScouts"
+            WaitForAllSpawned "Wave1_Subwave2_Tank"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Sunstick_Supercharged
+            }
+        }
+        WaveSpawn // 12 Supercharged Scouts (Waffle, they're my version of Public Enemies)
+        {
+            Name "Wave1_Subwave2_Scouts"
+            WaitForAllSpawned "Wave1_Subwave2_Tank"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 5
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Blaster_Supercharged
+            }
+        }
+        WaveSpawn // 20 Rapid Scouts (Datlad, had to take a bit of liberty here)
+        {
+            Name "Wave1_Subwave2_Scouts"
+            WaitForAllSpawned "Wave1_Subwave2_GSunstickScouts"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 1
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Spammer
+            }
+        }
+
+        WaveSpawn // 3 GSunstick Scouts (Package)
+        {
+            Name "Wave1_Subwave2_GSunstickScouts2"
+            WaitForAllSpawned "Wave1_Subwave2_GSunstickScouts"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 18
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Sunstick_Supercharged
+            }
+        }
+        WaveSpawn // 12 Supercharged Scouts (Waffle, they're my version of Public Enemies)
+        {
+            Name "Wave1_Subwave2_Scouts2"
+            WaitForAllSpawned "Wave1_Subwave2_GSunstickScouts"
+            Where spawnbot
+            TotalCount 12
+            MaxActive 5
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Blaster_Supercharged
+            }
+        }
+        WaveSpawn // 20 Rapid Scouts (Datlad, had to take a bit of liberty here)
+        {
+            Name "Wave1_Subwave2_Scouts2"
+            WaitForAllSpawned "Wave1_Subwave2_GSunstickScouts"
+            Where spawnbot
+            TotalCount 20
+            MaxActive 10
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 1
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Spammer
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // Blast-Master Scout and 2 Rapid Battalion Soldiers (Necrodancer and Leonheart)
+        {
+            Name "Wave1_Subwave3_BlastMasterScout"
+            WaitForAllSpawned "Wave1_Subwave2_GSunstickScouts2"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 100
+
+            LastSpawnWarningSound "mvm/giant_heavy/giant_heavy_entrance.wav"
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Miniboss_Scout_Rocket
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion_Spammer
+                }
+                TFBot
+                {
+                    Template T_TFBot_Soldier_Extended_Battalion_Spammer
+                }
+            }
+        }
+        WaveSpawn // 10 Pyros (Mike)
+        {
+            Name "Wave1_Subwave3_Pyros"
+            WaitForAllSpawned "Wave1_Subwave3_BlastMasterScout"
+            Where spawnbot_lower
+            TotalCount 10
+            MaxActive 5
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Class Pyro
+                Skill Expert
+
+                ItemAttributes
+                {
+                    ItemName "TF_WEAPON_FLAMETHROWER"
+
+                    "airblast disabled" 1
+                }
+            }
+        }
+        WaveSpawn // 15 Burst Shotgun Heavies (Kai)
+        {
+            Name "Wave1_Subwave3_ShotgunHeavies"
+            WaitForAllSpawned "Wave1_Subwave3_BlastMasterScout"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 15
+            SpawnCount 5
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 4
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Shotgun_Burst
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_force_right`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 10 Mafia Heavies (Waffle)
+        {
+            Name "Wave1_Subwave1_MAFIACITY"
+            Where spawnbot_left
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Mafia
+            }
+        }
+        WaveSpawn // 10 Mafia Heavies (Waffle)
+        {
+            Name "Wave1_Subwave1_MAFIACITY"
+            Where spawnbot_right
+            TotalCount 10
+            MaxActive 10
+            SpawnCount 10
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 50
+
+            TFBot
+            {
+                Template T_TFBot_Heavy_Mafia
+            }
+        }
+
+        WaveSpawn // 1 GBurst Sticky Demo, 2 Firebrand Pyros and 5 Flash-Uber Medics (Owy, Hoshi and Mike)
+        {
+            Name "Wave2_Subwave1_GBurstStickyDemo"
+            WaitForAllSpawned "Wave1_Subwave1_MAFIACITY"
+            Where spawnbot_left
+            TotalCount 7
+            MaxActive 7
+            SpawnCount 7
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Stickybomb_Burst
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+            }
+        }
+        WaveSpawn // 2 GBurst Soldiers (Datlad11)
+        {
+            Name "Wave2_Subwave1_GBurstSoldier"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 12
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst
+            }
+        }
+        WaveSpawn // Support Samurai Demos (Randomguy)
+        {
+            Name "Wave2_Subwave1_Samurais"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo"
+            Where spawnbot_tank
+            Support 1
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 15
+            TotalCurrency 0
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Knight_Samurai
+            }
+        }
+        WaveSpawn // 15 Bowmen (Leonheart)
+        {
+            Name "Wave2_Subwave1_Bowmen"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Sniper_Huntsman
+                Skill Expert
+            }
+        }
+
+        WaveSpawn // 1 GBurst Sticky Demo, 2 Firebrand Pyros and 5 Flash-Uber Medics (Owy, Hoshi and Mike)
+        {
+            Name "Wave2_Subwave1_GBurstStickyDemo2"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo"
+            Where spawnbot_right
+            TotalCount 7
+            MaxActive 7
+            SpawnCount 7
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Stickybomb_Burst
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+            }
+        }
+        WaveSpawn // 2 GBurst Soldiers (Datlad11)
+        {
+            Name "Wave2_Subwave1_GBurstSoldier2"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo2"
+            Where spawnbot_left
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 12
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst
+            }
+        }
+        WaveSpawn // 15 Bowmen (Leonheart)
+        {
+            Name "Wave2_Subwave1_Bowmen2"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo2"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Sniper_Huntsman
+                Skill Expert
+            }
+        }
+
+        WaveSpawn // 1 GBurst Sticky Demo, 2 Firebrand Pyros and 5 Flash-Uber Medics (Owy, Hoshi and Mike)
+        {
+            Name "Wave2_Subwave1_GBurstStickyDemo3"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo2"
+            Where spawnbot_left
+            TotalCount 7
+            MaxActive 7
+            SpawnCount 7
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Demoman_Stickybomb_Burst
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+            }
+        }
+        WaveSpawn // 2 GBurst Soldiers (Datlad11)
+        {
+            Name "Wave2_Subwave1_GBurstSoldier3"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo3"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 12
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst
+            }
+        }
+        WaveSpawn // 15 Bowmen (Leonheart)
+        {
+            Name "Wave2_Subwave1_Bowmen3"
+            WaitForAllSpawned "Wave2_Subwave1_GBurstStickyDemo3"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Sniper_Huntsman
+                Skill Expert
+            }
+        }
+
+        // Subwave 1 Check
+        WaveSpawn
+        {
+            Name "Wave2_Subwave1_Check"
+            WaitForAllDead "Wave2_Subwave1_GBurstStickyDemo"
+        }
+        WaveSpawn
+        {
+            Name "Wave2_Subwave1_Check"
+            WaitForAllDead "Wave2_Subwave1_GBurstStickyDemo2"
+        }
+        WaveSpawn
+        {
+            Name "Wave2_Subwave1_Check"
+            WaitForAllDead "Wave2_Subwave1_GBurstStickyDemo3"
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 GHeavy and 2 Conch Gauntlets (Nai and Hoshi)
+        {
+            Name "Wave2_Subwave2_GHeavy"
+            WaitForAllSpawned "Wave2_Subwave1_Check"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+            }
+        }
+        WaveSpawn // 3 Laser Soldiers (The Fat, needed to supernerf the idea)
+        {
+            Name "Wave2_Subwave2_LaserSoldiers"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy"
+            Where spawnbot_tank
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 4
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer_Laser
+            }
+        }
+        WaveSpawn // 10 Stunner Soldiers (Wooper)
+        {
+            Name "Wave2_Subwave2_StunnerSoldiers"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Stunner
+            }
+        }
+
+        WaveSpawn // 1 GHeavy and 2 Conch Gauntlets (Nai and Hoshi)
+        {
+            Name "Wave2_Subwave2_GHeavy2"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 14
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+            }
+        }
+        WaveSpawn // 3 Laser Soldiers (The Fat, needed to supernerf the idea)
+        {
+            Name "Wave2_Subwave2_LaserSoldiers2"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy2"
+            Where spawnbot_tank
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 4
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer_Laser
+            }
+        }
+        WaveSpawn // 10 Stunner Soldiers (Wooper)
+        {
+            Name "Wave2_Subwave2_StunnerSoldiers2"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy2"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Stunner
+            }
+        }
+
+        WaveSpawn // 1 GHeavy and 2 Conch Gauntlets (Nai and Hoshi)
+        {
+            Name "Wave2_Subwave2_GHeavy3"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy2"
+            Where spawnbot
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 3
+            WaitBeforeStarting 14
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+            }
+        }
+        WaveSpawn // 3 Laser Soldiers (The Fat, needed to supernerf the idea)
+        {
+            Name "Wave2_Subwave2_LaserSoldiers3"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy3"
+            Where spawnbot_tank
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 4
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer_Laser
+            }
+        }
+        WaveSpawn // 10 Stunner Soldiers (Wooper)
+        {
+            Name "Wave2_Subwave2_StunnerSoldiers3"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy3"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Stunner
+            }
+        }
+
+        WaveSpawn // 1 GHeavy, 2 Conch Gauntlets and 3 Flash-Uber Medics (Nai, Hoshi and Mike)
+        {
+            Name "Wave2_Subwave2_GHeavy4"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy3"
+            Where spawnbot
+            TotalCount 6
+            MaxActive 6
+            SpawnCount 6
+            WaitBeforeStarting 14
+            WaitBetweenSpawns 0
+            TotalCurrency 60
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+
+                TFBot
+                {
+                    Template T_TFBot_Giant_Heavy
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Heavy_Steelfist_Concheror
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber_Flash
+                }
+            }
+        }
+        WaveSpawn // 3 Laser Soldiers (The Fat, needed to supernerf the idea)
+        {
+            Name "Wave2_Subwave2_LaserSoldiers4"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy4"
+            Where spawnbot_tank
+            TotalCount 3
+            MaxActive 3
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 4
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Spammer_Laser
+            }
+        }
+        WaveSpawn // 10 Stunner Soldiers (Wooper)
+        {
+            Name "Wave2_Subwave2_StunnerSoldiers4"
+            WaitForAllSpawned "Wave2_Subwave2_GHeavy4"
+            Where spawnbot
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 2
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Soldier_Stunner
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_force_left`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 Mini Minigun Tank (Table and Arlecchino)
+        {
+            Name "Wave3_Subwave1_MiniMinigunTank"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Tank
+            {
+                Template Tank_Combat_Minigun_Tiny
+                Health 25000
+                StartingPathTrackNode "boss_path_same"
+            }
+        }
+        WaveSpawn // 1 Mini Rocket Tank (Table and Arlecchino)
+        {
+            Name "Wave3_Subwave1_MiniRocketTank"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Tank
+            {
+                Template Tank_Combat_Rocket_Tiny
+                Health 25000
+                StartingPathTrackNode "boss_path_alt"
+            }
+        }
+
+        WaveSpawn // 30 Burst Demos (Table)
+        {
+            Name "Wave3_Subwave1_BurstDemos"
+            WaitForAllSpawned "Wave3_Subwave1_MiniMinigunTank"
+            Where spawnbot_left
+            TotalCount 30
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Burst
+            }
+        }
+        WaveSpawn // 30 Phlog Pyros (Wooper)
+        {
+            Name "Wave3_Subwave1_PhlogPyros"
+            WaitForAllSpawned "Wave3_Subwave1_MiniMinigunTank"
+            Where spawnbot_right
+            TotalCount 30
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Phlogistinator
+            }
+        }
+
+        WaveSpawn // 2 GBurst Medics (Datlad11)
+        {
+            Name "Wave3_Subwave1_GBurstMedic"
+            WaitForAllSpawned "Wave3_Subwave1_MiniMinigunTank"
+            Where spawnbot_left
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Medic_Crossbow_Burst
+                Action FetchFlag
+            }
+        }
+        WaveSpawn // 2 GBurst Medics (Datlad11)
+        {
+            Name "Wave3_Subwave1_GBurstMedic"
+            WaitForAllSpawned "Wave3_Subwave1_MiniMinigunTank"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Medic_Crossbow_Burst
+                Action FetchFlag
+            }
+        }
+
+        // Subwave 2
+        WaveSpawn // 1 Mini Rocket Sentry Tank (Table and Lutendent)
+        {
+            Name "Wave3_Subwave2_SentryTank"
+            WaitForAllSpawned "Wave3_Subwave1_GBurstMedic"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+            
+            Tank
+            {
+                Name "sentrytank$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+                ClassIcon tank_sentry_entropy
+                Health 22500
+                IsMiniBoss 1
+                StartingPathTrackNode "boss_path_same"
+
+                SpawnTemplate "RocketSentryTankPT"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+        WaveSpawn // 1 Mini Rocket Sentry Tank (Table and Lutendent)
+        {
+            Name "Wave3_Subwave2_SentryTank"
+            WaitForAllSpawned "Wave3_Subwave1_GBurstMedic"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 15
+            WaitBetweenSpawns 0
+            TotalCurrency 20
+            
+            Tank
+            {
+                Name "sentrytank$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+                ClassIcon tank_sentry_entropy
+                Health 22500
+                IsMiniBoss 1
+                StartingPathTrackNode "boss_path_alt"
+
+                SpawnTemplate "RocketSentryTankPT"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+
+        WaveSpawn // 1 GFury Pyro and 1 GBig-Heal Medic (DhzSquared and Mike)
+        {
+            Name "Wave3_Subwave2_GFuryPyro"
+            WaitForAllSpawned "Wave3_Subwave2_SentryTank"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Dragon_Fury
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 15 Widowmaker Engineers (Kai)
+        {
+            Name "Wave3_Subwave2_WidowEngies"
+            WaitForAllSpawned "Wave3_Subwave2_GFuryPyro"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Engineer_Widowmaker
+                Skill Normal
+                Action FetchFlag
+            }
+        }
+
+        WaveSpawn // 1 GFury Pyro and 1 GBig-Heal Medic (DhzSquared and Mike)
+        {
+            Name "Wave3_Subwave2_GFuryPyro2"
+            WaitForAllSpawned "Wave3_Subwave2_GFuryPyro"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Dragon_Fury
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_BigHeal
+                }
+            }
+        }
+        WaveSpawn // 15 Widowmaker Engineers (Kai)
+        {
+            Name "Wave3_Subwave2_WidowEngies2"
+            WaitForAllSpawned "Wave3_Subwave2_GFuryPyro2"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Engineer_Widowmaker
+                Skill Normal
+                Action FetchFlag
+            }
+        }
+
+        WaveSpawn // 1 GFury Pyro and 1 GShield Medic (DhzSquared and Mike)
+        {
+            Name "Wave3_Subwave2_GFuryPyro3"
+            WaitForAllSpawned "Wave3_Subwave2_GFuryPyro2"
+            Where spawnbot
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 2
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Template T_TFBot_Giant_Pyro_Dragon_Fury
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_Shield
+                }
+            }
+        }
+        WaveSpawn // 15 Widowmaker Engineers (Kai)
+        {
+            Name "Wave3_Subwave2_WidowEngies3"
+            WaitForAllSpawned "Wave3_Subwave2_GFuryPyro3"
+            Where spawnbot
+            TotalCount 15
+            MaxActive 9
+            SpawnCount 3
+            WaitBeforeStarting 2
+            WaitBetweenSpawns 3
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Engineer_Widowmaker
+                Skill Normal
+                Action FetchFlag
+            }
+        }
+
+        // Subwave 3
+        WaveSpawn // Forgeborn Pyro and 3 Burst Pomson Engineers (Necrodancer and Leonheart)
+        {
+            Name "Wave3_Subwave3_ForgebornPyro"
+            WaitForAllSpawned "Wave3_Subwave2_GFuryPyro3"
+            Where spawnbot
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 20
+            WaitBetweenSpawns 0
+            TotalCurrency 400
+
+            FirstSpawnWarningSound "mvm/mvm_giant_heavy/giant_heavy_entrance.wav"
+
+            TFBot
+            {
+                Template T_TFBot_Miniboss_Pyro_Blaster
+            }
+        }
+        WaveSpawn // 10 Burst Demos (Table)
+        {
+            Name "Wave3_Subwave3_BurstDemos"
+            WaitForAllSpawned "Wave3_Subwave3_ForgebornPyro"
+            Where spawnbot_left
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Demoman_Burst
+            }
+        }
+        WaveSpawn // 10 Phlog Pyros (Wooper)
+        {
+            Name "Wave3_Subwave3_PhlogPyros"
+            WaitForAllSpawned "Wave3_Subwave3_ForgebornPyro"
+            Where spawnbot_right
+            TotalCount 10
+            MaxActive 8
+            SpawnCount 2
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Pyro_Phlogistinator
+            }
+        }
+    }
+    Wave
+    {
+        InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`bombpath_force_left`, `Trigger`)
+                  "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+    }
+}
