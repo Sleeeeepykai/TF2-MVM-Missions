@@ -240,6 +240,28 @@ WaveSchedule
 			"spread offset pattern" "0 25 -20|0 -25 -20"
 		}
 
+		//// VOLCANO PYRO ////
+
+		"VolcanoWeapon"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+			"override projectile type" 2
+			"add damage type" 8
+			"remove damage type" 64
+			"clip size penalty" 0.5
+			"projectile speed decreased" 0.5
+			"projectile gravity" 500
+			"projectile spread angle penalty" 45
+			"grenade explode on impact" 1
+			"Set DamageType Ignite" 1
+			"ignores other projectiles" 1
+
+			"custom kill icon" "firedeath"
+			"custom projectile model" "models/empty.mdl"
+			"projectile trail particle" "~spell_fireball_small_red"
+		}
+
 		//// ALLOYED GENESIS ////
 
 		"MegaLaserBeamDetector"
@@ -1943,6 +1965,138 @@ WaveSchedule
 			}
 		}
 
+		// VOLCANO PYRO //
+
+		VolcanoPyroPT
+		{
+			KeepAlive 1
+
+			RemoveIfKilled "VolcanoPyroStompParticle"
+
+			OnSpawnOutput
+			{
+				Target VolcanoMimic
+				Action SetParent
+				Param !activator
+			}
+			OnSpawnOutput
+			{
+				Target VolcanoMimic
+				Action $SetOwner
+				Param !activator
+			}
+
+			OnParentKilledOutput
+			{
+				Target VolcanoPyroAttackRelay
+				Action CancelPending
+			}
+			OnParentKilledOutput
+			{
+				Target VolcanoPyroStompParticle
+				Action Kill
+				Delay 0.2
+			}
+
+			logic_relay
+			{
+				"targetname" "VolcanoPyroAttackRelay"
+
+				"OnTrigger" "!activator,$AddCond,81 12,0,-1"
+				"OnTrigger" "!activator,$PlaySequence,taunt_unleashed_rage_pyro,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient\volcano_rumble.wav,1,-1"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_zoomin_broom_exit,3,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_melee,3.8,-1"
+
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile speed decreased,3.6,-1"
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile spread angle penalty,3.6,-1"
+				"OnTrigger" "VolcanoMimic,$AddWeaponAttribute,projectile speed decreased|0.5,3.7,-1"
+				"OnTrigger" "VolcanoMimic,$AddWeaponAttribute,projectile spread angle penalty|45,3.7,-1"
+				"OnTrigger" "VolcanoMimic,FireMultiple,25,3.8,-1"
+
+				"OnTrigger" "VolcanoPyroStompParticle,Stop,,3.7,-1"
+				"OnTrigger" "VolcanoPyroStompParticle,Start,,3.8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_4.wav,3.8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/flare_detonator_explode.wav,3.8,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 10, 1, 50000, 0, true)3.8-1"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_zoomin_broom_exit,5.3,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_melee,6.1,-1"
+
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile speed decreased,5.9,-1"
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile spread angle penalty,5.9,-1"
+				"OnTrigger" "VolcanoMimic,$AddWeaponAttribute,projectile speed decreased|0.6,6,-1"
+				"OnTrigger" "VolcanoMimic,$AddWeaponAttribute,projectile spread angle penalty|60,6,-1"
+				"OnTrigger" "VolcanoMimic,FireMultiple,50,6.1,-1"
+
+				"OnTrigger" "VolcanoPyroStompParticle,Stop,,6,-1"
+				"OnTrigger" "VolcanoPyroStompParticle,Start,,6.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/explode_2.wav,6.1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/flare_detonator_explode.wav,6.1,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 8, 20, 1.5, 50000, 0, true)6.1-1"
+
+				"OnTrigger" "!activator,$PlaySequence,taunt_zoomin_broom_exit,8.1,-1"
+				"OnTrigger" "!activator,$PlaySequence,run_melee,8.9,-1"
+
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile speed decreased,8.7,-1"
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile spread angle penalty,8.7,-1"
+				"OnTrigger" "VolcanoMimic,$AddWeaponAttribute,projectile speed decreased|0.7,8.8,-1"
+				"OnTrigger" "VolcanoMimic,$AddWeaponAttribute,projectile spread angle penalty|90,8.8,-1"
+				"OnTrigger" "VolcanoMimic,FireMultiple,100,8.9,-1"
+
+				"OnTrigger" "VolcanoPyroStompParticle,Stop,,8.8,-1"
+				"OnTrigger" "VolcanoPyroStompParticle,Start,,8.9,-1"
+				"OnTrigger" "VolcanoPyroNukeParticle,Stop,,3.7,-1"
+				"OnTrigger" "VolcanoPyroNukeParticle,Start,,3.8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_missile_explosion.wav,8.9,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/flare_detonator_explode.wav,8.9,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 16, 40, 3, 50000, 0, true)8.9-1"
+
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile speed decreased,13.9,-1"
+				"OnTrigger" "VolcanoMimic,$RemoveWeaponAttribute,projectile spread angle penalty,13.9,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,ambient\volcano_rumble.wav,13.9,-1"
+				"OnTrigger" "!activator,$ChangeAttributes,VolcanoPyroDefault,14,-1"
+			}
+
+			tf_point_weapon_mimic
+            {
+                "targetname" "VolcanoMimic"
+				"origin" "0 0 200"
+                "angles" "-90 0 0"
+              
+				"$weaponname" "VolcanoWeapon"
+				"$preventshootparent" "1"
+            }
+
+			info_particle_system
+			{
+				"targetname" "VolcanoPyroStompParticle"
+				"effect_name" "hammer_impact_button"
+			}
+			info_particle_system
+			{
+				"targetname" "VolcanoPyroStompParticle"
+				"effect_name" "hammer_impact_button_dust2"
+			}
+
+			info_particle_system
+			{
+				"targetname" "VolcanoPyroNukeParticle"
+				"effect_name" "hightower_explosion"
+			}
+			info_particle_system
+			{
+				"targetname" "VolcanoPyroNukeParticle"
+				"effect_name" "cinefx_goldrush"
+			}
+			info_particle_system
+			{
+				"targetname" "VolcanoPyroNukeParticle"
+				"effect_name" "fireSmoke_Collumn_mvmAcres"
+			}
+		}
+
 		// TIMED DISASTER //
 
 		TimedDisasterPT
@@ -3227,7 +3381,12 @@ WaveSchedule
             }
 			logic_case
 			{
-				"targetname" "AlloyedGenesisPhase31AttackPool"
+				"targetname" "AlloyedGenesisPhase3AttackPool"
+
+				"OnCase01" "!activator,$ChangeAttributes,AlloyedGenesisShocksMegalaserRain,0,-1"
+				"OnCase02" "!activator,$ChangeAttributes,AlloyedGenesisShocksMegaSlam,0,-1"
+				"OnCase03" "!activator,$ChangeAttributes,AlloyedGenesisShocksLaserBombKick,0,-1"
+				"OnCase01" "!activator,$ChangeAttributes,AlloyedGenesisShocksProjectileOrb,0,-1"
 			}
 
 			// FORM CHANGE LOGIC //
@@ -3559,6 +3718,28 @@ WaveSchedule
 				"OnTrigger" "AlloyedGenesisPhase3ActivationRelay,Trigger,,0,-1"
 
 				"OnTrigger" "@p@AlloyedGenesisTarget,$AddCond,71 4.9,0,-1"
+			}
+
+			logic_relay
+			{
+				"targetname" "AlloyedGenesisFinalStunRelay"
+
+				"OnTrigger" "BigNet,RunScriptCode,TextualTimer.Set(15),0,-1"
+				"OnTrigger" "BigNet,RunScriptCode,TextualTimer.End(),0,-1"
+
+				"OnTrigger" "@p@AlloyedGenesisTarget,$RemoveCond,7,0,-1"
+				"OnTrigger" "@p@AlloyedGenesisTarget,$RemoveCond,57,0,-1"
+				"OnTrigger" "@p@AlloyedGenesisTarget,$RemoveCond,87,0,-1"
+
+				"OnTrigger" "@p@alloyedgenesisRunScriptCodeself.AddCustomAttribute(`gesture speed increase`,1,-1)0-1"
+				"OnTrigger" "tf_gamerules,PlayVO,player/invulnerable_off.wav,0,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm/mght/soldier_mvm_m_painsevere01.mp3,0,-1"
+
+				"OnTrigger" "tf_gamerules,$StopVO,nucleararmageddon.wav,0,-1"
+				"OnTrigger" "NuclearArmageddonParticle,Stop,,0,-1"
+				"OnTrigger" "NuclearArmageddonChargeParticle,TurnOff,,0,-1"
+
+				"OnTrigger" "@p@AlloyedGenesisTarget,$AddCond,71,0,-1"
 			}
 
 			logic_relay
@@ -4615,7 +4796,7 @@ WaveSchedule
 
 				"OnTrigger" "AlloyedGenesisMegaSlamDebrisMaker,ForceSpawnAtEntityOrigin,AlloyedGenesisMegaSlamTarget,5.33,-1"
 				"OnTrigger" "AlloyedGenesisMegaSlamRocks,FireMultiple,10,5.33,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,misc\doomsday_missile_explosion.wav,5.33,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_missile_explosion.wav,5.33,-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 16, 40, 3, 50000, 0, true)5.33-1"
 				"OnTrigger" "AlloyedGenesisMegaSlamParticle,Start,,5.33,-1"
 				"OnTrigger" "AlloyedGenesisMegaSlamDamage,Enable,,5.33,-1"
@@ -6037,7 +6218,7 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_activate.wav,0,-1"
 				"OnTrigger" "AlloyedGenesisSummonBeam,Start,,0,-1"
 
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_WarMachineEngineer,2,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave4_VolcanoPyro,2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,2,-1"
 				"OnTrigger" "AlloyedGenesisSummonBeam,Stop,,2,-1"
 			}
@@ -9357,6 +9538,71 @@ WaveSchedule
                 Type "Primary"
             }
         }
+
+		T_TFBot_Giant_Pyro_Volcano
+		{
+			Name "Prototype V01-F13"
+			Class Pyro
+			ClassIcon pyro_dragon_fury_hyper_swordstone_giant
+			Skill Expert
+			Health 40000
+			Scale 2
+			Attributes MiniBoss
+			Attributes UseBossHealthBar
+			Action Mobber
+
+			Item "The Dragon's Fury"
+
+			SpawnTemplate "VolcanoPyroPT"
+
+			CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.6
+				"airblast vulnerability multiplier" 0.6
+				"override footstep sound set" 6
+			}
+
+			ItemAttributes
+			{
+				ItemName "The Dragon's Fury"
+
+				"mult_item_meter_charge_rate" 0.5
+			}
+
+			ChangeAttributes
+			{
+				Name "VolcanoPyroAttack"
+				Delay 5
+				Repeats 1
+			}
+
+			EventChangeAttributes
+			{
+				VolcanoPyroDefault [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target !self
+						Action $ChangeAttributes
+						Param "VolcanoPyroAttack"
+						Delay 15
+						Repeats 1
+						Cooldown -1
+					}
+				}
+				VolcanoPyroAttack [$SIGSEGV]
+				{
+					FireInput
+					{
+						Target "VolcanoPyroAttackRelay"
+						Action Trigger
+						Delay 0
+						Repeats 1
+					}
+				}
+			}
+		}
 
 		//// TANKS ////
 		Tank_Gate
@@ -12740,9 +12986,9 @@ WaveSchedule
 				Action Trigger
 			}
 		}
-		WaveSpawn // War Machine Engineer Miniboss
+		WaveSpawn // Volcano Pyro Miniboss
 		{
-			Name "Wave4_WarMachineEngineer"
+			Name "Wave4_VolcanoPyro"
 			Where spawnbot_boss0
 			Where spawnbot_main_slow1
 			Support Limited
@@ -12757,7 +13003,7 @@ WaveSchedule
 
 			TFBot
 			{
-				Template T_TFBot_Giant_Engineer_WarMachine
+				Template T_TFBot_Giant_Pyro_Volcano
 
 				FireInput
 				{
@@ -12778,7 +13024,7 @@ WaveSchedule
 			}
 			DoneOutput
 			{
-				Target AlloyedGenesisStunRelay
+				Target AlloyedGenesisFinalStunRelay
 				Action Trigger
 			}
 		}
