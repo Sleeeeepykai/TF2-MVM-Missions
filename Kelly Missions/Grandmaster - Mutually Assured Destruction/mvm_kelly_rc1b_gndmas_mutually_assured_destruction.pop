@@ -193,6 +193,7 @@ WaveSchedule
 						PrecacheSound(`items/cart_explode_trigger.wav`)
 						PrecacheSound(`misc/halloween/spell_teleport.wav`)
 						PrecacheSound(`mvm/mvm_tank_deploy.wav`)
+						PrecacheSound(`mvm/mvm_tank_horn.wav`)
 
                         Convars.SetValue(`tf_playergib`, 0)
 
@@ -206,12 +207,17 @@ WaveSchedule
 
 						IncludeScript(`tankextensions_main`)
 
-						IncludeScript(`tankextensions/blimp`)
 						IncludeScript(`tankextensions/combattank`)
 						IncludeScript(`tankextensions/combattank_weapons/rocketpod`)
 						IncludeScript(`tankextensions/combattank_weapons/cannon`)
 						IncludeScript(`tankextensions/painttank`)
 						IncludeScript(`tankextensions/ubertank`)
+						IncludeScript(`tankextensions/sentrytank`)
+
+						TankExt.SetValueOverrides({
+                            SENTRYTANK_SENTRY_DEFAULTUPGRADE = 0
+                            SENTRYTANK_SENTRY_HEALTH = 3000
+                        })
 
 						TankExt.NewTankType(`tankexplosion`,
 						{
@@ -365,6 +371,25 @@ WaveSchedule
 			{
 				"targetname" "UberTankFilter"
 				"filtername" "BenedictUberTank"
+			}
+
+			// MUSIC //
+
+			logic_relay
+			{
+				"targetname" "FinalBossPreludeRelay"
+				"OnTrigger"  "FinalBossPrelude,PlaySound,,0,-1"
+				"OnTrigger"  "FinalBossPrelude,StopSound,,137.1,-1"
+				"OnTrigger"  "FinalBossPreludeRelay,Trigger,,137.115,-1"
+				"spawnflags" "2"
+			}
+			ambient_generic
+			{
+				"targetname" "FinalBossPrelude"
+				"message"    "#music/mutuallyassureddestruction/king_tank_prelude.mp3"
+				"health"     "10"
+				"pitch"      "100"
+				"spawnflags" "17"
 			}
 
 			// ENGINEER HINTS //
@@ -645,87 +670,722 @@ WaveSchedule
 			}
 		}
 
-		//// ROBOT PTs ////
+		//// FINAL BOSS PTs ////
 
-		RotatingHomewreckerPT
-        {
-			KeepAlive 1
+		FunnyOrbPT
+		{
+			RemoveIfKilled "OrbCore"
 
-			RemoveIfKilled "HomewreckerProjectile"
+			// ORB CORE //
 
-            OnSpawnOutput
-            {
-                Target "!activator"
-                Action "AddOutput"
-                Param "rendermode 10"
-                Delay 0.01
-            }
-			OnParentKilledOutput
+			info_particle_system
 			{
-				Target "HomewreckerRotator"
-				Action Stop
-			}
-			OnParentKilledOutput
-			{
-				Target "HomewreckerProjectile"
-				Action RunScriptCode
-				Param "ScreenShake(self.GetOrigin(), 10, 10, 2, 800, 0, true)"
-			}
-			OnParentKilledOutput
-			{
-				Target "HomewreckerProjectile"
-				Action RunScriptCode
-				Param "EmitSoundEx({sound_name = `misc/halloween/strongman_fast_impact_01.wav`, channel = 6, sound_level = 100, entity = self})"
-			}
-			OnParentKilledOutput
-			{
-				Target "HomewreckerAreaDamage"
-				Action Enable
-			}
-			OnParentKilledOutput
-			{
-				Target "HomewreckerAreaDamage"
-				Action Disable
-				Delay 0.01
-			}
-			OnParentKilledOutput
-			{
-				Target "HomewreckerProjectile"
-				Action Kill
-				Delay 3
+				"targetname" "OrbCore"
+				"origin" "175 -2368 200"
+				"effect_name" "dxhr_lightningball_parent_blue"
+				"start_active" "1"
 			}
 
-            prop_dynamic
-            {
-                "targetname" "HomewreckerProjectile"
-                "parentname" "HomewreckerRotator"
-				"origin" "-10 0 -50"
-                "model" "models/weapons/c_models/c_sledgehammer/c_sledgehammer.mdl"
-				"modelscale" "1.5"
-            }
-            func_rotating
-            {
-                "targetname" "HomewreckerRotator"
-                "spawnflags" "73"
-                "maxspeed" "500"
-            }
-			trigger_hurt
+			prop_dynamic
 			{
-				"targetname" "HomewreckerAreaDamage"
-				"filtername" "filter_redteam_nouber"
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "175 -2368 0"
 
-				"mins" "-48 -48 -48"
-				"maxs" "48 48 48"
+				"model" "models/buildables/sentry_shield.mdl"
+				"modelscale" "2.5"
+				"skin" "1"
 
-				"damagetype" "128"
-				"damage" "130"
-				"$killicon" "homewrecker"
-
-				"spawnflags" "1"
+				"disablebonefollowers" "1"
 				"disableshadows" "1"
-				"startdisabled" "1"
 			}
-        }
+			prop_dynamic
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "175 -2368 200"
+				"angles" "0 180 90"
+
+				"model" "models/props_lakeside_event/vortex_lakeside.mdl"
+				"modelscale" "1.25"
+
+				"rendercolor" "0 115 255"
+				"renderfx" "15"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "175 -2368 200"
+				"angles" "0 -180 90"
+
+				"model" "models/props_lakeside_event/vortex_lakeside.mdl"
+				"modelscale" "1.25"
+
+				"rendercolor" "0 115 255"
+				"renderfx" "15"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			
+			point_tesla
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "175 -2368 200"
+
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 255 255"
+				"m_flRadius" "300"
+				"beamcount_min" "3"
+				"beamcount_max" "10"
+				"thick_min" "20"
+				"thick_max" "20"
+				"lifetime_min" "0.1"
+				"lifetime_max" "0.1"
+				"interval_min" "0.01"
+				"interval_max" "0.01"
+				"m_bOn" "1"
+			}
+		}
+
+		FunnyOrbFinalPT
+		{
+			RemoveIfKilled "OrbCore"
+
+			OnSpawnOutput
+			{
+				Target "OrbCoreLinkRelay"
+				Action "Trigger"
+			}
+
+			// ORB CORE //
+
+			info_particle_system
+			{
+				"targetname" "OrbCore"
+				"origin" "-128 640 800"
+				"effect_name" "dxhr_lightningball_parent_blue"
+				"start_active" "1"
+			}
+
+			logic_relay
+			{
+				"targetname" "OrbCoreLinkRelay"
+
+				"OnTrigger" "OrbTankComponentLink*,StrikeOnce,,0,-1"
+				"OnTrigger" "!self,Trigger,,0.1,-1"
+
+				"spawnflags" "2"
+			}
+			prop_dynamic
+			{
+				"targetname" "OrbCoreProp"
+				"origin" "-128 640 800"
+
+				"model" "models/empty.mdl"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			prop_dynamic
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "-128 640 600"
+
+				"model" "models/buildables/sentry_shield.mdl"
+				"modelscale" "2.5"
+				"skin" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "-128 640 800"
+				"angles" "0 180 90"
+
+				"model" "models/props_lakeside_event/vortex_lakeside.mdl"
+				"modelscale" "1.25"
+
+				"rendercolor" "0 115 255"
+				"renderfx" "15"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			prop_dynamic
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "-128 640 800"
+				"angles" "0 -180 90"
+
+				"model" "models/props_lakeside_event/vortex_lakeside.mdl"
+				"modelscale" "1.25"
+
+				"rendercolor" "0 115 255"
+				"renderfx" "15"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			
+			point_tesla
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "-128 640 800"
+
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 255 255"
+				"m_flRadius" "300"
+				"beamcount_min" "3"
+				"beamcount_max" "10"
+				"thick_min" "20"
+				"thick_max" "20"
+				"lifetime_min" "0.1"
+				"lifetime_max" "0.1"
+				"interval_min" "0.01"
+				"interval_max" "0.01"
+				"m_bOn" "1"
+			}
+			point_tesla
+			{
+				"targetname" "OrbComponent"
+				"parentname" "OrbCore"
+				"origin" "-128 640 800"
+
+				"texture" "sprites/physbeam.vmt"
+				"m_Color" "255 255 255"
+				"m_flRadius" "5000"
+				"beamcount_min" "10"
+				"beamcount_max" "10"
+				"thick_min" "100"
+				"thick_max" "100"
+				"lifetime_min" "0.4"
+				"lifetime_max" "0.4"
+				"interval_min" "10"
+				"interval_max" "10"
+				"m_bOn" "1"
+			}
+
+			info_particle_system
+            {
+                "targetname" "OrbParticle"
+				"parentname" "OrbCore"
+                "origin" "-128 640 1000"
+                "effect_name" "green_vortex_rain"
+                "start_active" "1"
+            }
+			info_particle_system
+            {
+                "targetname" "OrbParticle"
+				"parentname" "OrbCore"
+                "origin" "-128 640 1300"
+                "effect_name" "green_vortex_rain"
+                "start_active" "1"
+            }
+
+			logic_timer
+			{
+				"targetname" "OrbLightningStrike"
+				"RefireTime" "10"
+				"OnTimer" "OrbLightningCase,PickRandomShuffle,,0,-1"
+			}
+			logic_case
+			{
+				"targetname" "OrbLightningCase"
+
+				"OnCase01" "tf_gamerules,PlayVO,ambient/halloween/thunder_03.wav,0,-1"
+				"OnCase01" "OrbComponent,DoSpark,,2,-1"
+
+				"OnCase02" "tf_gamerules,PlayVO,ambient/halloween/thunder_08.wav,0,-1"
+				"OnCase02" "OrbComponent,DoSpark,,0,-1"
+
+				"OnCase03" "tf_gamerules,PlayVO,ambient/halloween/thunder_05.wav,0,-1"
+				"OnCase03" "OrbComponent,DoSpark,,1.2,-1"
+
+				"OnCase04" "tf_gamerules,PlayVO,ambient/halloween/thunder_10.wav,0,-1"
+				"OnCase04" "OrbComponent,DoSpark,,1.4,-1"
+			}
+
+			// ORBITING TANK COMPONENT 1 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent1"
+				"parentname" "OrbTankComponentSubRotator1"
+				"origin" "-128 1240 1000"
+				"angles" "-30 206 -33"
+
+				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_chassis.mdl"
+				"skin" "3"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink1"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent1"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator1"
+				"origin" "-128 640 800"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator1"
+				"parentname" "OrbTankComponentRotator1"
+				"origin" "-128 640 1000"
+				"angles" "45 0 0"
+
+				"maxspeed" "30"
+				"fanfriction" "100"
+
+				"spawnflags" "93"
+			}
+
+			// ORBITING TANK COMPONENT 2 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent2"
+				"parentname" "OrbTankComponentSubRotator2"
+				"origin" "-428 640 800"
+				"angles" "-30 206 -33"
+
+				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_railgun.mdl"
+				"skin" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink2"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent2"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator2"
+				"origin" "-128 640 800"
+				"angles" "0 15 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator2"
+				"parentname" "OrbTankComponentRotator2"
+				"origin" "-428 640 800"
+				"angles" "45 0 0"
+
+				"maxspeed" "30"
+				"fanfriction" "100"
+
+				"spawnflags" "93"
+			}
+
+			// ORBITING TANK COMPONENT 3 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent3"
+				"parentname" "OrbTankComponentSubRotator3"
+				"origin" "328 640 1200"
+				"angles" "-30 -270 -67"
+
+				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_railgun.mdl"
+				"skin" "1"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink3"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent3"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator3"
+				"origin" "-128 640 800"
+				"angles" "0 30 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator3"
+				"parentname" "OrbTankComponentRotator3"
+				"origin" "328 640 1200"
+				"angles" "35 0 0"
+
+				"maxspeed" "50"
+				"fanfriction" "100"
+
+				"spawnflags" "95"
+			}
+
+			// ORBITING TANK COMPONENT 4 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent4"
+				"parentname" "OrbTankComponentSubRotator4"
+				"origin" "212 605 903"
+				"angles" "-70 21 133"
+
+				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_rocket_pod.mdl"
+				"skin" "1"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink4"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent4"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator4"
+				"origin" "-128 640 800"
+				"angles" "0 45 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator4"
+				"parentname" "OrbTankComponentRotator4"
+				"origin" "212 605 903"
+				"angles" "-45 0 0"
+
+				"maxspeed" "50"
+				"fanfriction" "100"
+
+				"spawnflags" "95"
+			}
+
+			// ORBITING TANK COMPONENT 5 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent5"
+				"parentname" "OrbTankComponentSubRotator5"
+				"origin" "-505 1000 681"
+				"angles" "-70 21 133"
+
+				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_rocket_pod.mdl"
+				"skin" "1"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink5"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent5"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator5"
+				"origin" "-128 640 800"
+				"angles" "0 60 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator5"
+				"parentname" "OrbTankComponentRotator5"
+				"origin" "-505 1000 681"
+				"angles" "45 0 0"
+
+				"maxspeed" "30"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+
+			// ORBITING TANK COMPONENT 6 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent6"
+				"parentname" "OrbTankComponentSubRotator6"
+				"origin" "-128 640 1350"
+				"angles" "-140 155 -133"
+
+				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_cannon.mdl"
+				"skin" "1"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink6"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent6"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator6"
+				"origin" "-128 640 800"
+				"angles" "0 75 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator6"
+				"parentname" "OrbTankComponentRotator6"
+				"origin" "-128 640 1350"
+				"angles" "0 0 -90"
+
+				"maxspeed" "25"
+				"fanfriction" "100"
+
+				"spawnflags" "93"
+			}
+
+			// ORBITING TANK COMPONENT 7 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent7"
+				"parentname" "OrbTankComponentSubRotator7"
+				"origin" "-428 640 1150"
+				"angles" "-194 -55 133"
+
+				"model" "models/bots/boss_bot/tank_track_l.mdl"
+				"skin" "1"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink7"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent7"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator7"
+				"origin" "-128 640 800"
+				"angles" "0 90 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator7"
+				"parentname" "OrbTankComponentRotator7"
+				"origin" "-428 640 1150"
+				"angles" "0 180 0"
+
+				"maxspeed" "25"
+				"fanfriction" "100"
+
+				"spawnflags" "93"
+			}
+
+			// ORBITING TANK COMPONENT 8 //
+			prop_dynamic
+			{
+				"targetname" "OrbTankComponent8"
+				"parentname" "OrbTankComponentSubRotator8"
+				"origin" "-228 640 1050"
+				"angles" "-140 -155 -133"
+
+				"model" "models/bots/boss_bot/tank_track_l.mdl"
+				"skin" "1"
+				
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+
+			env_beam
+			{
+				"targetname" "OrbTankComponentLink8"
+				"origin" "-128 640 1000"
+
+				"LightningStart" "OrbCoreProp"
+				"LightningEnd" "OrbTankComponent8"
+
+				"life" "0.11"
+				"BoltWidth" "4"
+				"texture" "sprites/laserbeam.spr"
+				"TextureScroll" "5"
+				"renderamt" "255"
+				"rendercolor" "255 255 255"
+			}
+
+			func_rotating
+			{
+				"targetname" "OrbTankComponentRotator8"
+				"origin" "-128 640 800"
+				"angles" "0 105 0"
+
+				"maxspeed" "20"
+				"fanfriction" "100"
+
+				"spawnflags" "81"
+			}
+			func_rotating
+			{
+				"targetname" "OrbTankComponentSubRotator8"
+				"parentname" "OrbTankComponentRotator8"
+				"origin" "-228 640 1050"
+				"angles" "0 180 0"
+
+				"maxspeed" "25"
+				"fanfriction" "100"
+
+				"spawnflags" "93"
+			}
+		}
+
+		//// TANK PTs ////
+
+		CombatTankBossTeleportPT
+		{
+			RemoveIfKilled "CheckThisMagicTrick"
+
+			OnSpawnOutput
+			{
+				Target CheckThisMagicTrick
+				Action Kill
+				Delay 1
+			}
+
+			info_particle_system
+            {
+                "targetname"   "CheckThisMagicTrick"
+                "origin"       "0 0 100"
+                "effect_name"  "hammer_lock_vanish01"
+                "start_active" "1"
+            }
+            info_particle_system
+            {
+                "targetname"   "CheckThisMagicTrick"
+                "origin"       "0 0 0"
+                "effect_name"  "hammer_lock_vanish01"
+                "start_active" "1"
+            }
+		}
 
 		CombatTankBossPart1PT
 		{
@@ -833,191 +1493,6 @@ WaveSchedule
 			{
 				"targetname" "CombatTankBossShielderTargetLooker"
 				"origin" "225 0 128"
-			}
-		}
-		CombatTankBossTeleportPT
-		{
-			RemoveIfKilled "CheckThisMagicTrick"
-
-			OnSpawnOutput
-			{
-				Target CheckThisMagicTrick
-				Action Kill
-				Delay 1
-			}
-
-			info_particle_system
-            {
-                "targetname"   "CheckThisMagicTrick"
-                "origin"       "0 0 100"
-                "effect_name"  "hammer_lock_vanish01"
-                "start_active" "1"
-            }
-            info_particle_system
-            {
-                "targetname"   "CheckThisMagicTrick"
-                "origin"       "0 0 0"
-                "effect_name"  "hammer_lock_vanish01"
-                "start_active" "1"
-            }
-		}
-		ButHeresTheForcer
-		{
-			info_target
-			{
-				"targetname" "ForcingThemHere"
-				"origin"     "0 0 0"
-			}
-			OnSpawnOutput
-			{
-				Target Kablooey
-				Action Trigger
-				Delay 5
-			}
-		}
-		KamikazeTankPT
-		{
-			OnSpawnOutput
-			{
-				Target !activator
-				Action AddOutput
-				Param "OnHealthBelow30Percent Kablooey:Trigger::0:-1"
-			}
-			logic_relay
-			{
-				"targetname" "Kablooey"
-
-				"OnTrigger" "!activator,SetSpeed,50,0,-1"
-				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})0.5-1"
-				"OnTrigger" "!activator,Color,255 0 0,0.5,-1"
-				"OnTrigger" "!activator,Color,255 255 255,0.6,-1"
-
-				"OnTrigger" "!activatorRunScriptCodeself.SetModelScale(1.2, 0.3)1.7-1"
-
-				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1-1"
-				"OnTrigger" "!activator,Color,255 0 0,1,-1"
-				"OnTrigger" "!activator,Color,255 255 255,1.1,-1"
-
-				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.4-1"
-				"OnTrigger" "!activator,Color,255 0 0,1.4,-1"
-				"OnTrigger" "!activator,Color,255 255 255,1.5,-1"
-
-				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.7-1"
-				"OnTrigger" "!activator,Color,255 0 0,1.7,-1"
-				"OnTrigger" "!activator,Color,255 255 255,1.8,-1"
-
-				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.9-1"
-				"OnTrigger" "!activator,Color,255 0 0,1.9,-1"
-
-				"OnTrigger" "!activator,$PlaySound,items/cart_explode.wav,1.99,-1"
-				"OnTrigger" "!activator,RemoveHealth,9999999,2,-1"
-
-				"spawnflags" "2"
-			}
-		}
-
-		StickyNukePT
-		{
-			RemoveIfKilled "StickyNukeHitbox"
-
-			OnSpawnOutput
-			{
-				Target "StickyNukeRelay"
-				Action "Trigger"
-			}
-			OnSpawnOutput
-			{
-				Target "StickyNukeIndicator"
-				Action "ClearParent"
-			}
-			OnSpawnOutput
-			{
-				Target "StickyNukeIndicator"
-				Action "$SetFakeParent"
-				Param "StickyNukeTarget"
-			}
-			OnSpawnOutput
-			{
-				Target "StickyNukeIndicator"
-				Action "$SetLocalAngles"
-				Param "0 0 0"
-			}
-			OnSpawnOutput
-			{
-				Target "StickyNukeHitbox"
-				Action "SetHealth"
-				Param 2500
-			}
-
-			logic_relay
-			{
-				"targetname" "StickyNukeRelay"
-
-				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,0.5,-1"
-				"OnTrigger" "StickyNukeCharge,Start,,1,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,1.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,2.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,3.5,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,items/bomb_warning.wav,5.3,-1"
-				"OnTrigger" "tf_gamerules,$StopVO,items/bomb_warning.wav,6,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_missile_explosion.wav,6,-1"
-			}
-
-			info_target
-			{
-				"targetname" "StickyNukeTarget"
-			}
-
-			obj_sentrygun
-			{
-				"targetname" "StickyNukeHitbox"
-				"TeamNum" "3"
-				"defaultupgrade" "2"
-				"health" "3500"
-				"SolidToPlayer" "0"
-				"rendermode" "10"
-				"$sentrymodelprefix" "models/empty.mdl"
-				"$rangemult" "0.001"
-
-				"damagefilter" "filter_redteam"
-
-				"OnDamaged" "Player,$DisplayTextCenter,$$=test(!caller.m_iHealth>1,'Nuke HP: '..string(max(!caller.m_iHealth, 0)),''),0,-1"
-                "OnDamaged" "!parentRunScriptCodetry{if(caller.GetHealth()<1){self.Kill()}}catch(e){}0-1"
-			}
-			prop_dynamic
-			{
-				"targetname" "StickyNukeIndicator"
-				"model" "models/props_gameplay/cap_circle_768.mdl"
-				"skin" "2"
-				"modelscale" "2"
-
-				"$modules" "fakeparent"
-				"$positiononly" "1"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
-			}
-			info_particle_system
-			{
-				"targetname" "StickyNukeCharge"
-				"effect_name" "charge_up"
-			}
-		}
-
-		BitchHaverPT
-		{
-			NoFixUp 1
-
-			OnParentKilledOutput
-			{
-				Target pop_interface
-				Action ChangeBotAttributes
-				Param "NotLookingAtHim"
-			}
-			info_target
-			{
-				"targetname" "BitchHaverTarget"
-				"origin" "0 0 100"
 			}
 		}
 
@@ -1161,7 +1636,7 @@ WaveSchedule
 				"OnTrigger" "BigNetRunScriptCodeSendGlobalGameEvent(`show_annotation`, {text = `The Bomb has been Warped!`, lifetime = 5, worldPosX = 0, worldPosY = -3264, worldPosZ = 624})3,-1"
 				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BombTeleportTarget,3.1,-1"
 
-				"OnTrigger" "TankTeleportLeftSideRelay,Trigger,,8,-1"
+				"OnTrigger" "TankTeleportRightSideRelay,Trigger,,8,-1"
 
 				"OnTrigger" "BenedictUberTank,AddOutput,OnHealthBelow90Percent BenedictUberTankStunRelay:Trigger::0:1,0,-1"
 				"OnTrigger" "BenedictUberTank,AddOutput,OnHealthBelow70Percent BenedictUberTankStunRelay:Trigger::0:1,0,-1"
@@ -1305,6 +1780,7 @@ WaveSchedule
 				"OnTrigger" "BenedictUberTank,AddOutput,renderfx 5,3,-1"
 				"OnTrigger" "@c@BenedictUberTank,AddOutput,renderfx 6,3,-1"
 
+				"OnTrigger" "tf_gamerules,PlayVO,weapons/physcannon/energy_sing_explosion2.wav,3,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,player/spy_cloak.wav,3,-1"
 				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `misc/halloween/spell_teleport.wav`, channel = 6, pitch = 85, special_dsp = 10})3-1"
 
@@ -1329,6 +1805,7 @@ WaveSchedule
 				"OnTrigger" "BenedictUberTankPhase2Relay,Trigger,,0,-1"
 				"OnTrigger" "BenedictUberTankPhase3Relay,Trigger,,0,-1"
 
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `mvm/mvm_tank_horn.wav`, pitch = 85})8-1"
 				"OnTrigger" "BenedictUberTank,SetSpeed,25,8,-1"
 				"OnTrigger" "BenedictUberTank,SetSpeed,50,8.5,-1"
 				"OnTrigger" "BenedictUberTank,SetSpeed,75,9,-1"
@@ -1354,10 +1831,10 @@ WaveSchedule
 			{
 				"targetname" "BenedictUberTankPhase1Relay"
 
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_UberMaintainers,0,-1"
-				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_TankSupport,0,-1"
-
 				"OnTrigger" "BenedictUberTankPhase2Relay,Enable,,1,-1"
+
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_UberMaintainers,5,-1"
+				"OnTrigger" "pop_interface,$ResumeWaveSpawn,Wave6_Subwave1_TankSupport,5,-1"
 
 				"OnTrigger" "TankTeleportLeftSideRelay,Enable,,5,-1"
 				"OnTrigger" "TankTeleportRightSideRelay,Enable,,5,-1"
@@ -1442,10 +1919,26 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,npc/scanner/scanner_siren1.wav,2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,npc/scanner/scanner_siren1.wav,2,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/charging.wav,3,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/fire.wav,4.99,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,mvm/mvm_tele_deliver.wav,4.99,-1"
-				"OnTrigger" "CombatTankBossTeleportPT,ForceSpawnAtEntityOrigin,BenedictUberTank,4.99,-1"
-				"OnTrigger" "BenedictUberTank,Kill,,5,1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,npc/attack_helicopter/aheli_damaged_alarm1.wav,5,-1"
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,5,-1"
+
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/attack_helicopter/aheli_damaged_alarm1.wav,6.5,-1"
+
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,7,-1"
+
+				"OnTrigger" "BenedictUberTank,CallScriptFunction,ToggleUber,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/strider/charging.wav,8,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,npc/attack_helicopter/aheli_damaged_alarm1.wav,8,-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/citadel_end_explosion2.wav,11,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/explosions/citadel_end_explosion2.wav,11,-1"
+				"OnTrigger" "BenedictUberTankStunParticle,Start,,11,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 160, 5, 1, 1)11-1"
+				"OnTrigger" "FunnyOrbPT,ForceSpawn,11,-1"
+
+				"OnTrigger" "BenedictUberTank,RemoveHealth,999999,11.1,-1"
 			}
 
 			info_particle_system
@@ -1475,6 +1968,272 @@ WaveSchedule
 				"targetname" "BenedictUberTankVanishingTrick"
 				"origin" "0 0 64"
 				"effect_name" "hammer_bell_ring_shockwave"
+			}
+		}
+
+		KamikazeTankPT
+		{
+			OnSpawnOutput
+			{
+				Target !activator
+				Action AddOutput
+				Param "OnHealthBelow30Percent Kablooey:Trigger::0:-1"
+			}
+			logic_relay
+			{
+				"targetname" "Kablooey"
+
+				"OnTrigger" "!activator,SetSpeed,50,0,-1"
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})0.5-1"
+				"OnTrigger" "!activator,Color,255 0 0,0.5,-1"
+				"OnTrigger" "!activator,Color,255 255 255,0.6,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeself.SetModelScale(1.2, 0.3)1.7-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1-1"
+				"OnTrigger" "!activator,Color,255 0 0,1,-1"
+				"OnTrigger" "!activator,Color,255 255 255,1.1,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.4-1"
+				"OnTrigger" "!activator,Color,255 0 0,1.4,-1"
+				"OnTrigger" "!activator,Color,255 255 255,1.5,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.7-1"
+				"OnTrigger" "!activator,Color,255 0 0,1.7,-1"
+				"OnTrigger" "!activator,Color,255 255 255,1.8,-1"
+
+				"OnTrigger" "!activatorRunScriptCodeEmitSoundEx({sound_name = `items/cart_explode_trigger.wav`, channel = 6, sound_level = 100, entity = self})1.9-1"
+				"OnTrigger" "!activator,Color,255 0 0,1.9,-1"
+
+				"OnTrigger" "!activator,$PlaySound,items/cart_explode.wav,1.99,-1"
+				"OnTrigger" "!activator,RemoveHealth,9999999,2,-1"
+
+				"spawnflags" "2"
+			}
+		}
+
+		ButHeresTheForcer
+		{
+			info_target
+			{
+				"targetname" "ForcingThemHere"
+				"origin"     "0 0 0"
+			}
+			OnSpawnOutput
+			{
+				Target Kablooey
+				Action Trigger
+				Delay 5
+			}
+			OnSpawnOutput
+			{
+				Target !activator
+				Action SetSpeed
+				Param 300
+				Delay 5.1
+			}
+		}
+
+		RocketSentryTankPT
+        {
+            OnSpawnOutput
+            {
+                Target SentryTankSetupRelay
+                Action Trigger
+            }
+            logic_relay
+            {
+                "targetname" "SentryTankSetupRelay"
+
+                "OnTrigger" "@c@!activator,AddOutput,$bulletweapon TF_WEAPON_ROCKETLAUNCHER,0,-1"
+                "OnTrigger" "@c@!activator,AddOutput,$fireratemult 3,0,-1"
+            }
+        }
+
+		//// ROBOT PTs ////
+
+		RotatingHomewreckerPT
+        {
+			KeepAlive 1
+
+			RemoveIfKilled "HomewreckerProjectile"
+
+            OnSpawnOutput
+            {
+                Target "!activator"
+                Action "AddOutput"
+                Param "rendermode 10"
+                Delay 0.01
+            }
+			OnParentKilledOutput
+			{
+				Target "HomewreckerRotator"
+				Action Stop
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerProjectile"
+				Action RunScriptCode
+				Param "ScreenShake(self.GetOrigin(), 10, 10, 2, 800, 0, true)"
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerProjectile"
+				Action RunScriptCode
+				Param "EmitSoundEx({sound_name = `misc/halloween/strongman_fast_impact_01.wav`, channel = 6, sound_level = 100, entity = self})"
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerAreaDamage"
+				Action Enable
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerAreaDamage"
+				Action Disable
+				Delay 0.01
+			}
+			OnParentKilledOutput
+			{
+				Target "HomewreckerProjectile"
+				Action Kill
+				Delay 3
+			}
+
+            prop_dynamic
+            {
+                "targetname" "HomewreckerProjectile"
+                "parentname" "HomewreckerRotator"
+				"origin" "-10 0 -50"
+                "model" "models/weapons/c_models/c_sledgehammer/c_sledgehammer.mdl"
+				"modelscale" "1.5"
+            }
+            func_rotating
+            {
+                "targetname" "HomewreckerRotator"
+                "spawnflags" "73"
+                "maxspeed" "500"
+            }
+			trigger_hurt
+			{
+				"targetname" "HomewreckerAreaDamage"
+				"filtername" "filter_redteam_nouber"
+
+				"mins" "-48 -48 -48"
+				"maxs" "48 48 48"
+
+				"damagetype" "128"
+				"damage" "130"
+				"$killicon" "homewrecker"
+
+				"spawnflags" "1"
+				"disableshadows" "1"
+				"startdisabled" "1"
+			}
+        }
+
+		StickyNukePT
+		{
+			RemoveIfKilled "StickyNukeHitbox"
+
+			OnSpawnOutput
+			{
+				Target "StickyNukeRelay"
+				Action "Trigger"
+			}
+			OnSpawnOutput
+			{
+				Target "StickyNukeIndicator"
+				Action "ClearParent"
+			}
+			OnSpawnOutput
+			{
+				Target "StickyNukeIndicator"
+				Action "$SetFakeParent"
+				Param "StickyNukeTarget"
+			}
+			OnSpawnOutput
+			{
+				Target "StickyNukeIndicator"
+				Action "$SetLocalAngles"
+				Param "0 0 0"
+			}
+			OnSpawnOutput
+			{
+				Target "StickyNukeHitbox"
+				Action "SetHealth"
+				Param 2500
+			}
+
+			logic_relay
+			{
+				"targetname" "StickyNukeRelay"
+
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,0.5,-1"
+				"OnTrigger" "StickyNukeCharge,Start,,1,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,1.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,2.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/cart_explode_trigger.wav,3.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,items/bomb_warning.wav,5.3,-1"
+				"OnTrigger" "tf_gamerules,$StopVO,items/bomb_warning.wav,6,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,misc/doomsday_missile_explosion.wav,6,-1"
+			}
+
+			info_target
+			{
+				"targetname" "StickyNukeTarget"
+			}
+
+			obj_sentrygun
+			{
+				"targetname" "StickyNukeHitbox"
+				"TeamNum" "3"
+				"defaultupgrade" "2"
+				"health" "3500"
+				"SolidToPlayer" "0"
+				"rendermode" "10"
+				"$sentrymodelprefix" "models/empty.mdl"
+				"$rangemult" "0.001"
+
+				"damagefilter" "filter_redteam"
+
+				"OnDamaged" "Player,$DisplayTextCenter,$$=test(!caller.m_iHealth>1,'Nuke HP: '..string(max(!caller.m_iHealth, 0)),''),0,-1"
+                "OnDamaged" "!parentRunScriptCodetry{if(caller.GetHealth()<1){self.Kill()}}catch(e){}0-1"
+			}
+			prop_dynamic
+			{
+				"targetname" "StickyNukeIndicator"
+				"model" "models/props_gameplay/cap_circle_768.mdl"
+				"skin" "2"
+				"modelscale" "2"
+
+				"$modules" "fakeparent"
+				"$positiononly" "1"
+
+				"disablebonefollowers" "1"
+				"disableshadows" "1"
+			}
+			info_particle_system
+			{
+				"targetname" "StickyNukeCharge"
+				"effect_name" "charge_up"
+			}
+		}
+
+		BitchHaverPT
+		{
+			NoFixUp 1
+
+			OnParentKilledOutput
+			{
+				Target pop_interface
+				Action ChangeBotAttributes
+				Param "NotLookingAtHim"
+			}
+			info_target
+			{
+				"targetname" "BitchHaverTarget"
+				"origin" "0 0 100"
 			}
 		}
 
@@ -1864,55 +2623,6 @@ WaveSchedule
 		Node "-41 -4013 142"
 	}
 
-	ExtraTankPath // Blimp Path A (Left Path)
-	{
-		Name "tank_path_blimp_a"
-
-		Node "-128 2688 556"
-		Node "-128 256 556"
-		Node "64 64 556"
-		Node "448 64 556"
-		Node "640 -192 556"
-		Node "640 -1152 556"
-		Node "832 -1664 556"
-		Node "832 -2240 556"
-		Node "704 -2368 556"
-		Node "176 -2368 556"
-	}
-	ExtraTankPath // Blimp Path B (Right Path)
-	{
-		Name "tank_path_blimp_b"
-
-		Node "-128 2688 556"
-		Node "-128 256 556"
-		Node "-320 64 556"
-		Node "-704 64 556"
-		Node "-896 -192 556"
-		Node "-960 -448 556"
-		Node "-960 -1344 556"
-		Node "-896 -1536 556"
-		Node "-896 -2432 556"
-		Node "-768 -2560 556"
-		Node "-320 -2560 556"
-		Node "-152 -2456 556"
-	}
-	ExtraTankPath // Blimp Path C (Over the Barn Path)
-	{
-		Name "tank_path_blimp_c"
-
-		Node "-128 2688 556"
-		Node "-128 256 556"
-		Node "-128 -232 812"
-		Node "-128 -1176 812"
-		Node "-128 -1344 748"
-		Node "-128 -1984 196"
-		Node "-104 -2024 196"
-		Node "-80 -2048 196"
-		Node "-64 -2080 196"
-		Node "-56 -2168 196"
-		Node "-48 -2192 196"
-	}
-
 	//// ROBOT TEMPLATES ////
 
 	Templates
@@ -2246,6 +2956,7 @@ WaveSchedule
                 "override footstep sound set" 2
                 "gesture speed increase" 1000
                 "voice pitch scale" 0
+				"no_jump" 1
 			}
 
 			ItemAttributes
@@ -2306,8 +3017,6 @@ WaveSchedule
 						"override footstep sound set" 2
 						"gesture speed increase" 1000
 						"voice pitch scale" 0
-						"no_attack" 0
-						"no_jump" 0
 					}
 
 					ItemAttributes
@@ -2333,7 +3042,6 @@ WaveSchedule
 						Duration 0.5
 						Repeats 0
 						Cooldown 0.5
-						IfSeeTarget 1
 					}
 
 					FireInput
@@ -2351,6 +3059,8 @@ WaveSchedule
 				{
 					WeaponRestrictions SecondaryOnly
 
+					Item "The Buffalo Steak Sandvich"
+
 					CharacterAttributes
 					{
 						"move speed penalty" 0.5
@@ -2360,8 +3070,6 @@ WaveSchedule
 						"override footstep sound set" 2
 						"gesture speed increase" 1000
 						"voice pitch scale" 0
-						"no_attack" 1
-						"no_jump" 1
 					}
 
 					FireInput
@@ -4423,7 +5131,6 @@ WaveSchedule
 		CustomWaveNumber 4
 		CustomMaxWaveNumber 6
 
-		// Subwave 1
 		WaveSpawn
 		{
 			Name "Wave4_Subwave1_CEMENT"
@@ -4439,7 +5146,7 @@ WaveSchedule
 			Tank
 			{
 				Template Tank_Tiny_Kamikaze
-				Health 99994
+				Health 100000
 				Speed 300
 				SpawnTemplate ButHeresTheForcer
 				StartingPathTrackNode "tank_path_a_1"
@@ -5055,81 +5762,119 @@ WaveSchedule
 		}
 
 		// Subwave 2
-		WaveSpawn // 1 Blimp
-		{
-			Name "Wave5_Subwave2_Blimp"
-			WaitForAllDead "Wave5_Subwave1_TheMan"
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 5
-			WaitBetweenSpawns 0
-			TotalCurrency 60
 
-			Tank
-			{
-				Name "blimp"
-				ClassIcon blimp2_lite
-				Health 25000
-				StartingPathTrackNode "tank_path_blimp_a_1"
+		WaveSpawn // 1 Mini Rocket Sentry Tank
+        {
+            Name "Wave5_Subwave2_SentryTank"
+            WaitForAllDead "Wave5_Subwave1_TheMan"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 5
+            WaitBetweenSpawns 0
+            TotalCurrency 45
+            
+            Tank
+            {
+                Name "sentrytank$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+                ClassIcon tank_sentry_entropy
+                Health 20000
+                IsMiniBoss 1
+                StartingPathTrackNode "tank_path_a_1"
 
-				OnBombDroppedOutput
-				{
-					Target boss_deploy_relay
-					Action Trigger
-				}
-			}
-		}
-		WaveSpawn // 1 Blimp
-		{
-			Name "Wave5_Subwave2_Blimp"
-			WaitForAllDead "Wave5_Subwave1_TheMan"
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 15
-			WaitBetweenSpawns 0
-			TotalCurrency 60
+                SpawnTemplate "RocketSentryTankPT"
 
-			Tank
-			{
-				Name "blimp"
-				ClassIcon blimp2_lite
-				Health 25000
-				StartingPathTrackNode "tank_path_blimp_b_1"
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+		WaveSpawn // 1 Mini Rocket Sentry Tank
+        {
+            Name "Wave5_Subwave2_SentryTank"
+            WaitForAllDead "Wave5_Subwave1_TheMan"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 6
+            WaitBetweenSpawns 0
+            TotalCurrency 45
+            
+            Tank
+            {
+                Name "sentrytank$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+                ClassIcon tank_sentry_entropy
+                Health 20000
+                IsMiniBoss 1
+                StartingPathTrackNode "tank_path_b_1"
 
-				OnBombDroppedOutput
-				{
-					Target boss_deploy_relay
-					Action Trigger
-				}
-			}
-		}
-		WaveSpawn // 1 Blimp
-		{
-			Name "Wave5_Subwave2_Blimp"
-			WaitForAllDead "Wave5_Subwave1_TheMan"
-			TotalCount 1
-			MaxActive 1
-			SpawnCount 1
-			WaitBeforeStarting 25
-			WaitBetweenSpawns 0
-			TotalCurrency 60
+                SpawnTemplate "RocketSentryTankPT"
 
-			Tank
-			{
-				Name "blimp"
-				ClassIcon blimp2_lite
-				Health 25000
-				StartingPathTrackNode "tank_path_blimp_c_1"
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+		WaveSpawn // 1 Mini Rocket Sentry Tank
+        {
+            Name "Wave5_Subwave2_SentryTank"
+            WaitForAllDead "Wave5_Subwave1_TheMan"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 7
+            WaitBetweenSpawns 0
+            TotalCurrency 45
+            
+            Tank
+            {
+                Name "sentrytank$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+                ClassIcon tank_sentry_entropy
+                Health 20000
+                IsMiniBoss 1
+                StartingPathTrackNode "tank_path_c_1"
 
-				OnBombDroppedOutput
-				{
-					Target boss_deploy_relay
-					Action Trigger
-				}
-			}
-		}
+                SpawnTemplate "RocketSentryTankPT"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
+		WaveSpawn // 1 Mini Rocket Sentry Tank
+        {
+            Name "Wave5_Subwave2_SentryTank"
+            WaitForAllDead "Wave5_Subwave1_TheMan"
+            TotalCount 1
+            MaxActive 1
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 0
+            TotalCurrency 45
+            
+            Tank
+            {
+                Name "sentrytank$scale|0.5^pingsound|misc/null.wav^maxstepheight|50^disablesmokestack|1^noscreenshake|1^nodestructionmodel|1"
+                ClassIcon tank_sentry_entropy
+                Health 20000
+                IsMiniBoss 1
+                StartingPathTrackNode "tank_path_d_1"
+
+                SpawnTemplate "RocketSentryTankPT"
+
+                OnBombDroppedOutput
+                {
+                    Target boss_deploy_relay
+                    Action Trigger
+                }
+            }
+        }
 
 		WaveSpawn // 4 GRicochet Demos and 8 Supercharged Pyros
 		{
@@ -5221,7 +5966,7 @@ WaveSchedule
 		WaveSpawn // 6 GSledge Pyros and 6 GCharged Medics
 		{
 			Name "Wave5_Subwave3_SledgeThrower"
-			WaitForAllDead "Wave5_Subwave2_Blimp"
+			WaitForAllDead "Wave5_Subwave2_SentryTank"
 			Where spawnbot
 			TotalCount 12
 			MaxActive 6
@@ -5260,7 +6005,7 @@ WaveSchedule
 		WaveSpawn // 6 Bulwark Medics and 18 Rapid Fire Soldiers
 		{
 			Name "Wave5_Subwave3_Soldiers"
-			WaitForAllDead "Wave5_Subwave2_Blimp"
+			WaitForAllDead "Wave5_Subwave2_SentryTank"
 			Where spawnbot_right
 			TotalCount 24
 			MaxActive 8
@@ -5483,7 +6228,7 @@ WaveSchedule
 			Tank
 			{
 				Name "ubertank|0|-1$targetname|BenedictUberTank^maxturnrate|75^pingsound|npc/combine_gunship/ping_search.wav^disablesmokestack|1"
-				ClassIcon tank_uber_lite_hyper
+				ClassIcon tank_uber_hyper_lite
 				Health 225000
 				Speed 75
 				Skin 1
@@ -5618,7 +6363,7 @@ WaveSchedule
 			WaitBeforeStarting 0
 			FirstSpawnOutput
 			{
-				Target TankTeleportRightSideRelay
+				Target TankTeleportLeftSideRelay
 				Action Trigger
 				Delay 3
 			}
@@ -5803,7 +6548,7 @@ WaveSchedule
 			WaitBeforeStarting 0
 			FirstSpawnOutput
 			{
-				Target TankTeleportLeftSideRelay
+				Target TankTeleportRightSideRelay
 				Action Trigger
 				Delay 3
 			}
@@ -5926,7 +6671,7 @@ WaveSchedule
 					Repeats 0
 					Duration 25
 					Cooldown 0.3
-					Distance 200
+					Distance 300
                 }
 			}
 		}
@@ -5936,7 +6681,7 @@ WaveSchedule
 			WaitBeforeStarting 0
 			FirstSpawnOutput
 			{
-				Target TankTeleportRightSideRelay
+				Target TankTeleportLeftSideRelay
 				Action Trigger
 				Delay 3
 			}
@@ -6027,36 +6772,47 @@ WaveSchedule
 				}
 			}
 		}
-		Wave
+
+		WaveSpawn
 		{
-			CustomWaveNumber 7
-			CustomMaxWaveNumber 0
-			InitWaveOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
-						EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
-						EntFire(`bombpath_left_upper_relay`, `Trigger`, null, 6.1)
-					"
-			}
-			StartWaveOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`wave_start_relay`, `Trigger`)
-					"
-			}
-			DoneOutput
-			{
-				Target BigNet
-				Action RunScriptCode
-				Param "
-						EntFire(`wave_finished_relay`, `Trigger`)
-					"
-			}
+			Name "Wave6_Cutscene"
+			WaitForAllDead "Wave6_UberTank"
+			WaitBeforeStarting 20
 		}
+	}
+	Wave
+	{
+		InitWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`FunnyOrbFinalPT`, `ForceSpawn`)
+					EntFire(`FinalBossPreludeRelay`, `Trigger`)
+
+					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_upper_relay`, `Trigger`, null, 6.1)
+				"
+		}
+		StartWaveOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_start_relay`, `Trigger`)
+				"
+		}
+		DoneOutput
+		{
+			Target BigNet
+			Action RunScriptCode
+			Param "
+					EntFire(`wave_finished_relay`, `Trigger`)
+				"
+		}
+
+		CustomWaveNumber 7
+		CustomMaxWaveNumber 0
 	}
 }
