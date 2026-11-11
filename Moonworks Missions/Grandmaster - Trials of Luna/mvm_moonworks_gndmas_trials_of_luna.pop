@@ -1094,6 +1094,50 @@ WaveSchedule
                 "projectile speed decreased" 0.65
             }
         }
+        T_TFBot_Giant_Sniper_Arrow_Storm_Homing
+        {
+            Name "Giant Homing Arrow Storm Bowman"
+            Class Sniper
+            ClassIcon sniper_bow_arrowrain_homing_giant
+            Skill Expert
+            Health 3000
+            Attributes MiniBoss
+            WeaponRestrictions PrimaryOnly
+
+            UseCustomModel "models/bots/sniper_boss/bot_sniper_boss.mdl"
+
+            AimOffset "0 0 1000"
+
+            Item "The Huntsman"
+
+            CharacterAttributes
+			{
+				"move speed penalty" 0.5
+				"damage force reduction" 0.7
+				"airblast vulnerability multiplier" 0.7
+				"override footstep sound set" 5
+			}
+
+            ItemAttributes
+            {
+                ItemName "The Huntsman"
+
+                "arrow mastery" 2
+
+                "projectile speed decreased" 0.65
+
+                "mod projectile heat seek power" 75
+                "mod projectile heat aim error" 99999
+                "mod projectile heat aim time" 1.5
+
+                "projectile trail particle" "eyeboss_projectile"
+            }
+
+            AddCond
+            {
+                Index 36
+            }
+        }
 
         //// MINIGIANTS ////
 
@@ -1423,6 +1467,33 @@ WaveSchedule
 				Repeats 0
 				Cooldown 0.5
 			}
+        }
+        T_TFBot_Scout_Bonk_Supercharged
+        {
+            Name "Supercharged Bonk Scout"
+            Class Scout
+            ClassIcon scout_bonk_fast_hyper
+            Skill Expert
+            WeaponRestrictions PrimaryOnly
+
+            Item "Bonk! Atomic Punch"
+
+			Item "Bonk Helm"
+
+            CharacterAttributes
+            {
+                "move speed bonus" 2
+                "deploy time decreased" 0.33
+            }
+
+            ItemAttributes
+            {
+                ItemName "TF_WEAPON_SCATTERGUN"
+
+                "damage bonus" 2
+                "fire rate bonus" 0.5
+                "faster reload rate" 0.001
+            }
         }
     }
 
@@ -3717,16 +3788,113 @@ WaveSchedule
         }
 
         // Subwave 1
-        WaveSpawn // 12 GRapid Stun Soldiers (Nai)
+        WaveSpawn // Support GBurst Fury Pyros (Kai)
+        {
+            Name "Wave6_Subwave1_GBurstFuryPyro"
+            Where spawnbot
+            Support 1
+            TotalCount 20
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 10
+            TotalCurrency 60
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Pyro_Dragon_Fury_Burst
+            }
+        }
+        WaveSpawn // 6 GRapid Stun Soldiers (Nai)
         {
             Name "Wave6_Subwave1_GRapidStunSoldier"
             Where spawnbot
-            TotalCount 12
-            MaxActive 8
+            TotalCount 6
+            MaxActive 4
             SpawnCount 1
             WaitBeforeStarting 0
             WaitBetweenSpawns 8
-            TotalCurrency 100
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Stunner
+                Attributes AlwaysCrit
+            }
+        }
+        WaveSpawn // 15 Heavies and 15 Full-Uber Medics (The Fat)
+        {
+            Name "Wave6_Subwave1_Heavies"
+            Where spawnbot
+            TotalCount 30
+            MaxActive 10
+            SpawnCount 2
+            WaitBeforeStarting 0
+            WaitBetweenSpawns 2
+            TotalCurrency 40
+
+            Squad
+            {
+                TFBot
+                {
+                    Class Heavy
+                    Skill Expert
+                }
+                TFBot
+                {
+                    Template T_TFBot_Medic_Uber
+                }
+            }
+        }
+
+        WaveSpawn // 6 GRapid Stun Soldiers (Nai)
+        {
+            Name "Wave6_Subwave1_GRapidStunSoldier2"
+            WaitForAllSpawned "Wave6_Subwave1_GRapidStunSoldier"
+            Where spawnbot
+            TotalCount 6
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 8
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Spammer_Stunner
+                Attributes AlwaysCrit
+            }
+        }
+        WaveSpawn // 30 Bonk Scouts (Kai & The Fat)
+        {
+            Name "Wave6_Subwave1_BonkScouts"
+            WaitForAllSpawned "Wave6_Subwave1_GRapidStunSoldier"
+            Where spawnbot
+            RandomSpawn 1
+            TotalCount 30
+            MaxActive 12
+            SpawnCount 6
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 8
+            TotalCurrency 40
+
+            TFBot
+            {
+                Template T_TFBot_Scout_Bonk_Supercharged
+            }
+        }
+
+        WaveSpawn // 4 GRapid Stun Soldiers (Nai)
+        {
+            Name "Wave6_Subwave1_GRapidStunSoldier3"
+            WaitForAllSpawned "Wave6_Subwave1_GRapidStunSoldier2"
+            Where spawnbot
+            TotalCount 4
+            MaxActive 4
+            SpawnCount 1
+            WaitBeforeStarting 8
+            WaitBetweenSpawns 1
+            TotalCurrency 40
 
             TFBot
             {
@@ -3735,22 +3903,117 @@ WaveSchedule
             }
         }
 
-        WaveSpawn // 4 GRapid Stun Soldiers (Nai)
+        // Subwave 2
+        WaveSpawn
         {
-            Name "Wave6_Subwave1_GRapidStunSoldier2"
-            WaitForAllSpawned "Wave6_Subwave1_GRapidStunSoldier"
-            Where spawnbot
-            TotalCount 4
-            MaxActive 4
+            Name "Wave6_Subwave2_Tankdozer"
+        }
+
+        WaveSpawn // 2 GHoming Arrow Storm Bowmen, 2 GBig-Heal Medics and 4 Firebrand Pyros (Owy)
+        {
+            Name "Wave6_Subwave2_GStormHuntsman"
+            WaitForAllSpawned "Wave6_Subwave1_GRapidStunSoldier3"
+            Where spawnbot_left
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 16
+            TotalCurrency 40
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+                
+                TFBot
+                {
+                    Template T_TFBot_Giant_Sniper_Arrow_Storm_Homing
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                }
+            }
+        }
+        WaveSpawn // 2 GBurst Soldiers (Datlad11)
+        {
+            Name "Wave6_Subwave2_GBurstSoldier"
+            WaitForAllSpawned "Wave6_Subwave1_GRapidStunSoldier3"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
             SpawnCount 1
-            WaitBeforeStarting 8
-            WaitBetweenSpawns 1
-            TotalCurrency 100
+            WaitBeforeStarting 10
+            WaitBetweenSpawns 16
+            TotalCurrency 20
 
             TFBot
             {
-                Template T_TFBot_Giant_Soldier_Spammer_Stunner
-                Attributes AlwaysCrit
+                Template T_TFBot_Giant_Soldier_Burst_Supercharged
+            }
+        }
+
+        WaveSpawn // 2 GHoming Arrow Storm Bowmen, 2 GBig-Heal Medics and 4 Firebrand Pyros (Owy)
+        {
+            Name "Wave6_Subwave2_GStormHuntsman2"
+            WaitForAllSpawned "Wave6_Subwave1_GStormHuntsman"
+            Where spawnbot_left
+            TotalCount 8
+            MaxActive 8
+            SpawnCount 4
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 40
+
+            Squad
+            {
+                NoWaitForFormation 1 [$SIGSEGV]
+                
+                TFBot
+                {
+                    Template T_TFBot_Giant_Sniper_Arrow_Storm_Homing
+                }
+                TFBot
+                {
+                    Template T_TFBot_Giant_Medic_BigHeal
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                }
+                TFBot
+                {
+                    Template T_TFBot_Pyro_Firebrand
+                    Attributes AlwaysCrit
+                }
+            }
+        }
+        WaveSpawn // 2 GBurst Soldiers (Datlad11)
+        {
+            Name "Wave6_Subwave2_GBurstSoldier2"
+            WaitForAllSpawned "Wave6_Subwave2_GStormHuntsman"
+            Where spawnbot_right
+            TotalCount 2
+            MaxActive 2
+            SpawnCount 1
+            WaitBeforeStarting 16
+            WaitBetweenSpawns 16
+            TotalCurrency 20
+
+            TFBot
+            {
+                Template T_TFBot_Giant_Soldier_Burst_Supercharged
             }
         }
     }
