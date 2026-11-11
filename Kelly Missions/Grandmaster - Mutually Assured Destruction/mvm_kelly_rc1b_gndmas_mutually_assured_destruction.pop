@@ -198,6 +198,8 @@ WaveSchedule
 						PrecacheSound(`ambient/explosions/explode_2.wav`)
 						PrecacheSound(`npc/dog/dog_rollover_servos1.wav`)
 						PrecacheSound(`npc/dog/dog_scared1.wav`)
+						PrecacheSound(`npc/dog/dog_angry2.wav`)
+						PrecacheSound(`npc/dog/dog_on_dropship.wav`)
 						PrecacheSound(`mvm/mvm_tele_deliver.wav`)
 						PrecacheSound(`mvm/mvm_tele_activate.wav`)
 
@@ -377,6 +379,21 @@ WaveSchedule
 			{
 				"targetname" "UberTankFilter"
 				"filtername" "BenedictUberTank"
+			}
+
+			// FINAL WAVE SETUP //
+
+			logic_relay
+			{
+				"targetname" "W7SetupRelay"
+
+				"OnTrigger" "bombpath_arrows_all,AddOutput,rendercolor 255 0 0,0,-1"
+				"OnTrigger" "bombpath_arrows_left,AddOutput,rendercolor 255 0 0,0,-1"
+				"OnTrigger" "bombpath_arrows_left_upper,AddOutput,rendercolor 255 0 0,0,-1"
+				"OnTrigger" "bombpath_arrows_right,AddOutput,rendercolor 255 0 0,0,-1"
+				"OnTrigger" "bombpath_arrows_right_upper,AddOutput,rendercolor 255 0 0,0,-1"
+
+				"OnTrigger" "Player,$DisplayTextChat,{yellow}Now Playing: {6383ff} The King Of All Tanks: Anticipation - PixelBitie,3,1"
 			}
 
 			// MUSIC //
@@ -697,7 +714,7 @@ WaveSchedule
 
 		FunnyOrbPT
 		{
-			RemoveIfKilled "OrbCore"
+			RemoveIfKilled "FunnyOrbCore"
 
 			OnSpawnOutput
 			{
@@ -777,34 +794,55 @@ WaveSchedule
 				"OnTrigger" "tf_gamerules,PlayVO,npc/combine_gunship/gunship_ping_search.wav,3,1"
 				"OnTrigger" "OrbComponent,Disable,,3,-1"
 				"OnTrigger" "OrbComponentBIG,Enable,,3,-1"
-
-				"OnTrigger" "OrbPulse,AddOutput,modelscale 1.25,4.9,-1"
-				"OnTrigger" "OrbPulseRunScriptCodeself.SetModelScale(100,1)5-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 128, 128, 255, 25, 0.6, 0.1, 1)5-1"
 				"OnTrigger" "tf_gamerules,PlayVO,npc/combine_gunship/gunship_ping_search.wav,5,1"
-
-				"OnTrigger" "OrbPulse,AddOutput,modelscale 1.25,6.9,-1"
-				"OnTrigger" "OrbPulseRunScriptCodeself.SetModelScale(100,1)7-1"
 				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 128, 128, 255, 25, 0.6, 0.1, 1)7-1"
 				"OnTrigger" "tf_gamerules,PlayVO,npc/combine_gunship/gunship_ping_search.wav,7,1"
+				"OnTrigger" "OrbCoreChargeUp,Start,,8.5,1"
 
-				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 2, 16, 14, 50000, 0, true)13.6-1"
-                "OnTrigger" "tf_gamerules,PlayVO,ambient/spacebase/spacebase_rumble_06.wav,13.5,-1"
+				"OnTrigger" "Player,SetFogController,FunnyOrbDustFog,11.5,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_angry2.wav`, channel = 6, pitch = 60})11.5-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_angry2.wav`, channel = 6, pitch = 60})11.5-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_on_dropship.wav`, channel = 6, pitch = 60})9-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_on_dropship.wav`, channel = 6, pitch = 60})9-1"
+
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `music/mutuallyassureddestruction/king_tank_prelude.mp3`, channel = 6, flags = 16, delay = -12})12.5-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient_mp3/medieval_thunder4.mp3,12.5,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient_mp3/halloween/windgust_10.mp3,12.5,-1"
+                "OnTrigger" "tf_gamerules,PlayVO,ambient_mp3/halloween/windgust_12.mp3,12.5,-1"
+				"OnTrigger" "DustParticlesTimer,Enable,,12.75,-1"
+
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 78, 80, 82, 255, 0.6, 0.1, 1)13-1"
+				"OnTrigger" "Player,SetScriptOverlayMaterial,effects/stealth_overlay,13,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/spacebase/spacebase_rumble_06.wav,13,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 4, 16, 3, 50000, 0, true)13.1-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 4, 16, 3, 50000, 0, true)16.1-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 4, 16, 3, 50000, 0, true)19.1-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 4, 16, 3, 50000, 0, true)22.1-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 4, 16, 3, 50000, 0, true)25.1-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 4, 16, 3, 50000, 0, true)28.1-1"
+
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/medieval_thunder3.wav,14.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/wind/windgust_strong.wav,15.5,-1"
                 "OnTrigger" "tf_gamerules,PlayVO,ambient/spacebase/spacebase_rumble_06.wav,16.5,-1"
 				"OnTrigger" "tf_gamerules,PlayVO,ambient/spacebase/spacebase_rumble_06.wav,19.5,-1"
-				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_angry2.wav`, channel = 6, pitch = 60})10.5-1"
-				"OnTrigger" "tf_gamerules,PlayVO,ambient_mp3\medieval_thunder4.mp3,12.5,-1"
-                "OnTrigger" "tf_gamerules,PlayVO,ambient_mp3\halloween\windgust_10.mp3,12.5,-1"
-                "OnTrigger" "tf_gamerules,PlayVO,ambient_mp3\halloween\windgust_12.mp3,12.5,-1"
-                "OnTrigger" "Player,SetFogController,teleport_rain_fog,10.5,-1"
-				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 78, 80, 82, 255, 0.6, 0.1, 1)12.9-1"
-				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 78, 80, 82, 255, 0.6, 0.1, 1)27.9-1"
-				"OnTrigger" "Player,SetScriptOverlayMaterial,effects/stealth_overlay,13,-1"
-                "OnTrigger" "Player,SetScriptOverlayMaterial,,30,-1"
-				"OnTrigger" "VortexProp,$SetKey$renderfx,14,14,-1"
-				"OnTrigger" "VortexProp,$SetKey$renderfx,26,26,-1"
-				"OnTrigger" "DustParticlesTimer,Enable,,14,-1"
-				"OnTrigger" "DustParticlesTimer,Disable,,26,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_angry2.wav`, channel = 6, pitch = 60})19.5-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `npc/dog/dog_angry2.wav`, channel = 6, pitch = 60})19.5-1"
+				
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/medieval_thunder4.wav,20.5,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/wind/windgust_strong.wav,21.5,-1"
+				
+				"OnTrigger" "DustParticlesTimer,Disable,,28,-1"
+				"OnTrigger" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 255, 1, 0.3, 1)28-1"
+                "OnTrigger" "Player,SetScriptOverlayMaterial,,28,-1"
+				"OnTrigger" "Player,SetFogController,DefaultFog,28,-1"
+				"OnTrigger" "BigNetRunScriptCodeEmitSoundEx({sound_name = `music/mutuallyassureddestruction/king_tank_prelude.mp3`, channel = 6, flags = 4})28-1"
+				"OnTrigger" "tf_gamerules,PlayVO,ambient/halloween/thunder_08.wav,28,-1"
+				"OnTrigger" "FunnyOrbFinalPT,ForceSpawn,,28,-1"
+				"OnTrigger" "Player,$DisplayTextChat,{blue}The King of All Tanks {FFFFFF}awaits it's {9BBF4D}REBIRTH{FFFFFF}.,28,1"
+				"OnTrigger" "tf_gamerules,$PlayVO,28,-1"
+				"OnTrigger" "FunnyOrbCore,Kill,,28.1,-1"
 			}
 
 			logic_timer
@@ -829,7 +867,7 @@ WaveSchedule
 				"fogmaxdensity" "0.95"
                 "farz" "-1"
 
-				"fogcolor" "78 80 82"
+				"fogcolor" "69 71 74"
                 "fogblend" "0"
 				"fogRadial" "1"
                 "foglerptime" "4"
@@ -894,69 +932,53 @@ WaveSchedule
 				"origin" "736 -512 32"
 				"effect_name" "hammer_dust_kickup"
 			}
-			func_rotating
+			info_particle_system
 			{
-				"targetname" "VortexRotator"
-				"origin" "4243 -245 276"
-				"maxspeed" "80"
-				"fanfriction" "100"
-
-				"spawnflags" "81"
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "-992 -928 64"
+				"effect_name" "hammer_dust_kickup"
 			}
-			prop_dynamic
+			info_particle_system
 			{
-				"targetname" "VortexProp"
-				"parentname" "VortexRotator"
-				"origin" "4243 -245 276"
-				"angles" "0 0 0"
-
-				"model" "models/props_lakeside_event/vortex_lakeside2.mdl"
-				"modelscale" "0.08"
-				"solid" "0"
-
-				"rendermode" "1"
-				"rendercolor" "255 111 0"
-				"renderamt" "0"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "-928 -1536 32"
+				"effect_name" "hammer_dust_kickup"
 			}
-			prop_dynamic
+			info_particle_system
 			{
-				"targetname" "VortexProp"
-				"parentname" "VortexRotator"
-				"origin" "4243 -245 276"
-				"angles" "0 0 0"
-
-				"model" "models/props_lakeside_event/vortex_lakeside2.mdl"
-				"modelscale" "0.17"
-				"solid" "0"
-
-				"rendermode" "1"
-				"rendercolor" "255 111 0"
-				"renderamt" "0"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "-64 -1536 64"
+				"effect_name" "hammer_dust_kickup"
 			}
-
-			prop_dynamic
+			info_particle_system
 			{
-				"targetname" "VortexProp"
-				"parentname" "VortexRotator"
-				"origin" "4243 -245 276"
-				"angles" "0 0 0"
-
-				"model" "models/props_lakeside_event/vortex_lakeside2.mdl"
-				"modelscale" "0.35"
-				"solid" "0"
-
-				"rendermode" "1"
-				"rendercolor" "255 111 0"
-				"renderamt" "0"
-
-				"disablebonefollowers" "1"
-				"disableshadows" "1"
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "704 -1568 32"
+				"effect_name" "hammer_dust_kickup"
+			}
+			info_particle_system
+			{
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "704 -736 32"
+				"effect_name" "hammer_dust_kickup"
+			}
+			info_particle_system
+			{
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "-160 2176 -64"
+				"effect_name" "hammer_dust_kickup"
+			}
+			info_particle_system
+			{
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "-128 992 0"
+				"effect_name" "hammer_dust_kickup"
+			}
+			info_particle_system
+			{
+				"targetname" "FunnyOrbDustParticle"
+				"origin" "3968 -288 288"
+				"effect_name" "hammer_dust_kickup"
 			}
 			
 			// ORB CORE //
@@ -977,16 +999,23 @@ WaveSchedule
 			}
 			info_particle_system
 			{
-				"targetname" "OrbCore"
+				"targetname" "FunnyOrbCore"
 				"parentname" "OrbCoreMover"
 				"origin" "175 -2368 200"
 				"effect_name" "dxhr_lightningball_parent_blue"
 				"start_active" "1"
 			}
+			info_particle_system
+			{
+				"targetname" "OrbCoreChargeUp"
+				"parentname" "OrbCoreMover"
+				"origin" "175 -2368 200"
+				"effect_name" "charge_up"
+			}
 			env_spritetrail
 			{
 				"targetname" "OrbComponentTrail"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "175 -2368 200"
 
 				"spritename" "effects/beam001_blu.vmt"
@@ -998,7 +1027,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponent"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "175 -2368 150"
 
 				"model" "models/buildables/sentry_shield.mdl"
@@ -1011,7 +1040,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponentBIG"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "175 -2368 0"
 
 				"model" "models/buildables/sentry_shield.mdl"
@@ -1025,7 +1054,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbPulse"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "175 -2368 150"
 
 				"model" "models/buildables/sentry_shield.mdl"
@@ -1042,7 +1071,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponentVortex"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "-128 640 800"
 				"angles" "0 180 90"
 
@@ -1059,7 +1088,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponentVortex"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "-128 640 800"
 				"angles" "0 -180 90"
 
@@ -1077,7 +1106,7 @@ WaveSchedule
 			point_tesla
 			{
 				"targetname" "OrbComponentTesla"
-				"parentname" "OrbCore"
+				"parentname" "FunnyOrbCore"
 				"origin" "175 -2368 200"
 
 				"texture" "sprites/physbeam.vmt"
@@ -1096,19 +1125,19 @@ WaveSchedule
 
 		FunnyOrbFinalPT
 		{
-			RemoveIfKilled "OrbCore"
+			RemoveIfKilled "FinalOrbCore"
 
 			OnSpawnOutput
 			{
-				Target "OrbCoreLinkRelay"
+				Target "FinalOrbCoreLinkRelay"
 				Action "Trigger"
 			}
 
-			// ORB CORE //
+			// FINAL ORB CORE //
 
 			info_particle_system
 			{
-				"targetname" "OrbCore"
+				"targetname" "FinalOrbCore"
 				"origin" "-128 640 800"
 				"effect_name" "dxhr_lightningball_parent_blue"
 				"start_active" "1"
@@ -1116,7 +1145,7 @@ WaveSchedule
 
 			logic_relay
 			{
-				"targetname" "OrbCoreLinkRelay"
+				"targetname" "FinalOrbCoreLinkRelay"
 
 				"OnTrigger" "OrbTankComponentLink*,StrikeOnce,,0,-1"
 				"OnTrigger" "!self,Trigger,,0.1,-1"
@@ -1137,7 +1166,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponent"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
 				"origin" "-128 640 600"
 
 				"model" "models/buildables/sentry_shield.mdl"
@@ -1150,7 +1179,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponent"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
 				"origin" "-128 640 800"
 				"angles" "0 180 90"
 
@@ -1166,7 +1195,7 @@ WaveSchedule
 			prop_dynamic
 			{
 				"targetname" "OrbComponent"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
 				"origin" "-128 640 800"
 				"angles" "0 -180 90"
 
@@ -1183,7 +1212,7 @@ WaveSchedule
 			point_tesla
 			{
 				"targetname" "OrbComponent"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
 				"origin" "-128 640 800"
 
 				"texture" "sprites/physbeam.vmt"
@@ -1202,7 +1231,7 @@ WaveSchedule
 			point_tesla
 			{
 				"targetname" "OrbComponent"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
 				"origin" "-128 640 800"
 
 				"texture" "sprites/physbeam.vmt"
@@ -1222,7 +1251,7 @@ WaveSchedule
 			info_particle_system
             {
                 "targetname" "OrbParticle"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
                 "origin" "-128 640 1000"
                 "effect_name" "green_vortex_rain"
                 "start_active" "1"
@@ -1230,7 +1259,7 @@ WaveSchedule
 			info_particle_system
             {
                 "targetname" "OrbParticle"
-				"parentname" "OrbCore"
+				"parentname" "FinalOrbCore"
                 "origin" "-128 640 1300"
                 "effect_name" "green_vortex_rain"
                 "start_active" "1"
@@ -1238,31 +1267,31 @@ WaveSchedule
 
 			logic_timer
 			{
-				"targetname" "OrbLightningStrike"
+				"targetname" "FinalOrbLightningStrike"
 				"RefireTime" "10"
-				"OnTimer" "OrbLightningCase,PickRandomShuffle,,0,-1"
+				"OnTimer" "FinalOrbLightningCase,PickRandomShuffle,,0,-1"
 			}
 			logic_case
 			{
-				"targetname" "OrbLightningCase"
+				"targetname" "FinalOrbLightningCase"
 
 				"OnCase01" "tf_gamerules,PlayVO,ambient/halloween/thunder_03.wav,0,-1"
-				"OnCase01" "OrbComponent,DoSpark,,2,-1"
+				"OnCase01" "FinalOrbComponent,DoSpark,,2,-1"
 				"OnCase01" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 25, 0.6, 0.1, 1)2-1"
 				"OnCase01" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)2-1"
 
 				"OnCase02" "tf_gamerules,PlayVO,ambient/halloween/thunder_08.wav,0,-1"
-				"OnCase02" "OrbComponent,DoSpark,,0,-1"
+				"OnCase02" "FinalOrbComponent,DoSpark,,0,-1"
 				"OnCase02" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 25, 0.6, 0.1, 1)0-1"
 				"OnCase02" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)0-1"
 
 				"OnCase03" "tf_gamerules,PlayVO,ambient/halloween/thunder_05.wav,0,-1"
-				"OnCase03" "OrbComponent,DoSpark,,1.2,-1"
+				"OnCase03" "FinalOrbComponent,DoSpark,,1.2,-1"
 				"OnCase03" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 25, 0.6, 0.1, 1)1.2-1"
 				"OnCase03" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)1.2-1"
 
 				"OnCase04" "tf_gamerules,PlayVO,ambient/halloween/thunder_10.wav,0,-1"
-				"OnCase04" "OrbComponent,DoSpark,,1.4,-1"
+				"OnCase04" "FinalOrbComponent,DoSpark,,1.4,-1"
 				"OnCase04" "PlayerRunScriptCodeScreenFade(null, 255, 255, 255, 25, 0.6, 0.1, 1)1.4-1"
 				"OnCase04" "PlayerRunScriptCodeScreenShake(self.GetOrigin(), 5, 5, 2, 50000, 0, true)1.4-1"
 			}
@@ -1727,7 +1756,7 @@ WaveSchedule
 				"OnTrigger" "KingTankDragonFuryRight,$SetLocalOrigin,120 0 0,0.2,-1"
 				"OnTrigger" "KingTankDragonFuryRight,$SetLocalAngles,0 -180 0,0.2,-1"
 
-				"OnTrigger" "OrbCore,Kill,,0,-1"
+				"OnTrigger" "FinalOrbCore,Kill,,0,-1"
 				"OnTrigger" "FinalBossPrelude,Kill,,0,-1"
 				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_MAX_RANGE = 1})0-1"
 
@@ -2131,11 +2160,11 @@ WaveSchedule
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,-128 256 36,0,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,64 64 36,30,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,448 64 36,35,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm_tank_alerts05.mp3,36.75,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_tank_alerts05.mp3,36.75,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,640 -192 36,40,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,640 -1152 36,44,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,832 -1664 36,55,-1"
-				"OnTrigger" "tf_gamerules,PlayVO,vo\mvm_tank_alerts07.mp3,55.125,-1"
+				"OnTrigger" "tf_gamerules,PlayVO,vo/mvm_tank_alerts07.mp3,55.125,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,832 -2240 36,62,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,704 -2368 36,70,-1"
 				"OnTrigger" "tank_path_uber_2,$SetLocalOrigin,0 -2368 116,73.5,-1"
@@ -5645,8 +5674,8 @@ WaveSchedule
 			SpawnCount 1
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
-			FirstSpawnWarningSound music\hl1_song17.mp3
-			LastSpawnWarningSound ambient\alarms\razortrain_horn1.wav
+			FirstSpawnWarningSound music/hl1_song17.mp3
+			LastSpawnWarningSound ambient/alarms/razortrain_horn1.wav
 			TotalCurrency 0
 
 			Tank
@@ -5700,7 +5729,7 @@ WaveSchedule
 		{
 			Name "Wave4_Subwave2_Giant"
 			WaitForAllDead "Wave4_Subwave1_CEMENT"
-			FirstSpawnWarningSound vo\mvm\mght\demoman_mvm_m_gibberish13.mp3
+			FirstSpawnWarningSound vo/mvm/mght/demoman_mvm_m_gibberish13.mp3
 			Where spawnbot_any
 			TotalCount 24
 			MaxActive 15
@@ -6586,7 +6615,7 @@ WaveSchedule
 			{
 				Target BigNet
 				Action RunScriptCode
-				Param "ClientPrint(null,3,`\x075885A2??? \x01has been \x03RETOOLED \x01into a\x03 Cannon Tank!`)"
+				Param "ClientPrint(null,3,`/x075885A2??? /x01has been /x03RETOOLED /x01into a/x03 Cannon Tank!`)"
 			}
 		}
 		WaveSpawn // Support GScouts
@@ -6754,7 +6783,7 @@ WaveSchedule
 			{
 				Target BigNet
 				Action RunScriptCode
-				Param "ClientPrint(null,3,`\x075885A2??? \x01has been \x03RETOOLED \x01into a\x03 Reality-Warping Uber Tank!`)"
+				Param "ClientPrint(null,3,`/x075885A2??? /x01has been /x03RETOOLED /x01into a/x03 Reality-Warping Uber Tank!`)"
 			}
 		}
 
@@ -7283,7 +7312,7 @@ WaveSchedule
 		{
 			Name "Wave6_Cutscene"
 			WaitForAllDead "Wave6_UberTank"
-			WaitBeforeStarting 20
+			WaitBeforeStarting 30
 		}
 	}
 	Wave
@@ -7293,12 +7322,20 @@ WaveSchedule
 			Target BigNet
 			Action RunScriptCode
 			Param "
-					EntFire(`FunnyOrbFinalPT`, `ForceSpawn`)
+					if(!Entities.FindByName(null, `FinalOrbCore`))
+					{
+						EntFire(`FunnyOrbFinalPT`, `ForceSpawn`)
+					}
+
+					EntFire(`W7SetupRelay`, `Trigger`)
 					EntFire(`FinalBossPreludeRelay`, `Trigger`)
 
 					EntFire(`bombpath_clearall_relay`, `Trigger`, null, 6)
 					EntFire(`bombpath_arrows_clear_relay`, `Trigger`, null, 6)
+					EntFire(`bombpath_left_relay`, `Trigger`, null, 6.1)
 					EntFire(`bombpath_left_upper_relay`, `Trigger`, null, 6.1)
+					EntFire(`bombpath_right_relay`, `Trigger`, null, 6.1)
+					EntFire(`bombpath_right_upper_relay`, `Trigger`, null, 6.1)
 				"
 		}
 		StartWaveOutput
