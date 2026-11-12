@@ -187,21 +187,53 @@ WaveSchedule
 			"custom impact sound" "misc/doomsday_missile_explosion.wav"
 			"custom kill icon" "megaton"
 		}
-		"KingTankHomingMiniRocket"
+
+		"KingTankRocketBurst"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+			"projectile gravity" 900
+			"projectile detonate time" 1.25
+
+			//"noclip projectiles" 1
+
+			"explosion particle" "hightower_explosion"
+			"projectile trail particle" "spell_fireball_small_red"
+		}
+		"RocketBurstWeapon"
 		{
 			OriginalItemName "The Air Strike"
 
-			"projectile speed decreased" 0.65
-			"projectile spread angle penalty" 5
-			"mult projectile count" 2
+			"damage penalty" 0.5
+
+			"projectile speed decreased" 0.5
+
 			"ignores other projectiles" 1
+			"mult projectile count" 25
+			"projectile spread angle penalty" 30
 
 			"mod projectile heat seek power" 75
-			"mod projectile heat aim error" 360
-			"mod projectile heat aim time" 2
+			"mod projectile heat aim error" 270
+			"mod projectile heat aim start time" 0.25
+			"mod projectile heat aim time" 1
 			"mod projectile heat no predict target speed" 1
 
 			"projectile trail particle" "eyeboss_projectile"
+		}
+
+		"KingTankFireball"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+			"add damage type" 8
+			"remove damage type" 64
+			"Set DamageType Ignite" 1
+			"custom kill icon" "firedeath"
+			"custom weapon fire sound" "Weapon_DragonsFury.Single"
+			"custom impact sound" "=75|misc/halloween/spell_fireball_impact.wav"
+			"custom projectile model" "models/empty.mdl"
+			"projectile trail particle" "~spell_fireball_small_red"
+			"projectile speed decreased" 0.65
 		}
 	}
 
@@ -1952,18 +1984,31 @@ WaveSchedule
 			logic_relay
 			{
 				"targetname" "KingTankSetupRelay"
-
+				
 				"OnTrigger" "BigNet,RunScriptCode,FindMyWeapons(),0,-1"
 
 				"OnTrigger" "KingTankDragonFuryLeft,SetParent,!activator,0,-1"
 				"OnTrigger" "KingTankDragonFuryLeft,SetParentAttachment,weapon_l,0.1,-1"
-				"OnTrigger" "KingTankDragonFuryLeft,$SetLocalOrigin,120 0 0,0.2,-1"
-				"OnTrigger" "KingTankDragonFuryLeft,$SetLocalAngles,0 -180 0,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryLeft,$SetLocalOrigin,120 40 0,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryLeft,$SetLocalAngles,0 90 0,0.2,-1"
+
+				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,SetParentAttachment,barrel_1,0.1,-1"
+				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,SetParentAttachment,barrel_2,0.1,-1"
+				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
 
 				"OnTrigger" "KingTankDragonFuryRight,SetParent,!activator,0,-1"
 				"OnTrigger" "KingTankDragonFuryRight,SetParentAttachment,weapon_r,0.1,-1"
-				"OnTrigger" "KingTankDragonFuryRight,$SetLocalOrigin,120 0 0,0.2,-1"
-				"OnTrigger" "KingTankDragonFuryRight,$SetLocalAngles,0 -180 0,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryRight,$SetLocalOrigin,120 40 0,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryRight,$SetLocalAngles,0 90 0,0.2,-1"
+
+				"OnTrigger" "KingTankDragonFuryRightUpperWeapon,SetParentAttachment,barrel_1,0.1,-1"
+				"OnTrigger" "KingTankDragonFuryRightUpperWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,SetParentAttachment,barrel_2,0.1,-1"
+				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
+
+				//"OnTrigger" "KingTankRailgunLeftRunScriptCodeself.SetPoseParameter(0, 1)0-1"
+				//"OnTrigger" "KingTankRailgunRightRunScriptCodeself.SetPoseParameter(0, 1)0-1"
 
 				"OnTrigger" "FinalOrbCore,Kill,,0,-1"
 				"OnTrigger" "FinalBossPrelude,Kill,,0,-1"
@@ -2020,11 +2065,12 @@ WaveSchedule
 				"targetname" "KingTankRailgunLeft"
 				"parentname" "KingTankRailgunLeftRotator"
 				"origin" "16 116 84"
-				"angles" "0 -90 -180"
+				"angles" "0 0 -180"
 
 				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_railgun.mdl"
 				"modelscale" "1.5"
 				"skin" "1"
+				"defaultanim" "idle"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
@@ -2050,11 +2096,12 @@ WaveSchedule
 				"targetname" "KingTankRailgunRight"
 				"parentname" "KingTankRailgunRightRotator"
 				"origin" "16 -116 84"
-				"angles" "0 90 0"
+				"angles" "0 0 0"
 
 				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_railgun.mdl"
 				"modelscale" "1.5"
 				"skin" "1"
+				"defaultanim" "idle"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
@@ -2085,6 +2132,7 @@ WaveSchedule
 				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_combat_tank_cannon.mdl"
 				"modelscale" "1.25"
 				"skin" "1"
+				"defaultanim" "idle"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
@@ -2112,10 +2160,12 @@ WaveSchedule
 				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_fireball.mdl"
 				"modelscale" "1.25"
 				"skin" "1"
+				"defaultanim" "idle"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
 			}
+
 			prop_dynamic
 			{
 				"targetname" "KingTankDragonFuryRight"
@@ -2123,6 +2173,7 @@ WaveSchedule
 				"model" "models/bots/boss_bot/combat_tank_mk2/mk2_fireball.mdl"
 				"modelscale" "1.25"
 				"skin" "1"
+				"defaultanim" "idle"
 
 				"disablebonefollowers" "1"
 				"disableshadows" "1"
@@ -2151,17 +2202,51 @@ WaveSchedule
 				"$autoparent" "1"
 			}
 
-			// Homing Mini-Rocket
-			logic_relay
+			// CANNON ATTACK //
+
+			tf_point_weapon_mimic
 			{
-				"targetname" "KingTankHomingMiniRocketMainWeaponRelay"
+				"targetname" "KingTankCannonWeapon"
+				"parentname" "KingTankCannonRotator"
+				"origin" "-140 0 300"
+				"angles" "-75 0 0"
+				"$weaponname" "KingTankRocketBurst"
 
-				"OnTrigger" "MainWeapon,AddOutput,$weaponname KingTankHomingMiniRocket,0,-1"
-				"OnTrigger" "MainWeapon,$RemoveOutput,$OnFire,0.1,-1"
+				"$OnFire" "KingTankRocketBurstSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			env_entity_maker
+			{
+				"targetname" "KingTankRocketBurstSpawner"
+				"entitytemplate" "CombatTankFinalBossRocketBurstPT"
+				"$autoparent" "1"
+			}
 
-				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_FIRE_DELAY = 0.16})0.1-1"
-				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_RELOAD_DELAY = 0.44})0.1-1"
-				"OnTrigger" "BigNetRunScriptCodeTankExt.SetValueOverrides({COMBATTANK_ROCKETPOD_SND_FIRE = `Weapon_Airstrike.AltFire`});TankExt.PrecacheSound(COMBATTANK_ROCKETPOD_SND_FIRE)0.1-1"
+			// FURY ATTACK //
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "KingTankDragonFuryLeftUpperWeapon"
+				"parentname" "KingTankDragonFuryLeft"
+				"$weaponname" "KingTankFireball"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "KingTankDragonFuryLeftLowerWeapon"
+				"parentname" "KingTankDragonFuryLeft"
+				"$weaponname" "KingTankFireball"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "KingTankDragonFuryRightUpperWeapon"
+				"parentname" "KingTankDragonFuryRight"
+				"$weaponname" "KingTankFireball"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "KingTankDragonFuryRightLowerWeapon"
+				"parentname" "KingTankDragonFuryRight"
+				"$weaponname" "KingTankFireball"
 			}
 		}
 		CombatTankFinalBossPathTriggerPT
@@ -2277,6 +2362,57 @@ WaveSchedule
                 "disablebonefollowers" "1"
                 "disableshadows" "1"
             }
+        }
+		CombatTankFinalBossRocketBurstPT
+        {
+			KeepAlive 1
+
+			RemoveIfKilled "RocketBurstMimic"
+
+			OnSpawnOutput
+			{
+				Target !activator
+				Action $RotateRelative
+				Param "120 0 0"
+				Delay 1
+			}
+
+            OnParentKilledOutput
+			{
+				Target RocketBurstMimic
+				Action FireOnce
+			}
+			OnParentKilledOutput
+			{
+				Target BigNuke
+				Action Kill
+			}
+			OnParentKilledOutput
+			{
+				Target RocketBurstMimic
+				Action Kill
+				Delay 5
+			}
+
+			prop_dynamic
+            {
+                "targetname" "BigNuke"
+				"origin" "0 0 -24"
+				"angles" "0 90 0"
+                "model" "models/workshop/player/items/soldier/taunt_rocket_jockey/taunt_rocket_jockey.mdl"
+				"skin" "1"
+
+                "disablebonefollowers" "1"
+                "disableshadows" "1"
+            }
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "RocketBurstMimic"
+
+				"teamnum" "3"
+				"$weaponname" "RocketBurstWeapon"
+			}
         }
 
 		//// TANK PTs ////
