@@ -43,6 +43,8 @@ WaveSchedule
 
 	PrecacheModel "models/megalaser_beam_v2/megalaser_beam_v2.mdl"
 
+	PrecacheModel "models/projectiles/fos_hologram_projectile_blu_l_spin.mdl"
+
 	// Precached Sounds //
 
 	PrecacheSound "music/mutuallyassureddestruction/abandoned_in_place.mp3"
@@ -235,6 +237,19 @@ WaveSchedule
 			"projectile trail particle" "~spell_fireball_small_red"
 			"projectile speed decreased" 0.65
 		}
+
+		"KingTankRailgunOrb"
+		{
+			OriginalItemName "TF_WEAPON_ROCKETLAUNCHER"
+
+			"projectile gravity" 400
+			"ignores other projectiles" 1
+
+			"custom weapon fire sound" "weapons/mortar/mortar_fire1.wav"
+            "custom projectile model" "models/projectiles/fos_hologram_projectile_blu_l_spin.mdl" 
+            "projectile trail particle" "rockettrail_airstrike_line"
+            "explosion particle" "drg_cow_explosioncore_charged_blue"
+		}
 	}
 
 	//// POINT TEMPLATES ////
@@ -263,6 +278,7 @@ WaveSchedule
 						PrecacheSound(`npc/dog/dog_on_dropship.wav`)
 						PrecacheSound(`mvm/mvm_tele_deliver.wav`)
 						PrecacheSound(`mvm/mvm_tele_activate.wav`)
+						PrecacheSound(`weapons/cow_mangler_explosion_charge_02.wav`)
 
                         Convars.SetValue(`tf_playergib`, 0)
 
@@ -1993,9 +2009,9 @@ WaveSchedule
 				"OnTrigger" "KingTankDragonFuryLeft,$SetLocalAngles,0 90 0,0.2,-1"
 
 				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,SetParentAttachment,barrel_1,0.1,-1"
-				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,$SetLocalOrigin,25 100 0,0.2,-1"
 				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,SetParentAttachment,barrel_2,0.1,-1"
-				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
+				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,$SetLocalOrigin,25 100 0,0.2,-1"
 
 				"OnTrigger" "KingTankDragonFuryRight,SetParent,!activator,0,-1"
 				"OnTrigger" "KingTankDragonFuryRight,SetParentAttachment,weapon_r,0.1,-1"
@@ -2006,6 +2022,11 @@ WaveSchedule
 				"OnTrigger" "KingTankDragonFuryRightUpperWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
 				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,SetParentAttachment,barrel_2,0.1,-1"
 				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,$SetLocalOrigin,0 100 10,0.2,-1"
+
+				"OnTrigger" "KingTankRailgunLeftWeapon,SetParentAttachment,barrel,0.1,-1"
+				"OnTrigger" "KingTankRailgunRightWeapon,SetParentAttachment,barrel,0.1,-1"
+				"OnTrigger" "KingTankRailgunLeftWeapon,$SetLocalOrigin,25 0 0,0.2,-1"
+				"OnTrigger" "KingTankRailgunRightWeapon,$SetLocalOrigin,25 0 0,0.2,-1"
 
 				//"OnTrigger" "KingTankRailgunLeftRunScriptCodeself.SetPoseParameter(0, 1)0-1"
 				//"OnTrigger" "KingTankRailgunRightRunScriptCodeself.SetPoseParameter(0, 1)0-1"
@@ -2058,7 +2079,7 @@ WaveSchedule
 				"effect_name" "hammer_impact_button_dust2"
 			}
 
-			// KING TANK WEAPON PROPS//
+			// KING TANK WEAPON PROPS //
 
 			prop_dynamic
 			{
@@ -2223,6 +2244,27 @@ WaveSchedule
 
 			// FURY ATTACK //
 
+			logic_relay
+			{
+				"targetname" "DragonFuryBasicAttackRelay"
+
+				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,FireOnce,,0,-1"
+				"OnTrigger" "KingTankDragonFuryRightUpperWeapon,FireOnce,,0,-1"
+				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,FireOnce,,0.5,-1"
+				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,FireOnce,,0.5-1"
+
+				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,FireOnce,,1.5,-1"
+				"OnTrigger" "KingTankDragonFuryRightUpperWeapon,FireOnce,,1.5,-1"
+				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,FireOnce,,2,-1"
+				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,FireOnce,,2,-1"
+
+				"OnTrigger" "KingTankDragonFuryLeftUpperWeapon,FireOnce,,3,-1"
+				"OnTrigger" "KingTankDragonFuryRightUpperWeapon,FireOnce,,3,-1"
+
+				"OnTrigger" "KingTankDragonFuryLeftLowerWeapon,FireOnce,,3.5,-1"
+				"OnTrigger" "KingTankDragonFuryRightLowerWeapon,FireOnce,,3.5,-1"
+			}
+
 			tf_point_weapon_mimic
 			{
 				"targetname" "KingTankDragonFuryLeftUpperWeapon"
@@ -2247,6 +2289,63 @@ WaveSchedule
 				"targetname" "KingTankDragonFuryRightLowerWeapon"
 				"parentname" "KingTankDragonFuryRight"
 				"$weaponname" "KingTankFireball"
+			}
+
+			// RAILGUN ATTACK //
+
+			logic_relay
+			{
+				"targetname" "RailgunOrbAttackRelay"
+
+				"OnTrigger" "KingTankRailgunRightRotator,Start,,0,-1"
+				"OnTrigger" "KingTankRailgunLeftRotator,Start,,0,-1"
+
+				"OnTrigger" "KingTankRailgunRightRotator,Stop,,3,-1"
+				"OnTrigger" "KingTankRailgunLeftRotator,Stop,,3,-1"
+
+				"OnTrigger" "KingTankRailgunLeftWeapon,FireOnce,,4,-1"
+				"OnTrigger" "KingTankRailgunRightWeapon,FireOnce,,4,-1"
+
+				"OnTrigger" "KingTankRailgunLeftWeapon,FireOnce,,6,-1"
+				"OnTrigger" "KingTankRailgunRightWeapon,FireOnce,,6,-1"
+				
+				"OnTrigger" "KingTankRailgunLeftWeapon,FireOnce,,8,-1"
+				"OnTrigger" "KingTankRailgunRightWeapon,FireOnce,,8,-1"
+
+				"OnTrigger" "KingTankRailgunRightRotator,Reverse,,8.9,-1"
+				"OnTrigger" "KingTankRailgunLeftRotator,Reverse,,8.9,-1"
+
+				"OnTrigger" "KingTankRailgunRightRotator,Start,,9,-1"
+				"OnTrigger" "KingTankRailgunLeftRotator,Start,,9,-1"
+
+				"OnTrigger" "KingTankRailgunRightRotator,Stop,,12,-1"
+				"OnTrigger" "KingTankRailgunLeftRotator,Stop,,12,-1"
+
+				"OnTrigger" "KingTankRailgunRightRotator,Reverse,,12.1,-1"
+				"OnTrigger" "KingTankRailgunLeftRotator,Reverse,,12.1,-1"
+			}
+
+			tf_point_weapon_mimic
+			{
+				"targetname" "KingTankRailgunLeftWeapon"
+				"parentname" "KingTankRailgunLeft"
+				"$weaponname" "KingTankRailgunOrb"
+
+				"$OnFire" "KingTankRailgunOrbSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			tf_point_weapon_mimic
+			{
+				"targetname" "KingTankRailgunRightWeapon"
+				"parentname" "KingTankRailgunRight"
+				"$weaponname" "KingTankRailgunOrb"
+
+				"$OnFire" "KingTankRailgunOrbSpawner,ForceSpawnAtEntityOrigin,!activator,0,-1"
+			}
+			env_entity_maker
+			{
+				"targetname" "KingTankRailgunOrbSpawner"
+				"entitytemplate" "CombatTankFinalBossRailgunOrbPT"
+				"$autoparent" "1"
 			}
 		}
 		CombatTankFinalBossPathTriggerPT
@@ -2414,6 +2513,65 @@ WaveSchedule
 				"$weaponname" "RocketBurstWeapon"
 			}
         }
+
+		CombatTankFinalBossRailgunOrbPT
+		{
+			KeepAlive 1
+			
+			RemoveIfKilled "RailgunOrbDamage"
+
+			OnParentKilledOutput
+			{
+				Target RailgunOrbRelay
+				Action Trigger
+			}
+
+			logic_relay
+			{
+				"targetname" "RailgunOrbRelay"
+
+				"OnTrigger" "ElectricFieldIndicatorRunScriptCodeEmitSoundEx({sound_name = `weapons/cow_mangler_explosion_charge_02.wav`, channel = 6, sound_level = 90, origin = self.GetOrigin() + Vector(0, 0, 40)})0-1"
+
+				"OnTrigger" "RailgunOrbParticle,Start,,0,-1"
+				"OnTrigger" "RailgunOrbBubble,Enable,,0,-1"
+				"OnTrigger" "RailgunOrbDamage,Enable,,0,-1"
+
+				"OnTrigger" "RailgunOrbDamage,Kill,,5,-1"
+			}
+			info_particle_system
+			{
+				"targetname" "RailgunOrbParticle"
+				"effect_name" "dxhr_lightningball_parent_blue"
+			}
+			prop_dynamic
+            {
+                "targetname" "RailgunOrbBubble"
+				"origin" "0 0 -35"
+
+                "model" "models/buildables/sentry_shield.mdl"
+                "modelscale" "1"
+                "skin" "1"
+
+				"disablebonefollowers" "1"
+                "disableshadows" "1"
+                "startdisabled" "1"
+            }
+			trigger_hurt
+            {
+                "targetname" "RailgunOrbDamage"
+                "filtername" "filter_redteam_nouber"
+
+                "mins" "-60 -60 -60"
+                "maxs" "60 60 60"
+
+                "damage" "70"
+                "damagetype" "1048576"
+                
+                "spawnflags" "1"
+
+                "startdisabled" "1"
+            }
+		}
 
 		//// TANK PTs ////
 
