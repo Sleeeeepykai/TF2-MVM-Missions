@@ -1,0 +1,588 @@
+#base robot_standard_vanilla_kai.pop
+#base robot_standard_custom_kai.pop
+#base robot_standard_custom_rafmod_kai.pop
+#base robot_standard_supercharged_kai.pop
+#base robot_standard_supercharged_rafmod_kai.pop
+#base robot_giant_vanilla_kai.pop
+#base robot_giant_custom_kai.pop
+#base robot_giant_custom_rafmod_kai.pop
+#base robot_giant_supercharged_kai.pop
+#base robot_giant_supercharged_rafmod_kai.pop
+#base robot_tank_custom_rafmod_kai.pop
+
+WaveSchedule
+{
+	StartingCurrency 1500
+	RespawnWaveTime 1
+	CanBotsAttackWhileInSpawnRoom No
+
+	AddSentryBusterWhenDamageDealtExceeds 2500
+    AddSentryBusterWhenKillCountExceeds 10
+
+	AllowBotExtraSlots 1
+	RobotLimit 25
+
+    BodyPartScaleSpeed 10
+
+    MissionUnloadOutput
+	{
+		Target BigNet
+		Action RunScriptCode
+		Param "
+				Convars.SetValue(`tf_playergib`, 1)
+			  "
+		Delay -1
+	}
+
+    //// PRECACHES ////
+
+	//// POINT TEMPLATES ////
+
+	PointTemplates
+	{
+		CorePT
+		{
+			OnSpawnOutput
+			{
+				Target BigNet
+				Action RunScriptCode
+				Param "
+						NetProps.SetPropString(Entities.FindByClassname(null, `tf_objective_resource`), `m_iszMvMPopfileName`, `(Expert) Causality Revolution`)
+
+                        Convars.SetValue(`tf_playergib`, 0)
+
+						IncludeScript(`tankextensions_main`)
+					  "
+			}
+		}
+    }
+
+    //// SPAWNED POINT TEMPLATES ////
+
+	SpawnTemplate "CorePT"
+
+    //// ROBOT TEMPLATES ////
+
+    Templates
+    {
+        
+    }
+    
+    //// MISSION BOTS ////
+
+    Mission // Sentry Buster
+	{
+		Objective DestroySentries
+		Where spawnbot_mission_sentrybuster
+		BeginAtWave 1
+		RunForThisManyWaves 8
+		InitialCooldown 25
+		CooldownTime 25
+		DesiredCount 1
+
+		TFBot
+		{
+			Template T_TFBot_SentryBuster
+		}
+	}
+
+    //// WAVES ////
+
+    Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`robotpath_b_relay`, `Trigger`, null, 5.1)
+                "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+        // Subwave 1
+        WaveSpawn // 1 GBarrage Demo and 1 GBig-Heal Medic
+        {
+            Name "Wave1_Subwave1_GBarrageDemo"
+			Where spawnbot_left
+			TotalCount 2
+			MaxActive 2
+			SpawnCount 2
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 100
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Barrage
+				}
+				TFBot
+				{
+					Template T_TFBot_Giant_Medic_BigHeal
+				}
+			}
+        }
+
+		WaveSpawn // 18 Scouts
+		{
+			Name "Wave1_Subwave1_Scouts"
+			WaitForAllSpawned "Wave1_Subwave1_GBarrageDemo"
+			Where spawnbot_random
+			TotalCount 18
+			MaxActive 8
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // 8 Soldiers
+		{
+			Name "Wave1_Subwave1_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave1_GBarrageDemo"
+			Where spawnbot_random
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Expert
+			}
+		}
+
+		// Subwave 2
+		WaveSpawn // 1 GPyro and 2 Charged Soldiers
+		{
+			Name "Wave1_Subwave2_GPyro"
+			WaitForAllDead "Wave1_Subwave1_GBarrageDemo"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+			
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+			}
+		}
+		WaveSpawn // 12 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro"
+			Where spawnbot_random
+			TotalCount 12
+			MaxActive 7
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+		WaveSpawn // 4 Heavies
+		{
+			Name "Wave1_Subwave2_Heavies"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro"
+			Where spawnbot_random
+			TotalCount 4
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 30
+
+			TFBot
+			{
+				Class Heavy
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 2 Charged Soldiers
+		{
+			Name "Wave1_Subwave2_GPyro2"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro"
+			Where spawnbot_left
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+			
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+			}
+		}
+		WaveSpawn // 12 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers2"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro2"
+			Where spawnbot_random
+			TotalCount 12
+			MaxActive 7
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+		WaveSpawn // 4 Heavies
+		{
+			Name "Wave1_Subwave2_Heavies2"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro2"
+			Where spawnbot_random
+			TotalCount 4
+			MaxActive 2
+			SpawnCount 1
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 30
+
+			TFBot
+			{
+				Class Heavy
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // 1 GPyro and 2 Charged Soldiers
+		{
+			Name "Wave1_Subwave2_GPyro3"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro2"
+			Where spawnbot_right
+			TotalCount 3
+			MaxActive 3
+			SpawnCount 3
+			WaitBeforeStarting 18
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+			
+			Squad
+			{
+				NoWaitForFormation 1 [$SIGSEGV]
+
+				TFBot
+				{
+					Template T_TFBot_Giant_Pyro
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+				TFBot
+				{
+					Template T_TFBot_Soldier_Crit
+				}
+			}
+		}
+		WaveSpawn // 12 Soldiers
+		{
+			Name "Wave1_Subwave2_Soldiers3"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro3"
+			Where spawnbot_random
+			TotalCount 12
+			MaxActive 7
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 6
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Soldier
+				Skill Easy
+			}
+		}
+		WaveSpawn // 4 Heavies and 4 Full-Uber Medics
+		{
+			Name "Wave1_Subwave2_Heavies3"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro3"
+			Where spawnbot_random
+			TotalCount 8
+			MaxActive 4
+			SpawnCount 2
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			Squad
+			{
+				TFBot
+				{
+					Class Heavy
+					Skill Expert
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+
+		// Subwave 3
+		WaveSpawn // 1 GBarrage Demo and 3 Full-Uber Medics
+		{
+			Name "Wave1_Subwave3_GBarrageDemo"
+			WaitForAllSpawned "Wave1_Subwave2_GPyro3"
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Barrage
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 12 Scouts
+		{
+			Name "Wave1_Subwave3_Scouts"
+			WaitForAllSpawned "Wave1_Subwave1_GBarrageDemo"
+			Where spawnbot_random
+			TotalCount 12
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // 9 Charged Soldiers
+		{
+			Name "Wave1_Subwave3_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave3_GBarrageDemo"
+			Where spawnbot_random
+			TotalCount 9
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+				Skill Expert
+			}
+		}
+
+		WaveSpawn // 1 GBarrage Demo and 3 Full-Uber Medics
+		{
+			Name "Wave1_Subwave3_GBarrageDemo2"
+			WaitForAllSpawned "Wave1_Subwave3_GBarrageDemo"
+			Where spawnbot_right
+			TotalCount 4
+			MaxActive 4
+			SpawnCount 4
+			WaitBeforeStarting 20
+			WaitBetweenSpawns 0
+			TotalCurrency 80
+
+			Squad
+			{
+				TFBot
+				{
+					Template T_TFBot_Giant_Demoman_Barrage
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+				TFBot
+				{
+					Template T_TFBot_Medic_Uber
+				}
+			}
+		}
+		WaveSpawn // 8 Scouts
+		{
+			Name "Wave1_Subwave3_Scouts2"
+			WaitForAllSpawned "Wave1_Subwave1_GBarrageDemo2"
+			Where spawnbot_random
+			TotalCount 8
+			MaxActive 8
+			SpawnCount 4
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 4
+			TotalCurrency 20
+
+			TFBot
+			{
+				Class Scout
+				Skill Easy
+			}
+		}
+		WaveSpawn // 6 Charged Soldiers
+		{
+			Name "Wave1_Subwave3_Soldiers"
+			WaitForAllSpawned "Wave1_Subwave3_GBarrageDemo"
+			Where spawnbot_random
+			TotalCount 6
+			MaxActive 6
+			SpawnCount 3
+			WaitBeforeStarting 2
+			WaitBetweenSpawns 5
+			TotalCurrency 40
+
+			TFBot
+			{
+				Template T_TFBot_Soldier_Crit
+				Skill Expert
+			}
+		}
+    }
+	Wave
+	{
+		InitWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`robotpath_d_relay`, `Trigger`, null, 5.1)
+                "
+        }
+		StartWaveOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_start_relay`, `Trigger`)
+                  "
+        }
+        DoneOutput
+        {
+            Target BigNet
+            Action RunScriptCode
+            Param "
+                    EntFire(`wave_finished_relay`, `Trigger`)
+                  "
+        }
+
+		// Subwave 1
+		WaveSpawn // 1 Tank
+		{
+			Name "Wave2_Subwave1_Tank"
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 0
+			WaitBetweenSpawns 0
+			TotalCurrency 60
+
+			Tank
+			{
+				Template Tank_Default
+				Health 25000
+				StartingPathTrackNode "tank_path_B"
+			}
+		}
+		WaveSpawn
+		{
+			Name "Wave2_Subwave1_GDeflectorHeavy"
+			WaitForAllSpawned "Wave2_Subwave1_Tank"
+			Where spawnbot_random
+			TotalCount 1
+			MaxActive 1
+			SpawnCount 1
+			WaitBeforeStarting 5
+			WaitBetweenSpawns 0
+			TotalCurrency 40
+
+			TF
+		}
+	}
+}
